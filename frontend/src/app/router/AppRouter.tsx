@@ -49,7 +49,7 @@ const router = createBrowserRouter([
     path: '/u/:username',
     element: <PortfolioPage />,
   },
-]);
+], { basename: import.meta.env.BASE_URL });
 
 export function AppRouter() {
   return <RouterProvider router={router} />;
