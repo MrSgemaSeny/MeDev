@@ -338,10 +338,10 @@ const sections = ['experience', 'education', 'skills', 'languages', 'projects']
 ```
 PROJECT:          MeDev
 TRACK:            FULL
-CURRENT PHASE:    0 (pre-init)
+CURRENT PHASE:    2.3 (Profile module done)
 LAST UPDATED:     2026-08-07
 BLOCKER:          нет
-NEXT STEP:        финализировать название, git init
+NEXT STEP:        Фаза 2.4 — GitHub модуль (интеграция GitHub API, парсинг репозиториев)
 NOTES:            UX редактора — главный приоритет и главный риск.
                   Начинать с простого drag-and-drop, не усложнять.
                   Stripe + Kaspi Pay — два платёжных шлюза с первого дня планирования.
