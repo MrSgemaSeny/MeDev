@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${DATABASE_URL}
-    username: ${DATABASE_USERNAME}
-    password: ${DATABASE_PASSWORD}
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/medev}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
   jpa:
     hibernate:
       ddl-auto: validate          # НИКОГДА create — только Flyway
@@ -21,7 +21,7 @@ server:
     context-path: /api
 
 jwt:
-  secret: ${JWT_SECRET}
+  secret: ${JWT_SECRET:super_secret_jwt_key_that_is_at_least_256_bits_long_for_hs256_algorithm_12345}
   expiration: 86400000            # 24 часа
   refresh-expiration: 2592000000  # 30 дней
 
@@ -29,5 +29,5 @@ github:
   api-url: https://api.github.com
 
 stripe:
-  secret-key: ${STRIPE_SECRET_KEY}
-  webhook-secret: ${STRIPE_WEBHOOK_SECRET}
+  secret-key: ${STRIPE_SECRET_KEY:sk_test_123}
+  webhook-secret: ${STRIPE_WEBHOOK_SECRET:whsec_123}
