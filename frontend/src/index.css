@@ -32,11 +32,7 @@
   }
   
   body {
-    @apply bg-zinc-950 text-zinc-50 antialiased selection:bg-purple-500/30;
-    background-image: 
-      radial-gradient(circle at 15% 50%, rgba(76, 29, 149, 0.15), transparent 25%),
-      radial-gradient(circle at 85% 30%, rgba(30, 58, 138, 0.15), transparent 25%);
-    background-attachment: fixed;
+    @apply bg-zinc-950 text-zinc-50 antialiased selection:bg-zinc-500/30;
     min-height: 100vh;
     font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     margin: 0;
@@ -57,29 +53,19 @@
   }
 
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-zinc-100 via-zinc-400 to-zinc-500;
   }
 }
 
 #root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid rgba(255, 255, 255, 0.05);
+  width: 100%;
   min-height: 100svh;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
-  background: rgba(255, 255, 255, 0.01);
-  backdrop-blur: 12px;
 }
 
 h1 {
   @apply text-4xl md:text-6xl font-bold mt-8 mb-6;
-  background: linear-gradient(to right, #fff, #a5b4fc);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
 
 h2 {
@@ -91,5 +77,5 @@ p {
 }
 
 code, .counter {
-  @apply inline-flex rounded-md bg-zinc-900/80 border border-white/10 px-2 py-1 text-sm font-mono text-indigo-300 shadow-inner;
+  @apply inline-flex rounded-md bg-zinc-900/80 border border-white/10 px-2 py-1 text-sm font-mono text-zinc-300 shadow-inner;
 }

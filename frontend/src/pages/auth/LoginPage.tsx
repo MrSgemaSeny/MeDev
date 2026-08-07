@@ -24,17 +24,16 @@ export function LoginPage() {
   return (
     <div className="min-h-screen w-full flex bg-zinc-950">
       {/* Left Side - Animated Gradient */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-zinc-900 justify-center items-center">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-600 opacity-90"></div>
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-zinc-900 justify-center items-center border-r border-zinc-800">
+        <div className="absolute inset-0 bg-zinc-950"></div>
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150"></div>
         
-        {/* Animated decorative blobs */}
-        <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-2xl opacity-70 animate-pulse"></div>
-        <div className="absolute top-0 -right-4 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-2xl opacity-70 animate-pulse" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-2xl opacity-70 animate-pulse" style={{ animationDelay: '4s' }}></div>
+        {/* Minimal decorative blobs */}
+        <div className="absolute top-0 -left-4 w-72 h-72 bg-zinc-800 rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-pulse"></div>
+        <div className="absolute -bottom-8 right-20 w-72 h-72 bg-zinc-700 rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
 
         <div className="relative z-10 text-center px-12">
-          <div className="mb-8 inline-flex items-center justify-center p-3 bg-white/10 rounded-2xl backdrop-blur-md border border-white/20">
+          <div className="mb-8 inline-flex items-center justify-center p-3 bg-zinc-800/50 rounded-2xl border border-zinc-700">
             <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
@@ -42,7 +41,7 @@ export function LoginPage() {
           <h1 className="text-5xl font-bold text-white mb-6 tracking-tight">
             Welcome to MeDev
           </h1>
-          <p className="text-lg text-indigo-100 font-medium max-w-md mx-auto leading-relaxed">
+          <p className="text-lg text-zinc-400 font-medium max-w-md mx-auto leading-relaxed">
             The ultimate workspace for developers. Connect, build, and ship faster than ever.
           </p>
         </div>
@@ -83,7 +82,7 @@ export function LoginPage() {
 
             <p className="text-center text-sm text-zinc-500 dark:text-zinc-400 mt-8">
               Don't have an account?{' '}
-              <Link to="/register" className="text-indigo-600 dark:text-indigo-400 font-semibold hover:text-indigo-500 transition-colors">
+              <Link to="/register" className="text-zinc-900 dark:text-white font-semibold hover:underline transition-colors">
                 Sign up
               </Link>
             </p>

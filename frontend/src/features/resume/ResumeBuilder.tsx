@@ -36,18 +36,18 @@ function SortableItem({ section }: { section: Section }) {
       ref={setNodeRef}
       style={style}
       className={`flex items-center justify-between p-4 mb-3 bg-white dark:bg-slate-800/80 border rounded-2xl shadow-sm transition-all duration-200 ${
-        isDragging ? 'border-indigo-500 shadow-md ring-2 ring-indigo-500/20 scale-[1.02]' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:shadow'
+        isDragging ? 'border-slate-500 shadow-md ring-2 ring-slate-500/20 scale-[1.02]' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:shadow'
       } ${!section.visible ? 'opacity-40 grayscale' : ''}`}
     >
       <div className="flex items-center gap-4">
-        <div {...attributes} {...listeners} className="cursor-grab hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-400 dark:text-slate-500 transition-colors bg-slate-50 dark:bg-slate-900/50 p-2 rounded-xl">
+        <div {...attributes} {...listeners} className="cursor-grab hover:text-slate-900 dark:hover:text-white text-slate-400 dark:text-slate-500 transition-colors bg-slate-50 dark:bg-slate-900/50 p-2 rounded-xl">
           <GripVertical className="w-5 h-5" />
         </div>
         <span className="font-semibold text-sm text-slate-700 dark:text-slate-200">{section.label}</span>
       </div>
       <button 
         onClick={() => toggleSection(section.id)}
-        className="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+        className="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
         title={section.visible ? "Hide section" : "Show section"}
       >
         {section.visible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
@@ -84,7 +84,7 @@ export function ResumeBuilder() {
 
   if (isLoading) return (
     <div className="flex h-full items-center justify-center">
-      <div className="w-8 h-8 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin"></div>
+      <div className="w-8 h-8 border-4 border-slate-500/30 border-t-slate-500 rounded-full animate-spin"></div>
     </div>
   );
 
@@ -92,13 +92,13 @@ export function ResumeBuilder() {
     <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 h-[calc(100vh-8rem)] min-h-[700px]">
       {/* Editor Panel */}
       <div className="col-span-1 xl:col-span-4 flex flex-col h-full bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/60 dark:border-slate-800/60 shadow-xl shadow-slate-200/40 dark:shadow-none p-6 lg:p-8 overflow-hidden relative">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-500" />
+        <div className="absolute top-0 left-0 w-full h-1 bg-slate-800 dark:bg-slate-400" />
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Builder</h2>
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">Design your professional story</p>
           </div>
-          <Button size="sm" onClick={handleDownload} className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md shadow-indigo-600/20 border-0">
+          <Button size="sm" onClick={handleDownload} className="flex items-center gap-2 bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-900 rounded-xl shadow-md shadow-slate-900/20 dark:shadow-white/20 border-0">
             <Download className="w-4 h-4" /> <span className="hidden sm:inline">Export PDF</span>
           </Button>
         </div>
@@ -118,7 +118,7 @@ export function ResumeBuilder() {
       <div className="col-span-1 xl:col-span-8 bg-slate-100/50 dark:bg-slate-900/30 rounded-3xl flex flex-col items-center justify-center p-6 lg:p-10 border border-slate-200/60 dark:border-slate-800/60 overflow-hidden relative ring-1 ring-slate-900/5 dark:ring-white/5">
         <div className="absolute top-6 right-6 z-10 flex gap-3">
           <span className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-xs px-4 py-2 rounded-xl font-semibold shadow-sm border border-slate-200/50 dark:border-slate-700/50 text-slate-700 dark:text-slate-300 flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+            <div className="w-2 h-2 rounded-full bg-slate-500 animate-pulse"></div>
             Live Preview
           </span>
           <span className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-xs px-4 py-2 rounded-xl font-semibold shadow-sm border border-slate-200/50 dark:border-slate-700/50 text-slate-700 dark:text-slate-300 capitalize">
