@@ -19,6 +19,7 @@ import { useAuthStore } from '../../entities/user/model/store';
 import { useProfile } from '../../shared/api/hooks/useProfile';
 import { Button } from '../../shared/ui/Button';
 import { toast } from 'sonner';
+import { GripVertical, Eye, EyeOff, Download } from 'lucide-react';
 
 function SortableItem({ section }: { section: Section }) {
   const toggleSection = useResumeEditorStore((state) => state.toggleSection);
@@ -34,21 +35,22 @@ function SortableItem({ section }: { section: Section }) {
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center justify-between p-4 mb-2 bg-white border rounded-xl shadow-sm ${
-        isDragging ? 'border-zinc-900 shadow-md ring-1 ring-zinc-900' : 'border-zinc-200 hover:border-zinc-300'
-      } ${!section.visible ? 'opacity-50' : ''}`}
+      className={`flex items-center justify-between p-4 mb-3 bg-white dark:bg-slate-800/80 border rounded-2xl shadow-sm transition-all duration-200 ${
+        isDragging ? 'border-indigo-500 shadow-md ring-2 ring-indigo-500/20 scale-[1.02]' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:shadow'
+      } ${!section.visible ? 'opacity-40 grayscale' : ''}`}
     >
-      <div className="flex items-center gap-3">
-        <div {...attributes} {...listeners} className="cursor-grab hover:text-zinc-900 text-zinc-400">
-          [::]
+      <div className="flex items-center gap-4">
+        <div {...attributes} {...listeners} className="cursor-grab hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-400 dark:text-slate-500 transition-colors bg-slate-50 dark:bg-slate-900/50 p-2 rounded-xl">
+          <GripVertical className="w-5 h-5" />
         </div>
-        <span className="font-medium text-sm text-zinc-700">{section.label}</span>
+        <span className="font-semibold text-sm text-slate-700 dark:text-slate-200">{section.label}</span>
       </div>
       <button 
         onClick={() => toggleSection(section.id)}
-        className="p-2 rounded-md hover:bg-[var(--accent-bg)] text-[var(--text)] hover:text-[var(--accent)]"
+        className="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+        title={section.visible ? "Hide section" : "Show section"}
       >
-        {section.visible ? '[Hide]' : '[Show]'}
+        {section.visible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
       </button>
     </div>
   );
@@ -77,24 +79,31 @@ export function ResumeBuilder() {
 
   const handleDownload = () => {
     toast.info("Downloading PDF...");
-    // Ideally trigger a download from the API
     window.open(`http://localhost:8080/v1/resume/generate/${selectedTemplate}?token=${token}`, '_blank');
   };
 
-  if (isLoading) return <div className="animate-pulse flex space-x-4"><div className="flex-1 space-y-6 py-1"><div className="h-2 bg-zinc-200 rounded"></div></div></div>;
+  if (isLoading) return (
+    <div className="flex h-full items-center justify-center">
+      <div className="w-8 h-8 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin"></div>
+    </div>
+  );
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-full min-h-[700px]">
+    <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 h-[calc(100vh-8rem)] min-h-[700px]">
       {/* Editor Panel */}
-      <div className="col-span-1 lg:col-span-4 flex flex-col h-full bg-zinc-50/50 rounded-2xl border border-zinc-200 p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-zinc-900">Builder</h2>
-          <Button size="sm" onClick={handleDownload}>Export PDF</Button>
+      <div className="col-span-1 xl:col-span-4 flex flex-col h-full bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/60 dark:border-slate-800/60 shadow-xl shadow-slate-200/40 dark:shadow-none p-6 lg:p-8 overflow-hidden relative">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-500" />
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Builder</h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">Design your professional story</p>
+          </div>
+          <Button size="sm" onClick={handleDownload} className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md shadow-indigo-600/20 border-0">
+            <Download className="w-4 h-4" /> <span className="hidden sm:inline">Export PDF</span>
+          </Button>
         </div>
         
-        <p className="text-sm text-zinc-500 mb-4">Drag to reorder sections. Toggle visibility with the eye icon.</p>
-        
-        <div className="flex-1 overflow-y-auto pr-2">
+        <div className="flex-1 overflow-y-auto pr-3 -mr-3 scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-700">
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={sections.map(s => s.id)} strategy={verticalListSortingStrategy}>
               {sections.map((section) => (
@@ -106,19 +115,22 @@ export function ResumeBuilder() {
       </div>
 
       {/* Preview Panel */}
-      <div className="col-span-1 lg:col-span-8 bg-zinc-200 rounded-2xl flex items-center justify-center p-8 border border-zinc-200 overflow-hidden relative">
-        <div className="absolute top-4 right-4 z-10 flex gap-2">
-          {/* Template Switcher would go here */}
-          <span className="bg-white/80 backdrop-blur text-xs px-3 py-1.5 rounded-full font-medium shadow-sm border border-black/5">
-            Template: Classic
+      <div className="col-span-1 xl:col-span-8 bg-slate-100/50 dark:bg-slate-900/30 rounded-3xl flex flex-col items-center justify-center p-6 lg:p-10 border border-slate-200/60 dark:border-slate-800/60 overflow-hidden relative ring-1 ring-slate-900/5 dark:ring-white/5">
+        <div className="absolute top-6 right-6 z-10 flex gap-3">
+          <span className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-xs px-4 py-2 rounded-xl font-semibold shadow-sm border border-slate-200/50 dark:border-slate-700/50 text-slate-700 dark:text-slate-300 flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+            Live Preview
+          </span>
+          <span className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-xs px-4 py-2 rounded-xl font-semibold shadow-sm border border-slate-200/50 dark:border-slate-700/50 text-slate-700 dark:text-slate-300 capitalize">
+            Template: {selectedTemplate || 'classic'}
           </span>
         </div>
         
-        {/* We use an iframe pointing to our API to render the PDF preview directly */}
-        <div className="w-full max-w-[210mm] h-[297mm] max-h-full bg-white shadow-2xl overflow-hidden rounded-md border border-zinc-300">
+        {/* Iframe wrapper */}
+        <div className="w-full max-w-[210mm] h-[297mm] max-h-full bg-white shadow-2xl shadow-slate-900/10 dark:shadow-black/50 overflow-hidden rounded-xl border border-slate-200/50 dark:border-slate-700/50 ring-1 ring-slate-900/5 transition-transform hover:scale-[1.005] duration-500">
            {token && (
              <iframe 
-                className="w-full h-full"
+                className="w-full h-full bg-white"
                 src={`http://localhost:8080/v1/resume/generate/${selectedTemplate}?token=${token}#toolbar=0&navpanes=0&scrollbar=0`}
                 title="Resume Preview"
              />
