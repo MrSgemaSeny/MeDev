@@ -46,9 +46,9 @@ function SortableItem({ section }: { section: Section }) {
       </div>
       <button 
         onClick={() => toggleSection(section.id)}
-        className="p-2 rounded-md hover:bg-zinc-100 text-zinc-500 hover:text-zinc-900"
+        className="p-2 rounded-md hover:bg-[var(--accent-bg)] text-[var(--text)] hover:text-[var(--accent)]"
       >
-        {section.visible ? '👁️' : '🚫'}
+        {section.visible ? '[Hide]' : '[Show]'}
       </button>
     </div>
   );
