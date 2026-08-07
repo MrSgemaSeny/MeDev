@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/medev
+    username: test_user
+    password: pass1
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+jwt:
+  secret: super_secret_jwt_key_that_is_at_least_256_bits_long_for_hs256_algorithm_12345
+
+stripe:
+  secret-key: sk_test_123
+  webhook-secret: whsec_123
