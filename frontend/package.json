@@ -2,6 +2,7 @@
   "name": "frontend",
   "private": true,
   "version": "0.0.0",
+  "homepage": "https://MrSgemaSeny.github.io/MeDev",
   "type": "module",
   "scripts": {
     "dev": "vite",
