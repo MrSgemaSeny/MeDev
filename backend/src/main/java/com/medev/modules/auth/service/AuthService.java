@@ -26,7 +26,15 @@ public class AuthService {
     private final RedisTemplate<String, String> redisTemplate;
     private final ProfileService profileService;
 
+    private static final java.util.List<String> RESERVED_USERNAMES = java.util.List.of(
+            "admin", "api", "login", "medev", "support", "billing", "auth", "register"
+    );
+
     public AuthResponse register(RegisterRequest request) {
+        String reqUsername = request.getUsername().toLowerCase();
+        if (RESERVED_USERNAMES.contains(reqUsername)) {
+            throw new ConflictException("Username is reserved");
+        }
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new ConflictException("Email already in use");
         }
@@ -88,9 +96,11 @@ public class AuthService {
     public void logout(String bearerToken) {
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             String token = bearerToken.substring(7);
-            Long userId = jwtService.extractUserId(token);
-            // Удаляем refresh token → нельзя обновить сессию
-            redisTemplate.delete("refresh:" + userId);
+            if (jwtService.validateToken(token)) {
+                Long userId = jwtService.extractUserId(token);
+                // Удаляем refresh token → нельзя обновить сессию
+                redisTemplate.delete("refresh:" + userId);
+            }
         }
     }
 }

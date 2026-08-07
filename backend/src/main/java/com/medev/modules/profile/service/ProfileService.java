@@ -7,6 +7,7 @@ import com.medev.modules.profile.entity.Profile;
 import com.medev.modules.profile.repository.ExperienceRepository;
 import com.medev.modules.profile.repository.ProfileRepository;
 import com.medev.shared.exception.ForbiddenException;
+import com.medev.shared.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +31,7 @@ public class ProfileService {
 
     private Profile getProfileByUserId(Long userId) {
         return profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+                .orElseThrow(() -> new NotFoundException("Profile not found"));
     }
 
     public ProfileDto getByUserId(Long userId) {
@@ -78,7 +79,7 @@ public class ProfileService {
     public ExperienceDto updateExperience(Long userId, Long experienceId, ExperienceRequest request) {
         Profile profile = getProfileByUserId(userId);
         Experience exp = experienceRepository.findById(experienceId)
-                .orElseThrow(() -> new RuntimeException("Experience not found"));
+                .orElseThrow(() -> new NotFoundException("Experience not found"));
                 
         if (!exp.getProfile().getId().equals(profile.getId())) {
             throw new ForbiddenException("Access denied");
@@ -100,7 +101,7 @@ public class ProfileService {
     public void deleteExperience(Long userId, Long experienceId) {
         Profile profile = getProfileByUserId(userId);
         Experience exp = experienceRepository.findById(experienceId)
-                .orElseThrow(() -> new RuntimeException("Experience not found"));
+                .orElseThrow(() -> new NotFoundException("Experience not found"));
                 
         if (!exp.getProfile().getId().equals(profile.getId())) {
             throw new ForbiddenException("Access denied");
@@ -153,5 +154,38 @@ public class ProfileService {
         dto.setIsCurrent(exp.getIsCurrent());
         dto.setSortOrder(exp.getSortOrder());
         return dto;
+    }
+
+    @Transactional
+    public void updateFromGitHub(Long userId, com.medev.modules.github.dto.GitHubProfileDto github) {
+        Profile profile = getProfileByUserId(userId);
+        
+        if (github.getName() != null && profile.getFullName() == null) {
+            profile.setFullName(github.getName());
+        }
+        if (github.getAvatarUrl() != null) {
+            profile.setAvatarUrl(github.getAvatarUrl());
+        }
+        if (github.getLocation() != null && profile.getLocation() == null) {
+            profile.setLocation(github.getLocation());
+        }
+        if (github.getBio() != null && profile.getSummary() == null) {
+            profile.setSummary(github.getBio());
+        }
+        
+        profile.setGithubUsername(github.getUsername());
+        profileRepository.save(profile);
+    }
+
+    @Transactional
+    public void importProjects(Long userId, java.util.List<com.medev.modules.github.dto.GitHubRepoDto> repos) {
+        // Заглушка, пока сущность Project не реализована в Фазе 3
+        System.out.println("Importing " + repos.size() + " projects for user " + userId);
+    }
+
+    @Transactional
+    public void addSkillIfNotExists(Long userId, String skillName, String category) {
+        // Заглушка, пока сущность Skill не будет расширена (сейчас есть только базовая версия)
+        System.out.println("Adding skill " + skillName + " (" + category + ") for user " + userId);
     }
 }

@@ -34,6 +34,9 @@ dependencies {
     // HTTP Client (для GitHub API)
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
+    // Template Engine (для PDF генерации)
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
     // Utils
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
