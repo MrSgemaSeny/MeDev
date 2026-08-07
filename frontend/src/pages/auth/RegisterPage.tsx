@@ -59,6 +59,7 @@ export function RegisterPage() {
             <div>
               <Input 
                 type="password" 
+                autoComplete="new-password"
                 placeholder="Password" 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
