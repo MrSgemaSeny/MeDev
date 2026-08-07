@@ -14,4 +14,9 @@ public class ProfileDto {
     private String githubUsername;
     private String telegram;
     private String linkedin;
+    private java.util.List<ExperienceDto> experience;
+    private java.util.List<EducationDto> education;
+    private java.util.List<SkillDto> skills;
+    private java.util.List<LanguageDto> languages;
+    private java.util.List<ProjectDto> projects;
 }

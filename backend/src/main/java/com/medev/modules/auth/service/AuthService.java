@@ -70,8 +70,21 @@ public class AuthService {
     }
 
     public AuthResponse refresh(String refreshToken) {
-        // TODO: Implement refresh logic verifying token against Redis
-        throw new UnsupportedOperationException("Not implemented yet");
+        if (!jwtService.validateToken(refreshToken)) {
+            throw new UnauthorizedException("Invalid refresh token");
+        }
+        
+        Long userId = jwtService.extractUserId(refreshToken);
+        String redisToken = redisTemplate.opsForValue().get("refresh:" + userId);
+        
+        if (redisToken == null || !redisToken.equals(refreshToken)) {
+            throw new UnauthorizedException("Invalid or expired refresh token");
+        }
+        
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UnauthorizedException("User not found"));
+                
+        return buildAuthResponse(user);
     }
 
     private AuthResponse buildAuthResponse(User user) {

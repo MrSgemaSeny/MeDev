@@ -11,19 +11,17 @@
 ```
 PROJECT:         MeDev
 TRACK:           FULL
-CURRENT PHASE:   1
-CURRENT SUBPHASE: 1.1
+CURRENT PHASE:   3 (Frontend & Backend Goal)
+CURRENT SUBPHASE: 3.1 (Resume Builder & Portfolio)
 LAST UPDATED:    2026-08-07
 BLOCKER:         нет
-NEXT STEP:       git init, структура монорепо
+NEXT STEP:       Тестирование фронтенда и деплой
 NOTES:
   - Шаблоны резюме: HTML файлы в resources/templates/resume/ → Flying Saucer → PDF
-  - Auth: email/password на старте, Google OAuth позже
-  - Роли: USER, ADMIN
-  - Мультитенантность: не нужна, просто user_id изоляция
-  - UX drag-and-drop редактора — главный приоритет и главный риск
-  - Redis: временное хранение профиля до сохранения в БД
-  - Платежи: Stripe (глобал) + Kaspi Pay (СНГ) — в Фазе 3
+  - Auth: email/password реализован с Refresh-токенами
+  - Profile CRUD для Education, Project, Language, Experience реализованы
+  - UX drag-and-drop редактора интегрирован в ResumeBuilder.tsx
+  - Redis: настроен для хранения токенов и кэша
 ```
 
 ---

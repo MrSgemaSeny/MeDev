@@ -336,13 +336,15 @@ const sections = ['experience', 'education', 'skills', 'languages', 'projects']
 ## PROJECT STATUS BLOCK
 
 ```
-PROJECT:          MeDev
-TRACK:            FULL
-CURRENT PHASE:    3.0 (Phase 2 finished)
-LAST UPDATED:     2026-08-07
-BLOCKER:          нет
-NEXT STEP:        Фаза 3 — Расширение (Инвалидация токенов, PDF парсинг, Drag-n-drop)
-NOTES:            UX редактора — главный приоритет и главный риск.
-                  Начинать с простого drag-and-drop, не усложнять.
-                  Stripe + Kaspi Pay — два платёжных шлюза с первого дня планирования.
+PROJECT:         MeDev
+TRACK:           FULL
+CURRENT PHASE:   3 (Frontend & Backend Goal)
+CURRENT SUBPHASE: 3.1 (Resume Builder & Portfolio)
+LAST UPDATED:    2026-08-07
+BLOCKER:         нет
+NEXT STEP:       Доработка Frontend, Тестирование и деплой
+NOTES:
+  - Auth, Profile CRUD и Drag-and-Drop Resume Builder реализованы.
+  - Уведомления через Sonner настроены.
+  - PDF генерация использует Thymeleaf + Flying Saucer.
 ```
