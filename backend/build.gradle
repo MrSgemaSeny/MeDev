@@ -1,0 +1,46 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.3.0'
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+java { sourceCompatibility = JavaVersion.VERSION_17 }
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Core
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // DB
+    runtimeOnly 'org.postgresql:postgresql'
+    implementation 'org.flywaydb:flyway-core'
+
+    // JWT
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5'
+
+    // PDF
+    implementation 'org.xhtmlrenderer:flying-saucer-pdf:9.1.22'
+    implementation 'org.apache.pdfbox:pdfbox:3.0.2'
+
+    // HTTP Client (для GitHub API)
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    // Utils
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // Stripe
+    implementation 'com.stripe:stripe-java:25.3.0'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+}

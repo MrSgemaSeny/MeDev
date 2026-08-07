@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate          # НИКОГДА create — только Flyway
+    show-sql: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: 86400000            # 24 часа
+  refresh-expiration: 2592000000  # 30 дней
+
+github:
+  api-url: https://api.github.com
+
+stripe:
+  secret-key: ${STRIPE_SECRET_KEY}
+  webhook-secret: ${STRIPE_WEBHOOK_SECRET}
