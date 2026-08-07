@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/medev}
-    username: ${DATABASE_USERNAME:postgres}
-    password: ${DATABASE_PASSWORD:postgres}
+    username: ${DATABASE_USERNAME:test_user}
+    password: ${DATABASE_PASSWORD:pass1}
   jpa:
     hibernate:
       ddl-auto: validate          # НИКОГДА create — только Flyway
