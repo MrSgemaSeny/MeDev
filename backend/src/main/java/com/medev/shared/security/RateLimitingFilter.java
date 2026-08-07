@@ -31,6 +31,11 @@ public class RateLimitingFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // Пытаемся получить реальный IP, если приложение за Nginx/HAProxy
         String ip = request.getHeader("X-Forwarded-For");
         if (ip == null || ip.isEmpty()) {

@@ -32,6 +32,7 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                 // Публичные эндпоинты
                 .requestMatchers(
                     "/v1/auth/**",
@@ -50,7 +51,14 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("http://localhost:*", "https://mrsgemaseny.github.io"));
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:5173", 
+                "http://localhost:5174", 
+                "http://localhost:5175", 
+                "http://localhost:5176", 
+                "http://localhost:5177", 
+                "https://mrsgemaseny.github.io"
+        ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
