@@ -69,7 +69,7 @@ export const AboutSection = () => {
               disabled={isGenerating}
               style={{ padding: '0.125rem 0.5rem', fontSize: '0.75rem' }}
             >
-              ✨ {isGenerating ? 'Generating...' : 'Generate with AI'}
+              {isGenerating ? 'Generating...' : 'Generate with AI'}
             </Button>
           </div>
           <Textarea id="summary" name="summary" value={formData.summary} onChange={handleChange} rows={4} />

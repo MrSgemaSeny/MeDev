@@ -121,7 +121,7 @@ const ExperienceForm: React.FC<ExperienceFormProps> = ({ initialData, onSave, on
               disabled={isGenerating || !formData.position || !formData.company}
               style={{ padding: '0.125rem 0.5rem', fontSize: '0.75rem' }}
             >
-              ✨ {isGenerating ? 'Generating...' : 'Generate with AI'}
+              {isGenerating ? 'Generating...' : 'Generate with AI'}
             </Button>
           </div>
           <Textarea id="description" name="description" value={formData.description} onChange={handleChange} rows={4} />

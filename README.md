@@ -3,7 +3,7 @@
 MeDev is a data-first SaaS platform designed for software engineers. 
 Stop writing resumes manually. Connect your GitHub account, let the system parse your repositories, and instantly generate beautiful PDF resumes or a public web portfolio. Powered by AI to help you articulate your experience.
 
-## ✨ Core Features (MVP)
+## Core Features (MVP)
 - **GitHub Integration (OAuth2)**: One-click login and automated repository import.
 - **AI-Powered Profile Generation**: Integrated Groq AI assistant (streaming responses) to auto-generate project descriptions, experience summaries, and analyze your GitHub stats.
 - **Resume Generator**: Export your data to a clean, ATS-friendly PDF resume in one click. (Powered by Thymeleaf + PDFBox).
