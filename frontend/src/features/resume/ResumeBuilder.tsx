@@ -19,10 +19,9 @@ import { useAuthStore } from '../../entities/user/model/store';
 import { useProfile, useUpdateSectionOrder } from '../../shared/api/hooks/useProfile';
 import { Button } from '../../shared/ui/Button';
 import { toast } from 'sonner';
-import { GripVertical, Eye, EyeOff, Download, RefreshCw } from 'lucide-react';
+import { GripVertical, Eye, EyeOff, Download } from 'lucide-react';
 import { api } from '../../shared/api/axios';
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 function SortableItem({ section }: { section: Section }) {
   const toggleSection = useResumeEditorStore((state) => state.toggleSection);
@@ -59,6 +58,8 @@ function SortableItem({ section }: { section: Section }) {
   );
 }
 
+import { useTranslation } from 'react-i18next';
+
 export function ResumeBuilder() {
   const { t } = useTranslation();
   const { sections, reorderSections, selectedTemplate, setSections, setTemplate } = useResumeEditorStore();
@@ -66,7 +67,6 @@ export function ResumeBuilder() {
   const { mutate: updateSectionOrder } = useUpdateSectionOrder();
   const token = useAuthStore((state) => state.accessToken);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
-  const [isPdfLoading, setIsPdfLoading] = useState(false);
 
   // Sync initial order from profile
   useEffect(() => {
@@ -89,38 +89,32 @@ export function ResumeBuilder() {
   }, [profile?.sectionOrder]); // Only run when profile order changes
 
   // Fetch PDF securely
-  const fetchPdf = async () => {
-    if (!token) return;
-    setIsPdfLoading(true);
-    try {
-      const response = await api.get(`/resume/generate/${selectedTemplate}`, {
-        responseType: 'blob'
-      });
-      const objectUrl = URL.createObjectURL(response.data);
-      setPdfUrl(prev => {
-        if (prev) URL.revokeObjectURL(prev);
-        return objectUrl;
-      });
-    } catch (e: any) {
-      console.error("Failed to fetch PDF", e);
-      if (e.response?.status === 429) {
-        toast.error("Too many requests. Please wait a moment.");
-      }
-    } finally {
-      setIsPdfLoading(false);
-    }
-  };
-
   useEffect(() => {
+    let objectUrl: string | null = null;
+    let isMounted = true;
+
+    const fetchPdf = async () => {
+      if (!token) return;
+      try {
+        const response = await api.get(`/resume/generate/${selectedTemplate}`, {
+          responseType: 'blob'
+        });
+        if (isMounted) {
+          objectUrl = URL.createObjectURL(response.data);
+          setPdfUrl(objectUrl);
+        }
+      } catch (e) {
+        console.error("Failed to fetch PDF", e);
+      }
+    };
+    
     fetchPdf();
     
     return () => {
-      setPdfUrl(prev => {
-        if (prev) URL.revokeObjectURL(prev);
-        return null;
-      });
+      isMounted = false;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
-  }, [selectedTemplate, token]); // Only re-fetch on template change or login
+  }, [selectedTemplate, token, profile]); // re-render when profile changes
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -238,15 +232,10 @@ export function ResumeBuilder() {
       {/* Preview Panel */}
       <div className="flex-1 bg-[#010409] flex flex-col items-center justify-center p-6 relative overflow-hidden">
         <div className="absolute top-4 right-4 z-10 flex gap-2">
-          <Button 
-            size="sm" 
-            onClick={fetchPdf} 
-            disabled={isPdfLoading}
-            className="bg-[#21262d] border border-[#30363d] hover:bg-[#30363d] text-xs px-3 h-8 rounded-md text-[#c9d1d9] flex items-center gap-2 font-medium transition-colors shadow-sm"
-          >
-            {isPdfLoading ? <div className="w-3 h-3 border-2 border-[#8b949e] border-t-white rounded-full animate-spin"></div> : <RefreshCw className="w-3 h-3" />}
-            {t('builder.updatePreview', 'Update Preview')}
-          </Button>
+          <span className="bg-[#161b22] border border-[#30363d] text-xs px-3 py-1.5 rounded-md text-[#8b949e] flex items-center gap-2 font-medium">
+            <div className="w-2 h-2 rounded-full bg-[#238636] animate-pulse"></div>
+            Live Preview
+          </span>
         </div>
         
         {/* Iframe wrapper */}
