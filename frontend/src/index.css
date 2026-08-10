@@ -2,60 +2,36 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-@layer base {
-  :root {
-    /* Premium SaaS Dark Theme */
-    --background: 240 10% 4%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 6%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 6%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 260 100% 65%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 240 10% 12%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 10% 12%;
-    --muted-foreground: 240 5% 65%;
-    --accent: 280 100% 60%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 10% 16%;
-    --input: 240 10% 16%;
-    --ring: 260 100% 65%;
-    --radius: 0.75rem;
-  }
+@theme {
+  --color-gh-bg: #0d1117;
+  --color-gh-card: #161b22;
+  --color-gh-border: #30363d;
+  --color-gh-accent: #238636;
+  --color-gh-accent-hover: #2ea043;
+  --color-gh-text: #c9d1d9;
+  --color-gh-muted: #8b949e;
 }
 
 @layer base {
   * {
-    @apply border-white/10;
+    @apply border-gh-border;
   }
   
   body {
-    @apply bg-zinc-50 text-zinc-950 dark:bg-zinc-950 dark:text-zinc-50 antialiased selection:bg-zinc-500/30;
+    @apply bg-gh-bg text-gh-text antialiased selection:bg-[#58a6ff]/30;
     min-height: 100vh;
     font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     margin: 0;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-semibold tracking-tight;
+    @apply font-semibold tracking-tight text-white;
   }
 }
 
 @layer utilities {
-  .glass {
-    @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)];
-  }
-  
-  .glass-card {
-    @apply bg-zinc-900/40 backdrop-blur-2xl border border-zinc-800/50 shadow-2xl;
-  }
-
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-zinc-100 via-zinc-400 to-zinc-500;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-gray-200 via-gray-400 to-gray-500;
   }
 }
 
@@ -71,7 +47,7 @@ h1 {
 }
 
 h2 {
-  @apply text-xl md:text-2xl font-medium mb-2 text-zinc-300;
+  @apply text-xl md:text-2xl font-medium mb-2 text-gh-text;
 }
 
 p {
@@ -79,5 +55,5 @@ p {
 }
 
 code, .counter {
-  @apply inline-flex rounded-md bg-zinc-900/80 border border-white/10 px-2 py-1 text-sm font-mono text-zinc-300 shadow-inner;
+  @apply inline-flex rounded-md bg-gh-card border border-gh-border px-2 py-1 text-sm font-mono text-gh-text shadow-sm;
 }
