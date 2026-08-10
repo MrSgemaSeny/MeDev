@@ -25,8 +25,14 @@ import { GripVertical, Eye, EyeOff, Download, RefreshCw } from 'lucide-react';
 import { api } from '../../shared/api/axios';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { AboutForm } from './forms/AboutForm';
+import { ExperienceForm } from './forms/ExperienceForm';
+import { EducationForm } from './forms/EducationForm';
+import { SkillsForm } from './forms/SkillsForm';
+import { LanguagesForm } from './forms/LanguagesForm';
+import { ProjectsForm } from './forms/ProjectsForm';
 
-function SectionItem({ section, isDragging, dragOverlay, listeners, attributes, setNodeRef, style }: any) {
+function SectionItem({ section, isDragging, dragOverlay, listeners, attributes, setNodeRef, style, onEdit }: any) {
   const toggleSection = useResumeEditorStore((state) => state.toggleSection);
   
   return (
@@ -51,7 +57,13 @@ function SectionItem({ section, isDragging, dragOverlay, listeners, attributes, 
         >
           <GripVertical className="w-4 h-4" />
         </div>
-        <span className="font-medium text-sm" style={{ color: 'var(--color-text-secondary)' }}>{section.label}</span>
+        <span 
+          className="font-medium text-sm hover:underline cursor-pointer" 
+          style={{ color: 'var(--color-text-secondary)' }}
+          onClick={() => !dragOverlay && onEdit?.(section.id)}
+        >
+          {section.label}
+        </span>
       </div>
       <button
         onClick={() => toggleSection(section.id)}
@@ -66,7 +78,7 @@ function SectionItem({ section, isDragging, dragOverlay, listeners, attributes, 
   );
 }
 
-function SortableItem({ section }: { section: Section }) {
+function SortableItem({ section, onEdit }: { section: Section, onEdit?: (id: string) => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: section.id });
 
   const style = {
@@ -83,6 +95,7 @@ function SortableItem({ section }: { section: Section }) {
       attributes={attributes}
       setNodeRef={setNodeRef}
       style={style}
+      onEdit={onEdit}
     />
   );
 }
@@ -96,6 +109,7 @@ export function ResumeBuilder() {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [isPdfLoading, setIsPdfLoading] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [editingSection, setEditingSection] = useState<string | null>(null);
 
   // Sync initial order from profile
   useEffect(() => {
@@ -294,34 +308,45 @@ export function ResumeBuilder() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto overflow-x-hidden pr-1 relative">
-          <div className="text-xs font-semibold mb-3 uppercase tracking-wider sticky top-0 bg-opacity-90 pb-1 z-10" style={{ color: 'var(--color-text-muted)', backgroundColor: 'var(--color-bg-primary)' }}>Sections</div>
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-            onDragCancel={() => setActiveId(null)}
-          >
-            <SortableContext items={sections.map(s => s.id)} strategy={verticalListSortingStrategy}>
-              {sections.map((section) => (
-                <SortableItem key={section.id} section={section} />
-              ))}
-            </SortableContext>
-            <DragOverlay
-              dropAnimation={{
-                sideEffects: defaultDropAnimationSideEffects({ styles: { active: { opacity: '0.4' } } }),
-              }}
+        {editingSection ? (
+          <div className="flex-1 overflow-hidden h-full">
+            {editingSection === 'summary' && <AboutForm onClose={() => { setEditingSection(null); fetchPdf(); }} />}
+            {editingSection === 'experience' && <ExperienceForm onClose={() => { setEditingSection(null); fetchPdf(); }} />}
+            {editingSection === 'education' && <EducationForm onClose={() => { setEditingSection(null); fetchPdf(); }} />}
+            {editingSection === 'skills' && <SkillsForm onClose={() => { setEditingSection(null); fetchPdf(); }} />}
+            {editingSection === 'languages' && <LanguagesForm onClose={() => { setEditingSection(null); fetchPdf(); }} />}
+            {editingSection === 'projects' && <ProjectsForm onClose={() => { setEditingSection(null); fetchPdf(); }} />}
+          </div>
+        ) : (
+          <div className="flex-1 overflow-y-auto overflow-x-hidden pr-1 relative">
+            <div className="text-xs font-semibold mb-3 uppercase tracking-wider sticky top-0 bg-opacity-90 pb-1 z-10" style={{ color: 'var(--color-text-muted)', backgroundColor: 'var(--color-bg-primary)' }}>Sections</div>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+              onDragCancel={() => setActiveId(null)}
             >
-              {activeId ? (
-                <SectionItem
-                  section={sections.find(s => s.id === activeId)!}
-                  dragOverlay={true}
-                />
-              ) : null}
-            </DragOverlay>
-          </DndContext>
-        </div>
+              <SortableContext items={sections.map(s => s.id)} strategy={verticalListSortingStrategy}>
+                {sections.map((section) => (
+                  <SortableItem key={section.id} section={section} onEdit={setEditingSection} />
+                ))}
+              </SortableContext>
+              <DragOverlay
+                dropAnimation={{
+                  sideEffects: defaultDropAnimationSideEffects({ styles: { active: { opacity: '0.4' } } }),
+                }}
+              >
+                {activeId ? (
+                  <SectionItem
+                    section={sections.find(s => s.id === activeId)!}
+                    dragOverlay={true}
+                  />
+                ) : null}
+              </DragOverlay>
+            </DndContext>
+          </div>
+        )}
       </div>
 
       {/* Preview Panel */}
