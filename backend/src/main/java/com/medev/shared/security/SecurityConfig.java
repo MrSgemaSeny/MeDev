@@ -18,12 +18,17 @@ import org.springframework.security.config.Customizer;
 
 import java.util.List;
 
+import com.medev.modules.auth.service.CustomOAuth2UserService;
+import com.medev.modules.auth.security.OAuth2LoginSuccessHandler;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -32,17 +37,26 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                .dispatcherTypeMatchers(jakarta.servlet.DispatcherType.ASYNC).permitAll()
                 .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                 // Публичные эндпоинты
                 .requestMatchers(
                     "/v1/auth/**",
                     "/v1/portfolio/**",    // публичные страницы
-                    "/actuator/health"
+                    "/actuator/health",
+                    "/oauth2/**",
+                    "/login/oauth2/**"
                 ).permitAll()
                 // Только ADMIN
                 .requestMatchers("/v1/admin/**").hasRole("ADMIN")
                 // Всё остальное — авторизованные пользователи
                 .anyRequest().authenticated()
+            )
+            .oauth2Login(oauth2 -> oauth2
+                .userInfoEndpoint(userInfo -> userInfo
+                    .userService(customOAuth2UserService)
+                )
+                .successHandler(oAuth2LoginSuccessHandler)
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
             .build();

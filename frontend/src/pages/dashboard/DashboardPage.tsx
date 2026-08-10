@@ -70,30 +70,6 @@ export const DashboardPage = () => {
             />
           </div>
         </Card>
-
-        <Card className="p-4">
-          <h3 className="text-xs font-medium mb-3" style={{ color: 'var(--color-text-secondary)' }}>
-            Profile Views
-          </h3>
-          <div className="text-2xl font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>
-            1,204
-          </div>
-          <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
-            +12% from last week
-          </p>
-        </Card>
-
-        <Card className="p-4">
-          <h3 className="text-xs font-medium mb-3" style={{ color: 'var(--color-text-secondary)' }}>
-            Resume Downloads
-          </h3>
-          <div className="text-2xl font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>
-            3
-          </div>
-          <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
-            Free tier limit: 3/day
-          </p>
-        </Card>
       </div>
 
       <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide" style={{ color: 'var(--color-text-secondary)' }}>

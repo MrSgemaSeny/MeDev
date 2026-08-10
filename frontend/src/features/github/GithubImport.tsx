@@ -30,23 +30,19 @@ type Stage = 'idle' | 'fetching' | 'selecting' | 'importing' | 'done' | 'error';
 
 export const GithubImport = () => {
   const { refetch } = useProfile();
-  const [token, setToken] = useState('');
   const [stage, setStage] = useState<Stage>('idle');
   const [error, setError] = useState<string | null>(null);
   const [profile, setProfile] = useState<GitHubProfileDto | null>(null);
   const [selected, setSelected] = useState<Set<number>>(new Set());
 
-  const handleFetch = async (e: React.FormEvent) => {
+  const handleFetch = async (e: React.FormEvent | React.MouseEvent) => {
     e.preventDefault();
-    if (!token) return;
     setStage('fetching');
     setError(null);
     setProfile(null);
     setSelected(new Set());
     try {
-      const { data } = await api.get<GitHubProfileDto>('/github/fetch', {
-        params: { token },
-      });
+      const { data } = await api.get<GitHubProfileDto>('/github/fetch');
       setProfile(data);
       const ownedRepos = (data.repos || []).filter((r) => !r.name.includes('.github'));
       setSelected(new Set(ownedRepos.map((r) => r.id)));
@@ -76,7 +72,6 @@ export const GithubImport = () => {
     setError(null);
     try {
       await api.post('/github/import', {
-        token,
         selectedRepoIds: Array.from(selected),
       });
       await refetch();
@@ -96,7 +91,6 @@ export const GithubImport = () => {
     setError(null);
     setProfile(null);
     setSelected(new Set());
-    setToken('');
   };
 
   return (
@@ -111,24 +105,13 @@ export const GithubImport = () => {
 
       {stage === 'idle' || stage === 'fetching' || stage === 'error' ? (
         <Card className="p-4">
-          <form onSubmit={handleFetch} className="space-y-3">
+          <div className="space-y-3">
             <div>
               <label className="block text-xs font-medium mb-1" style={{ color: 'var(--color-text-secondary)' }}>
-                Personal Access Token
+                GitHub Connection
               </label>
-              <Input
-                type="password"
-                value={token}
-                onChange={(e) => setToken(e.target.value)}
-                placeholder="ghp_..."
-                required
-                autoComplete="off"
-              />
-              <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
-                Create one at GitHub → Settings → Developer settings → Personal access tokens. Scope:
-                <code className="mx-1 px-1 rounded" style={{ backgroundColor: 'var(--color-bg-tertiary)' }}>repo</code>
-                and
-                <code className="mx-1 px-1 rounded" style={{ backgroundColor: 'var(--color-bg-tertiary)' }}>user</code>.
+              <p className="text-xs mb-3" style={{ color: 'var(--color-text-muted)' }}>
+                Authorize MeDev to read your GitHub profile and repositories. We only request read access to public data.
               </p>
             </div>
             {error && (
@@ -143,10 +126,15 @@ export const GithubImport = () => {
                 {error}
               </div>
             )}
-            <Button type="submit" variant="primary" disabled={stage === 'fetching' || !token}>
-              {stage === 'fetching' ? 'Fetching...' : 'Fetch GitHub data'}
-            </Button>
-          </form>
+            <div className="flex gap-2">
+              <Button type="button" variant="outline" onClick={() => window.location.href = 'http://localhost:8080/oauth2/authorization/github'}>
+                Connect GitHub
+              </Button>
+              <Button type="button" variant="primary" onClick={handleFetch} disabled={stage === 'fetching'}>
+                {stage === 'fetching' ? 'Fetching...' : 'Fetch GitHub data'}
+              </Button>
+            </div>
+          </div>
         </Card>
       ) : null}
 

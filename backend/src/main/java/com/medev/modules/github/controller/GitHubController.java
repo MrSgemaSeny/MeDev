@@ -16,9 +16,9 @@ public class GitHubController {
     private final GitHubService githubService;
 
     @GetMapping("/fetch")
-    public ResponseEntity<GitHubProfileDto> fetchProfile(@RequestParam String token) {
+    public ResponseEntity<GitHubProfileDto> fetchProfile() {
         Long userId = SecurityUtils.getCurrentUserId();
-        return ResponseEntity.ok(githubService.fetchAndParseProfile(userId, token));
+        return ResponseEntity.ok(githubService.fetchAndParseProfile(userId));
     }
 
     @PostMapping("/import")

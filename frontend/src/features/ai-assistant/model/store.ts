@@ -28,7 +28,8 @@ export const useAiChatStore = create<AiChatState>((set) => ({
   updateLastMessage: (content) => set((state) => {
     const newMessages = [...state.messages];
     if (newMessages.length > 0) {
-      newMessages[newMessages.length - 1].content += content;
+      const last = newMessages[newMessages.length - 1];
+      newMessages[newMessages.length - 1] = { ...last, content: last.content + content };
     }
     return { messages: newMessages };
   }),

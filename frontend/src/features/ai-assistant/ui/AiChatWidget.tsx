@@ -70,9 +70,9 @@ export const AiChatWidget = () => {
           }
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching chat:', error);
-      updateLastMessage('\n\n**Ошибка подключения к ИИ.**');
+      updateLastMessage(`\n\n**Ошибка подключения к ИИ: ${error.message || 'Неизвестная ошибка'}**`);
     } finally {
       setLoading(false);
     }

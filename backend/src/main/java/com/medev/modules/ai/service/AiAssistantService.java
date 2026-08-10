@@ -14,14 +14,10 @@ public class AiAssistantService {
 
     private final GroqClient groqClient;
 
-    private static final String SYSTEM_PROMPT = 
-        "Ты — помощник, который отвечает кратко, вежливо и по существу. Помоги пользователю быстро.\n" +
-        "Если пользователь только открыл чат, напиши приветственное сообщение для ИИ-ассистента и уточни, чем помочь.";
-
-    public Flux<String> streamChat(String userMessage, List<Map<String, String>> previousHistory) {
+    public Flux<String> streamChat(String userMessage, String systemPrompt, List<Map<String, String>> previousHistory) {
         List<Map<String, String>> messages = new ArrayList<>();
         
-        messages.add(Map.of("role", "system", "content", SYSTEM_PROMPT));
+        messages.add(Map.of("role", "system", "content", systemPrompt));
         
         if (previousHistory != null) {
             messages.addAll(previousHistory);

@@ -37,6 +37,12 @@ public class User {
     @Column(name = "stripe_customer_id")
     private String stripeCustomerId;
 
+    @Column(name = "github_id")
+    private String githubId;
+
+    @Column(name = "github_access_token")
+    private String githubAccessToken;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 

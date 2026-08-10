@@ -80,6 +80,11 @@ public class GroqClient {
                 .bodyValue(requestBody)
                 .retrieve()
                 .bodyToFlux(String.class)
+                .takeUntil(chunk -> {
+                    String clean = chunk.trim();
+                    if (clean.startsWith("data: ")) clean = clean.substring(6).trim();
+                    return clean.equals("[DONE]");
+                })
                 .mapNotNull(chunk -> {
                     String cleanChunk = chunk.trim();
                     if (cleanChunk.startsWith("data: ")) {
@@ -100,6 +105,7 @@ public class GroqClient {
                     }
                     return "";
                 })
-                .filter(s -> !s.isEmpty());
+                .filter(s -> !s.isEmpty())
+                .onErrorResume(e -> reactor.core.publisher.Flux.empty());
     }
 }

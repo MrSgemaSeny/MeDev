@@ -2,6 +2,7 @@ package com.medev.modules.ai.controller;
 
 import com.medev.modules.ai.service.AiAnalysisService;
 import com.medev.modules.ai.service.AiAssistantService;
+import com.medev.modules.ai.service.AiContextService;
 import com.medev.modules.ai.dto.ChatRequest;
 import com.medev.modules.profile.dto.UpdateProfileRequest;
 import com.medev.modules.profile.service.ProfileService;
@@ -20,6 +21,7 @@ public class AiController {
 
     private final AiAnalysisService aiAnalysisService;
     private final AiAssistantService aiAssistantService;
+    private final AiContextService aiContextService;
     private final ProfileService profileService;
 
     @PostMapping("/parse-resume")
@@ -34,19 +36,25 @@ public class AiController {
 
     @PostMapping("/chat/stream")
     public SseEmitter streamChat(@RequestBody ChatRequest request) {
+        Long userId = SecurityUtils.getCurrentUserId();
+        String systemPrompt = aiContextService.buildSystemPrompt(userId);
+
         SseEmitter emitter = new SseEmitter(120_000L); // 2 minutes timeout
         
-        Flux<String> stream = aiAssistantService.streamChat(request.getPrompt(), request.getHistory());
+        Flux<String> stream = aiAssistantService.streamChat(request.getPrompt(), systemPrompt, request.getHistory());
         
         stream.subscribe(
             chunk -> {
                 try {
                     emitter.send(chunk);
                 } catch (Exception e) {
-                    emitter.completeWithError(e);
+                    emitter.complete();
                 }
             },
-            emitter::completeWithError,
+            error -> {
+                System.err.println("AI Stream Error: " + error.getMessage());
+                emitter.complete(); // Cleanly close the stream on the frontend even if backend WebClient throws PrematureCloseException
+            },
             emitter::complete
         );
         

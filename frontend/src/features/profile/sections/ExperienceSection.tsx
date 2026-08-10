@@ -3,6 +3,7 @@ import { useProfile, useAddExperience, useUpdateExperience, useDeleteExperience 
 import type { ExperienceDto } from '../../../entities/profile/model/types';
 import { Button } from '../../../shared/ui/Button';
 import { Input, Textarea, Label, Card } from '../../../shared/ui/Form';
+import { useAiGenerate } from '../../ai/hooks/useAiGenerate';
 
 export const ExperienceSection = () => {
   const { data: profile, isLoading } = useProfile();
@@ -75,6 +76,7 @@ const ExperienceForm: React.FC<ExperienceFormProps> = ({ initialData, onSave, on
     current: initialData?.current || false,
     description: initialData?.description || '',
   });
+  const { generate, isGenerating } = useAiGenerate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
@@ -82,6 +84,16 @@ const ExperienceForm: React.FC<ExperienceFormProps> = ({ initialData, onSave, on
   };
 
   const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); onSave(formData); };
+
+  const handleGenerateDescription = async () => {
+    setFormData((prev) => ({ ...prev, description: '' }));
+    await generate(
+      `Сгенерируй описание для моего опыта работы на позиции "${formData.position}" в компании "${formData.company}". Максимум 3-4 предложения. Сделай упор на достижения и обязанности.`,
+      (token) => {
+        setFormData((prev) => ({ ...prev, description: prev.description + token }));
+      }
+    );
+  };
 
   return (
     <Card className="p-4">
@@ -98,7 +110,22 @@ const ExperienceForm: React.FC<ExperienceFormProps> = ({ initialData, onSave, on
           <input type="checkbox" name="current" checked={formData.current} onChange={handleChange} style={{ accentColor: 'var(--color-accent)' }} />
           I currently work here
         </label>
-        <div><Label htmlFor="description">Description</Label><Textarea id="description" name="description" value={formData.description} onChange={handleChange} rows={4} /></div>
+        <div>
+          <div className="flex items-center justify-between mb-1">
+            <Label htmlFor="description" className="mb-0">Description</Label>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleGenerateDescription}
+              disabled={isGenerating || !formData.position || !formData.company}
+              style={{ padding: '0.125rem 0.5rem', fontSize: '0.75rem' }}
+            >
+              ✨ {isGenerating ? 'Generating...' : 'Generate with AI'}
+            </Button>
+          </div>
+          <Textarea id="description" name="description" value={formData.description} onChange={handleChange} rows={4} />
+        </div>
         <div className="flex gap-2 pt-1">
           <Button type="submit" variant="primary" disabled={isPending}>{isPending ? 'Saving...' : 'Save'}</Button>
           <Button type="button" variant="secondary" onClick={onCancel}>Cancel</Button>

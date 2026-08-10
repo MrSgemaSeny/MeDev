@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.medev.modules.auth.repository.UserRepository;
+import com.medev.modules.auth.entity.User;
+
 @Service
 @RequiredArgsConstructor
 public class GitHubService {
@@ -24,15 +27,19 @@ public class GitHubService {
     private final WebClient.Builder webClientBuilder;
     private final ProfileService profileService;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final UserRepository userRepository;
 
     private static final String GITHUB_API = "https://api.github.com";
     private static final Duration CACHE_TTL = Duration.ofHours(1);
 
-    public GitHubProfileDto fetchAndParseProfile(Long userId, String githubToken) {
-        String cacheKey = "github:profile:" + userId;
-
-        Object cached = redisTemplate.opsForValue().get(cacheKey);
-        if (cached != null) return (GitHubProfileDto) cached;
+    public GitHubProfileDto fetchAndParseProfile(Long userId) {
+        User userRecord = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        String githubToken = userRecord.getGithubAccessToken();
+        if (githubToken == null || githubToken.isEmpty()) {
+            throw new RuntimeException("GitHub account is not connected.");
+        }
 
         WebClient webClient = webClientBuilder.baseUrl(GITHUB_API).build();
 
@@ -73,17 +80,51 @@ public class GitHubService {
                     .languageStats(languageStats)
                     .build();
 
-            redisTemplate.opsForValue().set(cacheKey, result, CACHE_TTL);
-
             return result;
         } catch (WebClientResponseException e) {
             throw new RuntimeException("Failed to fetch data from GitHub API: " + e.getMessage());
         }
     }
 
+    public String fetchUserPublicRepos(String username) {
+        if (username == null || username.isEmpty()) return "";
+
+        String cacheKey = "github:public_repos:" + username;
+        Object cached = redisTemplate.opsForValue().get(cacheKey);
+        if (cached != null) return (String) cached;
+
+        WebClient webClient = webClientBuilder.baseUrl(GITHUB_API).build();
+
+        try {
+            List<GitHubRepoDto> repos = webClient.get()
+                    .uri("/users/" + username + "/repos?sort=updated&per_page=10")
+                    .retrieve()
+                    .bodyToFlux(GitHubRepoDto.class)
+                    .collectList()
+                    .block();
+
+            if (repos == null || repos.isEmpty()) return "";
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("Публичные репозитории GitHub (последние 10 обновленных):\n");
+            for (GitHubRepoDto repo : repos) {
+                sb.append("- ").append(repo.getName());
+                if (repo.getLanguage() != null) sb.append(" [").append(repo.getLanguage()).append("]");
+                if (repo.getDescription() != null) sb.append(": ").append(repo.getDescription());
+                sb.append("\n");
+            }
+
+            String result = sb.toString();
+            redisTemplate.opsForValue().set(cacheKey, result, CACHE_TTL);
+            return result;
+        } catch (WebClientResponseException e) {
+            return "Не удалось получить репозитории (Rate Limit или ошибка GitHub API).";
+        }
+    }
+
     @Transactional
     public void importToProfile(Long userId, GitHubImportRequest request) {
-        GitHubProfileDto github = fetchAndParseProfile(userId, request.getToken());
+        GitHubProfileDto github = fetchAndParseProfile(userId);
 
         profileService.updateFromGitHub(userId, github);
 
