@@ -7,6 +7,14 @@ spring:
     redis:
       host: localhost
       port: 6379
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ${GITHUB_CLIENT_ID:placeholder_client_id}
+            client-secret: ${GITHUB_CLIENT_SECRET:placeholder_client_secret}
+            scope: read:user,user:email
 
 jwt:
   secret: super_secret_jwt_key_that_is_at_least_256_bits_long_for_hs256_algorithm_12345

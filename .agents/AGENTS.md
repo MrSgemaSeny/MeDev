@@ -21,10 +21,14 @@ Explain WHY, not just WHAT (Senior Tech Lead mentoring approach: architect think
 - **AI Integration**: Backend выступает как прокси для Groq. Секрет `GROQ_API_KEY` никогда не уходит на фронт. 
 - **Модульный монолит**: Бэкенд разбит на модули (auth, profile, github, ai, portfolio, resume).
 
+## 🛑 CRITICAL INITIALIZATION SEQUENCE (MUST DO FIRST)
+1. **Brain's Protocol (Second Brain)**: Ты ОБЯЗАН неукоснительно следовать протоколам из `C:\Users\murat\IdeaProjects\new_world\Brain's protocol - second brain`. **В самом начале каждой новой сессии ты ДОЛЖЕН прочитать файлы в папке `context/` (например, `me.md`, `projects.md`, `rules.md`). Это твой Second Brain.**
+2. **CONTEXT.md**: ALWAYS read `.agents/CONTEXT.md` at the start of a session to understand the current project state.
+*Do NOT execute any code or write any plans until you have completed these two reads.*
+
 ## Critical Rules
-1. **Brain's Protocol (Second Brain)**: Ты ОБЯЗАН неукоснительно следовать протоколам из `C:\Users\murat\IdeaProjects\new_world\Brain's protocol - second brain`. Всегда читай `context/` перед началом сессии.
-2. **Workflow (Журнал)**: ТЕСТЫ ПРОШЛИ → ЗАПИСЬ В ЖУРНАЛ (`journal/YYYY-MM-DD/`) → GIT PUSH. Никогда наоборот.
-3. **Secrets**: Secrets and passwords belong strictly in env vars and GitHub Secrets, never hardcoded in source files.
+1. **Workflow (Журнал)**: ТЕСТЫ ПРОШЛИ → ЗАПИСЬ В ЖУРНАЛ (`journal/YYYY-MM-DD/`) → GIT PUSH. Никогда наоборот.
+2. **Secrets**: Secrets and passwords belong strictly in env vars and GitHub Secrets, never hardcoded in source files.
 4. **Docker**: Do not suggest or configure Docker unless explicitly requested.
 5. **Communication**: Язык - русский. Тон - Senior Architect (прямо, без воды, без "отличный вопрос"). NEVER use emojis in any responses, artifacts, or code.
 6. **Tests before pushing**: Never push to branches if there are errors or failing tests.

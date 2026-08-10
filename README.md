@@ -1,18 +1,53 @@
-# MeDev
+# MeDev — Developer Profile & Resume Platform (MVP)
 
-MeDev is a data-first platform for developers.
-Create your profile once and use it everywhere. Connect your GitHub account, upload your old resume, and let MeDev build a unified, structured profile for you. 
+MeDev is a data-first SaaS platform designed for software engineers. 
+Stop writing resumes manually. Connect your GitHub account, let the system parse your repositories, and instantly generate beautiful PDF resumes or a public web portfolio. Powered by AI to help you articulate your experience.
 
-## Features
-- **Public Portfolio Page**: A beautiful, shareable profile page (e.g. medev.app/username).
-- **Automated Data Sync**: Connect GitHub to automatically fetch your repositories, languages, and activity.
-- **Resume Generator**: Export your profile into multiple clean, professional PDF templates.
-- **Drag-and-Drop Builder**: Completely customize the order and visibility of your resume sections.
+## ✨ Core Features (MVP)
+- **GitHub Integration (OAuth2)**: One-click login and automated repository import.
+- **AI-Powered Profile Generation**: Integrated Groq AI assistant (streaming responses) to auto-generate project descriptions, experience summaries, and analyze your GitHub stats.
+- **Resume Generator**: Export your data to a clean, ATS-friendly PDF resume in one click. (Powered by Thymeleaf + PDFBox).
+- **Drag-and-Drop Builder**: Completely customize the order and visibility of your resume sections using a robust `dnd-kit` React interface.
+- **Feature-Sliced Design**: Highly modular frontend architecture ensuring scalability.
 
-## Technology Stack
-- **Backend**: Java 17, Spring Boot 3, PostgreSQL, Flyway, Redis.
-- **Frontend**: React 19, TypeScript, Vite, Tailwind CSS v4, Zustand, React Query (Feature-Sliced Design architecture).
-- **Infrastructure**: Fly.io (Backend), GitHub Pages (Frontend), Stripe & Kaspi Pay.
+## 🛠 Technology Stack
+### Backend (Modular Monolith)
+- **Core**: Java 17, Spring Boot 3.3.0
+- **Database & Cache**: PostgreSQL (with Flyway Migrations), Redis (for JWT refresh tokens)
+- **Security**: Spring Security, OAuth2 Client, Stateless JWT
+- **Integrations**: Groq API (AI generation), GitHub API (Data parsing), Stripe (Payments)
+- **PDF Generation**: Thymeleaf + Flying Saucer + OpenPDF/PDFBox
 
-## Architecture
-Modular monolith on the backend with a clear separation of concerns (Auth, Profile, GitHub, Resume, Portfolio, Billing). JWT based authentication. The frontend relies on `dnd-kit` for complex drag-and-drop interactions.
+### Frontend (FSD Architecture)
+- **Core**: React 19, TypeScript, Vite
+- **State & Data**: Zustand (Global state), React Query (Server state)
+- **Styling & UI**: Tailwind CSS v4, Lucide React (Icons)
+- **Interactions**: `@dnd-kit/core` (Drag and Drop), Server-Sent Events (SSE) for AI streaming
+
+## 🏗 Architecture
+MeDev follows a **Modular Monolith** architecture on the backend, separated into distinct domains (`auth`, `profile`, `github`, `ai`, `portfolio`, `resume`, `billing`). 
+The backend acts as a secure proxy for third-party services (Groq, Stripe, GitHub), ensuring that API keys are never exposed to the frontend. Authentication is handled via short-lived JWTs (Access Tokens) and long-lived Refresh Tokens stored in Redis.
+
+## 🚀 Running Locally
+### Prerequisites
+- JDK 17
+- Node.js 20+
+- PostgreSQL
+- Redis
+
+### Setup
+1. Clone the repository.
+2. Set up environment variables for the backend:
+   ```env
+   DATABASE_URL=jdbc:postgresql://localhost:5432/medev
+   DATABASE_USERNAME=postgres
+   DATABASE_PASSWORD=postgres
+   REDIS_HOST=localhost
+   REDIS_PORT=6379
+   JWT_SECRET=your_256_bit_secret
+   GROQ_API_KEY=your_groq_api_key
+   GITHUB_CLIENT_ID=your_oauth_client_id
+   GITHUB_CLIENT_SECRET=your_oauth_client_secret
+   ```
+3. Run the backend: `./gradlew bootRun`
+4. Run the frontend: `cd frontend && npm install && npm run dev`
