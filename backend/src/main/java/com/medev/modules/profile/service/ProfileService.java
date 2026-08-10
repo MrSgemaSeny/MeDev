@@ -18,10 +18,7 @@ import java.util.stream.Collectors;
 public class ProfileService {
 
     private final ProfileRepository profileRepository;
-    private final ExperienceRepository experienceRepository;
-    private final EducationRepository educationRepository;
     private final SkillRepository skillRepository;
-    private final LanguageRepository languageRepository;
     private final ProjectRepository projectRepository;
     private final ProfileMapper profileMapper;
 
@@ -75,30 +72,7 @@ public class ProfileService {
     // MAPPERS
     // ==========================================
     private ProfileDto mapToProfileDto(Profile profile) {
-        ProfileDto dto = new ProfileDto();
-        dto.setId(profile.getId());
-        dto.setFullName(profile.getFullName());
-        dto.setHeadline(profile.getHeadline());
-        dto.setSummary(profile.getSummary());
-        dto.setAvatarUrl(profile.getAvatarUrl());
-        dto.setLocation(profile.getLocation());
-        dto.setWebsite(profile.getWebsite());
-        dto.setGithubUsername(profile.getGithubUsername());
-        dto.setTelegram(profile.getTelegram());
-        dto.setLinkedin(profile.getLinkedin());
-        dto.setSectionOrder(profile.getSectionOrder());
-        
-        dto.setExperience(experienceRepository.findByProfileIdOrderBySortOrderAsc(profile.getId())
-                .stream().map(profileMapper::toDto).collect(Collectors.toList()));
-        dto.setEducation(educationRepository.findByProfileIdOrderBySortOrderAsc(profile.getId())
-                .stream().map(profileMapper::toDto).collect(Collectors.toList()));
-        dto.setSkills(skillRepository.findByProfileIdOrderBySortOrderAsc(profile.getId())
-                .stream().map(profileMapper::toDto).collect(Collectors.toList()));
-        dto.setLanguages(languageRepository.findByProfileIdOrderBySortOrderAsc(profile.getId())
-                .stream().map(profileMapper::toDto).collect(Collectors.toList()));
-        dto.setProjects(projectRepository.findByProfileIdOrderBySortOrderAsc(profile.getId())
-                .stream().map(profileMapper::toDto).collect(Collectors.toList()));
-        return dto;
+        return profileMapper.toDto(profile);
     }
     
 

@@ -46,6 +46,31 @@ public class Profile {
     @Column(columnDefinition = "jsonb")
     private java.util.List<String> sectionOrder;
 
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("sortOrder ASC")
+    @Builder.Default
+    private java.util.List<Experience> experiences = new java.util.ArrayList<>();
+
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("sortOrder ASC")
+    @Builder.Default
+    private java.util.List<Education> educations = new java.util.ArrayList<>();
+
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("sortOrder ASC")
+    @Builder.Default
+    private java.util.List<Skill> skills = new java.util.ArrayList<>();
+
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("sortOrder ASC")
+    @Builder.Default
+    private java.util.List<Language> languages = new java.util.ArrayList<>();
+
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("sortOrder ASC")
+    @Builder.Default
+    private java.util.List<Project> projects = new java.util.ArrayList<>();
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 

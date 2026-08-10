@@ -34,7 +34,6 @@ Explain WHY, not just WHAT (Senior Tech Lead mentoring approach: architect think
 10. **FSD Compliance (MeDev)**: Frontend обязан строго следовать Feature-Sliced Design (app, pages, features, entities, shared).
 
 ## Current Technical Debt & Unfinished Phases (Sprint Backlog)
-- **[CRITICAL] ProfileService Refactoring**: Распил 472-строчного God Service на 6 независимых сервисов. Замена ручного маппинга на MapStruct.
 - **[CRITICAL] Тесты**: Текущее покрытие 0%. Внедрить JUnit 5/Mockito на бэке, Vitest/Playwright на фронте.
 - **[CRITICAL] CI/CD**: Настроить GitHub Actions пайплайн (сборка, тесты, блокировка пуша при падении).
 - **[CRITICAL] Frontend Performance**: Внедрить Code Splitting (`React.lazy`) и Axios interceptor для автоматического refresh token флоу.
