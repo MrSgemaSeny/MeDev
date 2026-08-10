@@ -31,6 +31,7 @@ import { EducationForm } from './forms/EducationForm';
 import { SkillsForm } from './forms/SkillsForm';
 import { LanguagesForm } from './forms/LanguagesForm';
 import { ProjectsForm } from './forms/ProjectsForm';
+import { Modal } from '../../shared/ui/Modal';
 
 function SectionItem({ section, isDragging, dragOverlay, listeners, attributes, setNodeRef, style, onEdit }: any) {
   const toggleSection = useResumeEditorStore((state) => state.toggleSection);
@@ -308,46 +309,48 @@ export function ResumeBuilder() {
           </div>
         </div>
 
-        {editingSection ? (
-          <div className="flex-1 overflow-hidden h-full">
-            {editingSection === 'summary' && <AboutForm onClose={() => { setEditingSection(null); fetchPdf(); }} />}
-            {editingSection === 'experience' && <ExperienceForm onClose={() => { setEditingSection(null); fetchPdf(); }} />}
-            {editingSection === 'education' && <EducationForm onClose={() => { setEditingSection(null); fetchPdf(); }} />}
-            {editingSection === 'skills' && <SkillsForm onClose={() => { setEditingSection(null); fetchPdf(); }} />}
-            {editingSection === 'languages' && <LanguagesForm onClose={() => { setEditingSection(null); fetchPdf(); }} />}
-            {editingSection === 'projects' && <ProjectsForm onClose={() => { setEditingSection(null); fetchPdf(); }} />}
-          </div>
-        ) : (
-          <div className="flex-1 overflow-y-auto overflow-x-hidden pr-1 relative">
-            <div className="text-xs font-semibold mb-3 uppercase tracking-wider sticky top-0 bg-opacity-90 pb-1 z-10" style={{ color: 'var(--color-text-muted)', backgroundColor: 'var(--color-bg-primary)' }}>Sections</div>
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragStart={handleDragStart}
-              onDragEnd={handleDragEnd}
-              onDragCancel={() => setActiveId(null)}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden pr-1 relative">
+          <div className="text-xs font-semibold mb-3 uppercase tracking-wider sticky top-0 bg-opacity-90 pb-1 z-10" style={{ color: 'var(--color-text-muted)', backgroundColor: 'var(--color-bg-primary)' }}>Sections</div>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+            onDragCancel={() => setActiveId(null)}
+          >
+            <SortableContext items={sections.map(s => s.id)} strategy={verticalListSortingStrategy}>
+              {sections.map((section) => (
+                <SortableItem key={section.id} section={section} onEdit={setEditingSection} />
+              ))}
+            </SortableContext>
+            <DragOverlay
+              dropAnimation={{
+                sideEffects: defaultDropAnimationSideEffects({ styles: { active: { opacity: '0.4' } } }),
+              }}
             >
-              <SortableContext items={sections.map(s => s.id)} strategy={verticalListSortingStrategy}>
-                {sections.map((section) => (
-                  <SortableItem key={section.id} section={section} onEdit={setEditingSection} />
-                ))}
-              </SortableContext>
-              <DragOverlay
-                dropAnimation={{
-                  sideEffects: defaultDropAnimationSideEffects({ styles: { active: { opacity: '0.4' } } }),
-                }}
-              >
-                {activeId ? (
-                  <SectionItem
-                    section={sections.find(s => s.id === activeId)!}
-                    dragOverlay={true}
-                  />
-                ) : null}
-              </DragOverlay>
-            </DndContext>
-          </div>
-        )}
+              {activeId ? (
+                <SectionItem
+                  section={sections.find(s => s.id === activeId)!}
+                  dragOverlay={true}
+                />
+              ) : null}
+            </DragOverlay>
+          </DndContext>
+        </div>
       </div>
+
+      <Modal
+        isOpen={editingSection !== null}
+        onClose={() => { setEditingSection(null); fetchPdf(); }}
+        title={`Edit ${sections.find(s => s.id === editingSection)?.label || 'Section'}`}
+      >
+        {editingSection === 'summary' && <AboutForm onClose={() => { setEditingSection(null); fetchPdf(); }} />}
+        {editingSection === 'experience' && <ExperienceForm onClose={() => { setEditingSection(null); fetchPdf(); }} />}
+        {editingSection === 'education' && <EducationForm onClose={() => { setEditingSection(null); fetchPdf(); }} />}
+        {editingSection === 'skills' && <SkillsForm onClose={() => { setEditingSection(null); fetchPdf(); }} />}
+        {editingSection === 'languages' && <LanguagesForm onClose={() => { setEditingSection(null); fetchPdf(); }} />}
+        {editingSection === 'projects' && <ProjectsForm onClose={() => { setEditingSection(null); fetchPdf(); }} />}
+      </Modal>
 
       {/* Preview Panel */}
       <div
