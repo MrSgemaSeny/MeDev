@@ -22,7 +22,7 @@ public class PdfGeneratorService {
     private final ProfileService profileService;
     private final RedisTemplate<String, Object> redisTemplate;
 
-    private static final int FREE_DAILY_LIMIT = 3;
+    private static final int FREE_DAILY_LIMIT = 50;
 
     public byte[] generatePdf(Long userId, String templateName) {
         checkGenerationLimit(userId);
