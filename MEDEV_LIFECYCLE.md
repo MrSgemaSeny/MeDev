@@ -12,16 +12,15 @@
 PROJECT:         MeDev
 TRACK:           FULL
 CURRENT PHASE:   3 (Frontend & Backend Goal)
-CURRENT SUBPHASE: 3.1 (Resume Builder & Portfolio)
-LAST UPDATED:    2026-08-07
+CURRENT SUBPHASE: 3.2 (Expanding Features)
+LAST UPDATED:    2026-08-10
 BLOCKER:         нет
-NEXT STEP:       Тестирование фронтенда и деплой
+NEXT STEP:       Реализация парсинга PDF (Apache PDFBox) и мульти-сессий (Refresh tokens per device)
 NOTES:
-  - Шаблоны резюме: HTML файлы в resources/templates/resume/ → Flying Saucer → PDF
-  - Auth: email/password реализован с Refresh-токенами
-  - Profile CRUD для Education, Project, Language, Experience реализованы
-  - UX drag-and-drop редактора интегрирован в ResumeBuilder.tsx
-  - Redis: настроен для хранения токенов и кэша
+  - Шаблоны резюме: HTML файлы (classic, minimal, modern) → Flying Saucer → PDF
+  - Auth: email/password реализован, JWT токены работают секьюрно
+  - UI редактора: Drag-and-drop с сохранением в БД и синхронизацией
+  - Деплой: frontend тесты и сборка проходят, GitHub Pages настроен
 ```
 
 ---
