@@ -140,16 +140,20 @@ export function ResumeBuilder() {
 
   function handleDragEnd(event: any) {
     const { active, over } = event;
-    if (active.id !== over.id) {
+    if (over && active.id !== over.id) {
       const oldIndex = sections.findIndex((item) => item.id === active.id);
       const newIndex = sections.findIndex((item) => item.id === over.id);
-      reorderSections(oldIndex, newIndex);
+      
+      // If found in array
+      if (oldIndex !== -1 && newIndex !== -1) {
+        reorderSections(oldIndex, newIndex);
 
-      const newSections = [...sections];
-      const [moved] = newSections.splice(oldIndex, 1);
-      newSections.splice(newIndex, 0, moved);
-      const order = newSections.map(s => s.id);
-      updateSectionOrder(order);
+        const newSections = [...sections];
+        const [moved] = newSections.splice(oldIndex, 1);
+        newSections.splice(newIndex, 0, moved);
+        const order = newSections.map(s => s.id);
+        updateSectionOrder(order);
+      }
     }
   }
 
@@ -263,8 +267,8 @@ export function ResumeBuilder() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto pr-1">
-          <div className="text-xs font-semibold mb-3 uppercase tracking-wider" style={{ color: 'var(--color-text-muted)' }}>Sections</div>
+        <div className="flex-1 overflow-y-auto overflow-x-hidden pr-1 relative">
+          <div className="text-xs font-semibold mb-3 uppercase tracking-wider sticky top-0 bg-opacity-90 pb-1 z-10" style={{ color: 'var(--color-text-muted)', backgroundColor: 'var(--color-bg-primary)' }}>Sections</div>
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={sections.map(s => s.id)} strategy={verticalListSortingStrategy}>
               {sections.map((section) => (
