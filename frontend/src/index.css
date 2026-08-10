@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   :root {
     /* Premium SaaS Dark Theme */
@@ -32,7 +34,7 @@
   }
   
   body {
-    @apply bg-zinc-950 text-zinc-50 antialiased selection:bg-zinc-500/30;
+    @apply bg-zinc-50 text-zinc-950 dark:bg-zinc-950 dark:text-zinc-50 antialiased selection:bg-zinc-500/30;
     min-height: 100vh;
     font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     margin: 0;
