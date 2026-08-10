@@ -4,7 +4,7 @@ import { useAuthStore } from '../../entities/user/model/store';
 // Для простоты, пока бэкенд на локалхосте.
 // В проде baseURL будет заменен на относительный путь или из env
 export const api = axios.create({
-  baseURL: 'http://localhost:8080/v1',
+  baseURL: 'http://localhost:8080/api/v1',
 });
 
 // Interceptor для подстановки токена
@@ -33,7 +33,7 @@ api.interceptors.response.use(
           return Promise.reject(error);
         }
         
-        const { data } = await axios.post('http://localhost:8080/v1/auth/refresh', {
+        const { data } = await axios.post('http://localhost:8080/api/v1/auth/refresh', {
           refreshToken,
         });
         

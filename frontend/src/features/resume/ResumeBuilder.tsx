@@ -79,7 +79,7 @@ export function ResumeBuilder() {
 
   const handleDownload = () => {
     toast.info("Downloading PDF...");
-    window.open(`http://localhost:8080/v1/resume/generate/${selectedTemplate}?token=${token}`, '_blank');
+    window.open(`http://localhost:8080/api/v1/resume/generate/${selectedTemplate}?token=${token}`, '_blank');
   };
 
   if (isLoading) return (
@@ -131,7 +131,7 @@ export function ResumeBuilder() {
            {token && (
              <iframe 
                 className="w-full h-full bg-white"
-                src={`http://localhost:8080/v1/resume/generate/${selectedTemplate}?token=${token}#toolbar=0&navpanes=0&scrollbar=0`}
+                src={`http://localhost:8080/api/v1/resume/generate/${selectedTemplate}?token=${token}#toolbar=0&navpanes=0&scrollbar=0`}
                 title="Resume Preview"
              />
            )}
