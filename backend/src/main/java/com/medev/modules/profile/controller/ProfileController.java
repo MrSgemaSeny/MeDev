@@ -28,6 +28,13 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.update(userId, request));
     }
 
+    @PutMapping("/section-order")
+    public ResponseEntity<Void> updateSectionOrder(@RequestBody java.util.Map<String, java.util.List<String>> request) {
+        Long userId = SecurityUtils.getCurrentUserId();
+        profileService.updateSectionOrder(userId, request.get("sectionOrder"));
+        return ResponseEntity.noContent().build();
+    }
+
     // ================= EXPERIENCE =================
     @PostMapping("/experience")
     public ResponseEntity<ExperienceDto> addExperience(@Valid @RequestBody ExperienceRequest request) {

@@ -35,3 +35,15 @@ export const useReorderSection = (section: string) => {
     },
   });
 };
+
+export const useUpdateSectionOrder = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (sectionOrder: string[]) => {
+      await api.put('/profile/section-order', { sectionOrder });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+    },
+  });
+};

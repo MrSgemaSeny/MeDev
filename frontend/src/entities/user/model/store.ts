@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { api } from '../../shared/api/axios';
 
 interface AuthState {
   accessToken: string | null;
@@ -24,14 +25,20 @@ export const useAuthStore = create<AuthState>()(
         localStorage.setItem('refreshToken', refreshToken);
         set({ accessToken });
       },
-      logout: () => {
+      logout: async () => {
+        try {
+          // Import api here to avoid circular dependency if needed, or use the top level one
+          await api.post('/auth/logout');
+        } catch (e) {
+          console.error('Logout failed on backend', e);
+        }
         localStorage.removeItem('refreshToken');
         set({ accessToken: null, username: null, plan: null });
       },
     }),
     {
       name: 'auth-storage', // Key for localStorage
-      partialize: (state) => ({ accessToken: state.accessToken, username: state.username, plan: state.plan }), // We don't persist functions
+      partialize: (state) => ({ username: state.username, plan: state.plan }), // We don't persist functions and accessToken
     }
   )
 );

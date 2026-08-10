@@ -42,6 +42,10 @@ public class Profile {
     @Builder.Default
     private Boolean isPublic = true;
 
+    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
+    private java.util.List<String> sectionOrder;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 

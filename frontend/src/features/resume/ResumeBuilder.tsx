@@ -16,10 +16,12 @@ import { CSS } from '@dnd-kit/utilities';
 import { useResumeEditorStore } from '../../entities/resume/model/resumeEditorStore';
 import type { Section } from '../../entities/resume/model/resumeEditorStore';
 import { useAuthStore } from '../../entities/user/model/store';
-import { useProfile } from '../../shared/api/hooks/useProfile';
+import { useProfile, useUpdateSectionOrder } from '../../shared/api/hooks/useProfile';
 import { Button } from '../../shared/ui/Button';
 import { toast } from 'sonner';
 import { GripVertical, Eye, EyeOff, Download } from 'lucide-react';
+import { api } from '../../shared/api/axios';
+import { useEffect, useState } from 'react';
 
 function SortableItem({ section }: { section: Section }) {
   const toggleSection = useResumeEditorStore((state) => state.toggleSection);
@@ -57,9 +59,59 @@ function SortableItem({ section }: { section: Section }) {
 }
 
 export function ResumeBuilder() {
-  const { sections, reorderSections, selectedTemplate } = useResumeEditorStore();
-  const { data: _profile, isLoading } = useProfile();
+  const { sections, reorderSections, selectedTemplate, setSections } = useResumeEditorStore();
+  const { data: profile, isLoading } = useProfile();
+  const { mutate: updateSectionOrder } = useUpdateSectionOrder();
   const token = useAuthStore((state) => state.accessToken);
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+
+  // Sync initial order from profile
+  useEffect(() => {
+    if (profile?.sectionOrder && profile.sectionOrder.length > 0) {
+      const order = profile.sectionOrder as string[];
+      // sort sections based on order
+      const newSections = [...sections].sort((a, b) => {
+        const indexA = order.indexOf(a.id);
+        const indexB = order.indexOf(b.id);
+        if (indexA === -1) return 1;
+        if (indexB === -1) return -1;
+        return indexA - indexB;
+      });
+      // check if it actually changed to avoid infinite loop
+      const isDifferent = newSections.some((s, i) => s.id !== sections[i].id);
+      if (isDifferent) {
+        setSections(newSections);
+      }
+    }
+  }, [profile?.sectionOrder]); // Only run when profile order changes
+
+  // Fetch PDF securely
+  useEffect(() => {
+    let objectUrl: string | null = null;
+    let isMounted = true;
+
+    const fetchPdf = async () => {
+      if (!token) return;
+      try {
+        const response = await api.get(`/resume/generate/${selectedTemplate}`, {
+          responseType: 'blob'
+        });
+        if (isMounted) {
+          objectUrl = URL.createObjectURL(response.data);
+          setPdfUrl(objectUrl);
+        }
+      } catch (e) {
+        console.error("Failed to fetch PDF", e);
+      }
+    };
+    
+    fetchPdf();
+    
+    return () => {
+      isMounted = false;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [selectedTemplate, token, profile]); // re-render when profile changes
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -74,12 +126,35 @@ export function ResumeBuilder() {
       const oldIndex = sections.findIndex((item) => item.id === active.id);
       const newIndex = sections.findIndex((item) => item.id === over.id);
       reorderSections(oldIndex, newIndex);
+      
+      // Compute new order and save to backend
+      const newSections = [...sections];
+      const [moved] = newSections.splice(oldIndex, 1);
+      newSections.splice(newIndex, 0, moved);
+      const order = newSections.map(s => s.id);
+      updateSectionOrder(order);
     }
   }
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
+    if (!token) return;
     toast.info("Downloading PDF...");
-    window.open(`http://localhost:8080/api/v1/resume/generate/${selectedTemplate}?token=${token}`, '_blank');
+    try {
+      const response = await api.get(`/resume/generate/${selectedTemplate}`, {
+        responseType: 'blob'
+      });
+      const url = window.URL.createObjectURL(response.data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'resume.pdf');
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Download failed", error);
+      toast.error("Download failed. Limit reached or server error.");
+    }
   };
 
   if (isLoading) return (
@@ -128,10 +203,10 @@ export function ResumeBuilder() {
         
         {/* Iframe wrapper */}
         <div className="w-full max-w-[210mm] h-[297mm] max-h-full bg-white shadow-2xl shadow-slate-900/10 dark:shadow-black/50 overflow-hidden rounded-xl border border-slate-200/50 dark:border-slate-700/50 ring-1 ring-slate-900/5 transition-transform hover:scale-[1.005] duration-500">
-           {token && (
+           {pdfUrl && (
              <iframe 
                 className="w-full h-full bg-white"
-                src={`http://localhost:8080/api/v1/resume/generate/${selectedTemplate}?token=${token}#toolbar=0&navpanes=0&scrollbar=0`}
+                src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
                 title="Resume Preview"
              />
            )}

@@ -61,6 +61,13 @@ public class ProfileService {
         return mapToProfileDto(profile);
     }
 
+    @Transactional
+    public void updateSectionOrder(Long userId, List<String> sectionOrder) {
+        Profile profile = getProfileByUserId(userId);
+        profile.setSectionOrder(sectionOrder);
+        profileRepository.save(profile);
+    }
+
     // ==========================================
     // EXPERIENCE
     // ==========================================
@@ -341,6 +348,7 @@ public class ProfileService {
         dto.setGithubUsername(profile.getGithubUsername());
         dto.setTelegram(profile.getTelegram());
         dto.setLinkedin(profile.getLinkedin());
+        dto.setSectionOrder(profile.getSectionOrder());
         
         dto.setExperience(experienceRepository.findByProfileIdOrderBySortOrderAsc(profile.getId())
                 .stream().map(this::mapToExperienceDto).collect(Collectors.toList()));

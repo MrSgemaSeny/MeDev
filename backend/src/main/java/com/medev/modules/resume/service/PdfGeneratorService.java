@@ -2,6 +2,7 @@ package com.medev.modules.resume.service;
 
 import com.medev.modules.profile.dto.ProfileDto;
 import com.medev.modules.profile.service.ProfileService;
+import com.medev.shared.exception.TooManyRequestsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -53,7 +54,7 @@ public class PdfGeneratorService {
         String key = "resume:gen:" + userId + ":" + LocalDate.now();
         Integer count = (Integer) redisTemplate.opsForValue().get(key);
         if (count != null && count >= FREE_DAILY_LIMIT) {
-            throw new RuntimeException("Daily generation limit reached. Upgrade to Pro.");
+            throw new TooManyRequestsException("Daily generation limit reached. Upgrade to Pro.");
         }
     }
 

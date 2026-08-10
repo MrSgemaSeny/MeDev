@@ -19,4 +19,5 @@ public class ProfileDto {
     private java.util.List<SkillDto> skills;
     private java.util.List<LanguageDto> languages;
     private java.util.List<ProjectDto> projects;
+    private java.util.List<String> sectionOrder;
 }

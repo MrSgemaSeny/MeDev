@@ -11,3 +11,5 @@
 - Добавлена аннотация @Transactional в AuthService, чтобы предотвратить частичное создание пользователя в БД, если Redis недоступен.
 
 - Настроено переключение темы (Dark/Light) в Tailwind CSS v4 через класс .dark. В index.css добавлено переопределение @custom-variant dark (&:where(.dark, .dark *));.
+
+- Исправлены критические ошибки в MeDev: PDF-генерация через iframe с токеном заменена на axios blob fetch, добавлен шаблон classic, удален accessToken из localStorage, исправлен logout, добавлена синхронизация порядка секций через новую колонку section_order, добавлена обработка 429 ошибки.
