@@ -6,6 +6,21 @@
     "uploadPdf": "Загрузить старое резюме",
     "uploadSuccess": "Резюме успешно распознано и импортировано!",
     "uploadError": "Не удалось распознать резюме",
-    "template": "Шаблон"
+    "template": "Шаблон",
+    "updatePreview": "Обновить"
+  },
+  "dashboard": {
+    "title": "Панель управления",
+    "logout": "Выйти"
+  },
+  "auth": {
+    "login": "Войти",
+    "register": "Регистрация",
+    "email": "Email",
+    "password": "Пароль",
+    "username": "Имя пользователя",
+    "submit": "Отправить",
+    "noAccount": "Нет аккаунта?",
+    "hasAccount": "Уже есть аккаунт?"
   }
 }

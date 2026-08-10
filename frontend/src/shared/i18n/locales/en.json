@@ -6,6 +6,21 @@
     "uploadPdf": "Upload Old PDF",
     "uploadSuccess": "Resume successfully parsed and imported!",
     "uploadError": "Failed to parse resume",
-    "template": "Template"
+    "template": "Template",
+    "updatePreview": "Update Preview"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "logout": "Logout"
+  },
+  "auth": {
+    "login": "Sign In",
+    "register": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "username": "Username",
+    "submit": "Submit",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?"
   }
 }

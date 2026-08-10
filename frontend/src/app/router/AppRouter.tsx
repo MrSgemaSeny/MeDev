@@ -11,8 +11,8 @@ const SuccessPage = lazy(() => import('../../pages/billing/SuccessPage').then(m 
 const CancelPage = lazy(() => import('../../pages/billing/CancelPage').then(m => ({ default: m.CancelPage })));
 
 const PageLoader = () => (
-  <div className="flex h-screen w-full items-center justify-center bg-[#0d1117]">
-    <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#30363d] border-t-[#238636]"></div>
+  <div className="flex h-screen w-full items-center justify-center" style={{ backgroundColor: 'var(--color-bg-primary)' }}>
+    <div className="h-10 w-10 animate-spin rounded-full" style={{ border: '4px solid var(--color-border-default)', borderTopColor: 'var(--color-accent)' }}></div>
   </div>
 );
 

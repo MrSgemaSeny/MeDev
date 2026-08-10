@@ -22,6 +22,7 @@ import { toast } from 'sonner';
 import { GripVertical, Eye, EyeOff, Download, RefreshCw } from 'lucide-react';
 import { api } from '../../shared/api/axios';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 function SortableItem({ section }: { section: Section }) {
   const toggleSection = useResumeEditorStore((state) => state.toggleSection);
@@ -36,20 +37,31 @@ function SortableItem({ section }: { section: Section }) {
   return (
     <div
       ref={setNodeRef}
-      style={style}
-      className={`w-full flex items-center justify-between px-3 py-2.5 mb-2 bg-[#161b22] border rounded-md transition-colors duration-150 ${
-        isDragging ? 'border-[#8b949e] shadow-md ring-1 ring-[#8b949e]' : 'border-[#30363d] hover:border-[#8b949e] hover:bg-[#21262d]'
-      } ${!section.visible ? 'opacity-50' : ''}`}
+      style={{
+        ...style,
+        backgroundColor: 'var(--color-bg-secondary)',
+        border: `1px solid ${isDragging ? 'var(--color-text-muted)' : 'var(--color-border-default)'}`,
+        opacity: section.visible ? 1 : 0.5,
+      }}
+      className={`w-full flex items-center justify-between px-3 py-2.5 mb-2 rounded-md transition-colors duration-150 ${
+        isDragging ? 'shadow-md' : ''
+      }`}
     >
       <div className="flex items-center gap-3">
-        <div {...attributes} {...listeners} className="cursor-grab text-[#8b949e] hover:text-[#c9d1d9] transition-colors bg-transparent p-1 rounded-sm">
+        <div
+          {...attributes}
+          {...listeners}
+          className="cursor-grab p-1 rounded-sm transition-colors"
+          style={{ color: 'var(--color-text-muted)' }}
+        >
           <GripVertical className="w-4 h-4" />
         </div>
-        <span className="font-medium text-sm text-[#c9d1d9]">{section.label}</span>
+        <span className="font-medium text-sm" style={{ color: 'var(--color-text-secondary)' }}>{section.label}</span>
       </div>
-      <button 
+      <button
         onClick={() => toggleSection(section.id)}
-        className="p-1.5 rounded-md hover:bg-[#30363d] text-[#8b949e] hover:text-[#c9d1d9] transition-colors"
+        className="p-1.5 rounded-md transition-colors"
+        style={{ color: 'var(--color-text-muted)' }}
         title={section.visible ? "Hide section" : "Show section"}
       >
         {section.visible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
@@ -57,8 +69,6 @@ function SortableItem({ section }: { section: Section }) {
     </div>
   );
 }
-
-import { useTranslation } from 'react-i18next';
 
 export function ResumeBuilder() {
   const { t } = useTranslation();
@@ -73,7 +83,6 @@ export function ResumeBuilder() {
   useEffect(() => {
     if (profile?.sectionOrder && profile.sectionOrder.length > 0) {
       const order = profile.sectionOrder as string[];
-      // sort sections based on order
       const newSections = [...sections].sort((a, b) => {
         const indexA = order.indexOf(a.id);
         const indexB = order.indexOf(b.id);
@@ -81,13 +90,12 @@ export function ResumeBuilder() {
         if (indexB === -1) return -1;
         return indexA - indexB;
       });
-      // check if it actually changed to avoid infinite loop
       const isDifferent = newSections.some((s, i) => s.id !== sections[i].id);
       if (isDifferent) {
         setSections(newSections);
       }
     }
-  }, [profile?.sectionOrder]); // Only run when profile order changes
+  }, [profile?.sectionOrder]);
 
   // Fetch PDF securely
   const fetchPdf = async () => {
@@ -114,14 +122,14 @@ export function ResumeBuilder() {
 
   useEffect(() => {
     fetchPdf();
-    
+
     return () => {
       setPdfUrl(prev => {
         if (prev) URL.revokeObjectURL(prev);
         return null;
       });
     };
-  }, [selectedTemplate, token]); // Only re-fetch on template change or login
+  }, [selectedTemplate, token]);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -136,8 +144,7 @@ export function ResumeBuilder() {
       const oldIndex = sections.findIndex((item) => item.id === active.id);
       const newIndex = sections.findIndex((item) => item.id === over.id);
       reorderSections(oldIndex, newIndex);
-      
-      // Compute new order and save to backend
+
       const newSections = [...sections];
       const [moved] = newSections.splice(oldIndex, 1);
       newSections.splice(newIndex, 0, moved);
@@ -168,32 +175,49 @@ export function ResumeBuilder() {
   };
 
   if (isLoading) return (
-    <div className="flex h-full items-center justify-center bg-[#0d1117]">
-      <div className="w-8 h-8 border-4 border-[#30363d] border-t-[#58a6ff] rounded-full animate-spin"></div>
+    <div className="flex h-full items-center justify-center" style={{ backgroundColor: 'var(--color-bg-primary)' }}>
+      <div
+        className="w-8 h-8 rounded-full animate-spin"
+        style={{ border: '4px solid var(--color-border-default)', borderTopColor: 'var(--color-link)' }}
+      />
     </div>
   );
 
   return (
-    <div className="flex flex-col lg:flex-row h-full w-full bg-[#0d1117] text-[#c9d1d9]">
+    <div
+      className="flex flex-col lg:flex-row h-full w-full"
+      style={{ backgroundColor: 'var(--color-bg-primary)', color: 'var(--color-text-secondary)' }}
+    >
       {/* Editor Panel (Sidebar) */}
-      <div className="w-full lg:w-[350px] shrink-0 flex flex-col h-full bg-[#0d1117] border-r border-[#30363d] p-5">
+      <div
+        className="w-full lg:w-[350px] shrink-0 flex flex-col h-full p-5"
+        style={{
+          backgroundColor: 'var(--color-bg-primary)',
+          borderRight: '1px solid var(--color-border-default)',
+        }}
+      >
         <div className="flex flex-col gap-4 mb-6">
           <div>
-            <h2 className="text-xl font-semibold text-[#c9d1d9]">{t('builder.title')}</h2>
-            <p className="text-xs text-[#8b949e] mt-1">{t('builder.subtitle')}</p>
+            <h2 className="text-xl font-semibold" style={{ color: 'var(--color-text-secondary)' }}>{t('builder.title')}</h2>
+            <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>{t('builder.subtitle')}</p>
           </div>
-          
+
           <div className="flex flex-col gap-3">
             <select
               value={selectedTemplate}
               onChange={(e) => setTemplate(e.target.value)}
-              className="bg-[#21262d] border border-[#30363d] text-[#c9d1d9] text-sm rounded-md px-3 py-1.5 focus:outline-none focus:border-[#58a6ff] hover:bg-[#30363d] transition-colors w-full cursor-pointer"
+              className="text-sm rounded-md px-3 py-1.5 focus:outline-none transition-colors w-full cursor-pointer"
+              style={{
+                backgroundColor: 'var(--color-btn-bg)',
+                border: '1px solid var(--color-border-default)',
+                color: 'var(--color-text-secondary)',
+              }}
             >
               <option value="classic">Classic Template</option>
               <option value="minimal">Minimal Template</option>
               <option value="modern">Modern Template</option>
             </select>
-            
+
             <div className="flex gap-2 w-full">
               <label className="cursor-pointer flex-1">
                 <input type="file" accept=".pdf" className="hidden" onChange={async (e) => {
@@ -212,20 +236,35 @@ export function ResumeBuilder() {
                     toast.error(t('builder.uploadError'));
                   }
                 }} />
-                <div className="flex items-center justify-center gap-2 bg-[#21262d] hover:bg-[#30363d] border border-[#f0f6fc1a] text-[#c9d1d9] px-3 py-1.5 text-sm rounded-md transition-colors w-full h-full font-medium">
+                <div
+                  className="flex items-center justify-center gap-2 px-3 py-1.5 text-sm rounded-md transition-colors w-full h-full font-medium"
+                  style={{
+                    backgroundColor: 'var(--color-btn-bg)',
+                    border: '1px solid var(--color-btn-border)',
+                    color: 'var(--color-text-secondary)',
+                  }}
+                >
                    <span>{t('builder.uploadPdf')}</span>
                 </div>
               </label>
 
-              <Button size="sm" onClick={handleDownload} className="flex-1 flex items-center justify-center gap-2 bg-[#238636] hover:bg-[#2ea043] text-white border border-[#f0f6fc1a] rounded-md px-3 py-1.5 font-medium transition-colors shadow-sm">
+              <Button
+                size="sm"
+                onClick={handleDownload}
+                className="flex-1 flex items-center justify-center gap-2 text-white rounded-md px-3 py-1.5 font-medium transition-colors shadow-sm"
+                style={{
+                  backgroundColor: 'var(--color-accent)',
+                  border: '1px solid var(--color-btn-border)',
+                }}
+              >
                 <Download className="w-4 h-4" /> <span>{t('builder.exportPdf')}</span>
               </Button>
             </div>
           </div>
         </div>
-        
-        <div className="flex-1 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-[#30363d]">
-          <div className="text-xs font-semibold text-[#8b949e] mb-3 uppercase tracking-wider">Sections</div>
+
+        <div className="flex-1 overflow-y-auto pr-1">
+          <div className="text-xs font-semibold mb-3 uppercase tracking-wider" style={{ color: 'var(--color-text-muted)' }}>Sections</div>
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={sections.map(s => s.id)} strategy={verticalListSortingStrategy}>
               {sections.map((section) => (
@@ -237,23 +276,41 @@ export function ResumeBuilder() {
       </div>
 
       {/* Preview Panel */}
-      <div className="flex-1 bg-[#010409] flex flex-col items-center justify-center p-6 relative overflow-hidden">
+      <div
+        className="flex-1 flex flex-col items-center justify-center p-6 relative overflow-hidden"
+        style={{ backgroundColor: 'var(--color-preview-bg)' }}
+      >
         <div className="absolute top-4 right-4 z-10 flex gap-2">
-          <Button 
-            size="sm" 
-            onClick={fetchPdf} 
+          <Button
+            size="sm"
+            onClick={fetchPdf}
             disabled={isPdfLoading}
-            className="bg-[#21262d] border border-[#30363d] hover:bg-[#30363d] text-xs px-3 h-8 rounded-md text-[#c9d1d9] flex items-center gap-2 font-medium transition-colors shadow-sm"
+            className="text-xs px-3 h-8 rounded-md flex items-center gap-2 font-medium transition-colors shadow-sm"
+            style={{
+              backgroundColor: 'var(--color-btn-bg)',
+              border: '1px solid var(--color-border-default)',
+              color: 'var(--color-text-secondary)',
+            }}
           >
-            {isPdfLoading ? <div className="w-3 h-3 border-2 border-[#8b949e] border-t-white rounded-full animate-spin"></div> : <RefreshCw className="w-3 h-3" />}
+            {isPdfLoading ? (
+              <div
+                className="w-3 h-3 rounded-full animate-spin"
+                style={{ border: '2px solid var(--color-text-muted)', borderTopColor: 'white' }}
+              />
+            ) : (
+              <RefreshCw className="w-3 h-3" />
+            )}
             {t('builder.updatePreview', 'Update Preview')}
           </Button>
         </div>
-        
+
         {/* Iframe wrapper */}
-        <div className="w-full max-w-[210mm] h-[297mm] max-h-full bg-white shadow-sm overflow-hidden rounded-md border border-[#30363d] transition-transform hover:scale-[1.01] duration-300">
+        <div
+          className="w-full max-w-[210mm] h-[297mm] max-h-full bg-white shadow-sm overflow-hidden rounded-md transition-transform hover:scale-[1.01] duration-300"
+          style={{ border: '1px solid var(--color-border-default)' }}
+        >
            {pdfUrl && (
-             <iframe 
+             <iframe
                 className="w-full h-full bg-white"
                 src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
                 title="Resume Preview"

@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 
 export function LoginPage() {
-  const { t } = useTranslation('auth');
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const setAuth = useAuthStore((state) => state.setAuth);
@@ -19,30 +19,30 @@ export function LoginPage() {
       setAuth(data.accessToken, data.refreshToken, data.username, data.plan);
     } catch (error) {
       console.error('Login failed', error);
-      alert(t('login.error', 'Login failed. Check credentials.'));
+      alert(t('auth.loginError', 'Login failed. Check credentials.'));
     }
   };
 
   return (
-    <div className="min-h-screen w-full flex bg-black">
-      {/* Left Side - Solid Dark & Form */}
+    <div className="min-h-screen w-full flex" style={{ backgroundColor: 'var(--color-bg-primary)' }}>
+      {/* Left Side - Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 relative z-10">
-        <div className="w-full max-w-sm relative z-10">
+        <div className="w-full max-w-sm relative z-10 p-8 rounded-xl" style={{ backgroundColor: 'var(--color-bg-secondary)', border: '1px solid var(--color-border-default)' }}>
           <div className="mb-12 flex justify-center">
-            <svg className="w-12 h-12 text-zinc-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-12 h-12" style={{ color: 'var(--color-text-primary)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
           </div>
           
-          <h1 className="text-3xl font-extrabold text-zinc-100 mb-8 text-center tracking-tight">
-            {t('login.title', 'Log in to MeDev')}
+          <h1 className="text-3xl font-extrabold mb-8 text-center tracking-tight" style={{ color: 'var(--color-text-primary)' }}>
+            {t('auth.login', 'Sign In')}
           </h1>
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Input 
                 type="email" 
-                placeholder={t('login.emailPlaceholder', 'Email address')} 
+                placeholder={t('auth.email', 'Email')} 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required 
@@ -52,32 +52,31 @@ export function LoginPage() {
               <Input 
                 type="password" 
                 autoComplete="current-password"
-                placeholder={t('login.passwordPlaceholder', 'Password')} 
+                placeholder={t('auth.password', 'Password')} 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required 
               />
             </div>
             <div className="pt-2">
-              <Button type="submit" className="w-full h-12">{t('login.submit', 'Log In')}</Button>
+              <Button type="submit" className="w-full h-12 text-white" style={{ backgroundColor: 'var(--color-accent)' }}>{t('auth.submit', 'Submit')}</Button>
             </div>
           </form>
 
-          <p className="text-center text-sm text-zinc-500 mt-8 font-medium">
-            {t('login.noAccount', "Don't have an account?")}{' '}
-            <Link to="/register" className="text-zinc-300 font-semibold hover:text-white hover:underline transition-colors">
-              {t('login.signup', 'Sign up')}
+          <p className="text-center text-sm mt-8 font-medium" style={{ color: 'var(--color-text-muted)' }}>
+            {t('auth.noAccount', "Don't have an account?")}{' '}
+            <Link to="/register" className="font-semibold transition-colors" style={{ color: 'var(--color-link)' }}>
+              {t('auth.register', 'Sign Up')}
             </Link>
           </p>
         </div>
       </div>
 
       {/* Right Side - Static Graphic Background */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-zinc-950 border-l border-zinc-900 justify-center items-center">
-        <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at center, #18181b 0%, #09090b 100%)' }}></div>
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden justify-center items-center" style={{ backgroundColor: 'var(--color-bg-inset)', borderLeft: '1px solid var(--color-border-default)' }}>
         {/* Subtle large watermark */}
         <div className="absolute flex justify-center items-center inset-0 opacity-10">
-          <svg className="w-3/4 h-3/4 text-zinc-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-3/4 h-3/4" style={{ color: 'var(--color-text-primary)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={0.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>
         </div>

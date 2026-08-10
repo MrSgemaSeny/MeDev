@@ -86,7 +86,7 @@ public class PdfGeneratorServiceTest {
         String templateName = "modern";
 
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-        when(valueOperations.get(anyString())).thenReturn(3);
+        when(valueOperations.get(anyString())).thenReturn(50);
 
         assertThatThrownBy(() -> pdfGeneratorService.generatePdf(userId, templateName))
                 .isInstanceOf(RuntimeException.class)

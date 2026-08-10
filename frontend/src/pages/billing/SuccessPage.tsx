@@ -11,24 +11,32 @@ export function SuccessPage() {
   const setPlan = useAuthStore((state) => state.setPlan);
 
   useEffect(() => {
-    // В реальном приложении лучше сделать GET /api/v1/users/me,
-    // но для скорости (поскольку webhook уже обновил базу) обновим состояние локально.
     if (sessionId) {
       setPlan('PRO');
     }
   }, [sessionId, setPlan]);
 
   return (
-    <div className="min-h-screen bg-[#0d1117] flex flex-col items-center justify-center p-4">
-      <div className="bg-[#161b22] border border-[#30363d] rounded-xl p-8 max-w-md w-full text-center">
+    <div
+      className="min-h-screen flex flex-col items-center justify-center p-4"
+      style={{ backgroundColor: 'var(--color-bg-primary)' }}
+    >
+      <div
+        className="rounded-xl p-8 max-w-md w-full text-center"
+        style={{ backgroundColor: 'var(--color-bg-secondary)', border: '1px solid var(--color-border-default)' }}
+      >
         <div className="flex justify-center mb-6">
-          <CheckCircle2 className="w-20 h-20 text-[#238636]" />
+          <CheckCircle2 className="w-20 h-20" style={{ color: 'var(--color-accent)' }} />
         </div>
-        <h1 className="text-3xl font-bold text-white mb-4">Payment Successful!</h1>
-        <p className="text-[#8b949e] mb-8">
+        <h1 className="text-3xl font-bold mb-4" style={{ color: 'var(--color-text-primary)' }}>Payment Successful!</h1>
+        <p className="mb-8" style={{ color: 'var(--color-text-muted)' }}>
           Thank you for upgrading to PRO. Your account has been updated and you now have access to all premium features.
         </p>
-        <Button onClick={() => navigate('/builder')} className="w-full bg-[#238636] hover:bg-[#2ea043] text-white">
+        <Button
+          onClick={() => navigate('/builder')}
+          className="w-full text-white"
+          style={{ backgroundColor: 'var(--color-accent)' }}
+        >
           Go to Resume Builder
         </Button>
       </div>
