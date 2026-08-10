@@ -1,8 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../axios';
+import type { ProfileDto } from '../../../entities/profile/model/types';
 
 export const useProfile = () => {
-  return useQuery({
+  return useQuery<ProfileDto>({
     queryKey: ['profile'],
     queryFn: async () => {
       const { data } = await api.get('/profile');
@@ -14,7 +15,7 @@ export const useProfile = () => {
 export const useUpdateProfile = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (payload: any) => {
+    mutationFn: async (payload: Partial<ProfileDto>) => {
       const { data } = await api.put('/profile', payload);
       return data;
     },
@@ -49,12 +50,12 @@ export const useUpdateSectionOrder = () => {
 };
 
 // --- CRUD Hooks Factory ---
-const createCrudHooks = (sectionName: string) => {
+const createCrudHooks = <T,>(sectionName: string) => {
   return {
     useAdd: () => {
       const queryClient = useQueryClient();
       return useMutation({
-        mutationFn: async (payload: any) => {
+        mutationFn: async (payload: Omit<T, 'id' | 'orderIndex'>) => {
           const { data } = await api.post(`/profile/${sectionName}`, payload);
           return data;
         },
@@ -64,7 +65,7 @@ const createCrudHooks = (sectionName: string) => {
     useUpdate: () => {
       const queryClient = useQueryClient();
       return useMutation({
-        mutationFn: async ({ id, payload }: { id: number; payload: any }) => {
+        mutationFn: async ({ id, payload }: { id: number; payload: Partial<T> }) => {
           const { data } = await api.put(`/profile/${sectionName}/${id}`, payload);
           return data;
         },
@@ -83,8 +84,10 @@ const createCrudHooks = (sectionName: string) => {
   };
 };
 
-export const { useAdd: useAddExperience, useUpdate: useUpdateExperience, useDelete: useDeleteExperience } = createCrudHooks('experience');
-export const { useAdd: useAddEducation, useUpdate: useUpdateEducation, useDelete: useDeleteEducation } = createCrudHooks('education');
-export const { useAdd: useAddSkill, useUpdate: useUpdateSkill, useDelete: useDeleteSkill } = createCrudHooks('skills');
-export const { useAdd: useAddLanguage, useUpdate: useUpdateLanguage, useDelete: useDeleteLanguage } = createCrudHooks('languages');
-export const { useAdd: useAddProject, useUpdate: useUpdateProject, useDelete: useDeleteProject } = createCrudHooks('projects');
+import type { ExperienceDto, EducationDto, SkillDto, LanguageDto, ProjectDto } from '../../../entities/profile/model/types';
+
+export const { useAdd: useAddExperience, useUpdate: useUpdateExperience, useDelete: useDeleteExperience } = createCrudHooks<ExperienceDto>('experience');
+export const { useAdd: useAddEducation, useUpdate: useUpdateEducation, useDelete: useDeleteEducation } = createCrudHooks<EducationDto>('education');
+export const { useAdd: useAddSkill, useUpdate: useUpdateSkill, useDelete: useDeleteSkill } = createCrudHooks<SkillDto>('skills');
+export const { useAdd: useAddLanguage, useUpdate: useUpdateLanguage, useDelete: useDeleteLanguage } = createCrudHooks<LanguageDto>('languages');
+export const { useAdd: useAddProject, useUpdate: useUpdateProject, useDelete: useDeleteProject } = createCrudHooks<ProjectDto>('projects');

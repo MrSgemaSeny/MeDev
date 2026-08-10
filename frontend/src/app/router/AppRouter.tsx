@@ -1,18 +1,22 @@
-import React, { Suspense, lazy } from 'react';
+import {  Suspense, lazy  } from 'react';
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 import { useAuthStore } from '../../entities/user/model/store';
+import { AppLayout } from '../layouts/AppLayout';
+import { PublicLayout } from '../layouts/PublicLayout';
 
 const LoginPage = lazy(() => import('../../pages/auth/LoginPage').then(m => ({ default: m.LoginPage })));
 const RegisterPage = lazy(() => import('../../pages/auth/RegisterPage').then(m => ({ default: m.RegisterPage })));
 const DashboardPage = lazy(() => import('../../pages/dashboard/DashboardPage').then(m => ({ default: m.DashboardPage })));
+const ProfileEditPage = lazy(() => import('../../pages/profile/ProfileEditPage').then(m => ({ default: m.ProfileEditPage })));
+const ResumePage = lazy(() => import('../../pages/resume/ResumePage').then(m => ({ default: m.ResumePage })));
 const PortfolioPage = lazy(() => import('../../pages/portfolio/PortfolioPage').then(m => ({ default: m.PortfolioPage })));
 const PricingPage = lazy(() => import('../../pages/billing/PricingPage').then(m => ({ default: m.PricingPage })));
 const SuccessPage = lazy(() => import('../../pages/billing/SuccessPage').then(m => ({ default: m.SuccessPage })));
 const CancelPage = lazy(() => import('../../pages/billing/CancelPage').then(m => ({ default: m.CancelPage })));
 
 const PageLoader = () => (
-  <div className="flex h-screen w-full items-center justify-center" style={{ backgroundColor: 'var(--color-bg-primary)' }}>
-    <div className="h-10 w-10 animate-spin rounded-full" style={{ border: '4px solid var(--color-border-default)', borderTopColor: 'var(--color-accent)' }}></div>
+  <div className="flex h-screen w-full items-center justify-center bg-gray-950">
+    <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-800 border-t-emerald-500"></div>
   </div>
 );
 
@@ -48,41 +52,47 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/dashboard',
     element: (
       <PrivateRoute>
-        <DashboardPage />
+        <AppLayout />
       </PrivateRoute>
     ),
+    children: [
+      {
+        path: '/dashboard',
+        element: <DashboardPage />,
+      },
+      {
+        path: '/profile/edit',
+        element: <ProfileEditPage />,
+      },
+      {
+        path: '/resume',
+        element: <ResumePage />,
+      },
+      {
+        path: '/billing',
+        element: <PricingPage />,
+      },
+      {
+        path: '/billing/success',
+        element: <SuccessPage />,
+      },
+      {
+        path: '/billing/cancel',
+        element: <CancelPage />,
+      },
+    ]
   },
   {
-    path: '/pricing',
-    element: (
-      <PrivateRoute>
-        <PricingPage />
-      </PrivateRoute>
-    ),
-  },
-  {
-    path: '/billing/success',
-    element: (
-      <PrivateRoute>
-        <SuccessPage />
-      </PrivateRoute>
-    ),
-  },
-  {
-    path: '/billing/cancel',
-    element: (
-      <PrivateRoute>
-        <CancelPage />
-      </PrivateRoute>
-    ),
-  },
-  {
-    path: '/u/:username',
-    element: <PortfolioPage />,
-  },
+    element: <PublicLayout />,
+    children: [
+      {
+        path: '/portfolio/:username',
+        element: <PortfolioPage />,
+      }
+    ]
+  }
 ], { basename: import.meta.env.BASE_URL });
 
 export function AppRouter() {
