@@ -59,4 +59,47 @@ public class GroqClient {
         }
         throw new RuntimeException("Failed to get a valid response from Groq API");
     }
+
+    public reactor.core.publisher.Flux<String> streamChatCompletion(List<Map<String, String>> messages) {
+        if (apiKey == null || apiKey.isEmpty()) {
+            throw new IllegalStateException("Groq API key is not configured");
+        }
+
+        Map<String, Object> requestBody = Map.of(
+                "model", "llama-3.1-8b-instant",
+                "messages", messages,
+                "temperature", 0.7,
+                "stream", true
+        );
+
+        return webClientBuilder.build()
+                .post()
+                .uri(apiUrl)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToFlux(String.class)
+                .mapNotNull(chunk -> {
+                    String cleanChunk = chunk.trim();
+                    if (cleanChunk.startsWith("data: ")) {
+                        cleanChunk = cleanChunk.substring(6).trim();
+                    }
+                    if (cleanChunk.equals("[DONE]") || cleanChunk.isEmpty()) return null;
+                    try {
+                        com.fasterxml.jackson.databind.JsonNode node = new com.fasterxml.jackson.databind.ObjectMapper().readTree(cleanChunk);
+                        com.fasterxml.jackson.databind.JsonNode choices = node.get("choices");
+                        if (choices != null && choices.isArray() && choices.size() > 0) {
+                            com.fasterxml.jackson.databind.JsonNode delta = choices.get(0).get("delta");
+                            if (delta != null && delta.has("content")) {
+                                return delta.get("content").asText();
+                            }
+                        }
+                    } catch (Exception e) {
+                        // ignore parsing errors for partial chunks
+                    }
+                    return "";
+                })
+                .filter(s -> !s.isEmpty());
+    }
 }
