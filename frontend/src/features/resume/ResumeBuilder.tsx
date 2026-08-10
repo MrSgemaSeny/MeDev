@@ -345,11 +345,11 @@ export function ResumeBuilder() {
         title={`Edit ${sections.find(s => s.id === editingSection)?.label || 'Section'}`}
       >
         {editingSection === 'summary' && <AboutForm onClose={() => { setEditingSection(null); fetchPdf(); }} />}
-        {editingSection === 'experience' && <ExperienceForm onClose={() => { setEditingSection(null); fetchPdf(); }} />}
-        {editingSection === 'education' && <EducationForm onClose={() => { setEditingSection(null); fetchPdf(); }} />}
-        {editingSection === 'skills' && <SkillsForm onClose={() => { setEditingSection(null); fetchPdf(); }} />}
-        {editingSection === 'languages' && <LanguagesForm onClose={() => { setEditingSection(null); fetchPdf(); }} />}
-        {editingSection === 'projects' && <ProjectsForm onClose={() => { setEditingSection(null); fetchPdf(); }} />}
+        {editingSection === 'experience' && <ExperienceForm />}
+        {editingSection === 'education' && <EducationForm />}
+        {editingSection === 'skills' && <SkillsForm />}
+        {editingSection === 'languages' && <LanguagesForm />}
+        {editingSection === 'projects' && <ProjectsForm />}
       </Modal>
 
       {/* Preview Panel */}

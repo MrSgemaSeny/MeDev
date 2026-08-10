@@ -58,12 +58,7 @@ export function AboutForm({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="flex flex-col h-full animate-in slide-in-from-right-4 duration-300">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>About You</h3>
-        <button onClick={onClose} className="text-sm font-medium hover:underline" style={{ color: 'var(--color-text-muted)' }}>
-          Back
-        </button>
-      </div>
+      
 
       <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto pr-2 space-y-4 pb-20">
         <div>
@@ -100,8 +95,8 @@ export function AboutForm({ onClose }: { onClose: () => void }) {
         </div>
       </form>
 
-      <div className="pt-4 border-t mt-auto" style={{ borderColor: 'var(--color-border-default)' }}>
-        <Button onClick={handleSubmit} disabled={isPending} className="w-full text-white font-medium" style={{ backgroundColor: 'var(--color-accent)' }}>
+      <div className="pt-4 border-t mt-auto flex justify-end" style={{ borderColor: 'var(--color-border-default)' }}>
+        <Button onClick={handleSubmit} disabled={isPending} className="text-white px-6 font-medium" style={{ backgroundColor: 'var(--color-accent)' }}>
           {isPending ? 'Saving...' : 'Save Changes'}
         </Button>
       </div>

@@ -4,7 +4,7 @@ import { Button } from '../../../shared/ui/Button';
 import { toast } from 'sonner';
 import { Trash2, Edit2, Plus } from 'lucide-react';
 
-export function ExperienceForm({ onClose }: { onClose: () => void }) {
+export function ExperienceForm() {
   const { data: profile } = useProfile();
   const { mutate: addExperience, isPending: isAdding } = useAddExperience();
   const { mutate: updateExperience, isPending: isUpdating } = useUpdateExperience();
@@ -96,12 +96,7 @@ export function ExperienceForm({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="flex flex-col h-full animate-in slide-in-from-right-4 duration-300">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>Experience</h3>
-        <button onClick={editingId ? () => setEditingId(null) : onClose} className="text-sm font-medium hover:underline" style={{ color: 'var(--color-text-muted)' }}>
-          {editingId ? 'Cancel' : 'Back'}
-        </button>
-      </div>
+      {editingId && (<div className="flex items-center justify-end mb-4"><button type="button" onClick={() => setEditingId(null)} className="text-sm font-medium hover:underline" style={{ color: 'var(--color-text-muted)' }}>Cancel Edit</button></div>)}
 
       {!editingId ? (
         <div className="flex-1 overflow-y-auto pr-2 space-y-3 pb-20">
@@ -157,8 +152,8 @@ export function ExperienceForm({ onClose }: { onClose: () => void }) {
             <label className="block text-xs font-medium mb-1" style={{ color: 'var(--color-text-secondary)' }}>Tech Stack</label>
             <input name="techStack" value={formData.techStack} onChange={handleChange} className={inputClass} style={inputStyle} placeholder="React, Node.js, etc." />
           </div>
-          <div className="pt-4 border-t mt-auto" style={{ borderColor: 'var(--color-border-default)' }}>
-            <Button type="submit" disabled={isAdding || isUpdating} className="w-full text-white font-medium" style={{ backgroundColor: 'var(--color-accent)' }}>
+          <div className="pt-4 border-t mt-auto flex justify-end" style={{ borderColor: 'var(--color-border-default)' }}>
+            <Button type="submit" disabled={isAdding || isUpdating} className="text-white px-6 font-medium" style={{ backgroundColor: 'var(--color-accent)' }}>
               {isAdding || isUpdating ? 'Saving...' : 'Save'}
             </Button>
           </div>
