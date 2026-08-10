@@ -27,18 +27,19 @@ public class JwtService {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateAccessToken(User user) {
-        return buildToken(user, expiration);
+    public String generateAccessToken(User user, String deviceId) {
+        return buildToken(user, deviceId, expiration);
     }
 
-    public String generateRefreshToken(User user) {
-        return buildToken(user, refreshExpiration);
+    public String generateRefreshToken(User user, String deviceId) {
+        return buildToken(user, deviceId, refreshExpiration);
     }
 
-    private String buildToken(User user, long exp) {
+    private String buildToken(User user, String deviceId, long exp) {
         return Jwts.builder()
                 .subject(user.getEmail())
                 .claim("userId", user.getId())
+                .claim("deviceId", deviceId)
                 .claim("role", user.getRole().name())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + exp))
@@ -52,6 +53,10 @@ public class JwtService {
 
     public Long extractUserId(String token) {
         return getClaims(token).get("userId", Long.class);
+    }
+
+    public String extractDeviceId(String token) {
+        return getClaims(token).get("deviceId", String.class);
     }
 
     public String extractRole(String token) {

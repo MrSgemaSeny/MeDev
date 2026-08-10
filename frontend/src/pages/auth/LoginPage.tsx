@@ -3,9 +3,11 @@ import { Button } from '../../shared/ui/Button';
 import { Input } from '../../shared/ui/Input';
 import { api } from '../../shared/api/axios';
 import { useAuthStore } from '../../entities/user/model/store';
+import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 
 export function LoginPage() {
+  const { t } = useTranslation('auth');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const setAuth = useAuthStore((state) => state.setAuth);
@@ -17,7 +19,7 @@ export function LoginPage() {
       setAuth(data.accessToken, data.refreshToken, data.username, data.plan);
     } catch (error) {
       console.error('Login failed', error);
-      alert('Login failed. Check credentials.');
+      alert(t('login.error', 'Login failed. Check credentials.'));
     }
   };
 
@@ -33,14 +35,14 @@ export function LoginPage() {
           </div>
           
           <h1 className="text-3xl font-extrabold text-zinc-100 mb-8 text-center tracking-tight">
-            Log in to MeDev
+            {t('login.title', 'Log in to MeDev')}
           </h1>
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Input 
                 type="email" 
-                placeholder="Email address" 
+                placeholder={t('login.emailPlaceholder', 'Email address')} 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required 
@@ -50,21 +52,21 @@ export function LoginPage() {
               <Input 
                 type="password" 
                 autoComplete="current-password"
-                placeholder="Password" 
+                placeholder={t('login.passwordPlaceholder', 'Password')} 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required 
               />
             </div>
             <div className="pt-2">
-              <Button type="submit" className="w-full h-12">Log In</Button>
+              <Button type="submit" className="w-full h-12">{t('login.submit', 'Log In')}</Button>
             </div>
           </form>
 
           <p className="text-center text-sm text-zinc-500 mt-8 font-medium">
-            Don't have an account?{' '}
+            {t('login.noAccount', "Don't have an account?")}{' '}
             <Link to="/register" className="text-zinc-300 font-semibold hover:text-white hover:underline transition-colors">
-              Sign up
+              {t('login.signup', 'Sign up')}
             </Link>
           </p>
         </div>

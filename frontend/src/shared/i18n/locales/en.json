@@ -1,0 +1,11 @@
+{
+  "builder": {
+    "title": "Builder",
+    "subtitle": "Design your professional story",
+    "exportPdf": "Export PDF",
+    "uploadPdf": "Upload Old PDF",
+    "uploadSuccess": "Resume successfully parsed and imported!",
+    "uploadError": "Failed to parse resume",
+    "template": "Template"
+  }
+}

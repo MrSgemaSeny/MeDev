@@ -12,6 +12,10 @@ spring:
     user:
       name: user
       password: stub_password_to_suppress_log
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 server:
   port: 8080
@@ -25,3 +29,11 @@ jwt:
 github:
   api-url: https://api.github.com
 
+groq:
+  api-key: ${GROQ_API_KEY:}
+  api-url: https://api.groq.com/openai/v1/chat/completions
+
+stripe:
+  api-key: ${STRIPE_API_KEY:sk_test_12345}
+  webhook-secret: ${STRIPE_WEBHOOK_SECRET:whsec_12345}
+  pro-price-id: ${STRIPE_PRO_PRICE_ID:price_12345}

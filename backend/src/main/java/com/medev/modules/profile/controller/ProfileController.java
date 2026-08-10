@@ -15,11 +15,25 @@ import org.springframework.web.bind.annotation.*;
 public class ProfileController {
 
     private final ProfileService profileService;
+    private final com.medev.modules.profile.service.ExperienceService experienceService;
+    private final com.medev.modules.profile.service.EducationService educationService;
+    private final com.medev.modules.profile.service.SkillService skillService;
+    private final com.medev.modules.profile.service.LanguageService languageService;
+    private final com.medev.modules.profile.service.ProjectService projectService;
+    private final com.medev.modules.profile.service.ReadmeGeneratorService readmeGeneratorService;
 
     @GetMapping
     public ResponseEntity<ProfileDto> getMyProfile() {
         Long userId = SecurityUtils.getCurrentUserId();
         return ResponseEntity.ok(profileService.getByUserId(userId));
+    }
+
+    @GetMapping(value = "/readme", produces = "text/markdown;charset=UTF-8")
+    public ResponseEntity<String> getReadme() {
+        Long userId = SecurityUtils.getCurrentUserId();
+        com.medev.modules.profile.entity.Profile profile = profileService.getProfileEntityByUserId(userId);
+        String readmeContent = readmeGeneratorService.generateReadme(profile);
+        return ResponseEntity.ok(readmeContent);
     }
 
     @PutMapping
@@ -38,115 +52,115 @@ public class ProfileController {
     // ================= EXPERIENCE =================
     @PostMapping("/experience")
     public ResponseEntity<ExperienceDto> addExperience(@Valid @RequestBody ExperienceRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(profileService.addExperience(SecurityUtils.getCurrentUserId(), request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(experienceService.addExperience(SecurityUtils.getCurrentUserId(), request));
     }
 
     @PutMapping("/experience/{id}")
     public ResponseEntity<ExperienceDto> updateExperience(@PathVariable Long id, @Valid @RequestBody ExperienceRequest request) {
-        return ResponseEntity.ok(profileService.updateExperience(SecurityUtils.getCurrentUserId(), id, request));
+        return ResponseEntity.ok(experienceService.updateExperience(SecurityUtils.getCurrentUserId(), id, request));
     }
 
     @DeleteMapping("/experience/{id}")
     public ResponseEntity<Void> deleteExperience(@PathVariable Long id) {
-        profileService.deleteExperience(SecurityUtils.getCurrentUserId(), id);
+        experienceService.deleteExperience(SecurityUtils.getCurrentUserId(), id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/experience/reorder")
     public ResponseEntity<Void> reorderExperience(@RequestBody ReorderRequest request) {
-        profileService.reorderExperience(SecurityUtils.getCurrentUserId(), request.getIds());
+        experienceService.reorderExperience(SecurityUtils.getCurrentUserId(), request.getIds());
         return ResponseEntity.noContent().build();
     }
 
     // ================= EDUCATION =================
     @PostMapping("/education")
     public ResponseEntity<EducationDto> addEducation(@Valid @RequestBody EducationRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(profileService.addEducation(SecurityUtils.getCurrentUserId(), request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(educationService.addEducation(SecurityUtils.getCurrentUserId(), request));
     }
 
     @PutMapping("/education/{id}")
     public ResponseEntity<EducationDto> updateEducation(@PathVariable Long id, @Valid @RequestBody EducationRequest request) {
-        return ResponseEntity.ok(profileService.updateEducation(SecurityUtils.getCurrentUserId(), id, request));
+        return ResponseEntity.ok(educationService.updateEducation(SecurityUtils.getCurrentUserId(), id, request));
     }
 
     @DeleteMapping("/education/{id}")
     public ResponseEntity<Void> deleteEducation(@PathVariable Long id) {
-        profileService.deleteEducation(SecurityUtils.getCurrentUserId(), id);
+        educationService.deleteEducation(SecurityUtils.getCurrentUserId(), id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/education/reorder")
     public ResponseEntity<Void> reorderEducation(@RequestBody ReorderRequest request) {
-        profileService.reorderEducation(SecurityUtils.getCurrentUserId(), request.getIds());
+        educationService.reorderEducation(SecurityUtils.getCurrentUserId(), request.getIds());
         return ResponseEntity.noContent().build();
     }
 
     // ================= SKILLS =================
     @PostMapping("/skills")
     public ResponseEntity<SkillDto> addSkill(@Valid @RequestBody SkillRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(profileService.addSkill(SecurityUtils.getCurrentUserId(), request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(skillService.addSkill(SecurityUtils.getCurrentUserId(), request));
     }
 
     @PutMapping("/skills/{id}")
     public ResponseEntity<SkillDto> updateSkill(@PathVariable Long id, @Valid @RequestBody SkillRequest request) {
-        return ResponseEntity.ok(profileService.updateSkill(SecurityUtils.getCurrentUserId(), id, request));
+        return ResponseEntity.ok(skillService.updateSkill(SecurityUtils.getCurrentUserId(), id, request));
     }
 
     @DeleteMapping("/skills/{id}")
     public ResponseEntity<Void> deleteSkill(@PathVariable Long id) {
-        profileService.deleteSkill(SecurityUtils.getCurrentUserId(), id);
+        skillService.deleteSkill(SecurityUtils.getCurrentUserId(), id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/skills/reorder")
     public ResponseEntity<Void> reorderSkills(@RequestBody ReorderRequest request) {
-        profileService.reorderSkills(SecurityUtils.getCurrentUserId(), request.getIds());
+        skillService.reorderSkills(SecurityUtils.getCurrentUserId(), request.getIds());
         return ResponseEntity.noContent().build();
     }
 
     // ================= LANGUAGES =================
     @PostMapping("/languages")
     public ResponseEntity<LanguageDto> addLanguage(@Valid @RequestBody LanguageRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(profileService.addLanguage(SecurityUtils.getCurrentUserId(), request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(languageService.addLanguage(SecurityUtils.getCurrentUserId(), request));
     }
 
     @PutMapping("/languages/{id}")
     public ResponseEntity<LanguageDto> updateLanguage(@PathVariable Long id, @Valid @RequestBody LanguageRequest request) {
-        return ResponseEntity.ok(profileService.updateLanguage(SecurityUtils.getCurrentUserId(), id, request));
+        return ResponseEntity.ok(languageService.updateLanguage(SecurityUtils.getCurrentUserId(), id, request));
     }
 
     @DeleteMapping("/languages/{id}")
     public ResponseEntity<Void> deleteLanguage(@PathVariable Long id) {
-        profileService.deleteLanguage(SecurityUtils.getCurrentUserId(), id);
+        languageService.deleteLanguage(SecurityUtils.getCurrentUserId(), id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/languages/reorder")
     public ResponseEntity<Void> reorderLanguages(@RequestBody ReorderRequest request) {
-        profileService.reorderLanguages(SecurityUtils.getCurrentUserId(), request.getIds());
+        languageService.reorderLanguages(SecurityUtils.getCurrentUserId(), request.getIds());
         return ResponseEntity.noContent().build();
     }
 
     // ================= PROJECTS =================
     @PostMapping("/projects")
     public ResponseEntity<ProjectDto> addProject(@Valid @RequestBody ProjectRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(profileService.addProject(SecurityUtils.getCurrentUserId(), request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(projectService.addProject(SecurityUtils.getCurrentUserId(), request));
     }
 
     @PutMapping("/projects/{id}")
     public ResponseEntity<ProjectDto> updateProject(@PathVariable Long id, @Valid @RequestBody ProjectRequest request) {
-        return ResponseEntity.ok(profileService.updateProject(SecurityUtils.getCurrentUserId(), id, request));
+        return ResponseEntity.ok(projectService.updateProject(SecurityUtils.getCurrentUserId(), id, request));
     }
 
     @DeleteMapping("/projects/{id}")
     public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
-        profileService.deleteProject(SecurityUtils.getCurrentUserId(), id);
+        projectService.deleteProject(SecurityUtils.getCurrentUserId(), id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/projects/reorder")
     public ResponseEntity<Void> reorderProjects(@RequestBody ReorderRequest request) {
-        profileService.reorderProjects(SecurityUtils.getCurrentUserId(), request.getIds());
+        projectService.reorderProjects(SecurityUtils.getCurrentUserId(), request.getIds());
         return ResponseEntity.noContent().build();
     }
 }

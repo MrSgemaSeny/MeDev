@@ -8,6 +8,7 @@ interface AuthState {
   plan: string | null;
   setAuth: (accessToken: string, refreshToken: string, username: string, plan: string) => void;
   setTokens: (accessToken: string, refreshToken: string) => void;
+  setPlan: (plan: string) => void;
   logout: () => void;
 }
 
@@ -24,6 +25,9 @@ export const useAuthStore = create<AuthState>()(
       setTokens: (accessToken, refreshToken) => {
         localStorage.setItem('refreshToken', refreshToken);
         set({ accessToken });
+      },
+      setPlan: (plan) => {
+        set({ plan });
       },
       logout: async () => {
         try {

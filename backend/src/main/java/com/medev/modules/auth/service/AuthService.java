@@ -77,7 +77,13 @@ public class AuthService {
         }
         
         Long userId = jwtService.extractUserId(refreshToken);
-        String redisToken = redisTemplate.opsForValue().get("refresh:" + userId);
+        String deviceId = jwtService.extractDeviceId(refreshToken);
+        
+        if (deviceId == null) {
+            throw new UnauthorizedException("Invalid refresh token format");
+        }
+        
+        String redisToken = redisTemplate.opsForValue().get("refresh:" + userId + ":" + deviceId);
         
         if (redisToken == null || !redisToken.equals(refreshToken)) {
             throw new UnauthorizedException("Invalid or expired refresh token");
@@ -86,16 +92,20 @@ public class AuthService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UnauthorizedException("User not found"));
                 
-        return buildAuthResponse(user);
+        return buildAuthResponse(user, deviceId);
     }
 
     private AuthResponse buildAuthResponse(User user) {
-        String accessToken  = jwtService.generateAccessToken(user);
-        String refreshToken = jwtService.generateRefreshToken(user);
+        return buildAuthResponse(user, java.util.UUID.randomUUID().toString());
+    }
 
-        // Refresh token в Redis с TTL 30 дней
+    private AuthResponse buildAuthResponse(User user, String deviceId) {
+        String accessToken  = jwtService.generateAccessToken(user, deviceId);
+        String refreshToken = jwtService.generateRefreshToken(user, deviceId);
+
+        // Refresh token в Redis с TTL 30 дней, ключ привязан к устройству
         redisTemplate.opsForValue().set(
-            "refresh:" + user.getId(),
+            "refresh:" + user.getId() + ":" + deviceId,
             refreshToken,
             Duration.ofDays(30)
         );
@@ -113,8 +123,14 @@ public class AuthService {
             String token = bearerToken.substring(7);
             if (jwtService.validateToken(token)) {
                 Long userId = jwtService.extractUserId(token);
-                // Удаляем refresh token → нельзя обновить сессию
-                redisTemplate.delete("refresh:" + userId);
+                String deviceId = jwtService.extractDeviceId(token);
+                if (deviceId != null) {
+                    // Удаляем только текущую сессию (устройство)
+                    redisTemplate.delete("refresh:" + userId + ":" + deviceId);
+                } else {
+                    // Для обратной совместимости, если старый токен без deviceId
+                    redisTemplate.delete("refresh:" + userId);
+                }
             }
         }
     }

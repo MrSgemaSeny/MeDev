@@ -11,16 +11,16 @@
 ```
 PROJECT:         MeDev
 TRACK:           FULL
-CURRENT PHASE:   3 (Frontend & Backend Goal)
-CURRENT SUBPHASE: 3.2 (Expanding Features)
+CURRENT PHASE:   4 (Billing & Monetization)
+CURRENT SUBPHASE: 4.1 (Stripe Integration)
 LAST UPDATED:    2026-08-10
 BLOCKER:         нет
-NEXT STEP:       Реализация парсинга PDF (Apache PDFBox) и мульти-сессий (Refresh tokens per device)
+NEXT STEP:       Интеграция Stripe Checkout, управление подписками Free/Pro
 NOTES:
-  - Шаблоны резюме: HTML файлы (classic, minimal, modern) → Flying Saucer → PDF
-  - Auth: email/password реализован, JWT токены работают секьюрно
-  - UI редактора: Drag-and-drop с сохранением в БД и синхронизацией
-  - Деплой: frontend тесты и сборка проходят, GitHub Pages настроен
+  - Фаза 3 (Расширение) полностью завершена: внедрен парсинг PDF, мультисессии, i18n, README экспорт.
+  - Auth: JWT с поддержкой мульти-сессий (deviceId)
+  - UI: Drag-and-drop редактор, поддержка нескольких языков (react-i18next)
+  - AI: Интеграция GROQ для автоматического извлечения данных из старых PDF-резюме
 ```
 
 ---

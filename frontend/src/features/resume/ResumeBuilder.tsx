@@ -28,7 +28,7 @@ function SortableItem({ section }: { section: Section }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: section.id });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Translate.toString(transform),
     transition,
     zIndex: isDragging ? 1 : 0,
   };
@@ -37,19 +37,19 @@ function SortableItem({ section }: { section: Section }) {
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center justify-between p-4 mb-3 bg-white dark:bg-slate-800/80 border rounded-2xl shadow-sm transition-all duration-200 ${
-        isDragging ? 'border-slate-500 shadow-md ring-2 ring-slate-500/20 scale-[1.02]' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:shadow'
-      } ${!section.visible ? 'opacity-40 grayscale' : ''}`}
+      className={`w-full flex items-center justify-between px-3 py-2.5 mb-2 bg-[#161b22] border rounded-md transition-colors duration-150 ${
+        isDragging ? 'border-[#8b949e] shadow-md ring-1 ring-[#8b949e]' : 'border-[#30363d] hover:border-[#8b949e] hover:bg-[#21262d]'
+      } ${!section.visible ? 'opacity-50' : ''}`}
     >
-      <div className="flex items-center gap-4">
-        <div {...attributes} {...listeners} className="cursor-grab hover:text-slate-900 dark:hover:text-white text-slate-400 dark:text-slate-500 transition-colors bg-slate-50 dark:bg-slate-900/50 p-2 rounded-xl">
-          <GripVertical className="w-5 h-5" />
+      <div className="flex items-center gap-3">
+        <div {...attributes} {...listeners} className="cursor-grab text-[#8b949e] hover:text-[#c9d1d9] transition-colors bg-transparent p-1 rounded-sm">
+          <GripVertical className="w-4 h-4" />
         </div>
-        <span className="font-semibold text-sm text-slate-700 dark:text-slate-200">{section.label}</span>
+        <span className="font-medium text-sm text-[#c9d1d9]">{section.label}</span>
       </div>
       <button 
         onClick={() => toggleSection(section.id)}
-        className="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+        className="p-1.5 rounded-md hover:bg-[#30363d] text-[#8b949e] hover:text-[#c9d1d9] transition-colors"
         title={section.visible ? "Hide section" : "Show section"}
       >
         {section.visible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
@@ -161,61 +161,64 @@ export function ResumeBuilder() {
   };
 
   if (isLoading) return (
-    <div className="flex h-full items-center justify-center">
-      <div className="w-8 h-8 border-4 border-slate-500/30 border-t-slate-500 rounded-full animate-spin"></div>
+    <div className="flex h-full items-center justify-center bg-[#0d1117]">
+      <div className="w-8 h-8 border-4 border-[#30363d] border-t-[#58a6ff] rounded-full animate-spin"></div>
     </div>
   );
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 h-[calc(100vh-8rem)] min-h-[700px]">
-      {/* Editor Panel */}
-      <div className="col-span-1 xl:col-span-4 flex flex-col h-full bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/60 dark:border-slate-800/60 shadow-xl shadow-slate-200/40 dark:shadow-none p-6 lg:p-8 overflow-hidden relative">
-        <div className="absolute top-0 left-0 w-full h-1 bg-slate-800 dark:bg-slate-400" />
-        <div className="flex items-center justify-between mb-8">
+    <div className="flex flex-col lg:flex-row h-full w-full bg-[#0d1117] text-[#c9d1d9]">
+      {/* Editor Panel (Sidebar) */}
+      <div className="w-full lg:w-[350px] shrink-0 flex flex-col h-full bg-[#0d1117] border-r border-[#30363d] p-5">
+        <div className="flex flex-col gap-4 mb-6">
           <div>
-            <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t('builder.title')}</h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">{t('builder.subtitle')}</p>
+            <h2 className="text-xl font-semibold text-[#c9d1d9]">{t('builder.title')}</h2>
+            <p className="text-xs text-[#8b949e] mt-1">{t('builder.subtitle')}</p>
           </div>
-          <div className="flex items-center gap-3">
+          
+          <div className="flex flex-col gap-3">
             <select
               value={selectedTemplate}
               onChange={(e) => setTemplate(e.target.value)}
-              className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500"
+              className="bg-[#21262d] border border-[#30363d] text-[#c9d1d9] text-sm rounded-md px-3 py-1.5 focus:outline-none focus:border-[#58a6ff] hover:bg-[#30363d] transition-colors w-full cursor-pointer"
             >
-              <option value="classic">Classic</option>
-              <option value="minimal">Minimal</option>
-              <option value="modern">Modern</option>
+              <option value="classic">Classic Template</option>
+              <option value="minimal">Minimal Template</option>
+              <option value="modern">Modern Template</option>
             </select>
             
-            <label className="cursor-pointer">
-              <input type="file" accept=".pdf" className="hidden" onChange={async (e) => {
-                const file = e.target.files?.[0];
-                if (!file) return;
-                toast.info("Uploading and parsing PDF...");
-                const formData = new FormData();
-                formData.append('file', file);
-                try {
-                  await api.post('/ai/parse-resume', formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' }
-                  });
-                  toast.success(t('builder.uploadSuccess'));
-                  window.location.reload(); // simple way to refresh profile
-                } catch (error) {
-                  toast.error(t('builder.uploadError'));
-                }
-              }} />
-              <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-2 text-sm rounded-xl transition-colors">
-                 <span className="hidden sm:inline">{t('builder.uploadPdf')}</span>
-              </div>
-            </label>
+            <div className="flex gap-2 w-full">
+              <label className="cursor-pointer flex-1">
+                <input type="file" accept=".pdf" className="hidden" onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  toast.info("Uploading and parsing PDF...");
+                  const formData = new FormData();
+                  formData.append('file', file);
+                  try {
+                    await api.post('/ai/parse-resume', formData, {
+                      headers: { 'Content-Type': 'multipart/form-data' }
+                    });
+                    toast.success(t('builder.uploadSuccess'));
+                    window.location.reload();
+                  } catch (error) {
+                    toast.error(t('builder.uploadError'));
+                  }
+                }} />
+                <div className="flex items-center justify-center gap-2 bg-[#21262d] hover:bg-[#30363d] border border-[#f0f6fc1a] text-[#c9d1d9] px-3 py-1.5 text-sm rounded-md transition-colors w-full h-full font-medium">
+                   <span>{t('builder.uploadPdf')}</span>
+                </div>
+              </label>
 
-            <Button size="sm" onClick={handleDownload} className="flex items-center gap-2 bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-900 rounded-xl shadow-md shadow-slate-900/20 dark:shadow-white/20 border-0">
-              <Download className="w-4 h-4" /> <span className="hidden sm:inline">{t('builder.exportPdf')}</span>
-            </Button>
+              <Button size="sm" onClick={handleDownload} className="flex-1 flex items-center justify-center gap-2 bg-[#238636] hover:bg-[#2ea043] text-white border border-[#f0f6fc1a] rounded-md px-3 py-1.5 font-medium transition-colors shadow-sm">
+                <Download className="w-4 h-4" /> <span>{t('builder.exportPdf')}</span>
+              </Button>
+            </div>
           </div>
         </div>
         
-        <div className="flex-1 overflow-y-auto pr-3 -mr-3 scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-700">
+        <div className="flex-1 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-[#30363d]">
+          <div className="text-xs font-semibold text-[#8b949e] mb-3 uppercase tracking-wider">Sections</div>
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={sections.map(s => s.id)} strategy={verticalListSortingStrategy}>
               {sections.map((section) => (
@@ -227,19 +230,16 @@ export function ResumeBuilder() {
       </div>
 
       {/* Preview Panel */}
-      <div className="col-span-1 xl:col-span-8 bg-slate-100/50 dark:bg-slate-900/30 rounded-3xl flex flex-col items-center justify-center p-6 lg:p-10 border border-slate-200/60 dark:border-slate-800/60 overflow-hidden relative ring-1 ring-slate-900/5 dark:ring-white/5">
-        <div className="absolute top-6 right-6 z-10 flex gap-3">
-          <span className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-xs px-4 py-2 rounded-xl font-semibold shadow-sm border border-slate-200/50 dark:border-slate-700/50 text-slate-700 dark:text-slate-300 flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-slate-500 animate-pulse"></div>
+      <div className="flex-1 bg-[#010409] flex flex-col items-center justify-center p-6 relative overflow-hidden">
+        <div className="absolute top-4 right-4 z-10 flex gap-2">
+          <span className="bg-[#161b22] border border-[#30363d] text-xs px-3 py-1.5 rounded-md text-[#8b949e] flex items-center gap-2 font-medium">
+            <div className="w-2 h-2 rounded-full bg-[#238636] animate-pulse"></div>
             Live Preview
-          </span>
-          <span className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md text-xs px-4 py-2 rounded-xl font-semibold shadow-sm border border-slate-200/50 dark:border-slate-700/50 text-slate-700 dark:text-slate-300 capitalize">
-            Template: {selectedTemplate || 'classic'}
           </span>
         </div>
         
         {/* Iframe wrapper */}
-        <div className="w-full max-w-[210mm] h-[297mm] max-h-full bg-white shadow-2xl shadow-slate-900/10 dark:shadow-black/50 overflow-hidden rounded-xl border border-slate-200/50 dark:border-slate-700/50 ring-1 ring-slate-900/5 transition-transform hover:scale-[1.005] duration-500">
+        <div className="w-full max-w-[210mm] h-[297mm] max-h-full bg-white shadow-sm overflow-hidden rounded-md border border-[#30363d] transition-transform hover:scale-[1.01] duration-300">
            {pdfUrl && (
              <iframe 
                 className="w-full h-full bg-white"

@@ -24,13 +24,18 @@ public class User {
     @Column(unique = true, nullable = false)
     private String username;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role = Role.USER;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Plan plan = Plan.FREE;
+
+    @Column(name = "stripe_customer_id")
+    private String stripeCustomerId;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
