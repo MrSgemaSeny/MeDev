@@ -173,9 +173,20 @@ export function ResumeBuilder() {
             <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Builder</h2>
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">Design your professional story</p>
           </div>
-          <Button size="sm" onClick={handleDownload} className="flex items-center gap-2 bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-900 rounded-xl shadow-md shadow-slate-900/20 dark:shadow-white/20 border-0">
-            <Download className="w-4 h-4" /> <span className="hidden sm:inline">Export PDF</span>
-          </Button>
+          <div className="flex items-center gap-3">
+            <select
+              value={selectedTemplate}
+              onChange={(e) => setTemplate(e.target.value)}
+              className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500"
+            >
+              <option value="classic">Classic</option>
+              <option value="minimal">Minimal</option>
+              <option value="modern">Modern</option>
+            </select>
+            <Button size="sm" onClick={handleDownload} className="flex items-center gap-2 bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-900 rounded-xl shadow-md shadow-slate-900/20 dark:shadow-white/20 border-0">
+              <Download className="w-4 h-4" /> <span className="hidden sm:inline">Export PDF</span>
+            </Button>
+          </div>
         </div>
         
         <div className="flex-1 overflow-y-auto pr-3 -mr-3 scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-700">

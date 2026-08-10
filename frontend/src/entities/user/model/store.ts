@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { api } from '../../shared/api/axios';
+import { api } from '../../../shared/api/axios';
 
 interface AuthState {
   accessToken: string | null;
