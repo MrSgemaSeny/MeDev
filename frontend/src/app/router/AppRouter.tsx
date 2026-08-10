@@ -1,4 +1,4 @@
-import {  Suspense, lazy  } from 'react';
+import { Suspense, lazy } from 'react';
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 import { useAuthStore } from '../../entities/user/model/store';
 import { AppLayout } from '../layouts/AppLayout';
@@ -15,8 +15,19 @@ const SuccessPage = lazy(() => import('../../pages/billing/SuccessPage').then(m 
 const CancelPage = lazy(() => import('../../pages/billing/CancelPage').then(m => ({ default: m.CancelPage })));
 
 const PageLoader = () => (
-  <div className="flex h-screen w-full items-center justify-center bg-gray-950">
-    <div className="h-10 w-10 animate-spin rounded-full border-4 border-gray-800 border-t-emerald-500"></div>
+  <div
+    className="flex h-screen w-full items-center justify-center"
+    style={{ backgroundColor: 'var(--color-bg-primary)' }}
+  >
+    <span
+      className="inline-block animate-spin rounded-full"
+      style={{
+        width: 24,
+        height: 24,
+        border: '2px solid var(--color-border-default)',
+        borderTopColor: 'var(--color-text-muted)',
+      }}
+    />
   </div>
 );
 
@@ -31,68 +42,30 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <Navigate to="/dashboard" replace />,
-  },
+  { path: '/', element: <Navigate to="/dashboard" replace /> },
   {
     path: '/login',
-    element: (
-      <PublicRoute>
-        <LoginPage />
-      </PublicRoute>
-    ),
+    element: (<PublicRoute><LoginPage /></PublicRoute>),
   },
   {
     path: '/register',
-    element: (
-      <PublicRoute>
-        <RegisterPage />
-      </PublicRoute>
-    ),
+    element: (<PublicRoute><RegisterPage /></PublicRoute>),
   },
   {
-    element: (
-      <PrivateRoute>
-        <AppLayout />
-      </PrivateRoute>
-    ),
+    element: (<PrivateRoute><AppLayout /></PrivateRoute>),
     children: [
-      {
-        path: '/dashboard',
-        element: <DashboardPage />,
-      },
-      {
-        path: '/profile/edit',
-        element: <ProfileEditPage />,
-      },
-      {
-        path: '/resume',
-        element: <ResumePage />,
-      },
-      {
-        path: '/billing',
-        element: <PricingPage />,
-      },
-      {
-        path: '/billing/success',
-        element: <SuccessPage />,
-      },
-      {
-        path: '/billing/cancel',
-        element: <CancelPage />,
-      },
-    ]
+      { path: '/dashboard', element: <DashboardPage /> },
+      { path: '/profile/edit', element: <ProfileEditPage /> },
+      { path: '/resume', element: <ResumePage /> },
+      { path: '/billing', element: <PricingPage /> },
+      { path: '/billing/success', element: <SuccessPage /> },
+      { path: '/billing/cancel', element: <CancelPage /> },
+    ],
   },
   {
     element: <PublicLayout />,
-    children: [
-      {
-        path: '/portfolio/:username',
-        element: <PortfolioPage />,
-      }
-    ]
-  }
+    children: [{ path: '/portfolio/:username', element: <PortfolioPage /> }],
+  },
 ], { basename: import.meta.env.BASE_URL });
 
 export function AppRouter() {

@@ -27,47 +27,49 @@ export const ProfileEditor = () => {
 
   const renderActiveSection = () => {
     switch (activeSection) {
-      case 'about':
-        return <AboutSection />;
-      case 'experience':
-        return <ExperienceSection />;
-      case 'education':
-        return <EducationSection />;
-      case 'skills':
-        return <SkillsSection />;
-      case 'languages':
-        return <LanguagesSection />;
-      case 'projects':
-        return <ProjectsSection />;
-      case 'github':
-        return <GithubSection />;
-      default:
-        return <AboutSection />;
+      case 'about': return <AboutSection />;
+      case 'experience': return <ExperienceSection />;
+      case 'education': return <EducationSection />;
+      case 'skills': return <SkillsSection />;
+      case 'languages': return <LanguagesSection />;
+      case 'projects': return <ProjectsSection />;
+      case 'github': return <GithubSection />;
+      default: return <AboutSection />;
     }
   };
 
   return (
     <div className="flex h-full">
-      {/* Left Sidebar for Sections */}
-      <div className="w-64 border-r border-gray-800 p-4 space-y-1">
-        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4 px-2">Sections</h3>
-        {SECTIONS.map((section) => (
-          <button
-            key={section.id}
-            onClick={() => handleSectionChange(section.id)}
-            className={`w-full text-left px-3 py-2 rounded-md transition-colors ${
-              activeSection === section.id
-                ? 'bg-emerald-900/30 text-emerald-400 border border-emerald-800/50'
-                : 'text-gray-400 hover:bg-gray-800 hover:text-white border border-transparent'
-            }`}
-          >
-            {section.label}
-          </button>
-        ))}
+      <div
+        className="w-52 border-r p-3 space-y-0.5 shrink-0"
+        style={{ borderColor: 'var(--color-border-default)' }}
+      >
+        <h3
+          className="text-xs font-semibold uppercase tracking-wide mb-3 px-2"
+          style={{ color: 'var(--color-text-muted)' }}
+        >
+          Sections
+        </h3>
+        {SECTIONS.map((section) => {
+          const active = activeSection === section.id;
+          return (
+            <button
+              key={section.id}
+              onClick={() => handleSectionChange(section.id)}
+              className="w-full text-left px-2 py-1.5 rounded-md text-sm transition-colors duration-100"
+              style={{
+                backgroundColor: active ? 'var(--color-btn-hover)' : 'transparent',
+                color: active ? 'var(--color-text-primary)' : 'var(--color-text-secondary)',
+                fontWeight: active ? 600 : 400,
+              }}
+            >
+              {section.label}
+            </button>
+          );
+        })}
       </div>
-      
-      {/* Right Column for Active Form */}
-      <div className="flex-1 p-8 overflow-y-auto">
+
+      <div className="flex-1 p-6 overflow-y-auto">
         {renderActiveSection()}
       </div>
     </div>

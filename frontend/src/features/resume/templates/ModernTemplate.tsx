@@ -9,18 +9,17 @@ export const ModernTemplate = () => {
 
   return (
     <div className="bg-white text-gray-800 p-8 max-w-[800px] w-full min-h-[1131px] shadow-lg font-sans grid grid-cols-3 gap-8">
-      {/* Left Sidebar (Dark) */}
       <div className="col-span-1 bg-gray-900 text-gray-300 -m-8 p-8 flex flex-col space-y-8">
         <div>
           <h1 className="text-2xl font-bold text-white uppercase tracking-wider">{profile.fullName || 'Your Name'}</h1>
           <p className="text-emerald-500 font-medium mt-1">{profile.headline || 'Professional Title'}</p>
         </div>
 
-        <div className="space-y-2 text-sm">
-          {profile.location && <p>📍 {profile.location}</p>}
-          {profile.website && <p>🔗 {profile.website}</p>}
-          {profile.githubUrl && <p>🐙 {profile.githubUrl}</p>}
-          {profile.linkedinUrl && <p>💼 {profile.linkedinUrl}</p>}
+        <div className="space-y-1 text-sm">
+          {profile.location && <p>{profile.location}</p>}
+          {profile.website && <p>{profile.website}</p>}
+          {profile.githubUrl && <p>{profile.githubUrl}</p>}
+          {profile.linkedinUrl && <p>{profile.linkedinUrl}</p>}
         </div>
 
         {sections.find(s => s.type === 'skills')?.visible && profile.skills && profile.skills.length > 0 && (
@@ -52,7 +51,6 @@ export const ModernTemplate = () => {
         )}
       </div>
 
-      {/* Right Content */}
       <div className="col-span-2 space-y-6">
         {sections.filter(s => s.visible && !['skills', 'languages'].includes(s.type)).map(section => {
           switch (section.type) {
@@ -77,9 +75,7 @@ export const ModernTemplate = () => {
                           </span>
                         </div>
                         <div className="text-gray-500 font-medium text-sm mb-1">{exp.company}</div>
-                        {exp.description && (
-                          <p className="text-sm text-gray-600 mt-2 whitespace-pre-wrap">{exp.description}</p>
-                        )}
+                        {exp.description && <p className="text-sm text-gray-600 mt-2 whitespace-pre-wrap">{exp.description}</p>}
                       </div>
                     ))}
                   </div>
@@ -118,9 +114,7 @@ export const ModernTemplate = () => {
                           </span>
                         </div>
                         {proj.url && <a href={proj.url} className="text-sm text-emerald-500 hover:underline mb-1 block">{proj.url}</a>}
-                        {proj.description && (
-                          <p className="text-sm text-gray-600 mt-1 whitespace-pre-wrap">{proj.description}</p>
-                        )}
+                        {proj.description && <p className="text-sm text-gray-600 mt-1 whitespace-pre-wrap">{proj.description}</p>}
                       </div>
                     ))}
                   </div>

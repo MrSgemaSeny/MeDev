@@ -1,38 +1,66 @@
 import * as React from 'react';
 import { cn } from '../lib/utils';
 
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+export type ButtonSize = 'sm' | 'md' | 'lg' | 'icon';
+
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'default' | 'outline' | 'ghost' | 'link' | 'premium' | 'glass';
-  size?: 'default' | 'sm' | 'lg' | 'icon';
+  variant?: ButtonVariant;
+  size?: ButtonSize;
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = 'default', size = 'default', ...props }, ref) => {
-    const variants = {
-      default: 'bg-zinc-50 text-zinc-950 hover:bg-zinc-200 shadow-none hover:shadow-none hover:-translate-y-0.5',
-      outline: 'border border-zinc-700 bg-transparent hover:bg-zinc-900 text-zinc-100 hover:text-white shadow-none',
-      ghost: 'hover:bg-zinc-900 text-zinc-400 hover:text-white',
-      link: 'text-zinc-400 underline-offset-4 hover:underline',
-      premium: 'bg-zinc-50 text-zinc-950 hover:bg-zinc-200 hover:-translate-y-0.5 hover:scale-[1.02]',
-      glass: 'bg-transparent border border-zinc-700 text-white hover:bg-zinc-900 hover:-translate-y-0.5',
-    };
+const sizeClasses: Record<ButtonSize, string> = {
+  sm: 'h-8 px-3 text-xs gap-1.5',
+  md: 'h-9 px-3 text-sm gap-2',
+  lg: 'h-10 px-4 text-sm gap-2',
+  icon: 'h-8 w-8 p-0',
+};
 
-    const sizes = {
-      default: 'h-10 px-5 py-2',
-      sm: 'h-9 rounded-md px-3 text-xs',
-      lg: 'h-12 rounded-lg px-8 text-base',
-      icon: 'h-10 w-10',
-    };
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant = 'secondary', size = 'md', style, ...props }, ref) => {
+    const variantStyle: React.CSSProperties =
+      variant === 'primary'
+        ? {
+            backgroundColor: 'var(--color-accent)',
+            color: '#ffffff',
+            border: '1px solid transparent',
+          }
+        : variant === 'danger'
+        ? {
+            backgroundColor: 'var(--color-danger)',
+            color: '#ffffff',
+            border: '1px solid transparent',
+          }
+        : variant === 'outline'
+        ? {
+            backgroundColor: 'transparent',
+            color: 'var(--color-text-primary)',
+            border: '1px solid var(--color-border-default)',
+          }
+        : variant === 'ghost'
+        ? {
+            backgroundColor: 'transparent',
+            color: 'var(--color-text-secondary)',
+            border: '1px solid transparent',
+          }
+        : {
+            backgroundColor: 'var(--color-btn-bg)',
+            color: 'var(--color-text-primary)',
+            border: '1px solid var(--color-btn-border)',
+          };
 
     return (
       <button
         ref={ref}
         className={cn(
-          'inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-bold transition-all duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black disabled:pointer-events-none disabled:opacity-50 active:scale-95',
-          variants[variant],
-          sizes[size],
+          'inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium cursor-pointer',
+          'transition-[background-color,border-color,color] duration-100',
+          'focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--color-link)]',
+          'disabled:pointer-events-none disabled:opacity-60',
+          sizeClasses[size],
           className
         )}
+        style={{ ...variantStyle, ...style }}
         {...props}
       />
     );
@@ -40,4 +68,3 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 );
 
 Button.displayName = 'Button';
-export { Button };

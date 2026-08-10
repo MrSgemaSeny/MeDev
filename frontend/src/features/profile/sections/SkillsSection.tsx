@@ -1,79 +1,51 @@
-import {  useState  } from 'react';
+import { useState } from 'react';
 import { useProfile, useAddSkill, useUpdateSkill, useDeleteSkill } from '../../../shared/api/hooks/useProfile';
 import type { SkillDto } from '../../../entities/profile/model/types';
+import { Button } from '../../../shared/ui/Button';
+import { Input, Select, Label, Card } from '../../../shared/ui/Form';
+
+const LEVELS = ['Beginner', 'Intermediate', 'Advanced', 'Expert'];
 
 export const SkillsSection = () => {
   const { data: profile, isLoading } = useProfile();
   const addMutation = useAddSkill();
   const updateMutation = useUpdateSkill();
   const deleteMutation = useDeleteSkill();
-
   const [editingId, setEditingId] = useState<number | 'new' | null>(null);
 
-  if (isLoading) return <div className="text-gray-400">Loading...</div>;
-
+  if (isLoading) return <div className="text-secondary">Loading...</div>;
   const skills = profile?.skills || [];
 
   return (
     <div className="max-w-2xl">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-white">Skills</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>Skills</h2>
         {editingId === null && (
-          <button 
-            onClick={() => setEditingId('new')}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-md text-sm transition-colors"
-          >
-            + Add Skill
-          </button>
+          <Button size="sm" variant="secondary" onClick={() => setEditingId('new')}>Add skill</Button>
         )}
       </div>
-
-      <div className="space-y-4">
-        {skills.map((skill: any) => (
+      <div className="space-y-2">
+        {skills.map((skill) =>
           editingId === skill.id ? (
-            <SkillForm 
-              key={skill.id} 
-              initialData={skill} 
-              onSave={(data) => {
-                updateMutation.mutate({ id: skill.id, payload: data });
-                setEditingId(null);
-              }}
-              onCancel={() => setEditingId(null)}
-              isPending={updateMutation.isPending}
-            />
+            <SkillForm key={skill.id} initialData={skill}
+              onSave={(data) => { updateMutation.mutate({ id: skill.id, payload: data }); setEditingId(null); }}
+              onCancel={() => setEditingId(null)} isPending={updateMutation.isPending} />
           ) : (
-            <div key={skill.id} className="bg-gray-900 border border-gray-800 p-4 rounded-md flex justify-between items-center">
+            <Card key={skill.id} className="p-3 flex justify-between items-center">
               <div>
-                <h3 className="text-lg font-semibold text-white">{skill.name}</h3>
-                <p className="text-sm text-gray-500">{skill.level}</p>
+                <h3 className="font-medium text-sm" style={{ color: 'var(--color-text-primary)' }}>{skill.name}</h3>
+                <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>{skill.level}</p>
               </div>
-              <div className="flex space-x-2">
-                <button 
-                  onClick={() => setEditingId(skill.id)}
-                  className="text-gray-400 hover:text-white"
-                >
-                  Edit
-                </button>
-                <button 
-                  onClick={() => deleteMutation.mutate(skill.id)}
-                  className="text-red-400 hover:text-red-300"
-                >
-                  Delete
-                </button>
+              <div className="flex gap-2">
+                <button onClick={() => setEditingId(skill.id)} className="text-sm hover:underline" style={{ color: 'var(--color-link)' }}>Edit</button>
+                <button onClick={() => deleteMutation.mutate(skill.id)} className="text-sm hover:underline" style={{ color: 'var(--color-danger)' }}>Delete</button>
               </div>
-            </div>
+            </Card>
           )
-        ))}
-
+        )}
         {editingId === 'new' && (
-          <SkillForm 
-            onSave={(data) => {
-              addMutation.mutate(data);
-              setEditingId(null);
-            }}
-            onCancel={() => setEditingId(null)}
-            isPending={addMutation.isPending}
-          />
+          <SkillForm onSave={(data) => { addMutation.mutate(data); setEditingId(null); }}
+            onCancel={() => setEditingId(null)} isPending={addMutation.isPending} />
         )}
       </div>
     </div>
@@ -92,65 +64,27 @@ const SkillForm: React.FC<SkillFormProps> = ({ initialData, onSave, onCancel, is
     name: initialData?.name || '',
     level: initialData?.level || 'Intermediate',
   });
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }));
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave(formData);
-  };
+  const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); onSave(formData); };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-gray-900 border border-gray-700 p-4 rounded-md space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-400 mb-1">Skill Name</label>
-          <input 
-            required
-            name="name" 
-            value={formData.name} 
-            onChange={handleChange}
-            placeholder="e.g. React, Java, Docker"
-            className="w-full bg-gray-950 border border-gray-700 rounded-md p-2 text-white focus:border-emerald-500 focus:outline-none"
-          />
+    <Card className="p-4">
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <div className="grid grid-cols-2 gap-3">
+          <div><Label htmlFor="name">Skill Name</Label><Input id="name" required name="name" value={formData.name} onChange={handleChange} placeholder="e.g. React, Java, Docker" /></div>
+          <div><Label htmlFor="level">Level</Label>
+            <Select id="level" name="level" value={formData.level} onChange={handleChange}>
+              {LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
+            </Select>
+          </div>
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-400 mb-1">Level</label>
-          <select 
-            name="level" 
-            value={formData.level} 
-            onChange={handleChange}
-            className="w-full bg-gray-950 border border-gray-700 rounded-md p-2 text-white focus:border-emerald-500 focus:outline-none"
-          >
-            <option value="Beginner">Beginner</option>
-            <option value="Intermediate">Intermediate</option>
-            <option value="Advanced">Advanced</option>
-            <option value="Expert">Expert</option>
-          </select>
+        <div className="flex gap-2 pt-1">
+          <Button type="submit" variant="primary" disabled={isPending}>{isPending ? 'Saving...' : 'Save'}</Button>
+          <Button type="button" variant="secondary" onClick={onCancel}>Cancel</Button>
         </div>
-      </div>
-
-      <div className="flex space-x-3 pt-2">
-        <button 
-          type="submit" 
-          disabled={isPending}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md transition-colors"
-        >
-          {isPending ? 'Saving...' : 'Save'}
-        </button>
-        <button 
-          type="button" 
-          onClick={onCancel}
-          className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-md transition-colors"
-        >
-          Cancel
-        </button>
-      </div>
-    </form>
+      </form>
+    </Card>
   );
 };

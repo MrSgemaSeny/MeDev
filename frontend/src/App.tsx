@@ -8,7 +8,16 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AppRouter />
-      <Toaster position="bottom-right" richColors />
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          style: {
+            backgroundColor: 'var(--color-bg-secondary)',
+            border: '1px solid var(--color-border-default)',
+            color: 'var(--color-text-primary)',
+          },
+        }}
+      />
     </QueryClientProvider>
   );
 }

@@ -1,35 +1,29 @@
-import {  useEffect, useState  } from 'react';
+import { useEffect, useState } from 'react';
 import { useProfile, useUpdateProfile } from '../../../shared/api/hooks/useProfile';
+import { Button } from '../../../shared/ui/Button';
+import { Input, Textarea, Label } from '../../../shared/ui/Form';
 
 export const AboutSection = () => {
   const { data: profile, isLoading } = useProfile();
   const updateProfile = useUpdateProfile();
-  
+
   const [formData, setFormData] = useState({
-    fullName: '',
-    headline: '',
-    summary: '',
-    location: '',
-    website: '',
-    githubUrl: '',
-    linkedinUrl: '',
+    fullName: '', headline: '', summary: '', location: '',
+    website: '', githubUrl: '', linkedinUrl: '',
   });
 
   useEffect(() => {
     if (profile) {
       setFormData({
-        fullName: profile.fullName || '',
-        headline: profile.headline || '',
-        summary: profile.summary || '',
-        location: profile.location || '',
-        website: profile.website || '',
-        githubUrl: profile.githubUrl || '',
+        fullName: profile.fullName || '', headline: profile.headline || '',
+        summary: profile.summary || '', location: profile.location || '',
+        website: profile.website || '', githubUrl: profile.githubUrl || '',
         linkedinUrl: profile.linkedinUrl || '',
       });
     }
   }, [profile]);
 
-  if (isLoading) return <div className="text-gray-400">Loading...</div>;
+  if (isLoading) return <div className="text-secondary">Loading...</div>;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -42,85 +36,44 @@ export const AboutSection = () => {
 
   return (
     <div className="max-w-2xl">
-      <h2 className="text-2xl font-bold mb-6 text-white">About You</h2>
+      <h2 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-text-primary)' }}>About You</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-400 mb-1">Full Name</label>
-          <input 
-            name="fullName" 
-            value={formData.fullName} 
-            onChange={handleChange}
-            className="w-full bg-gray-900 border border-gray-700 rounded-md p-2 text-white focus:border-emerald-500 focus:outline-none"
-          />
+          <Label htmlFor="fullName">Full Name</Label>
+          <Input id="fullName" name="fullName" value={formData.fullName} onChange={handleChange} />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-400 mb-1">Headline</label>
-          <input 
-            name="headline" 
-            value={formData.headline} 
-            onChange={handleChange}
-            className="w-full bg-gray-900 border border-gray-700 rounded-md p-2 text-white focus:border-emerald-500 focus:outline-none"
-            placeholder="e.g. Senior Full-Stack Engineer"
-          />
+          <Label htmlFor="headline">Headline</Label>
+          <Input id="headline" name="headline" value={formData.headline} onChange={handleChange} placeholder="e.g. Senior Full-Stack Engineer" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-400 mb-1">Summary</label>
-          <textarea 
-            name="summary" 
-            value={formData.summary} 
-            onChange={handleChange}
-            rows={4}
-            className="w-full bg-gray-900 border border-gray-700 rounded-md p-2 text-white focus:border-emerald-500 focus:outline-none"
-          />
+          <Label htmlFor="summary">Summary</Label>
+          <Textarea id="summary" name="summary" value={formData.summary} onChange={handleChange} rows={4} />
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">Location</label>
-            <input 
-              name="location" 
-              value={formData.location} 
-              onChange={handleChange}
-              className="w-full bg-gray-900 border border-gray-700 rounded-md p-2 text-white focus:border-emerald-500 focus:outline-none"
-            />
+            <Label htmlFor="location">Location</Label>
+            <Input id="location" name="location" value={formData.location} onChange={handleChange} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">Website</label>
-            <input 
-              name="website" 
-              value={formData.website} 
-              onChange={handleChange}
-              className="w-full bg-gray-900 border border-gray-700 rounded-md p-2 text-white focus:border-emerald-500 focus:outline-none"
-            />
+            <Label htmlFor="website">Website</Label>
+            <Input id="website" name="website" value={formData.website} onChange={handleChange} />
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">GitHub</label>
-            <input 
-              name="githubUrl" 
-              value={formData.githubUrl} 
-              onChange={handleChange}
-              className="w-full bg-gray-900 border border-gray-700 rounded-md p-2 text-white focus:border-emerald-500 focus:outline-none"
-            />
+            <Label htmlFor="githubUrl">GitHub</Label>
+            <Input id="githubUrl" name="githubUrl" value={formData.githubUrl} onChange={handleChange} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">LinkedIn</label>
-            <input 
-              name="linkedinUrl" 
-              value={formData.linkedinUrl} 
-              onChange={handleChange}
-              className="w-full bg-gray-900 border border-gray-700 rounded-md p-2 text-white focus:border-emerald-500 focus:outline-none"
-            />
+            <Label htmlFor="linkedinUrl">LinkedIn</Label>
+            <Input id="linkedinUrl" name="linkedinUrl" value={formData.linkedinUrl} onChange={handleChange} />
           </div>
         </div>
-        <div className="pt-4">
-          <button 
-            type="submit" 
-            disabled={updateProfile.isPending}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-4 rounded-md transition-colors"
-          >
-            {updateProfile.isPending ? 'Saving...' : 'Save Changes'}
-          </button>
+        <div className="pt-1">
+          <Button type="submit" variant="primary" disabled={updateProfile.isPending}>
+            {updateProfile.isPending ? 'Saving...' : 'Save changes'}
+          </Button>
         </div>
       </form>
     </div>

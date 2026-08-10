@@ -7,26 +7,27 @@
     /* Light Theme (GitHub Light) */
     --color-bg-primary: #ffffff;
     --color-bg-secondary: #f6f8fa;
-    --color-bg-tertiary: #f0f2f5;
+    --color-bg-tertiary: #eaeef2;
     --color-bg-canvas: #ffffff;
     --color-bg-inset: #f6f8fa;
     --color-border-default: #d0d7de;
     --color-border-muted: #d8dee4;
     --color-text-primary: #1f2328;
-    --color-text-secondary: #656d76;
-    --color-text-muted: #8b949e;
-    --color-accent: #238636;
-    --color-accent-hover: #2ea043;
+    --color-text-secondary: #59636e;
+    --color-text-muted: #818b98;
+    --color-accent: #1f883d;
+    --color-accent-hover: #1a7f37;
+    --color-accent-muted: rgba(31, 136, 61, 0.12);
     --color-link: #0969da;
     --color-btn-bg: #f6f8fa;
-    --color-btn-hover: #e8ebef;
+    --color-btn-hover: #eaeef2;
     --color-btn-border: #d0d7de;
     --color-header-bg: #f6f8fa;
+    --color-danger: #d1242f;
+    --color-danger-hover: #b3232c;
     --color-selection: rgba(9, 105, 218, 0.15);
-    --color-shadow: rgba(31, 35, 40, 0.04);
-    --color-preview-bg: #e8ebef;
-
-    --radius: 0.375rem;
+    --color-shadow: rgba(31, 35, 40, 0.06);
+    --color-preview-bg: #eaeef2;
   }
 
   .dark {
@@ -38,17 +39,20 @@
     --color-border-default: #30363d;
     --color-border-muted: #21262d;
     --color-text-primary: #e6edf3;
-    --color-text-secondary: #c9d1d9;
-    --color-text-muted: #8b949e;
-    --color-accent: #238636;
-    --color-accent-hover: #2ea043;
-    --color-link: #58a6ff;
+    --color-text-secondary: #9198a1;
+    --color-text-muted: #6e7681;
+    --color-accent: #2ea043;
+    --color-accent-hover: #3fb950;
+    --color-accent-muted: rgba(63, 185, 80, 0.15);
+    --color-link: #4493f8;
     --color-btn-bg: #21262d;
     --color-btn-hover: #30363d;
-    --color-btn-border: rgba(240, 246, 252, 0.1);
+    --color-btn-border: #3d444d;
     --color-header-bg: #010409;
-    --color-selection: rgba(88, 166, 255, 0.15);
-    --color-shadow: rgba(0, 0, 0, 0.3);
+    --color-danger: #f85149;
+    --color-danger-hover: #ff6b63;
+    --color-selection: rgba(68, 147, 248, 0.2);
+    --color-shadow: rgba(0, 0, 0, 0.4);
     --color-preview-bg: #010409;
   }
 }
@@ -58,10 +62,16 @@
     border-color: var(--color-border-default);
   }
 
+  html {
+    color-scheme: light dark;
+  }
+
   body {
     background-color: var(--color-bg-primary);
     color: var(--color-text-primary);
-    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
     min-height: 100vh;
     margin: 0;
     -webkit-font-smoothing: antialiased;
@@ -74,41 +84,58 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
-    letter-spacing: -0.025em;
+    margin: 0;
+  }
+
+  a {
+    color: var(--color-link);
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
   }
 }
 
 #root {
   width: 100%;
   min-height: 100svh;
-  display: flex;
-  flex-direction: column;
 }
 
-h1 {
-  @apply text-4xl md:text-6xl font-bold mt-8 mb-6;
-}
-
-h2 {
-  @apply text-xl md:text-2xl font-medium mb-2;
-  color: var(--color-text-secondary);
-}
-
-p {
-  @apply m-0;
-}
-
-code, .counter {
-  @apply inline-flex rounded-md px-2 py-1 text-sm font-mono shadow-inner;
-  background-color: var(--color-bg-secondary);
-  border: 1px solid var(--color-border-default);
-  color: var(--color-text-secondary);
+/* Semantic utility classes bound to design tokens.
+   Use these instead of hardcoded tailwind colors so the whole UI
+   stays consistent and respects light/dark automatically. */
+@layer components {
+  .surface {
+    background-color: var(--color-bg-primary);
+  }
+  .surface-secondary {
+    background-color: var(--color-bg-secondary);
+  }
+  .surface-tertiary {
+    background-color: var(--color-bg-tertiary);
+  }
+  .surface-inset {
+    background-color: var(--color-bg-inset);
+  }
+  .border-default {
+    border: 1px solid var(--color-border-default);
+  }
+  .border-muted {
+    border: 1px solid var(--color-border-muted);
+  }
+  .text-primary { color: var(--color-text-primary); }
+  .text-secondary { color: var(--color-text-secondary); }
+  .text-muted { color: var(--color-text-muted); }
+  .text-link { color: var(--color-link); }
+  .text-accent { color: var(--color-accent); }
+  .text-danger { color: var(--color-danger); }
 }
 
 /* Custom WebKit Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
@@ -117,7 +144,9 @@ code, .counter {
 
 ::-webkit-scrollbar-thumb {
   background-color: var(--color-border-default);
-  border-radius: 4px;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  background-clip: content-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {

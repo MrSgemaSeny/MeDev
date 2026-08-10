@@ -3,25 +3,36 @@ import { cn } from '../lib/utils';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, ...props }, ref) => {
+const inputBase =
+  'flex w-full rounded-md px-3 py-1.5 text-sm font-normal transition-[border-color,box-shadow] ' +
+  'focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60 placeholder:text-[var(--color-text-muted)]';
+
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className, type = 'text', style, ...props }, ref) => {
     return (
       <input
         type={type}
-        className={cn(
-          'flex h-12 w-full rounded-full border border-zinc-700 bg-transparent px-5 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 transition-all duration-300',
-          'hover:border-zinc-500',
-          'focus-visible:outline-none focus-visible:border-zinc-300 focus-visible:ring-1 focus-visible:ring-zinc-300',
-          'file:border-0 file:bg-transparent file:text-sm file:font-medium',
-          'disabled:cursor-not-allowed disabled:opacity-50',
-          className
-        )}
         ref={ref}
+        className={cn(inputBase, 'h-9', className)}
+        style={{
+          backgroundColor: 'var(--color-bg-primary)',
+          color: 'var(--color-text-primary)',
+          border: '1px solid var(--color-border-default)',
+          ...style,
+        }}
+        onFocus={(e) => {
+          e.currentTarget.style.borderColor = 'var(--color-link)';
+          e.currentTarget.style.boxShadow = '0 0 0 3px var(--color-selection)';
+          props.onFocus?.(e);
+        }}
+        onBlur={(e) => {
+          e.currentTarget.style.borderColor = 'var(--color-border-default)';
+          e.currentTarget.style.boxShadow = 'none';
+          props.onBlur?.(e);
+        }}
         {...props}
       />
     );
   }
 );
 Input.displayName = 'Input';
-
-export { Input };

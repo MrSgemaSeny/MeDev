@@ -1,79 +1,51 @@
-import {  useState  } from 'react';
+import { useState } from 'react';
 import { useProfile, useAddLanguage, useUpdateLanguage, useDeleteLanguage } from '../../../shared/api/hooks/useProfile';
 import type { LanguageDto } from '../../../entities/profile/model/types';
+import { Button } from '../../../shared/ui/Button';
+import { Input, Select, Label, Card } from '../../../shared/ui/Form';
+
+const PROFICIENCIES = ['Elementary', 'Limited Working', 'Professional Working', 'Full Professional', 'Native'];
 
 export const LanguagesSection = () => {
   const { data: profile, isLoading } = useProfile();
   const addMutation = useAddLanguage();
   const updateMutation = useUpdateLanguage();
   const deleteMutation = useDeleteLanguage();
-
   const [editingId, setEditingId] = useState<number | 'new' | null>(null);
 
-  if (isLoading) return <div className="text-gray-400">Loading...</div>;
-
+  if (isLoading) return <div className="text-secondary">Loading...</div>;
   const languages = profile?.languages || [];
 
   return (
     <div className="max-w-2xl">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-white">Languages</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>Languages</h2>
         {editingId === null && (
-          <button 
-            onClick={() => setEditingId('new')}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-md text-sm transition-colors"
-          >
-            + Add Language
-          </button>
+          <Button size="sm" variant="secondary" onClick={() => setEditingId('new')}>Add language</Button>
         )}
       </div>
-
-      <div className="space-y-4">
-        {languages.map((lang: any) => (
+      <div className="space-y-2">
+        {languages.map((lang) =>
           editingId === lang.id ? (
-            <LanguageForm 
-              key={lang.id} 
-              initialData={lang} 
-              onSave={(data) => {
-                updateMutation.mutate({ id: lang.id, payload: data });
-                setEditingId(null);
-              }}
-              onCancel={() => setEditingId(null)}
-              isPending={updateMutation.isPending}
-            />
+            <LanguageForm key={lang.id} initialData={lang}
+              onSave={(data) => { updateMutation.mutate({ id: lang.id, payload: data }); setEditingId(null); }}
+              onCancel={() => setEditingId(null)} isPending={updateMutation.isPending} />
           ) : (
-            <div key={lang.id} className="bg-gray-900 border border-gray-800 p-4 rounded-md flex justify-between items-center">
+            <Card key={lang.id} className="p-3 flex justify-between items-center">
               <div>
-                <h3 className="text-lg font-semibold text-white">{lang.name}</h3>
-                <p className="text-sm text-gray-500">{lang.proficiency}</p>
+                <h3 className="font-medium text-sm" style={{ color: 'var(--color-text-primary)' }}>{lang.name}</h3>
+                <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>{lang.proficiency}</p>
               </div>
-              <div className="flex space-x-2">
-                <button 
-                  onClick={() => setEditingId(lang.id)}
-                  className="text-gray-400 hover:text-white"
-                >
-                  Edit
-                </button>
-                <button 
-                  onClick={() => deleteMutation.mutate(lang.id)}
-                  className="text-red-400 hover:text-red-300"
-                >
-                  Delete
-                </button>
+              <div className="flex gap-2">
+                <button onClick={() => setEditingId(lang.id)} className="text-sm hover:underline" style={{ color: 'var(--color-link)' }}>Edit</button>
+                <button onClick={() => deleteMutation.mutate(lang.id)} className="text-sm hover:underline" style={{ color: 'var(--color-danger)' }}>Delete</button>
               </div>
-            </div>
+            </Card>
           )
-        ))}
-
+        )}
         {editingId === 'new' && (
-          <LanguageForm 
-            onSave={(data) => {
-              addMutation.mutate(data);
-              setEditingId(null);
-            }}
-            onCancel={() => setEditingId(null)}
-            isPending={addMutation.isPending}
-          />
+          <LanguageForm onSave={(data) => { addMutation.mutate(data); setEditingId(null); }}
+            onCancel={() => setEditingId(null)} isPending={addMutation.isPending} />
         )}
       </div>
     </div>
@@ -92,66 +64,27 @@ const LanguageForm: React.FC<LanguageFormProps> = ({ initialData, onSave, onCanc
     name: initialData?.name || '',
     proficiency: initialData?.proficiency || 'Native',
   });
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }));
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave(formData);
-  };
+  const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); onSave(formData); };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-gray-900 border border-gray-700 p-4 rounded-md space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-400 mb-1">Language</label>
-          <input 
-            required
-            name="name" 
-            value={formData.name} 
-            onChange={handleChange}
-            placeholder="e.g. English, Spanish"
-            className="w-full bg-gray-950 border border-gray-700 rounded-md p-2 text-white focus:border-emerald-500 focus:outline-none"
-          />
+    <Card className="p-4">
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <div className="grid grid-cols-2 gap-3">
+          <div><Label htmlFor="name">Language</Label><Input id="name" required name="name" value={formData.name} onChange={handleChange} placeholder="e.g. English, Spanish" /></div>
+          <div><Label htmlFor="proficiency">Proficiency</Label>
+            <Select id="proficiency" name="proficiency" value={formData.proficiency} onChange={handleChange}>
+              {PROFICIENCIES.map((p) => <option key={p} value={p}>{p}</option>)}
+            </Select>
+          </div>
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-400 mb-1">Proficiency</label>
-          <select 
-            name="proficiency" 
-            value={formData.proficiency} 
-            onChange={handleChange}
-            className="w-full bg-gray-950 border border-gray-700 rounded-md p-2 text-white focus:border-emerald-500 focus:outline-none"
-          >
-            <option value="Elementary">Elementary</option>
-            <option value="Limited Working">Limited Working</option>
-            <option value="Professional Working">Professional Working</option>
-            <option value="Full Professional">Full Professional</option>
-            <option value="Native">Native</option>
-          </select>
+        <div className="flex gap-2 pt-1">
+          <Button type="submit" variant="primary" disabled={isPending}>{isPending ? 'Saving...' : 'Save'}</Button>
+          <Button type="button" variant="secondary" onClick={onCancel}>Cancel</Button>
         </div>
-      </div>
-
-      <div className="flex space-x-3 pt-2">
-        <button 
-          type="submit" 
-          disabled={isPending}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md transition-colors"
-        >
-          {isPending ? 'Saving...' : 'Save'}
-        </button>
-        <button 
-          type="button" 
-          onClick={onCancel}
-          className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-md transition-colors"
-        >
-          Cancel
-        </button>
-      </div>
-    </form>
+      </form>
+    </Card>
   );
 };

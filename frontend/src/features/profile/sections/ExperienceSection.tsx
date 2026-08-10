@@ -1,87 +1,58 @@
-import {  useState  } from 'react';
+import { useState } from 'react';
 import { useProfile, useAddExperience, useUpdateExperience, useDeleteExperience } from '../../../shared/api/hooks/useProfile';
 import type { ExperienceDto } from '../../../entities/profile/model/types';
+import { Button } from '../../../shared/ui/Button';
+import { Input, Textarea, Label, Card } from '../../../shared/ui/Form';
 
 export const ExperienceSection = () => {
   const { data: profile, isLoading } = useProfile();
   const addMutation = useAddExperience();
   const updateMutation = useUpdateExperience();
   const deleteMutation = useDeleteExperience();
-
   const [editingId, setEditingId] = useState<number | 'new' | null>(null);
 
-  if (isLoading) return <div className="text-gray-400">Loading...</div>;
-
+  if (isLoading) return <div className="text-secondary">Loading...</div>;
   const experiences = profile?.experience || [];
 
   return (
     <div className="max-w-2xl">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-white">Experience</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>Experience</h2>
         {editingId === null && (
-          <button 
-            onClick={() => setEditingId('new')}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-md text-sm transition-colors"
-          >
-            + Add Experience
-          </button>
+          <Button size="sm" variant="secondary" onClick={() => setEditingId('new')}>Add experience</Button>
         )}
       </div>
 
-      <div className="space-y-6">
-        {experiences.map((exp: any) => (
+      <div className="space-y-3">
+        {experiences.map((exp) =>
           editingId === exp.id ? (
-            <ExperienceForm 
-              key={exp.id} 
-              initialData={exp} 
-              onSave={(data) => {
-                updateMutation.mutate({ id: exp.id, payload: data });
-                setEditingId(null);
-              }}
-              onCancel={() => setEditingId(null)}
-              isPending={updateMutation.isPending}
-            />
+            <ExperienceForm key={exp.id} initialData={exp}
+              onSave={(data) => { updateMutation.mutate({ id: exp.id, payload: data }); setEditingId(null); }}
+              onCancel={() => setEditingId(null)} isPending={updateMutation.isPending} />
           ) : (
-            <div key={exp.id} className="bg-gray-900 border border-gray-800 p-4 rounded-md">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="text-lg font-semibold text-white">{exp.position}</h3>
-                  <p className="text-emerald-400">{exp.company}</p>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {exp.startDate} - {exp.current ? 'Present' : exp.endDate}
+            <Card key={exp.id} className="p-3">
+              <div className="flex justify-between items-start gap-3">
+                <div className="min-w-0">
+                  <h3 className="font-semibold text-sm" style={{ color: 'var(--color-text-primary)' }}>{exp.position}</h3>
+                  <p className="text-sm" style={{ color: 'var(--color-link)' }}>{exp.company}</p>
+                  <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
+                    {exp.startDate} — {exp.current ? 'Present' : exp.endDate}
                   </p>
+                  {exp.description && (
+                    <p className="mt-2 text-sm whitespace-pre-wrap" style={{ color: 'var(--color-text-secondary)' }}>{exp.description}</p>
+                  )}
                 </div>
-                <div className="flex space-x-2">
-                  <button 
-                    onClick={() => setEditingId(exp.id)}
-                    className="text-gray-400 hover:text-white"
-                  >
-                    Edit
-                  </button>
-                  <button 
-                    onClick={() => deleteMutation.mutate(exp.id)}
-                    className="text-red-400 hover:text-red-300"
-                  >
-                    Delete
-                  </button>
+                <div className="flex gap-2 shrink-0">
+                  <button onClick={() => setEditingId(exp.id)} className="text-sm hover:underline" style={{ color: 'var(--color-link)' }}>Edit</button>
+                  <button onClick={() => deleteMutation.mutate(exp.id)} className="text-sm hover:underline" style={{ color: 'var(--color-danger)' }}>Delete</button>
                 </div>
               </div>
-              {exp.description && (
-                <p className="mt-3 text-gray-300 whitespace-pre-wrap">{exp.description}</p>
-              )}
-            </div>
+            </Card>
           )
-        ))}
-
+        )}
         {editingId === 'new' && (
-          <ExperienceForm 
-            onSave={(data) => {
-              addMutation.mutate(data);
-              setEditingId(null);
-            }}
-            onCancel={() => setEditingId(null)}
-            isPending={addMutation.isPending}
-          />
+          <ExperienceForm onSave={(data) => { addMutation.mutate(data); setEditingId(null); }}
+            onCancel={() => setEditingId(null)} isPending={addMutation.isPending} />
         )}
       </div>
     </div>
@@ -107,106 +78,32 @@ const ExperienceForm: React.FC<ExperienceFormProps> = ({ initialData, onSave, on
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
-    }));
+    setFormData((prev) => ({ ...prev, [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave(formData);
-  };
+  const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); onSave(formData); };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-gray-900 border border-gray-700 p-4 rounded-md space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-400 mb-1">Company</label>
-          <input 
-            required
-            name="company" 
-            value={formData.company} 
-            onChange={handleChange}
-            className="w-full bg-gray-950 border border-gray-700 rounded-md p-2 text-white focus:border-emerald-500 focus:outline-none"
-          />
+    <Card className="p-4">
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <div className="grid grid-cols-2 gap-3">
+          <div><Label htmlFor="company">Company</Label><Input id="company" required name="company" value={formData.company} onChange={handleChange} /></div>
+          <div><Label htmlFor="position">Position</Label><Input id="position" required name="position" value={formData.position} onChange={handleChange} /></div>
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-400 mb-1">Position</label>
-          <input 
-            required
-            name="position" 
-            value={formData.position} 
-            onChange={handleChange}
-            className="w-full bg-gray-950 border border-gray-700 rounded-md p-2 text-white focus:border-emerald-500 focus:outline-none"
-          />
+        <div className="grid grid-cols-2 gap-3">
+          <div><Label htmlFor="startDate">Start Date</Label><Input id="startDate" type="month" required name="startDate" value={formData.startDate} onChange={handleChange} /></div>
+          <div><Label htmlFor="endDate">End Date</Label><Input id="endDate" type="month" name="endDate" value={formData.endDate} onChange={handleChange} disabled={formData.current} /></div>
         </div>
-      </div>
-      
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-400 mb-1">Start Date</label>
-          <input 
-            required
-            type="month"
-            name="startDate" 
-            value={formData.startDate} 
-            onChange={handleChange}
-            className="w-full bg-gray-950 border border-gray-700 rounded-md p-2 text-white focus:border-emerald-500 focus:outline-none"
-          />
+        <label className="flex items-center gap-2 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+          <input type="checkbox" name="current" checked={formData.current} onChange={handleChange} style={{ accentColor: 'var(--color-accent)' }} />
+          I currently work here
+        </label>
+        <div><Label htmlFor="description">Description</Label><Textarea id="description" name="description" value={formData.description} onChange={handleChange} rows={4} /></div>
+        <div className="flex gap-2 pt-1">
+          <Button type="submit" variant="primary" disabled={isPending}>{isPending ? 'Saving...' : 'Save'}</Button>
+          <Button type="button" variant="secondary" onClick={onCancel}>Cancel</Button>
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-400 mb-1">End Date</label>
-          <input 
-            type="month"
-            name="endDate" 
-            value={formData.endDate} 
-            onChange={handleChange}
-            disabled={formData.current}
-            className="w-full bg-gray-950 border border-gray-700 rounded-md p-2 text-white focus:border-emerald-500 focus:outline-none disabled:opacity-50"
-          />
-        </div>
-      </div>
-
-      <div className="flex items-center mt-2">
-        <input 
-          type="checkbox" 
-          id="current" 
-          name="current"
-          checked={formData.current}
-          onChange={handleChange}
-          className="mr-2 rounded border-gray-700 text-emerald-500 focus:ring-emerald-500 bg-gray-950"
-        />
-        <label htmlFor="current" className="text-sm text-gray-300">I currently work here</label>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-400 mb-1">Description</label>
-        <textarea 
-          name="description" 
-          value={formData.description} 
-          onChange={handleChange}
-          rows={4}
-          className="w-full bg-gray-950 border border-gray-700 rounded-md p-2 text-white focus:border-emerald-500 focus:outline-none"
-        />
-      </div>
-
-      <div className="flex space-x-3 pt-2">
-        <button 
-          type="submit" 
-          disabled={isPending}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md transition-colors"
-        >
-          {isPending ? 'Saving...' : 'Save'}
-        </button>
-        <button 
-          type="button" 
-          onClick={onCancel}
-          className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-md transition-colors"
-        >
-          Cancel
-        </button>
-      </div>
-    </form>
+      </form>
+    </Card>
   );
 };

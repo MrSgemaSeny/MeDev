@@ -26,12 +26,9 @@ export const useAuthStore = create<AuthState>()(
         localStorage.setItem('refreshToken', refreshToken);
         set({ accessToken });
       },
-      setPlan: (plan) => {
-        set({ plan });
-      },
+      setPlan: (plan) => set({ plan }),
       logout: async () => {
         try {
-          // Import api here to avoid circular dependency if needed, or use the top level one
           await api.post('/auth/logout');
         } catch (e) {
           console.error('Logout failed on backend', e);
@@ -41,8 +38,8 @@ export const useAuthStore = create<AuthState>()(
       },
     }),
     {
-      name: 'auth-storage', // Key for localStorage
-      partialize: (state) => ({ username: state.username, plan: state.plan }), // We don't persist functions and accessToken
+      name: 'auth-storage',
+      partialize: (state) => ({ username: state.username, plan: state.plan }),
     }
   )
 );
