@@ -5,6 +5,8 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  DragOverlay,
+  defaultDropAnimationSideEffects
 } from '@dnd-kit/core';
 import {
   SortableContext,
@@ -24,34 +26,27 @@ import { api } from '../../shared/api/axios';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-function SortableItem({ section }: { section: Section }) {
+function SectionItem({ section, isDragging, dragOverlay, listeners, attributes, setNodeRef, style }: any) {
   const toggleSection = useResumeEditorStore((state) => state.toggleSection);
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: section.id });
-
-  const style = {
-    transform: CSS.Translate.toString(transform),
-    transition,
-    zIndex: isDragging ? 1 : 0,
-  };
-
+  
   return (
     <div
       ref={setNodeRef}
       style={{
         ...style,
         backgroundColor: 'var(--color-bg-secondary)',
-        border: `1px solid ${isDragging ? 'var(--color-text-muted)' : 'var(--color-border-default)'}`,
-        opacity: section.visible ? 1 : 0.5,
+        border: `1px solid ${isDragging || dragOverlay ? 'var(--color-text-muted)' : 'var(--color-border-default)'}`,
+        opacity: isDragging && !dragOverlay ? 0.3 : (section.visible ? 1 : 0.5),
+        boxShadow: dragOverlay ? '0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.2)' : 'none',
+        cursor: dragOverlay ? 'grabbing' : 'default',
       }}
-      className={`w-full flex items-center justify-between px-3 py-2.5 mb-2 rounded-md transition-colors duration-150 ${
-        isDragging ? 'shadow-md' : ''
-      }`}
+      className="w-full flex items-center justify-between px-3 py-2.5 mb-2 rounded-md transition-colors duration-150"
     >
       <div className="flex items-center gap-3">
         <div
           {...attributes}
           {...listeners}
-          className="cursor-grab p-1 rounded-sm transition-colors"
+          className={`p-1 rounded-sm transition-colors ${dragOverlay ? 'cursor-grabbing' : 'cursor-grab'}`}
           style={{ color: 'var(--color-text-muted)' }}
         >
           <GripVertical className="w-4 h-4" />
@@ -63,10 +58,32 @@ function SortableItem({ section }: { section: Section }) {
         className="p-1.5 rounded-md transition-colors"
         style={{ color: 'var(--color-text-muted)' }}
         title={section.visible ? "Hide section" : "Show section"}
+        disabled={dragOverlay}
       >
         {section.visible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
       </button>
     </div>
+  );
+}
+
+function SortableItem({ section }: { section: Section }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: section.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 1 : 0,
+  };
+
+  return (
+    <SectionItem
+      section={section}
+      isDragging={isDragging}
+      listeners={listeners}
+      attributes={attributes}
+      setNodeRef={setNodeRef}
+      style={style}
+    />
   );
 }
 
@@ -78,6 +95,7 @@ export function ResumeBuilder() {
   const token = useAuthStore((state) => state.accessToken);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [isPdfLoading, setIsPdfLoading] = useState(false);
+  const [activeId, setActiveId] = useState<string | null>(null);
 
   // Sync initial order from profile
   useEffect(() => {
@@ -132,13 +150,22 @@ export function ResumeBuilder() {
   }, [selectedTemplate, token]);
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
 
+  function handleDragStart(event: any) {
+    setActiveId(event.active.id);
+  }
+
   function handleDragEnd(event: any) {
+    setActiveId(null);
     const { active, over } = event;
     if (over && active.id !== over.id) {
       const oldIndex = sections.findIndex((item) => item.id === active.id);
@@ -269,12 +296,30 @@ export function ResumeBuilder() {
 
         <div className="flex-1 overflow-y-auto overflow-x-hidden pr-1 relative">
           <div className="text-xs font-semibold mb-3 uppercase tracking-wider sticky top-0 bg-opacity-90 pb-1 z-10" style={{ color: 'var(--color-text-muted)', backgroundColor: 'var(--color-bg-primary)' }}>Sections</div>
-          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+            onDragCancel={() => setActiveId(null)}
+          >
             <SortableContext items={sections.map(s => s.id)} strategy={verticalListSortingStrategy}>
               {sections.map((section) => (
                 <SortableItem key={section.id} section={section} />
               ))}
             </SortableContext>
+            <DragOverlay
+              dropAnimation={{
+                sideEffects: defaultDropAnimationSideEffects({ styles: { active: { opacity: '0.4' } } }),
+              }}
+            >
+              {activeId ? (
+                <SectionItem
+                  section={sections.find(s => s.id === activeId)!}
+                  dragOverlay={true}
+                />
+              ) : null}
+            </DragOverlay>
           </DndContext>
         </div>
       </div>
