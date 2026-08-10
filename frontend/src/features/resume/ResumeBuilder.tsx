@@ -383,12 +383,11 @@ export function ResumeBuilder() {
 
         {/* Iframe wrapper */}
         <div
-          className="w-full max-w-[210mm] h-[297mm] max-h-full bg-white shadow-sm overflow-hidden rounded-md transition-transform hover:scale-[1.01] duration-300"
-          style={{ border: '1px solid var(--color-border-default)' }}
+          className="w-full max-w-[210mm] h-[297mm] max-h-full bg-white shadow-md overflow-hidden rounded-md transition-transform hover:scale-[1.01] duration-300 ring-1 ring-black/5 dark:ring-white/10"
         >
            {pdfUrl && (
              <iframe
-                className="w-full h-full bg-white"
+                className="w-full h-full bg-white border-0"
                 src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
                 title="Resume Preview"
              />

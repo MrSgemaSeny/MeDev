@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuthStore } from '../../entities/user/model/store';
 import { Button } from '../../shared/ui/Button';
 import { ResumeBuilder } from '../../features/resume/ResumeBuilder';
-import { LogOut, Moon, Sun, LayoutDashboard } from 'lucide-react';
+import { LogOut, Moon, Sun, Command } from 'lucide-react';
 
 export function DashboardPage() {
   const username = useAuthStore((state) => state.username);
@@ -34,14 +34,8 @@ export function DashboardPage() {
             borderBottom: '1px solid var(--color-border-default)',
           }}
         >
-          <div className="font-semibold text-base tracking-tight flex items-center gap-3" style={{ color: 'var(--color-text-secondary)' }}>
-            <div
-              className="w-8 h-8 rounded-full flex items-center justify-center"
-              style={{ backgroundColor: 'var(--color-text-secondary)', color: 'var(--color-header-bg)' }}
-            >
-              <LayoutDashboard className="w-4 h-4" />
-            </div>
-            MeDev
+          <div className="flex items-center justify-center p-1.5 rounded-lg border shadow-sm transition-colors cursor-default" style={{ backgroundColor: 'var(--color-btn-bg)', borderColor: 'var(--color-border-default)', color: 'var(--color-text-primary)' }}>
+            <Command className="w-5 h-5" />
           </div>
           <div className="flex items-center gap-3">
             <Button
