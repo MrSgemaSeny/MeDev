@@ -90,9 +90,9 @@ public class AiAnalysisServiceTest {
         MockMultipartFile file = createPdfFile("Text");
         when(groqClient.sendChatCompletion(anyString(), anyString())).thenReturn("not json");
 
-        assertThatThrownBy(() -> aiAnalysisService.parseResumePdf(file))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("Failed to parse Groq response to JSON");
+        UpdateProfileRequest result = aiAnalysisService.parseResumePdf(file);
+        assertThat(result).isNotNull();
+        assertThat(result.getFullName()).isNull();
     }
 
     @Test

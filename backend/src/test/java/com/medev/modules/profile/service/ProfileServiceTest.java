@@ -37,6 +37,8 @@ class ProfileServiceTest {
     private LanguageRepository languageRepository;
     @Mock
     private ProjectRepository projectRepository;
+    @Mock
+    private ProfileMapper profileMapper;
 
     @InjectMocks
     private ProfileService profileService;
