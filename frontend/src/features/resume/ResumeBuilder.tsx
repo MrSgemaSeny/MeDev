@@ -58,8 +58,11 @@ function SortableItem({ section }: { section: Section }) {
   );
 }
 
+import { useTranslation } from 'react-i18next';
+
 export function ResumeBuilder() {
-  const { sections, reorderSections, selectedTemplate, setSections } = useResumeEditorStore();
+  const { t } = useTranslation();
+  const { sections, reorderSections, selectedTemplate, setSections, setTemplate } = useResumeEditorStore();
   const { data: profile, isLoading } = useProfile();
   const { mutate: updateSectionOrder } = useUpdateSectionOrder();
   const token = useAuthStore((state) => state.accessToken);
@@ -170,8 +173,8 @@ export function ResumeBuilder() {
         <div className="absolute top-0 left-0 w-full h-1 bg-slate-800 dark:bg-slate-400" />
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Builder</h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">Design your professional story</p>
+            <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t('builder.title')}</h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">{t('builder.subtitle')}</p>
           </div>
           <div className="flex items-center gap-3">
             <select
@@ -183,8 +186,31 @@ export function ResumeBuilder() {
               <option value="minimal">Minimal</option>
               <option value="modern">Modern</option>
             </select>
+            
+            <label className="cursor-pointer">
+              <input type="file" accept=".pdf" className="hidden" onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                toast.info("Uploading and parsing PDF...");
+                const formData = new FormData();
+                formData.append('file', file);
+                try {
+                  await api.post('/ai/parse-resume', formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                  });
+                  toast.success(t('builder.uploadSuccess'));
+                  window.location.reload(); // simple way to refresh profile
+                } catch (error) {
+                  toast.error(t('builder.uploadError'));
+                }
+              }} />
+              <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-2 text-sm rounded-xl transition-colors">
+                 <span className="hidden sm:inline">{t('builder.uploadPdf')}</span>
+              </div>
+            </label>
+
             <Button size="sm" onClick={handleDownload} className="flex items-center gap-2 bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-900 rounded-xl shadow-md shadow-slate-900/20 dark:shadow-white/20 border-0">
-              <Download className="w-4 h-4" /> <span className="hidden sm:inline">Export PDF</span>
+              <Download className="w-4 h-4" /> <span className="hidden sm:inline">{t('builder.exportPdf')}</span>
             </Button>
           </div>
         </div>
