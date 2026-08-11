@@ -15,6 +15,10 @@
   - Implemented structured JSON logging via `logback-spring.xml` and MDC.
   - Created `Dockerfile` and `fly.toml` for backend deployment on Fly.io.
   - **Implemented Google OAuth2 integration** for universal Auth (added `google_id` to database via Flyway, refactored `CustomOAuth2UserService` to handle multiple providers, added frontend UI buttons).
+  - **Dockerized local development**: Created root `docker-compose.yml` (Postgres, Redis, Backend, Frontend) and `frontend/Dockerfile` for isolated full-stack execution.
+  - **Fixed `GroqClient` DNS Resolution**: Switched Reactor Netty's `HttpClient` to use the standard Java DNS resolver (`DefaultAddressResolverGroup.INSTANCE`) to fix `Failed to resolve api.groq.com` on Windows.
+  - **Fixed BillingController routing**: Corrected `@RequestMapping` from `/api/v1/billing` to `/v1/billing` to avoid `NoResourceFoundException` under the global `/api` context path.
+  - **Implemented User Profile Dropdown**: Added `UserProfileDropdown.tsx` matching UI design (Avatar, Role, Notifications, Language, Logout, and a Theme Switcher).
 
 ## Next in Backlog
 - Frontend CI/CD / GitHub Pages deployment.

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/billing")
+@RequestMapping("/v1/billing")
 @RequiredArgsConstructor
 public class BillingController {
 

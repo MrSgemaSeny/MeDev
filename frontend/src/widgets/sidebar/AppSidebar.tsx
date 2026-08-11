@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuthStore } from '../../entities/user/model/store';
 import { QuotaWidget } from '../../features/billing/components/QuotaWidget';
+import { UserProfileDropdown } from './components/UserProfileDropdown';
 
 const NAV = [
   { to: '/dashboard', label: 'Dashboard' },
@@ -62,19 +63,7 @@ export const AppSidebar = () => {
 
       <QuotaWidget />
 
-      {username && (
-        <div
-          className="px-3 py-2 border-t text-xs overflow-hidden shrink-0"
-          style={{
-            borderColor: 'var(--color-border-default)',
-            color: 'var(--color-text-muted)',
-          }}
-        >
-          <span className="truncate block group-hover:opacity-100 opacity-0 transition-opacity duration-150">
-            {username}
-          </span>
-        </div>
-      )}
+      <UserProfileDropdown isSidebarExpanded={hovered} />
     </aside>
   );
 };
