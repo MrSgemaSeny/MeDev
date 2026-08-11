@@ -43,6 +43,9 @@ public class User {
     @Column(name = "github_access_token")
     private String githubAccessToken;
 
+    @Column(name = "google_id")
+    private String googleId;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 

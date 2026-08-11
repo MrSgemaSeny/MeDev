@@ -38,7 +38,7 @@ export const AuthCallback = () => {
           }}
         />
         <h2 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-          Authenticating with GitHub...
+          Authenticating...
         </h2>
       </div>
     </div>

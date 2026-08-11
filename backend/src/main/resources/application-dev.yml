@@ -15,6 +15,11 @@ spring:
             client-id: ${GITHUB_CLIENT_ID:placeholder_client_id}
             client-secret: ${GITHUB_CLIENT_SECRET:placeholder_client_secret}
             scope: read:user,user:email
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:placeholder_google_client_id}
+            client-secret: ${GOOGLE_CLIENT_SECRET:placeholder_google_client_secret}
+            scope: openid,profile,email
+            redirect-uri: "{baseUrl}/login/oauth2/code/google"
 
 jwt:
   secret: super_secret_jwt_key_that_is_at_least_256_bits_long_for_hs256_algorithm_12345

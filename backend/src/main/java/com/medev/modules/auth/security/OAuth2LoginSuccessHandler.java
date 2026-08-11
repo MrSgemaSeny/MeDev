@@ -29,10 +29,11 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         
-        String email = (String) oAuth2User.getAttributes().get("email");
+        // _email is set by CustomOAuth2UserService for all providers
+        String email = (String) oAuth2User.getAttributes().get("_email");
         if (email == null) {
-            String login = (String) oAuth2User.getAttributes().get("login");
-            email = login + "@github.user.medev.com";
+            // Fallback: try standard email attribute
+            email = (String) oAuth2User.getAttributes().get("email");
         }
 
         User user = userRepository.findByEmail(email)
