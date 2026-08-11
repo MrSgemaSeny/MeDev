@@ -10,7 +10,7 @@ export function useAiGenerate() {
   const generate = useCallback(async (prompt: string, onToken: (token: string) => void) => {
     setIsGenerating(true);
     try {
-      const response = await fetch('http://localhost:8080/api/v1/ai/chat/stream', {
+      let response = await fetch('http://localhost:8080/api/v1/ai/chat/stream', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -18,6 +18,24 @@ export function useAiGenerate() {
         },
         body: JSON.stringify({ prompt: prompt }),
       });
+
+      if (response.status === 401) {
+        try {
+          const { api } = await import('../../../shared/api/axios');
+          await api.get('/v1/ai/quota');
+          const newToken = useAuthStore.getState().accessToken;
+          response = await fetch('http://localhost:8080/api/v1/ai/chat/stream', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${newToken}`,
+            },
+            body: JSON.stringify({ prompt: prompt }),
+          });
+        } catch (refreshErr) {
+          throw new Error('Сессия истекла. Пожалуйста, войдите снова.');
+        }
+      }
 
       if (response.status === 429) {
         useUpsellStore.getState().openUpsell();

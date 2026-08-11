@@ -37,7 +37,7 @@ export const AiChatWidget = () => {
     try {
       const historyToSend = messages.slice(-10).map(m => ({ role: m.role, content: m.content }));
       
-      const response = await fetch('http://localhost:8080/api/v1/ai/chat/stream', {
+      let response = await fetch('http://localhost:8080/api/v1/ai/chat/stream', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -45,6 +45,24 @@ export const AiChatWidget = () => {
         },
         body: JSON.stringify({ prompt: text, history: historyToSend })
       });
+
+      if (response.status === 401) {
+        try {
+          const { api } = await import('../../../shared/api/axios');
+          await api.get('/v1/ai/quota'); // this will trigger the axios interceptor to refresh the token
+          const newToken = useAuthStore.getState().accessToken;
+          response = await fetch('http://localhost:8080/api/v1/ai/chat/stream', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${newToken}`
+            },
+            body: JSON.stringify({ prompt: text, history: historyToSend })
+          });
+        } catch (refreshErr) {
+          throw new Error('Сессия истекла. Пожалуйста, войдите снова.');
+        }
+      }
 
       if (response.status === 429) {
         import('../../../entities/user/model/upsellStore').then(({ useUpsellStore }) => {
