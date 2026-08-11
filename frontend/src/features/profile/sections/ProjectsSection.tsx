@@ -5,7 +5,7 @@ import { Button } from '../../../shared/ui/Button';
 import { Input, Textarea, Label, Card } from '../../../shared/ui/Form';
 
 import { useAiChatStore } from '../../ai-assistant/model/store';
-import { useAiGenerate } from '../../ai/hooks/useAiGenerate';
+import { useGenerateProjectDescription } from '../../ai/hooks/useAiGenerate';
 import { Bot } from 'lucide-react';
 
 export const ProjectsSection = () => {
@@ -102,7 +102,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData, onSave, onCancel
     endDate: initialData?.endDate || '',
     description: initialData?.description || '',
   });
-  const { generate, isGenerating } = useAiGenerate();
+  const { generateProjectDescription, isGenerating } = useGenerateProjectDescription();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -110,13 +110,15 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData, onSave, onCancel
   const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); onSave(formData); };
 
   const handleGenerateDescription = async () => {
-    setFormData((prev) => ({ ...prev, description: '' }));
-    await generate(
-      `Сгенерируй описание для проекта "${formData.name}". Максимум 3-4 предложения. Сделай упор на технические детали и бизнес-ценность.`,
-      (token) => {
-        setFormData((prev) => ({ ...prev, description: prev.description + token }));
+    try {
+      const description = await generateProjectDescription(formData.name, 'ru');
+      if (description) {
+        setFormData((prev) => ({ ...prev, description }));
       }
-    );
+    } catch (error) {
+      console.error(error);
+      alert("Failed to generate description");
+    }
   };
 
   return (

@@ -27,7 +27,10 @@ import static org.mockito.Mockito.when;
 public class AiAnalysisServiceTest {
 
     @Mock
-    private GroqClient groqClient;
+    private LlmProvider llmProvider;
+
+    @Mock
+    private PromptLoader promptLoader;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -35,7 +38,8 @@ public class AiAnalysisServiceTest {
 
     @BeforeEach
     void setUp() {
-        aiAnalysisService = new AiAnalysisService(groqClient, objectMapper);
+        aiAnalysisService = new AiAnalysisService(llmProvider, promptLoader, objectMapper);
+        org.mockito.Mockito.lenient().when(promptLoader.load(anyString())).thenReturn("test prompt");
     }
 
     private MockMultipartFile createPdfFile(String text) throws Exception {
@@ -59,7 +63,7 @@ public class AiAnalysisServiceTest {
     void parseResumePdf_happyPath() throws Exception {
         MockMultipartFile file = createPdfFile("John Doe - Software Developer");
         String jsonResponse = "{\"fullName\":\"John Doe\",\"headline\":\"Software Developer\"}";
-        when(groqClient.sendChatCompletion(anyString(), anyString())).thenReturn(jsonResponse);
+        when(llmProvider.structuredCompletion(anyString(), anyString())).thenReturn(jsonResponse);
 
         UpdateProfileRequest result = aiAnalysisService.parseResumePdf(file);
 
@@ -76,19 +80,19 @@ public class AiAnalysisServiceTest {
         }
         MockMultipartFile file = createPdfFile(sb.toString());
         String jsonResponse = "{}";
-        when(groqClient.sendChatCompletion(anyString(), anyString())).thenReturn(jsonResponse);
+        when(llmProvider.structuredCompletion(anyString(), anyString())).thenReturn(jsonResponse);
 
         aiAnalysisService.parseResumePdf(file);
 
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        verify(groqClient).sendChatCompletion(anyString(), captor.capture());
+        verify(llmProvider).structuredCompletion(anyString(), captor.capture());
         assertThat(captor.getValue().length()).isLessThanOrEqualTo(10000);
     }
 
     @Test
     void parseResumePdf_groqReturnsInvalidJson_throwsRuntime() throws Exception {
         MockMultipartFile file = createPdfFile("Text");
-        when(groqClient.sendChatCompletion(anyString(), anyString())).thenReturn("not json");
+        when(llmProvider.structuredCompletion(anyString(), anyString())).thenReturn("not json");
 
         UpdateProfileRequest result = aiAnalysisService.parseResumePdf(file);
         assertThat(result).isNotNull();
@@ -107,7 +111,7 @@ public class AiAnalysisServiceTest {
     @Test
     void parseResumePdf_groqThrowsException_propagates() throws Exception {
         MockMultipartFile file = createPdfFile("Text");
-        when(groqClient.sendChatCompletion(anyString(), anyString())).thenThrow(new RuntimeException("Groq error"));
+        when(llmProvider.structuredCompletion(anyString(), anyString())).thenThrow(new RuntimeException("Groq error"));
 
         assertThatThrownBy(() -> aiAnalysisService.parseResumePdf(file))
                 .isInstanceOf(RuntimeException.class)

@@ -20,6 +20,7 @@ export const AiChatWidget = () => {
     if (isOpen && messages.length === 0) {
       handleSend("Привет! Поздоровайся и расскажи чем можешь помочь коротко.", true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   const handleSend = async (text: string = input, isHidden: boolean = false) => {
@@ -44,6 +45,13 @@ export const AiChatWidget = () => {
         },
         body: JSON.stringify({ prompt: text, history: historyToSend })
       });
+
+      if (response.status === 429) {
+        import('../../../entities/user/model/upsellStore').then(({ useUpsellStore }) => {
+          useUpsellStore.getState().openUpsell();
+        });
+        throw new Error('Лимит запросов исчерпан');
+      }
 
       if (!response.ok) throw new Error('Network response was not ok');
       if (!response.body) throw new Error('ReadableStream not supported');

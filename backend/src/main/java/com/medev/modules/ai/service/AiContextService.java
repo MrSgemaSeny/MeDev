@@ -1,52 +1,86 @@
 package com.medev.modules.ai.service;
 
-import com.medev.modules.auth.repository.UserRepository;
 import com.medev.modules.auth.entity.User;
+import com.medev.modules.auth.repository.UserRepository;
 import com.medev.modules.github.service.GitHubService;
 import com.medev.modules.profile.dto.ProfileDto;
 import com.medev.modules.profile.service.ProfileService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+/**
+ * Собирает system prompt для AI из профиля пользователя и GitHub данных.
+ *
+ * Кэш GitHub данных: @Cacheable("github-context") с TTL 1 час (настраивается в CacheConfig).
+ * Кэш профиля не нужен — он инвалидируется при каждом обновлении.
+ *
+ * Бюджет токенов:
+ * - System prompt: ~1800-2000 токенов максимум
+ * - Каждый текстовый блок обрезается с запасом
+ * - Грубая оценка: 1 токен ≈ 4 символа (для английского/русского)
+ */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AiContextService {
 
+    // Лимиты символов на блок — контролируем бюджет токенов
+    private static final int MAX_SUMMARY_CHARS     = 800;
+    private static final int MAX_EXPERIENCE_CHARS  = 500;
+    private static final int MAX_PROJECT_CHARS     = 300;
+    private static final int MAX_GITHUB_CHARS      = 600;
+
     private final ProfileService profileService;
     private final UserRepository userRepository;
     private final GitHubService gitHubService;
+    private final PromptLoader promptLoader;
 
-    public String buildSystemPrompt(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+    /**
+     * Строит system prompt для assistant-чата.
+     * Загружает шаблон из prompts/assistant_system_v1.txt
+     * и дополняет данными пользователя.
+     */
+    public String buildAssistantSystemPrompt(Long userId) {
+        String basePrompt = promptLoader.load("assistant_system_v1");
+        String userContext = buildUserContextBlock(userId);
+        return basePrompt + "\n\n" + userContext;
+    }
+
+    /**
+     * Строит контекстный блок для встраивания в любой промпт.
+     * Используется в generate-эндпоинтах (summary, project description и т.д.)
+     */
+    public String buildUserContextBlock(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
         ProfileDto profile = profileService.getByUserId(userId);
 
         StringBuilder sb = new StringBuilder();
-        sb.append("Ты — профессиональный AI ассистент платформы MeDev для разработчиков.\n");
-        sb.append("Ты знаешь профиль пользователя и помогаешь улучшить резюме и портфолио.\n");
-        sb.append("Отвечай конкретно, без воды. Давай actionable советы. Если с тобой просто здороваются - будь вежлив, назови пользователя по имени и предложи помощь.\n");
-        sb.append("КРИТИЧЕСКОЕ ПРАВИЛО: Обращайся к пользователю СТРОГО по имени, указанному в профиле. НИКОГДА не сокращай, не придумывай клички и не изменяй его имя! Это крайне важно.\n\n");
-
-        sb.append("=== ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ ===\n");
-        sb.append("Имя: ").append(profile.getFullName() != null ? profile.getFullName() : "Не указано").append("\n");
-        sb.append("Должность: ").append(profile.getHeadline() != null ? profile.getHeadline() : "Не указана").append("\n");
-        sb.append("Summary: ").append(truncate(profile.getSummary(), 1000)).append("\n");
-        sb.append("Локация: ").append(profile.getLocation() != null ? profile.getLocation() : "Не указана").append("\n");
-        sb.append("Тариф: ").append(user.getPlan() != null ? user.getPlan().name() : "FREE").append("\n\n");
+        sb.append("=== USER PROFILE ===\n");
+        sb.append("Name: ").append(orEmpty(profile.getFullName())).append("\n");
+        sb.append("Headline: ").append(orEmpty(profile.getHeadline())).append("\n");
+        sb.append("Plan: ").append(user.getPlan() != null ? user.getPlan().name() : "FREE").append("\n");
+        sb.append("Summary: ").append(truncate(profile.getSummary(), MAX_SUMMARY_CHARS)).append("\n");
+        sb.append("Location: ").append(orEmpty(profile.getLocation())).append("\n\n");
 
         if (profile.getExperience() != null && !profile.getExperience().isEmpty()) {
-            sb.append("=== ОПЫТ РАБОТЫ ===\n");
+            sb.append("=== EXPERIENCE ===\n");
             profile.getExperience().forEach(e -> {
-                sb.append("- ").append(e.getPosition()).append(" в ").append(e.getCompany())
-                  .append(" (").append(e.getStartDate()).append(" — ").append(e.getIsCurrent() != null && e.getIsCurrent() ? "Present" : e.getEndDate()).append(")\n");
-                if (e.getDescription() != null && !e.getDescription().isEmpty()) {
-                    sb.append("  ").append(truncate(e.getDescription(), 500).replace("\n", "\n  ")).append("\n");
+                sb.append("- ").append(e.getPosition()).append(" at ").append(e.getCompany())
+                  .append(" (").append(e.getStartDate()).append(" — ")
+                  .append(Boolean.TRUE.equals(e.getIsCurrent()) ? "Present" : e.getEndDate())
+                  .append(")\n");
+                if (e.getDescription() != null && !e.getDescription().isBlank()) {
+                    sb.append("  ").append(truncate(e.getDescription(), MAX_EXPERIENCE_CHARS)).append("\n");
                 }
             });
             sb.append("\n");
         }
 
         if (profile.getSkills() != null && !profile.getSkills().isEmpty()) {
-            sb.append("=== НАВЫКИ ===\n");
+            sb.append("=== SKILLS ===\n");
             profile.getSkills().forEach(s ->
                 sb.append("- ").append(s.getName()).append(" (").append(s.getLevel()).append(")\n")
             );
@@ -54,31 +88,52 @@ public class AiContextService {
         }
 
         if (profile.getProjects() != null && !profile.getProjects().isEmpty()) {
-            sb.append("=== ПРОЕКТЫ ===\n");
+            sb.append("=== PROJECTS ===\n");
             profile.getProjects().forEach(p -> {
-                sb.append("- ").append(p.getName()).append(": ").append(truncate(p.getDescription(), 300)).append("\n");
-                if (p.getGithubUrl() != null && !p.getGithubUrl().isEmpty()) {
-                    sb.append("  URL: ").append(p.getGithubUrl()).append("\n");
+                sb.append("- ").append(p.getName()).append(": ")
+                  .append(truncate(p.getDescription(), MAX_PROJECT_CHARS)).append("\n");
+                if (p.getGithubUrl() != null && !p.getGithubUrl().isBlank()) {
+                    sb.append("  GitHub: ").append(p.getGithubUrl()).append("\n");
                 }
             });
             sb.append("\n");
         }
 
-        if (profile.getGithubUsername() != null && !profile.getGithubUsername().isEmpty()) {
+        // GitHub данные кэшируются отдельно — они медленные и меняются редко
+        if (profile.getGithubUsername() != null && !profile.getGithubUsername().isBlank()) {
             sb.append("=== GITHUB ===\n");
             sb.append("Username: ").append(profile.getGithubUsername()).append("\n");
-            String githubRepos = gitHubService.fetchUserPublicRepos(profile.getGithubUsername());
-            if (!githubRepos.isEmpty()) {
-                sb.append(githubRepos).append("\n");
-            }
+            String githubData = fetchGithubCached(profile.getGithubUsername());
+            sb.append(truncate(githubData, MAX_GITHUB_CHARS)).append("\n");
         }
+
+        int estimatedTokens = sb.length() / 4;
+        log.debug("[AiContextService] Built context for user {}: {} chars (~{} tokens)",
+                userId, sb.length(), estimatedTokens);
 
         return sb.toString();
     }
 
-    private String truncate(String text, int maxLength) {
-        if (text == null) return "Нет данных";
-        if (text.length() <= maxLength) return text;
-        return text.substring(0, maxLength) + "...";
+    /**
+     * GitHub данные кэшируются на 1 час.
+     * TTL настраивается в CacheConfig через CaffeineSpec или Redis TTL.
+     */
+    @Cacheable(value = "github-context", key = "#username")
+    public String fetchGithubCached(String username) {
+        try {
+            return gitHubService.fetchUserPublicRepos(username);
+        } catch (Exception e) {
+            log.warn("[AiContextService] Failed to fetch GitHub data for {}: {}", username, e.getMessage());
+            return "GitHub data unavailable";
+        }
+    }
+
+    private String truncate(String text, int max) {
+        if (text == null || text.isBlank()) return "Not provided";
+        return text.length() <= max ? text : text.substring(0, max) + "...";
+    }
+
+    private String orEmpty(String value) {
+        return value != null ? value : "Not provided";
     }
 }

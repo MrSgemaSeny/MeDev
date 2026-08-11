@@ -12,7 +12,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AiAssistantService {
 
-    private final GroqClient groqClient;
+    private final LlmProvider llmProvider;
 
     public Flux<String> streamChat(String userMessage, String systemPrompt, List<Map<String, String>> previousHistory) {
         List<Map<String, String>> messages = new ArrayList<>();
@@ -25,6 +25,6 @@ public class AiAssistantService {
         
         messages.add(Map.of("role", "user", "content", userMessage));
 
-        return groqClient.streamChatCompletion(messages);
+        return llmProvider.streamCompletion(messages);
     }
 }

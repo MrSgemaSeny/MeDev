@@ -17,7 +17,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class AiAnalysisService {
 
-    private final GroqClient groqClient;
+    private final LlmProvider llmProvider;
+    private final PromptLoader promptLoader;
     private final ObjectMapper objectMapper;
 
     public UpdateProfileRequest parseResumePdf(MultipartFile file) {
@@ -28,22 +29,9 @@ public class AiAnalysisService {
             pdfText = pdfText.substring(0, 10000);
         }
 
-        String systemPrompt = "You are a professional resume parser. " +
-                "Extract the following information from the provided resume text and return it strictly as a JSON object matching this schema. " +
-                "Do not include any other text or explanations, ONLY JSON. " +
-                "{\n" +
-                "  \"fullName\": \"string\",\n" +
-                "  \"headline\": \"string\",\n" +
-                "  \"summary\": \"string\",\n" +
-                "  \"location\": \"string\",\n" +
-                "  \"website\": \"string\",\n" +
-                "  \"githubUsername\": \"string\",\n" +
-                "  \"telegram\": \"string\",\n" +
-                "  \"linkedin\": \"string\"\n" +
-                "}\n" +
-                "If some information is missing, leave the field null.";
+        String systemPrompt = promptLoader.load("resume_parser_v1.txt");
 
-        String jsonResponse = groqClient.sendChatCompletion(systemPrompt, pdfText);
+        String jsonResponse = llmProvider.structuredCompletion(systemPrompt, pdfText);
         
         try {
             if (jsonResponse.startsWith("```json")) {

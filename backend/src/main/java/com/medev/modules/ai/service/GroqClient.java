@@ -1,118 +1,246 @@
 package com.medev.modules.ai.service;
 
-import lombok.RequiredArgsConstructor;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.medev.modules.ai.model.LlmException;
+import com.medev.modules.ai.model.LlmException.Reason;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
+import io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOperator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
+
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
-@RequiredArgsConstructor
-public class GroqClient {
+public class GroqClient implements LlmProvider {
 
-    private final WebClient.Builder webClientBuilder;
+    private static final String STREAM_MODEL    = "llama-3.3-70b-versatile";
+    private static final String STRUCTURED_MODEL = "llama-3.3-70b-versatile"; // стабильный JSON mode
+    private static final int    MAX_TOKENS       = 2048;
 
-    @Value("${groq.api-key}")
-    private String apiKey;
+    private final WebClient webClient;
+    private final ObjectMapper objectMapper;
+    private final CircuitBreaker circuitBreaker;
+    private final TokenAccountingService tokenAccountingService;
 
-    @Value("${groq.api-url}")
-    private String apiUrl;
-
-    @jakarta.annotation.PostConstruct
-    public void init() {
-        if (apiKey == null || apiKey.isEmpty()) {
-            System.err.println("WARNING: GROQ_API_KEY is not configured! AI features will fail.");
+    public GroqClient(
+            WebClient.Builder webClientBuilder,
+            ObjectMapper objectMapper,
+            TokenAccountingService tokenAccountingService,
+            @Value("${groq.api-key}") String apiKey,
+            @Value("${groq.api-url}") String apiUrl
+    ) {
+        if (apiKey == null || apiKey.isBlank()) {
+            log.warn("[GroqClient] GROQ_API_KEY is not configured — AI features will fail at runtime");
         }
+
+        this.webClient = webClientBuilder
+                .baseUrl(apiUrl)
+                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                // connect timeout отдельно — через HttpClient в конфиге WebClient bean
+                .build();
+
+        this.objectMapper = objectMapper;
+        this.tokenAccountingService = tokenAccountingService;
+
+        // Circuit breaker: открывается после 5 ошибок подряд,
+        // остаётся открытым 30 секунд, затем пускает 1 probe-запрос.
+        CircuitBreakerConfig config = CircuitBreakerConfig.custom()
+                .failureRateThreshold(50)
+                .slidingWindowSize(10)
+                .waitDurationInOpenState(Duration.ofSeconds(30))
+                .permittedNumberOfCallsInHalfOpenState(1)
+                .recordExceptions(LlmException.class, WebClientResponseException.class)
+                .build();
+        this.circuitBreaker = CircuitBreaker.of("groq", config);
+
+        this.circuitBreaker.getEventPublisher()
+                .onStateTransition(e ->
+                    log.warn("[GroqClient] Circuit breaker transition: {}", e.getStateTransition()));
     }
 
-    public String sendChatCompletion(String systemPrompt, String userMessage) {
-        if (apiKey == null || apiKey.isEmpty()) {
-            throw new IllegalStateException("Groq API key is not configured");
-        }
+    // ─────────────────────────────────────────────────
+    // PUBLIC API
+    // ─────────────────────────────────────────────────
 
-        Map<String, Object> requestBody = Map.of(
-                "model", "llama3-70b-8192",
-                "messages", List.of(
-                        Map.of("role", "system", "content", systemPrompt),
-                        Map.of("role", "user", "content", userMessage)
-                ),
-                "temperature", 0.1,
-                "response_format", Map.of("type", "json_object")
-        );
-
-        Map response = webClientBuilder.build()
-                .post()
-                .uri(apiUrl)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(requestBody)
-                .retrieve()
-                .bodyToMono(Map.class)
-                .timeout(java.time.Duration.ofSeconds(60))
-                .retryWhen(reactor.util.retry.Retry.backoff(3, java.time.Duration.ofSeconds(2)))
-                .block();
-
-        if (response != null && response.containsKey("choices")) {
-            List<Map<String, Object>> choices = (List<Map<String, Object>>) response.get("choices");
-            if (!choices.isEmpty()) {
-                Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
-                if (message != null && message.containsKey("content")) {
-                    return (String) message.get("content");
-                }
-            }
-        }
-        throw new RuntimeException("Failed to get a valid response from Groq API");
-    }
-
-    public reactor.core.publisher.Flux<String> streamChatCompletion(List<Map<String, String>> messages) {
-        if (apiKey == null || apiKey.isEmpty()) {
-            throw new IllegalStateException("Groq API key is not configured");
-        }
-
-        Map<String, Object> requestBody = Map.of(
-                "model", "llama-3.1-8b-instant",
+    @Override
+    public Flux<String> streamCompletion(List<Map<String, String>> messages) {
+        Map<String, Object> body = Map.of(
+                "model", STREAM_MODEL,
                 "messages", messages,
                 "temperature", 0.7,
+                "max_tokens", MAX_TOKENS,
                 "stream", true
         );
 
-        return webClientBuilder.build()
-                .post()
-                .uri(apiUrl)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(requestBody)
+        return webClient.post()
+                .bodyValue(body)
                 .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, resp -> resp.bodyToMono(String.class)
+                        .flatMap(err -> Mono.error(handle4xx(resp.statusCode().value(), err))))
+                .onStatus(HttpStatusCode::is5xxServerError, resp ->
+                        Mono.error(new LlmException(Reason.PROVIDER_UNAVAILABLE, "Groq 5xx")))
                 .bodyToFlux(String.class)
-                .takeUntil(chunk -> {
-                    String clean = chunk.trim();
-                    if (clean.startsWith("data: ")) clean = clean.substring(6).trim();
-                    return clean.equals("[DONE]");
-                })
-                .mapNotNull(chunk -> {
-                    String cleanChunk = chunk.trim();
-                    if (cleanChunk.startsWith("data: ")) {
-                        cleanChunk = cleanChunk.substring(6).trim();
-                    }
-                    if (cleanChunk.equals("[DONE]") || cleanChunk.isEmpty()) return null;
-                    try {
-                        com.fasterxml.jackson.databind.JsonNode node = new com.fasterxml.jackson.databind.ObjectMapper().readTree(cleanChunk);
-                        com.fasterxml.jackson.databind.JsonNode choices = node.get("choices");
-                        if (choices != null && choices.isArray() && choices.size() > 0) {
-                            com.fasterxml.jackson.databind.JsonNode delta = choices.get(0).get("delta");
-                            if (delta != null && delta.has("content")) {
-                                return delta.get("content").asText();
-                            }
-                        }
-                    } catch (Exception e) {
-                        // ignore parsing errors for partial chunks
-                    }
-                    return "";
-                })
-                .filter(s -> !s.isEmpty())
-                .onErrorResume(e -> reactor.core.publisher.Flux.empty());
+                .timeout(Duration.ofSeconds(60),
+                        Flux.error(new LlmException(Reason.TIMEOUT, "Stream timeout after 60s")))
+                .transformDeferred(CircuitBreakerOperator.of(circuitBreaker))
+                .retryWhen(retrySpec())
+                .mapNotNull(this::extractStreamChunk)
+                .filter(s -> !s.isBlank())
+                .takeUntil(chunk -> "[DONE]".equals(chunk))
+                .filter(chunk -> !"[DONE]".equals(chunk))
+                .onErrorMap(this::wrapIfNeeded);
+    }
+
+    @Override
+    public String structuredCompletion(String systemPrompt, String userMessage) {
+        Long currentUserId = null;
+        try {
+            currentUserId = com.medev.shared.security.SecurityUtils.getCurrentUserId();
+        } catch (Exception e) {
+            log.warn("No user context for Token Accounting");
+        }
+        final Long userId = currentUserId;
+
+        Map<String, Object> body = Map.of(
+                "model", STRUCTURED_MODEL,
+                "messages", List.of(
+                        Map.of("role", "system", "content", systemPrompt),
+                        Map.of("role", "user",   "content", userMessage)
+                ),
+                "temperature", 0.1,     // низкая температура = детерминированный JSON
+                "max_tokens", MAX_TOKENS,
+                "response_format", Map.of("type", "json_object")
+        );
+
+        String raw = webClient.post()
+                .bodyValue(body)
+                .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, resp -> resp.bodyToMono(String.class)
+                        .flatMap(err -> Mono.error(handle4xx(resp.statusCode().value(), err))))
+                .onStatus(HttpStatusCode::is5xxServerError, resp ->
+                        Mono.error(new LlmException(Reason.PROVIDER_UNAVAILABLE, "Groq 5xx")))
+                .bodyToMono(JsonNode.class)
+                .timeout(Duration.ofSeconds(45),
+                        Mono.error(new LlmException(Reason.TIMEOUT, "Structured completion timeout")))
+                .transformDeferred(CircuitBreakerOperator.of(circuitBreaker))
+                .retryWhen(retrySpec())
+                .map(response -> extractContentAndRecordUsage(response, userId, "/v1/ai/generate"))
+                .onErrorMap(this::wrapIfNeeded)
+                // block() здесь оправдан: structured completion используется
+                // только в AiAnalysisService, который вызывается из @PostMapping (thread-per-request)
+                .block();
+
+        validateJson(raw);
+        return raw;
+    }
+
+    @Override
+    public String providerName() {
+        return "groq";
+    }
+
+    // ─────────────────────────────────────────────────
+    // PRIVATE HELPERS
+    // ─────────────────────────────────────────────────
+
+    /**
+     * Retry только на retriable ошибки: 429 и 5xx.
+     * Exponential backoff: 1s → 2s → 4s.
+     * НЕ ретраит 400/401/422 — это программные ошибки.
+     */
+    private Retry retrySpec() {
+        return Retry.backoff(3, Duration.ofSeconds(1))
+                .maxBackoff(Duration.ofSeconds(8))
+                .filter(e -> e instanceof LlmException && ((LlmException) e).isRetryable())
+                .doBeforeRetry(signal ->
+                    log.warn("[GroqClient] Retry attempt {} after: {}",
+                            signal.totalRetries() + 1, signal.failure().getMessage()));
+    }
+
+    private LlmException handle4xx(int status, String body) {
+        if (status == 429) {
+            log.warn("[GroqClient] Rate limited by Groq: {}", body);
+            return new LlmException(Reason.RATE_LIMITED, "Groq rate limit exceeded");
+        }
+        if (status == 401) {
+            log.error("[GroqClient] Unauthorized — check GROQ_API_KEY");
+            return new LlmException(Reason.API_KEY_MISSING, "Invalid Groq API key");
+        }
+        return new LlmException(Reason.INVALID_RESPONSE, "Groq 4xx: " + status + " " + body);
+    }
+
+    private Throwable wrapIfNeeded(Throwable e) {
+        if (e instanceof LlmException) return e;
+        if (e.getMessage() != null && e.getMessage().contains("circuit")) {
+            return new LlmException(Reason.CIRCUIT_OPEN, "Circuit breaker is open", e);
+        }
+        return new LlmException(Reason.PROVIDER_UNAVAILABLE, "Unexpected error: " + e.getMessage(), e);
+    }
+
+    /** Парсит SSE-чанк потока, возвращает текстовый токен или null */
+    private String extractStreamChunk(String raw) {
+        String line = raw.trim();
+        if (line.startsWith("data: ")) line = line.substring(6).trim();
+        if (line.isEmpty()) return null;
+        if ("[DONE]".equals(line)) return "[DONE]";
+
+        try {
+            JsonNode node = objectMapper.readTree(line);
+            JsonNode choices = node.get("choices");
+            if (choices != null && choices.isArray() && !choices.isEmpty()) {
+                JsonNode delta = choices.get(0).get("delta");
+                if (delta != null && delta.has("content")) {
+                    return delta.get("content").asText();
+                }
+            }
+        } catch (Exception ignored) {
+            // частичный чанк — игнорируем
+        }
+        return null;
+    }
+
+    /** Извлекает content из non-stream ответа и логирует токены */
+    private String extractContentAndRecordUsage(JsonNode response, Long userId, String endpoint) {
+        try {
+            JsonNode usage = response.get("usage");
+            if (usage != null && userId != null) {
+                int promptTokens = usage.has("prompt_tokens") ? usage.get("prompt_tokens").asInt() : 0;
+                int completionTokens = usage.has("completion_tokens") ? usage.get("completion_tokens").asInt() : 0;
+                int totalTokens = usage.has("total_tokens") ? usage.get("total_tokens").asInt() : 0;
+                tokenAccountingService.recordUsageAsync(userId, STRUCTURED_MODEL, promptTokens, completionTokens, totalTokens, endpoint);
+            }
+
+            return response
+                    .get("choices").get(0)
+                    .get("message")
+                    .get("content").asText();
+        } catch (Exception e) {
+            throw new LlmException(Reason.INVALID_RESPONSE, "Cannot extract content from response");
+        }
+    }
+
+    /** Проверяет, что строка — валидный JSON */
+    private void validateJson(String content) {
+        try {
+            objectMapper.readTree(content);
+        } catch (Exception e) {
+            log.error("[GroqClient] Response is not valid JSON: {}", content);
+            throw new LlmException(Reason.INVALID_RESPONSE, "LLM returned invalid JSON");
+        }
     }
 }

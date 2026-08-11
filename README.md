@@ -8,6 +8,7 @@ Stop writing resumes manually. Connect your GitHub account, let the system parse
 - **AI-Powered Profile Generation**: Integrated Groq AI assistant (streaming responses via SSE) to auto-generate project descriptions, experience summaries, and analyze your GitHub stats.
 - **AI Resume Parsing (Pro)**: Upload an existing PDF resume, and our AI will extract the data and populate your profile automatically.
 - **Resume Generator & Builder**: Export your data to a clean, ATS-friendly PDF resume in one click. Completely customize the order and visibility of your resume sections using a robust `dnd-kit` drag-and-drop React interface.
+- **Monetization & Quota Management**: Full Stripe Checkout integration for Pro plan upgrades. Features real-time AI quota tracking and soft upsell flows.
 - **Strict Rate Limiting & Security**: Implemented Bucket4j for API abuse prevention, strict CORS policies, and Free/Pro plan access controls.
 - **Feature-Sliced Design**: Highly modular frontend architecture ensuring scalability.
 
@@ -15,7 +16,7 @@ Stop writing resumes manually. Connect your GitHub account, let the system parse
 ### Backend (Modular Monolith)
 - **Core**: Java 17, Spring Boot 3.3.0
 - **Database & Cache**: PostgreSQL (with Flyway Migrations), Redis (for JWT refresh tokens)
-- **Security & Resilience**: Spring Security, OAuth2 Client, Stateless JWT, Bucket4j (Rate Limiting)
+- **Security & Resilience**: Spring Security, OAuth2 Client, Stateless JWT, Bucket4j (Rate Limiting), Resilience4j (Circuit Breaker & Retry)
 - **Integrations**: Groq API (AI generation), GitHub API (Data parsing)
 - **Logging & Deploy**: Structured JSON logging (Logstash/MDC), Dockerized for Fly.io
 
@@ -49,6 +50,9 @@ The backend acts as a secure proxy for third-party services (Groq, Stripe, GitHu
    GROQ_API_KEY=your_groq_api_key
    GITHUB_CLIENT_ID=your_oauth_client_id
    GITHUB_CLIENT_SECRET=your_oauth_client_secret
+   STRIPE_API_KEY=your_stripe_api_key
+   STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
+   STRIPE_PRO_PRICE_ID=your_stripe_price_id
    ```
 3. Run the backend: `./gradlew bootRun`
 4. Run the frontend: `cd frontend && npm install && npm run dev`

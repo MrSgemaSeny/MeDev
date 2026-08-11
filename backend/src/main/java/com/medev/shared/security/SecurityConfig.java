@@ -58,6 +58,15 @@ public class SecurityConfig {
                 )
                 .successHandler(oAuth2LoginSuccessHandler)
             )
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint((request, response, authException) -> {
+                    if (request.getRequestURI().startsWith("/api/v1/")) {
+                        response.sendError(jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                    } else {
+                        response.sendRedirect("http://localhost:8080/oauth2/authorization/github");
+                    }
+                })
+            )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
             .build();
     }

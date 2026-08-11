@@ -1,0 +1,18 @@
+{
+  "fullName": "Anna Petrova",
+  "headline": "Senior Full-Stack Engineer",
+  "skills": ["React", "TypeScript", "Node.js", "Docker", "AWS"],
+  "projects": [
+    {
+      "name": "E-commerce Platform",
+      "description": "High-load e-commerce platform built with microservices."
+    }
+  ],
+  "experience": [
+    {
+      "company": "Tech Corp",
+      "position": "Senior Developer",
+      "description": "Led the frontend migration to React 19."
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "fullName": "Ivan Ivanov",
+  "headline": "Junior Java Developer",
+  "skills": ["Java", "Spring Boot", "PostgreSQL"],
+  "projects": [
+    {
+      "name": "Library Management System",
+      "description": "CRUD application for managing books using Spring Boot and Hibernate."
+    }
+  ],
+  "experience": []
+}

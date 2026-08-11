@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuthStore } from '../../entities/user/model/store';
+import { QuotaWidget } from '../../features/billing/components/QuotaWidget';
 
 const NAV = [
   { to: '/dashboard', label: 'Dashboard' },
@@ -44,7 +45,7 @@ export const AppSidebar = () => {
           <NavLink
             key={item.to}
             to={item.to}
-            className="flex items-center h-9 px-3 rounded-md text-sm whitespace-nowrap transition-colors duration-100"
+            className="flex items-center h-9 px-3 mx-1 rounded-md text-sm whitespace-nowrap transition-colors duration-100"
             style={({ isActive }) => ({
               backgroundColor: isActive ? 'var(--color-btn-hover)' : 'transparent',
               color: isActive ? 'var(--color-text-primary)' : 'var(--color-text-secondary)',
@@ -58,6 +59,8 @@ export const AppSidebar = () => {
           </NavLink>
         ))}
       </nav>
+
+      <QuotaWidget />
 
       {username && (
         <div

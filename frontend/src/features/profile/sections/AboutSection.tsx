@@ -2,14 +2,14 @@ import { useEffect, useState, useRef } from 'react';
 import { useProfile, useUpdateProfile, useParseResume } from '../../../shared/api/hooks/useProfile';
 import { Button } from '../../../shared/ui/Button';
 import { Input, Textarea, Label } from '../../../shared/ui/Form';
-import { useAiGenerate } from '../../ai/hooks/useAiGenerate';
+import { useGenerateSummary } from '../../ai/hooks/useAiGenerate';
 import { Upload } from 'lucide-react';
 
 export const AboutSection = () => {
   const { data: profile, isLoading } = useProfile();
   const updateProfile = useUpdateProfile();
   const parseResume = useParseResume();
-  const { generate, isGenerating } = useAiGenerate();
+  const { generateSummary, isGenerating } = useGenerateSummary();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
@@ -53,13 +53,15 @@ export const AboutSection = () => {
   };
 
   const handleGenerateSummary = async () => {
-    setFormData((prev) => ({ ...prev, summary: '' }));
-    await generate(
-      "Сгенерируй профессиональное summary для резюме на основе моего профиля. Максимум 3 предложения. Фокус на стеке и ключевых проектах.",
-      (token) => {
-        setFormData((prev) => ({ ...prev, summary: prev.summary + token }));
+    try {
+      const summary = await generateSummary('ru'); // or from user preferences
+      if (summary) {
+        setFormData((prev) => ({ ...prev, summary }));
       }
-    );
+    } catch (error) {
+      console.error(error);
+      alert("Failed to generate summary");
+    }
   };
 
   return (
