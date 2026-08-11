@@ -25,6 +25,25 @@ export const useUpdateProfile = () => {
   });
 };
 
+export const useParseResume = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      const { data } = await api.post('/ai/parse-resume', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+    },
+  });
+};
+
 export const useReorderSection = (section: string) => {
   const queryClient = useQueryClient();
   return useMutation({

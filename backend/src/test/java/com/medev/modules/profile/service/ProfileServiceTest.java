@@ -59,6 +59,7 @@ class ProfileServiceTest {
         User user = User.builder().id(1L).build();
         Profile profile = Profile.builder().id(10L).user(user).fullName("John Doe").build();
         when(profileRepository.findByUserId(1L)).thenReturn(Optional.of(profile));
+        when(profileMapper.toDto(profile)).thenReturn(new ProfileDto());
 
         ProfileDto result = profileService.getByUserId(1L);
 

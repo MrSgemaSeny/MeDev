@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { api } from '../../shared/api/axios';
 import { useProfile } from '../../shared/api/hooks/useProfile';
 import { Button } from '../../shared/ui/Button';
-import { Input } from '../../shared/ui/Input';
 import { Card } from '../../shared/ui/Form';
 
 interface GitHubProfileDto {

@@ -21,6 +21,13 @@ public class GroqClient {
     @Value("${groq.api-url}")
     private String apiUrl;
 
+    @jakarta.annotation.PostConstruct
+    public void init() {
+        if (apiKey == null || apiKey.isEmpty()) {
+            System.err.println("WARNING: GROQ_API_KEY is not configured! AI features will fail.");
+        }
+    }
+
     public String sendChatCompletion(String systemPrompt, String userMessage) {
         if (apiKey == null || apiKey.isEmpty()) {
             throw new IllegalStateException("Groq API key is not configured");

@@ -1,16 +1,18 @@
 # Current Project Context
 
 ## Status
-- **Project Stage**: Minimal MVP (Completed Phase 2 & 3)
+- **Project Stage**: Production-Ready MVP
 - **Latest Work**:
-  - Implemented GitHub OAuth2 via Spring Security and `spring-boot-starter-oauth2-client` (removed legacy PAT-based token approach).
-  - Integrated `useAiGenerate` custom React hook using Server-Sent Events (SSE) to stream Groq API AI generation directly into text fields (Summary, Projects, Experience).
-  - Cleaned up the `DashboardPage` to remove fake hardcoded analytics.
-  - Stabilized frontend and backend interactions.
-  - Successfully deployed all core features locally.
+  - Validated and verified full implementation of Sprint 1 (Bucket4j Rate Limiting, GlobalExceptionHandler, File upload limits, Config Validation, Axios Refresh Interceptor, Code Splitting).
+  - Validated and verified full implementation of Sprint 2 (ProfileService decomposition, MapStruct, GroqClient resilience).
+  - Implemented AI Resume Parsing via PDF upload (`useParseResume`).
+  - Added AI Feedback Panel ("Analyze Resume") into the ResumeBuilder.
+  - Enforced AI feature access restrictions based on Plan (Free/Pro) in `AiController`.
+  - Configured `SecurityConfig` for strict CORS origins (configured via `application.yml`).
+  - Implemented structured JSON logging via `logback-spring.xml` and MDC.
+  - Created `Dockerfile` and `fly.toml` for backend deployment on Fly.io.
 
 ## Next in Backlog
-- CI/CD Setup: GitHub Actions for building, testing, and preventing failing PRs/pushes.
-- GlobalExceptionHandler improvements (`@Valid`, `MaxUploadSizeExceeded`).
-- Bucket4j Rate Limiting for AI endpoints to prevent abuse.
-- Fly.toml and GitHub Pages deployment configuration.
+- Frontend CI/CD / GitHub Pages deployment.
+- Implement Stripe / Kaspi Pay for actual PRO plan purchasing (currently mocked).
+- Implement Vitest tests for the frontend and expand JUnit/Mockito tests on the backend.

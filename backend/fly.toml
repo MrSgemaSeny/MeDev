@@ -1,11 +1,10 @@
-app = "medev-api"
+app = "medev-backend"
 primary_region = "fra"
 
 [build]
   dockerfile = "Dockerfile"
 
 [env]
-  PORT = "8080"
   SPRING_PROFILES_ACTIVE = "prod"
 
 [http_service]

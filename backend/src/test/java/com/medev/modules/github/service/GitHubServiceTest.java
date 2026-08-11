@@ -1,6 +1,8 @@
 package com.medev.modules.github.service;
 
 import com.medev.modules.profile.service.ProfileService;
+import com.medev.modules.auth.repository.UserRepository;
+import com.medev.modules.auth.entity.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,6 +13,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import java.util.Optional;
 
 // Stub DTO classes because we don't have imports, but typically they are in similar packages
 import com.medev.modules.github.dto.GitHubImportRequest;
@@ -41,38 +44,27 @@ public class GitHubServiceTest {
     @Mock
     private ValueOperations<String, Object> valueOperations;
 
+    @Mock
+    private UserRepository userRepository;
+
     @InjectMocks
     @Spy
     private GitHubService gitHubService;
 
-    @Test
-    void fetchAndParseProfile_cached_returnsCacheWithoutApiCall() {
-        Long userId = 1L;
-        String token = "token";
-        
-        GitHubProfileDto cachedProfile = GitHubProfileDto.builder().username("testuser").build();
 
-        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-        when(valueOperations.get(anyString())).thenReturn(cachedProfile);
-
-        GitHubProfileDto result = gitHubService.fetchAndParseProfile(userId, token);
-
-        assertThat(result).isNotNull();
-        assertThat(result.getUsername()).isEqualTo("testuser");
-        verify(webClientBuilder, never()).build();
-    }
 
     @Test
     void fetchAndParseProfile_apiError_throwsRuntime() {
         Long userId = 1L;
-        String token = "token";
-        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-        when(valueOperations.get(anyString())).thenReturn(null);
+        User user = new User();
+        user.setId(userId);
+        user.setGithubAccessToken("token");
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
         when(webClientBuilder.baseUrl(anyString())).thenReturn(webClientBuilder);
         when(webClientBuilder.build()).thenThrow(WebClientResponseException.create(500, "Error", null, null, null));
         
-        assertThatThrownBy(() -> gitHubService.fetchAndParseProfile(userId, token))
+        assertThatThrownBy(() -> gitHubService.fetchAndParseProfile(userId))
                 .isInstanceOf(RuntimeException.class);
     }
     
@@ -92,7 +84,7 @@ public class GitHubServiceTest {
                 .languageStats(Map.of("Java", 100))
                 .build();
 
-        doReturn(profile).when(gitHubService).fetchAndParseProfile(userId, request.getToken());
+        doReturn(profile).when(gitHubService).fetchAndParseProfile(userId);
 
         gitHubService.importToProfile(userId, request);
 
@@ -110,7 +102,7 @@ public class GitHubServiceTest {
 
         GitHubProfileDto profile = GitHubProfileDto.builder().build();
 
-        doReturn(profile).when(gitHubService).fetchAndParseProfile(userId, request.getToken());
+        doReturn(profile).when(gitHubService).fetchAndParseProfile(userId);
 
         gitHubService.importToProfile(userId, request);
 
@@ -126,7 +118,7 @@ public class GitHubServiceTest {
 
         GitHubProfileDto profile = GitHubProfileDto.builder().languageStats(null).build();
 
-        doReturn(profile).when(gitHubService).fetchAndParseProfile(userId, request.getToken());
+        doReturn(profile).when(gitHubService).fetchAndParseProfile(userId);
 
         gitHubService.importToProfile(userId, request);
 

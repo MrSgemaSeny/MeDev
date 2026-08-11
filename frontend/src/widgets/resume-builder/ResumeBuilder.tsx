@@ -3,9 +3,27 @@ import { ModernTemplate } from '../../features/resume/templates/ModernTemplate';
 import { useResumeEditorStore } from '../../entities/resume/model/resumeEditorStore';
 import { Button } from '../../shared/ui/Button';
 import { api } from '../../shared/api/axios';
+import { useAiChatStore } from '../../features/ai-assistant/model/store';
+import { Bot } from 'lucide-react';
 
 export const ResumeBuilder = () => {
   const { sections, selectedTemplate, setTemplate, toggleSection, reorderSections } = useResumeEditorStore();
+  const { toggleChat, isOpen } = useAiChatStore();
+
+  const handleAiAnalysis = () => {
+    if (!isOpen) toggleChat();
+    setTimeout(() => {
+      const chatWidget = document.querySelector('textarea[placeholder="Спроси о чём-нибудь..."]') as HTMLTextAreaElement;
+      if (chatWidget) {
+        const form = chatWidget.closest('form');
+        if (form) {
+          chatWidget.value = "Проанализируй моё резюме: насколько оно привлекательно для работодателей? Чего не хватает?";
+          chatWidget.dispatchEvent(new Event('input', { bubbles: true }));
+          form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+        }
+      }
+    }, 300);
+  };
 
   const handleDownload = async () => {
     try {
@@ -77,7 +95,11 @@ export const ResumeBuilder = () => {
           </div>
         </div>
 
-        <div className="mt-auto pt-4 border-t" style={{ borderColor: 'var(--color-border-default)' }}>
+        <div className="mt-auto pt-4 border-t space-y-3" style={{ borderColor: 'var(--color-border-default)' }}>
+          <Button variant="secondary" className="w-full flex items-center justify-center gap-2" onClick={handleAiAnalysis}>
+            <Bot size={16} />
+            Analyze Resume
+          </Button>
           <Button variant="primary" className="w-full" onClick={handleDownload}>Export README</Button>
         </div>
       </div>

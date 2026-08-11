@@ -1,13 +1,16 @@
-import { useEffect, useState } from 'react';
-import { useProfile, useUpdateProfile } from '../../../shared/api/hooks/useProfile';
+import { useEffect, useState, useRef } from 'react';
+import { useProfile, useUpdateProfile, useParseResume } from '../../../shared/api/hooks/useProfile';
 import { Button } from '../../../shared/ui/Button';
 import { Input, Textarea, Label } from '../../../shared/ui/Form';
 import { useAiGenerate } from '../../ai/hooks/useAiGenerate';
+import { Upload } from 'lucide-react';
 
 export const AboutSection = () => {
   const { data: profile, isLoading } = useProfile();
   const updateProfile = useUpdateProfile();
+  const parseResume = useParseResume();
   const { generate, isGenerating } = useAiGenerate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
     fullName: '', headline: '', summary: '', location: '',
@@ -36,6 +39,19 @@ export const AboutSection = () => {
     updateProfile.mutate(formData);
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      parseResume.mutate(e.target.files[0], {
+        onSuccess: (data) => {
+          setFormData((prev) => ({ ...prev, ...data }));
+        },
+        onError: (err: any) => {
+          alert(err.response?.data?.error || "Failed to parse resume");
+        }
+      });
+    }
+  };
+
   const handleGenerateSummary = async () => {
     setFormData((prev) => ({ ...prev, summary: '' }));
     await generate(
@@ -48,7 +64,16 @@ export const AboutSection = () => {
 
   return (
     <div className="max-w-2xl">
-      <h2 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-text-primary)' }}>About You</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>About You</h2>
+        <div>
+          <input type="file" accept="application/pdf" className="hidden" ref={fileInputRef} onChange={handleFileChange} />
+          <Button type="button" size="sm" variant="secondary" onClick={() => fileInputRef.current?.click()} disabled={parseResume.isPending} className="flex items-center gap-2">
+            <Upload size={16} />
+            {parseResume.isPending ? 'Parsing...' : 'Import from PDF (Pro)'}
+          </Button>
+        </div>
+      </div>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <Label htmlFor="fullName">Full Name</Label>
