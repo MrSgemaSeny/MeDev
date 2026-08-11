@@ -1,22 +1,23 @@
-# MeDev — Developer Profile & Resume Platform (MVP)
+# MeDev — Developer Profile & Resume Platform (Production-Ready MVP)
 
 MeDev is a data-first SaaS platform designed for software engineers. 
 Stop writing resumes manually. Connect your GitHub account, let the system parse your repositories, and instantly generate beautiful PDF resumes or a public web portfolio. Powered by AI to help you articulate your experience.
 
-## Core Features (MVP)
+## Core Features
 - **GitHub Integration (OAuth2)**: One-click login and automated repository import.
-- **AI-Powered Profile Generation**: Integrated Groq AI assistant (streaming responses) to auto-generate project descriptions, experience summaries, and analyze your GitHub stats.
-- **Resume Generator**: Export your data to a clean, ATS-friendly PDF resume in one click. (Powered by Thymeleaf + PDFBox).
-- **Drag-and-Drop Builder**: Completely customize the order and visibility of your resume sections using a robust `dnd-kit` React interface.
+- **AI-Powered Profile Generation**: Integrated Groq AI assistant (streaming responses via SSE) to auto-generate project descriptions, experience summaries, and analyze your GitHub stats.
+- **AI Resume Parsing (Pro)**: Upload an existing PDF resume, and our AI will extract the data and populate your profile automatically.
+- **Resume Generator & Builder**: Export your data to a clean, ATS-friendly PDF resume in one click. Completely customize the order and visibility of your resume sections using a robust `dnd-kit` drag-and-drop React interface.
+- **Strict Rate Limiting & Security**: Implemented Bucket4j for API abuse prevention, strict CORS policies, and Free/Pro plan access controls.
 - **Feature-Sliced Design**: Highly modular frontend architecture ensuring scalability.
 
 ## 🛠 Technology Stack
 ### Backend (Modular Monolith)
 - **Core**: Java 17, Spring Boot 3.3.0
 - **Database & Cache**: PostgreSQL (with Flyway Migrations), Redis (for JWT refresh tokens)
-- **Security**: Spring Security, OAuth2 Client, Stateless JWT
-- **Integrations**: Groq API (AI generation), GitHub API (Data parsing), Stripe (Payments)
-- **PDF Generation**: Thymeleaf + Flying Saucer + OpenPDF/PDFBox
+- **Security & Resilience**: Spring Security, OAuth2 Client, Stateless JWT, Bucket4j (Rate Limiting)
+- **Integrations**: Groq API (AI generation), GitHub API (Data parsing)
+- **Logging & Deploy**: Structured JSON logging (Logstash/MDC), Dockerized for Fly.io
 
 ### Frontend (FSD Architecture)
 - **Core**: React 19, TypeScript, Vite
