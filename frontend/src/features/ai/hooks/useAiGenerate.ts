@@ -8,13 +8,13 @@ export function useAiGenerate() {
   const generate = useCallback(async (prompt: string, onToken: (token: string) => void) => {
     setIsGenerating(true);
     try {
-      const response = await fetch('/api/v1/ai/chat/stream', {
+      const response = await fetch('http://localhost:8080/api/v1/ai/chat/stream', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${accessToken}`,
         },
-        body: JSON.stringify({ message: prompt }),
+        body: JSON.stringify({ prompt: prompt }),
       });
 
       if (!response.ok) {
