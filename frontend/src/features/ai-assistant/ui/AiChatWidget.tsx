@@ -49,7 +49,7 @@ export const AiChatWidget = () => {
       if (response.status === 401) {
         try {
           const { api } = await import('../../../shared/api/axios');
-          await api.get('/v1/ai/quota'); // this will trigger the axios interceptor to refresh the token
+          await api.get('/ai/quota'); // this will trigger the axios interceptor to refresh the token
           const newToken = useAuthStore.getState().accessToken;
           response = await fetch('http://localhost:8080/api/v1/ai/chat/stream', {
             method: 'POST',

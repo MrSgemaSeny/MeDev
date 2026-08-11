@@ -8,7 +8,7 @@ export const useCheckout = () => {
   const checkout = async () => {
     setIsPending(true);
     try {
-      const response = await api.post('/v1/billing/checkout');
+      const response = await api.post('/billing/checkout');
       const data = response.data;
       if (data.url) {
         window.location.href = data.url;

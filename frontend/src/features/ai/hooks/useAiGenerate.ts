@@ -22,7 +22,7 @@ export function useAiGenerate() {
       if (response.status === 401) {
         try {
           const { api } = await import('../../../shared/api/axios');
-          await api.get('/v1/ai/quota');
+          await api.get('/ai/quota');
           const newToken = useAuthStore.getState().accessToken;
           response = await fetch('http://localhost:8080/api/v1/ai/chat/stream', {
             method: 'POST',
@@ -82,7 +82,7 @@ export function useGenerateSummary() {
   const generateSummary = useCallback(async (language: string = 'en') => {
     setIsGenerating(true);
     try {
-      const response = await api.post('/v1/ai/generate/summary', { language });
+      const response = await api.post('/ai/generate/summary', { language });
       const data = response.data;
       return data.summary || data.content || JSON.stringify(data);
     } catch (error: any) {
@@ -105,7 +105,7 @@ export function useGenerateProjectDescription() {
   const generateProjectDescription = useCallback(async (projectName: string, language: string = 'en') => {
     setIsGenerating(true);
     try {
-      const response = await api.post('/v1/ai/generate/project-description', { projectName, language });
+      const response = await api.post('/ai/generate/project-description', { projectName, language });
       const data = response.data;
       return data.description || data.content || JSON.stringify(data);
     } catch (error: any) {
