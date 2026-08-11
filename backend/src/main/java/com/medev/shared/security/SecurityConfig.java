@@ -45,7 +45,8 @@ public class SecurityConfig {
                     "/v1/portfolio/**",    // публичные страницы
                     "/actuator/health",
                     "/oauth2/**",
-                    "/login/oauth2/**"
+                    "/login/oauth2/**",
+                    "/error"               // Tomcat error page
                 ).permitAll()
                 // Только ADMIN
                 .requestMatchers("/v1/admin/**").hasRole("ADMIN")
@@ -60,11 +61,11 @@ public class SecurityConfig {
             )
             .exceptionHandling(ex -> ex
                 .authenticationEntryPoint((request, response, authException) -> {
-                    if (request.getRequestURI().startsWith("/api/v1/")) {
-                        response.sendError(jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-                    } else {
-                        response.sendRedirect("http://localhost:8080/oauth2/authorization/github");
-                    }
+                    // Inside Spring Security, context-path (/api) is already stripped.
+                    // So the URI is /v1/..., not /api/v1/...
+                    response.setStatus(jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"error\":\"Unauthorized\",\"message\":\"" + authException.getMessage() + "\"}");
                 })
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

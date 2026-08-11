@@ -13,7 +13,7 @@ export const useQuota = () => {
   return useQuery<QuotaResponse>({
     queryKey: ['quota'],
     queryFn: async () => {
-      const res = await api.get<QuotaResponse>('/v1/ai/quota');
+      const res = await api.get<QuotaResponse>('/ai/quota');
       return res.data;
     },
     enabled: !!accessToken,
