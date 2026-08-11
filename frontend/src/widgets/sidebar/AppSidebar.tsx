@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuthStore } from '../../entities/user/model/store';
 import { QuotaWidget } from '../../features/billing/components/QuotaWidget';
-import { UserProfileDropdown } from './components/UserProfileDropdown';
 
 const NAV = [
   { to: '/dashboard', label: 'Dashboard' },
@@ -62,8 +61,6 @@ export const AppSidebar = () => {
       </nav>
 
       <QuotaWidget />
-
-      <UserProfileDropdown isSidebarExpanded={hovered} />
     </aside>
   );
 };

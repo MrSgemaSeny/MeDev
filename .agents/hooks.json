@@ -1,0 +1,10 @@
+{
+  "enforce-brains-protocol": {
+    "Stop": [
+      {
+        "type": "command",
+        "command": "powershell.exe -ExecutionPolicy Bypass -NoProfile -File scripts/check-protocol.ps1"
+      }
+    ]
+  }
+}

@@ -3,40 +3,34 @@ import { LogOut, Bell, Globe, Mail, Moon, Sun } from 'lucide-react';
 import { useAuthStore } from '../../../entities/user/model/store';
 import { useTranslation } from 'react-i18next';
 
-interface Props {
-  isSidebarExpanded: boolean;
-}
-
-export const UserProfileDropdown: React.FC<Props> = ({ isSidebarExpanded }) => {
+export const UserProfileDropdown: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const username = useAuthStore((s) => s.username);
   const logout = useAuthStore((s) => s.logout);
   const { i18n } = useTranslation();
   
-  // Theme state
   const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
+  const [currentTime, setCurrentTime] = useState(new Date());
 
-  // Close on outside click
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 60000);
+    return () => clearInterval(timer);
+  }, []);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    if (isOpen) document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen]);
 
   if (!username) return null;
 
-  const toggleLanguage = (lang: string) => {
-    i18n.changeLanguage(lang);
-  };
+  const toggleLanguage = (lang: string) => i18n.changeLanguage(lang);
 
   const toggleTheme = () => {
     const html = document.documentElement;
@@ -49,33 +43,40 @@ export const UserProfileDropdown: React.FC<Props> = ({ isSidebarExpanded }) => {
     }
   };
 
+  const formatterDate = new Intl.DateTimeFormat(i18n.language === 'ru' ? 'ru-RU' : 'en-US', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long'
+  });
+  const formatterTime = new Intl.DateTimeFormat(i18n.language === 'ru' ? 'ru-RU' : 'en-US', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+  
+  // Capitalize first letter of the weekday
+  let dateString = formatterDate.format(currentTime);
+  dateString = dateString.charAt(0).toUpperCase() + dateString.slice(1);
+
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* Trigger Button */}
+      {/* Trigger Pill */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center px-3 py-2 border-t transition-colors duration-150 hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer"
-        style={{
-          borderColor: 'var(--color-border-default)',
-          color: 'var(--color-text-primary)',
-        }}
+        className="flex items-center gap-3 px-3 py-1.5 rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
       >
-        <div className="w-6 h-6 shrink-0 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-bold overflow-hidden">
+        <div className="flex flex-col items-end leading-tight">
+          <span className="text-[13px] font-semibold text-primary">{dateString}</span>
+          <span className="text-[11px] font-medium text-muted">{formatterTime.format(currentTime)}</span>
+        </div>
+        <div className="w-9 h-9 shrink-0 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold shadow-sm">
           {username.charAt(0).toUpperCase()}
         </div>
-        
-        <span 
-          className="ml-3 text-sm font-medium truncate transition-opacity duration-150"
-          style={{ opacity: isSidebarExpanded ? 1 : 0 }}
-        >
-          {username}
-        </span>
       </button>
 
       {/* Dropdown Menu */}
       {isOpen && (
         <div 
-          className="absolute left-full bottom-0 ml-2 w-72 rounded-xl shadow-lg border z-50 flex flex-col py-2"
+          className="absolute right-0 top-full mt-2 w-72 rounded-xl shadow-lg border z-50 flex flex-col py-2"
           style={{ 
             backgroundColor: 'var(--color-bg-primary)',
             borderColor: 'var(--color-border-default)',
@@ -89,7 +90,7 @@ export const UserProfileDropdown: React.FC<Props> = ({ isSidebarExpanded }) => {
             </div>
             <div className="flex flex-col overflow-hidden">
               <span className="font-semibold text-[15px] truncate text-primary">{username}</span>
-              <span className="text-xs bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400 px-2 py-0.5 rounded-full w-max mt-0.5 font-medium">
+              <span className="text-[11px] bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400 px-2 py-0.5 rounded-full w-max mt-0.5 font-bold uppercase tracking-wider">
                 Администратор
               </span>
             </div>
@@ -97,8 +98,7 @@ export const UserProfileDropdown: React.FC<Props> = ({ isSidebarExpanded }) => {
 
           {/* Menu Items */}
           <div className="py-2 flex flex-col">
-            
-            {/* Theme Toggle (Bonus) */}
+            {/* Theme Toggle */}
             <div className="px-4 py-2.5 flex items-center justify-between hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer" onClick={toggleTheme}>
               <div className="flex items-center gap-3 text-secondary">
                 {isDark ? <Moon size={18} /> : <Sun size={18} />}

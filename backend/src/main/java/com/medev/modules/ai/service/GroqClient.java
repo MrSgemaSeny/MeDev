@@ -21,6 +21,8 @@ import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 import reactor.util.retry.Retry;
 import io.netty.resolver.DefaultAddressResolverGroup;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.codec.ServerSentEvent;
 
 import java.time.Duration;
 import java.util.List;
@@ -96,17 +98,18 @@ public class GroqClient implements LlmProvider {
 
         return webClient.post()
                 .bodyValue(body)
+                .accept(MediaType.TEXT_EVENT_STREAM)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, resp -> resp.bodyToMono(String.class)
                         .flatMap(err -> Mono.error(handle4xx(resp.statusCode().value(), err))))
                 .onStatus(HttpStatusCode::is5xxServerError, resp ->
                         Mono.error(new LlmException(Reason.PROVIDER_UNAVAILABLE, "Groq 5xx")))
-                .bodyToFlux(String.class)
+                .bodyToFlux(new ParameterizedTypeReference<ServerSentEvent<String>>() {})
                 .timeout(Duration.ofSeconds(60),
                         Flux.error(new LlmException(Reason.TIMEOUT, "Stream timeout after 60s")))
                 .transformDeferred(CircuitBreakerOperator.of(circuitBreaker))
                 .retryWhen(retrySpec())
-                .mapNotNull(this::extractStreamChunk)
+                .mapNotNull(sse -> extractStreamChunk(sse.data()))
                 .filter(s -> !s.isBlank())
                 .takeUntil(chunk -> "[DONE]".equals(chunk))
                 .filter(chunk -> !"[DONE]".equals(chunk))

@@ -3,6 +3,8 @@ import { AppSidebar } from '../../widgets/sidebar/AppSidebar';
 import { AiChatWidget } from '../../features/ai-assistant/ui/AiChatWidget';
 import { UpsellModal } from '../../shared/ui/UpsellModal';
 
+import { AppHeader } from '../../widgets/header/AppHeader';
+
 export const AppLayout = () => {
   return (
     <div
@@ -10,8 +12,11 @@ export const AppLayout = () => {
       style={{ backgroundColor: 'var(--color-bg-primary)' }}
     >
       <AppSidebar />
-      <main className="flex-1 overflow-y-auto" style={{ color: 'var(--color-text-primary)' }}>
-        <Outlet />
+      <main className="flex-1 flex flex-col h-screen" style={{ color: 'var(--color-text-primary)' }}>
+        <AppHeader />
+        <div className="flex-1 overflow-y-auto relative">
+          <Outlet />
+        </div>
         <AiChatWidget />
         <UpsellModal />
       </main>
