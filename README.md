@@ -4,7 +4,7 @@ MeDev is a data-first SaaS platform designed for software engineers.
 Stop writing resumes manually. Connect your GitHub account, let the system parse your repositories, and instantly generate beautiful PDF resumes or a public web portfolio. Powered by AI to help you articulate your experience.
 
 ## Core Features
-- **GitHub Integration (OAuth2)**: One-click login and automated repository import.
+- **GitHub & Google Integration (OAuth2)**: One-click login and automated repository import.
 - **AI-Powered Profile Generation**: Integrated Groq AI assistant (streaming responses via SSE) to auto-generate project descriptions, experience summaries, and analyze your GitHub stats.
 - **AI Resume Parsing (Pro)**: Upload an existing PDF resume, and our AI will extract the data and populate your profile automatically.
 - **Resume Generator & Builder**: Export your data to a clean, ATS-friendly PDF resume in one click. Completely customize the order and visibility of your resume sections using a robust `dnd-kit` drag-and-drop React interface.
@@ -17,7 +17,7 @@ Stop writing resumes manually. Connect your GitHub account, let the system parse
 - **Core**: Java 17, Spring Boot 3.3.0
 - **Database & Cache**: PostgreSQL (with Flyway Migrations), Redis (for JWT refresh tokens)
 - **Security & Resilience**: Spring Security, OAuth2 Client, Stateless JWT, Bucket4j (Rate Limiting), Resilience4j (Circuit Breaker & Retry)
-- **Integrations**: Groq API (AI generation), GitHub API (Data parsing)
+- **Integrations**: Groq API (AI generation), GitHub/Google API (Auth & Data parsing)
 - **Logging & Deploy**: Structured JSON logging (Logstash/MDC), Dockerized for Fly.io
 
 ### Frontend (FSD Architecture)
@@ -28,7 +28,7 @@ Stop writing resumes manually. Connect your GitHub account, let the system parse
 
 ## 🏗 Architecture
 MeDev follows a **Modular Monolith** architecture on the backend, separated into distinct domains (`auth`, `profile`, `github`, `ai`, `portfolio`, `resume`, `billing`). 
-The backend acts as a secure proxy for third-party services (Groq, Stripe, GitHub), ensuring that API keys are never exposed to the frontend. Authentication is handled via short-lived JWTs (Access Tokens) and long-lived Refresh Tokens stored in Redis.
+The backend acts as a secure proxy for third-party services (Groq, Stripe, GitHub, Google), ensuring that API keys are never exposed to the frontend. Authentication is handled via short-lived JWTs (Access Tokens) and long-lived Refresh Tokens stored in Redis.
 
 ## 🚀 Running Locally
 ### Prerequisites
@@ -50,6 +50,8 @@ The backend acts as a secure proxy for third-party services (Groq, Stripe, GitHu
    GROQ_API_KEY=your_groq_api_key
    GITHUB_CLIENT_ID=your_oauth_client_id
    GITHUB_CLIENT_SECRET=your_oauth_client_secret
+   GOOGLE_CLIENT_ID=your_google_oauth_client_id
+   GOOGLE_CLIENT_SECRET=your_google_oauth_client_secret
    STRIPE_API_KEY=your_stripe_api_key
    STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
    STRIPE_PRO_PRICE_ID=your_stripe_price_id

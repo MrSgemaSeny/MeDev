@@ -14,6 +14,7 @@
   - Configured `SecurityConfig` for strict CORS origins (configured via `application.yml`).
   - Implemented structured JSON logging via `logback-spring.xml` and MDC.
   - Created `Dockerfile` and `fly.toml` for backend deployment on Fly.io.
+  - **Implemented Google OAuth2 integration** for universal Auth (added `google_id` to database via Flyway, refactored `CustomOAuth2UserService` to handle multiple providers, added frontend UI buttons).
 
 ## Next in Backlog
 - Frontend CI/CD / GitHub Pages deployment.
