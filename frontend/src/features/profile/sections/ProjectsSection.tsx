@@ -41,7 +41,7 @@ export const ProjectsSection = () => {
         <div className="flex items-center gap-3">
           <h2 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>Projects</h2>
           {profile?.githubUrl && (
-            <Button size="sm" variant="secondary" onClick={handleAiAnalysis} className="flex items-center gap-2 text-blue-500 bg-blue-500/10 hover:bg-blue-500/20 border-blue-500/20">
+            <Button size="sm" variant="secondary" onClick={handleAiAnalysis} className="flex items-center gap-2" style={{ color: 'var(--color-accent)', backgroundColor: 'var(--color-accent-muted)', borderColor: 'var(--color-border-accent)' }}>
               <Bot size={16} />
               Analyze GitHub
             </Button>

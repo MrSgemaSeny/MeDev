@@ -35,17 +35,19 @@ export const AppHeader = () => {
         </div>
       </div>
 
-      <button
-        className="h-8 w-8 flex items-center justify-center rounded-md transition-colors"
-        style={{ color: 'var(--color-text-secondary)' }}
-        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--color-btn-hover)')}
-        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-        aria-label="Notifications"
-      >
-        <Bell size={16} />
-      </button>
+      <div className="flex items-center gap-4 ml-auto">
+        <button
+          className="h-8 w-8 flex items-center justify-center rounded-md transition-colors"
+          style={{ color: 'var(--color-text-secondary)' }}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--color-btn-hover)')}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+          aria-label="Notifications"
+        >
+          <Bell size={16} />
+        </button>
 
-      <UserProfileDropdown variant="header" />
+        <UserProfileDropdown variant="header" />
+      </div>
     </header>
   );
 };

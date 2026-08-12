@@ -120,8 +120,8 @@ export const AiChatWidget = () => {
       {/* Header */}
       <div className="surface-secondary border-b border-default p-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-blue-500/10 rounded-lg">
-            <Bot size={20} className="text-blue-400" />
+          <div className="p-2 rounded-lg" style={{ backgroundColor: 'var(--color-bg-tertiary)' }}>
+            <Bot size={20} style={{ color: 'var(--color-accent)' }} />
           </div>
           <div>
             <h3 className="font-semibold text-sm">MeDev Assistant</h3>
@@ -147,9 +147,10 @@ export const AiChatWidget = () => {
             <div 
               className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap ${
                 msg.role === 'user' 
-                  ? 'bg-blue-600 text-white rounded-br-none' 
+                  ? 'text-white rounded-br-none' 
                   : 'surface-secondary border-default text-primary rounded-bl-none'
               }`}
+              style={msg.role === 'user' ? { backgroundColor: 'var(--color-accent)' } : undefined}
             >
               {msg.content}
             </div>
@@ -181,13 +182,14 @@ export const AiChatWidget = () => {
               }
             }}
             placeholder="Спроси о чём-нибудь..."
-            className="w-full bg-transparent border border-default rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 resize-none max-h-32 min-h-[40px]"
+            className="w-full bg-transparent border border-default rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-accent)] resize-none max-h-32 min-h-[40px]"
             rows={1}
           />
           <button 
             type="submit" 
             disabled={!input.trim() || isLoading}
-            className="p-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shrink-0"
+            className="p-2.5 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors shrink-0"
+            style={{ backgroundColor: 'var(--color-accent)' }}
           >
             <Send size={18} />
           </button>
