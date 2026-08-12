@@ -201,6 +201,21 @@ public class ProfileService {
         Profile profile = getProfileEntityByUserId(userId);
         List<Project> existingProjects = projectRepository.findByProfileIdOrderBySortOrderAsc(profile.getId());
 
+        // Deduplicate existing projects (in case of previous race conditions)
+        java.util.Set<String> seenNames = new java.util.HashSet<>();
+        java.util.List<Project> toDelete = new java.util.ArrayList<>();
+        for (Project p : existingProjects) {
+            String key = p.getName() != null ? p.getName().toLowerCase() : "";
+            if (!key.isEmpty() && !seenNames.add(key)) {
+                toDelete.add(p);
+            }
+        }
+        if (!toDelete.isEmpty()) {
+            projectRepository.deleteAll(toDelete);
+            existingProjects.removeAll(toDelete);
+            profile.getProjects().removeAll(toDelete);
+        }
+
         for (com.medev.modules.github.dto.GitHubRepoDto repo : repos) {
             boolean exists = existingProjects.stream().anyMatch(p -> 
                 (p.getGithubUrl() != null && p.getGithubUrl().equalsIgnoreCase(repo.getHtmlUrl())) || 
@@ -216,6 +231,7 @@ public class ProfileService {
                         .techStack(repo.getLanguage())
                         .build();
                 projectRepository.save(project);
+                existingProjects.add(project); // Update local list for subsequent iterations
             }
         }
     }
