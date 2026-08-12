@@ -1,11 +1,12 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { LayoutDashboard, User, FileText, Info, Briefcase, GraduationCap, Code, Globe, Box, GitBranch, CreditCard, Settings } from 'lucide-react';
+import { LayoutDashboard, User, FileText, Info, Briefcase, GraduationCap, Code, Globe, Box, GitBranch, CreditCard, Settings, ListTodo } from 'lucide-react';
 import { QuotaWidget } from '../../features/billing/components/QuotaWidget';
 
 const MAIN_NAV = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/profile/edit', label: 'Profile', icon: User },
   { to: '/resume', label: 'Resume', icon: FileText },
+  { to: '/tracker', label: 'Job Tracker', icon: ListTodo },
 ];
 
 const SECTIONS_NAV = [

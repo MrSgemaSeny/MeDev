@@ -10,6 +10,7 @@ const AuthCallback = lazy(() => import('../../pages/auth/AuthCallback').then(m =
 const DashboardPage = lazy(() => import('../../pages/dashboard/DashboardPage').then(m => ({ default: m.DashboardPage })));
 const ProfileEditPage = lazy(() => import('../../pages/profile/ProfileEditPage').then(m => ({ default: m.ProfileEditPage })));
 const ResumePage = lazy(() => import('../../pages/resume/ResumePage').then(m => ({ default: m.ResumePage })));
+const JobTrackerPage = lazy(() => import('../../pages/tracker/JobTrackerPage').then(m => ({ default: m.JobTrackerPage })));
 const PortfolioPage = lazy(() => import('../../pages/portfolio/PortfolioPage').then(m => ({ default: m.PortfolioPage })));
 const PricingPage = lazy(() => import('../../pages/billing/PricingPage').then(m => ({ default: m.PricingPage })));
 const SuccessPage = lazy(() => import('../../pages/billing/SuccessPage').then(m => ({ default: m.SuccessPage })));
@@ -84,6 +85,7 @@ const router = createBrowserRouter([
       { path: '/dashboard', element: <DashboardPage /> },
       { path: '/profile/edit', element: <ProfileEditPage /> },
       { path: '/resume', element: <ResumePage /> },
+      { path: '/tracker', element: <JobTrackerPage /> },
       { path: '/billing', element: <PricingPage /> },
       { path: '/billing/success', element: <SuccessPage /> },
       { path: '/billing/cancel', element: <CancelPage /> },

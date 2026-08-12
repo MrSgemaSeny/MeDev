@@ -95,9 +95,27 @@ export const OnboardingWizard = ({ onComplete }: { onComplete: () => void }) => 
   if (step === 2) {
     return (
       <div className="p-6 max-w-lg mx-auto surface-secondary border border-default rounded-xl">
-        <h2 className="text-xl font-semibold mb-2">Welcome to MeDev</h2>
-        <p className="text-secondary mb-6 text-sm">Let's build your profile in seconds using AI. What do you do?</p>
+        <h2 className="text-xl font-semibold mb-2">Manual Setup</h2>
+        <p className="text-secondary mb-4 text-sm">Select a template or type your own role to get started.</p>
         
+        <div className="flex flex-wrap gap-2 mb-6">
+          {[
+            { role: 'Frontend Engineer', stack: 'React, TypeScript, Tailwind, Vite' },
+            { role: 'Backend Engineer', stack: 'Java, Spring Boot, PostgreSQL, Docker' },
+            { role: 'Full-Stack Engineer', stack: 'React, Node.js, TypeScript, SQL' },
+            { role: 'DevOps Engineer', stack: 'Kubernetes, AWS, Terraform, CI/CD' }
+          ].map(t => (
+            <button 
+              key={t.role}
+              type="button"
+              className="text-xs px-3 py-1.5 rounded-full border border-default surface-secondary text-secondary hover:border-[var(--color-accent)] hover:text-primary transition-colors cursor-pointer"
+              onClick={() => { setRole(t.role); setStack(t.stack); }}
+            >
+              {t.role}
+            </button>
+          ))}
+        </div>
+
         <div className="space-y-4">
           <Field label="Current Role">
             <Input 
