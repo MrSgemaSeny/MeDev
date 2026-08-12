@@ -31,6 +31,16 @@ public class ProfileService {
         profileRepository.save(profile);
     }
 
+    @Transactional
+    public void setGithubUsernameIfMissing(Long userId, String githubUsername) {
+        profileRepository.findByUserId(userId).ifPresent(profile -> {
+            if (profile.getGithubUsername() == null || profile.getGithubUsername().isBlank()) {
+                profile.setGithubUsername(githubUsername);
+                profileRepository.save(profile);
+            }
+        });
+    }
+
     public Profile getProfileEntityByUserId(Long userId) {
         return profileRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException("Profile not found"));

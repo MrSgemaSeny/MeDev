@@ -98,6 +98,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             user.setGithubId(providerId);
             String accessToken = userRequest.getAccessToken().getTokenValue();
             user.setGithubAccessToken(accessToken);
+            
+            String login = (String) attributes.get("login");
+            if (login != null) {
+                profileService.setGithubUsernameIfMissing(user.getId(), login);
+            }
         } else if ("google".equals(registrationId)) {
             user.setGoogleId(providerId);
         }

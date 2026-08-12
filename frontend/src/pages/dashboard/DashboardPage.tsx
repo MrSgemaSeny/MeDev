@@ -35,7 +35,7 @@ export const DashboardPage = () => {
     if (profile.experience && profile.experience.length > 0) score += 20;
     if (profile.education && profile.education.length > 0) score += 10;
     if (profile.skills && profile.skills.length > 0) score += 10;
-    if (profile.githubUrl) score += 10;
+    if (profile.githubUsername) score += 10;
     return score;
   };
 

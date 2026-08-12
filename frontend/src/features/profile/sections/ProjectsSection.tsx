@@ -4,11 +4,11 @@ import type { ProjectDto } from '../../../entities/profile/model/types';
 import { Button } from '../../../shared/ui/Button';
 import { Input, Textarea, Label, Card } from '../../../shared/ui/Form';
 import { Modal } from '../../../shared/ui/Modal';
-import { GithubImport } from '../../github/GithubImport';
+import { GithubImport, GithubIcon } from '../../github/GithubImport';
 
 import { useAiChatStore } from '../../ai-assistant/model/store';
 import { useGenerateProjectDescription } from '../../ai/hooks/useAiGenerate';
-import { Bot, Github } from 'lucide-react';
+import { Bot } from 'lucide-react';
 
 export const ProjectsSection = () => {
   const { data: profile, isLoading } = useProfile();
@@ -44,7 +44,7 @@ export const ProjectsSection = () => {
         <div className="flex items-center gap-3">
           <h2 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>Projects</h2>
           <Button size="sm" variant="secondary" onClick={() => setShowGithubSync(true)} className="flex items-center gap-2">
-            <Github size={16} />
+            <GithubIcon />
             Sync GitHub
           </Button>
           {profile?.githubUrl && (
