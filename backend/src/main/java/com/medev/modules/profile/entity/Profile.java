@@ -42,6 +42,9 @@ public class Profile {
     @Builder.Default
     private Boolean isPublic = true;
 
+    @Builder.Default
+    private Boolean isOnboardingCompleted = false;
+
     @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     private java.util.List<String> sectionOrder;

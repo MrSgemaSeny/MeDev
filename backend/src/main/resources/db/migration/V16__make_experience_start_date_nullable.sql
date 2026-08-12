@@ -1,0 +1,1 @@
+ALTER TABLE experience ALTER COLUMN start_date DROP NOT NULL;

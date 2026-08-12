@@ -12,14 +12,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
-public class AiApplicationService {
+public class AiApplicationService extends AbstractAiStructuredService {
 
     private final SubscriptionService subscriptionService;
     private final ProfileService profileService;
-    private final GroqClient groqClient;
-    private final ObjectMapper objectMapper;
+
+    public AiApplicationService(
+            LlmProvider llmProvider,
+            ObjectMapper objectMapper,
+            SubscriptionService subscriptionService,
+            ProfileService profileService) {
+        super(llmProvider, objectMapper);
+        this.subscriptionService = subscriptionService;
+        this.profileService = profileService;
+    }
 
     public AiApplicationResponse generateCoverLetter(Long userId, AiApplicationRequest request) {
         subscriptionService.assertPro(userId);
@@ -39,14 +46,11 @@ public class AiApplicationService {
             profileJson, request.getJobDescription(), request.getTargetRole() != null ? request.getTargetRole() : "Software Engineer"
         );
 
-        String rawJson = groqClient.structuredCompletion(systemPrompt, userMessage);
-        try {
-            JsonNode root = objectMapper.readTree(rawJson);
+        JsonNode root = generateStructuredData(systemPrompt, userMessage, JsonNode.class);
+        if (root != null && root.has("coverLetter")) {
             return new AiApplicationResponse(root.get("coverLetter").asText());
-        } catch (Exception e) {
-            log.error("Failed to parse Cover Letter JSON", e);
-            throw new RuntimeException("AI generated invalid structure", e);
         }
+        throw new RuntimeException("AI generated invalid structure: missing 'coverLetter'");
     }
 
     public AiApplicationResponse tailorResume(Long userId, AiApplicationRequest request) {
@@ -66,14 +70,11 @@ public class AiApplicationService {
             profileJson, request.getJobDescription()
         );
 
-        String rawJson = groqClient.structuredCompletion(systemPrompt, userMessage);
-        try {
-            JsonNode root = objectMapper.readTree(rawJson);
+        JsonNode root = generateStructuredData(systemPrompt, userMessage, JsonNode.class);
+        if (root != null && root.has("suggestions")) {
             return new AiApplicationResponse(root.get("suggestions").asText());
-        } catch (Exception e) {
-            log.error("Failed to parse Tailor JSON", e);
-            throw new RuntimeException("AI generated invalid structure", e);
         }
+        throw new RuntimeException("AI generated invalid structure: missing 'suggestions'");
     }
 }
 

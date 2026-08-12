@@ -32,7 +32,6 @@ public class Experience {
     
     private String techStack;
 
-    @Column(nullable = false)
     private LocalDate startDate;
     
     private LocalDate endDate;
