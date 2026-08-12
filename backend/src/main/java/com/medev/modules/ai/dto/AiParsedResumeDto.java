@@ -21,4 +21,5 @@ public class AiParsedResumeDto {
     private List<AiLanguageDto> languages;
     private List<AiExperienceDto> experience;
     private List<AiEducationDto> education;
+    private List<AiProjectDto> projects;
 }

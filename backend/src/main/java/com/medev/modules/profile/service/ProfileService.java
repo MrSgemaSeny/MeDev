@@ -106,24 +106,20 @@ public class ProfileService {
         if (parsed.getTelegram() != null) profile.setTelegram(parsed.getTelegram());
         if (parsed.getLinkedin() != null) profile.setLinkedin(parsed.getLinkedin());
         
-        // Clear existing to replace with AI parsed
+        // Smart Merge guarantees the DTO has the FINAL state, so we overwrite collections
         profile.getSkills().clear();
         profile.getExperiences().clear();
         profile.getEducations().clear();
         profile.getLanguages().clear();
+        profile.getProjects().clear();
         
-        // Force flush to execute the deletes before inserting new ones
         profileRepository.saveAndFlush(profile);
 
         if (parsed.getSkills() != null) {
             int order = 0;
-            for (AiSkillDto s : parsed.getSkills()) {
+            for (com.medev.modules.ai.dto.AiSkillDto s : parsed.getSkills()) {
                 if (s.getName() != null && !s.getName().isBlank()) {
-                    Skill skill = Skill.builder()
-                            .profile(profile)
-                            .name(s.getName())
-                            .sortOrder(order++)
-                            .build();
+                    Skill skill = Skill.builder().profile(profile).name(s.getName()).sortOrder(order++).build();
                     skillRepository.save(skill);
                 }
             }
@@ -131,49 +127,61 @@ public class ProfileService {
 
         if (parsed.getExperience() != null) {
             int order = 0;
-            for (AiExperienceDto e : parsed.getExperience()) {
+            for (com.medev.modules.ai.dto.AiExperienceDto e : parsed.getExperience()) {
                 Experience exp = Experience.builder()
                         .profile(profile)
                         .company(e.getCompany())
                         .position(e.getPosition())
                         .description(e.getDescription())
                         .techStack(e.getTechStack())
-                        .startDate(e.getStartDate())
-                        .endDate(e.getEndDate())
                         .isCurrent(e.getIsCurrent() != null ? e.getIsCurrent() : false)
                         .sortOrder(order++)
                         .build();
+                if (e.getStartDate() != null) { try { exp.setStartDate(java.time.LocalDate.parse(e.getStartDate() + "-01")); } catch (Exception ignored) {} }
+                if (e.getEndDate() != null) { try { exp.setEndDate(java.time.LocalDate.parse(e.getEndDate() + "-01")); } catch (Exception ignored) {} }
                 experienceRepository.save(exp);
             }
         }
 
         if (parsed.getEducation() != null) {
             int order = 0;
-            for (AiEducationDto ed : parsed.getEducation()) {
+            for (com.medev.modules.ai.dto.AiEducationDto ed : parsed.getEducation()) {
                 Education edu = Education.builder()
                         .profile(profile)
                         .institution(ed.getInstitution())
                         .degree(ed.getDegree())
                         .field(ed.getFieldOfStudy())
-                        .startDate(ed.getStartDate())
-                        .endDate(ed.getEndDate())
                         .sortOrder(order++)
                         .build();
+                if (ed.getStartDate() != null) { try { edu.setStartDate(java.time.LocalDate.parse(ed.getStartDate() + "-01")); } catch (Exception ignored) {} }
+                if (ed.getEndDate() != null) { try { edu.setEndDate(java.time.LocalDate.parse(ed.getEndDate() + "-01")); } catch (Exception ignored) {} }
                 educationRepository.save(edu);
             }
         }
 
         if (parsed.getLanguages() != null) {
             int order = 0;
-            for (AiLanguageDto l : parsed.getLanguages()) {
+            for (com.medev.modules.ai.dto.AiLanguageDto l : parsed.getLanguages()) {
                 if (l.getName() != null && !l.getName().isBlank()) {
-                    Language lang = Language.builder()
+                    Language lang = Language.builder().profile(profile).name(l.getName()).level(l.getProficiency()).sortOrder(order++).build();
+                    languageRepository.save(lang);
+                }
+            }
+        }
+
+        if (parsed.getProjects() != null) {
+            int order = 0;
+            for (com.medev.modules.ai.dto.AiProjectDto p : parsed.getProjects()) {
+                if (p.getName() != null && !p.getName().isBlank()) {
+                    Project proj = Project.builder()
                             .profile(profile)
-                            .name(l.getName())
-                            .level(l.getProficiency())
+                            .name(p.getName())
+                            .description(p.getDescription())
+                            .githubUrl(p.getGithubUrl())
+                            .techStack(p.getTechStack())
                             .sortOrder(order++)
                             .build();
-                    languageRepository.save(lang);
+                    projectRepository.save(proj);
                 }
             }
         }
@@ -181,6 +189,7 @@ public class ProfileService {
         eventPublisher.publishEvent(new com.medev.modules.profile.event.ProfileUpdatedEvent(this, userId));
         return mapToProfileDto(profile);
     }
+
 
 
 

@@ -103,7 +103,7 @@ const createCrudHooks = <T,>(sectionName: string) => {
   };
 };
 
-import type { ExperienceDto, EducationDto, SkillDto, LanguageDto, ProjectDto } from '../../../entities/profile/model/types';
+import type { ExperienceDto, EducationDto, SkillDto, LanguageDto, ProjectDto, AiParsedResumeDto } from '../../../entities/profile/model/types';
 
 export const { useAdd: useAddExperience, useUpdate: useUpdateExperience, useDelete: useDeleteExperience } = createCrudHooks<ExperienceDto>('experience');
 export const { useAdd: useAddEducation, useUpdate: useUpdateEducation, useDelete: useDeleteEducation } = createCrudHooks<EducationDto>('education');

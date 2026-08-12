@@ -183,7 +183,8 @@ public class AiController {
             return ResponseEntity.badRequest().build();
         }
 
-        AiParsedResumeDto parsed = aiAnalysisService.parseResumePdf(file);
+        ProfileDto currentProfile = profileService.getByUserId(userId);
+        AiParsedResumeDto parsed = aiAnalysisService.parseResumePdf(file, currentProfile);
         ProfileDto updatedProfile = profileService.importParsedResume(userId, parsed);
         return ResponseEntity.ok(updatedProfile);
     }

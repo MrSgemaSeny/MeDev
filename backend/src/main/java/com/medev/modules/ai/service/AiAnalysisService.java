@@ -22,7 +22,7 @@ public class AiAnalysisService {
     private final PromptLoader promptLoader;
     private final ObjectMapper objectMapper;
 
-    public AiParsedResumeDto parseResumePdf(MultipartFile file) {
+    public AiParsedResumeDto parseResumePdf(MultipartFile file, com.medev.modules.profile.dto.ProfileDto currentProfile) {
         String pdfText = extractTextFromPdf(file);
         
         // Ограничиваем размер текста, чтобы не превысить лимиты (например 10000 символов)
@@ -31,8 +31,17 @@ public class AiAnalysisService {
         }
 
         String systemPrompt = promptLoader.load("resume_parser_v1");
+        String currentProfileJson = "{}";
+        try {
+            currentProfileJson = objectMapper.writeValueAsString(currentProfile);
+        } catch (Exception e) {
+            log.warn("Failed to serialize current profile", e);
+        }
 
-        String jsonResponse = llmProvider.structuredCompletion(systemPrompt, pdfText);
+        String finalPrompt = "CURRENT PROFILE JSON (FROM GITHUB/DB):\n" + currentProfileJson + "\n\n" +
+                             "PDF RESUME TEXT:\n" + pdfText;
+
+        String jsonResponse = llmProvider.structuredCompletion(systemPrompt, finalPrompt);
         
         try {
             if (jsonResponse.startsWith("```json")) {
