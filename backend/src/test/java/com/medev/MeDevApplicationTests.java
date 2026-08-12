@@ -15,7 +15,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 class MeDevApplicationTests {
 
     @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine");
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("pgvector/pgvector:pg15");
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
