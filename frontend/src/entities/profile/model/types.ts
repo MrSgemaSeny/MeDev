@@ -3,61 +3,64 @@ export interface ProfileDto {
   fullName?: string;
   headline?: string;
   summary?: string;
+  avatarUrl?: string;
   location?: string;
   website?: string;
-  githubUrl?: string;
-  linkedinUrl?: string;
+  githubUsername?: string;
+  telegram?: string;
+  linkedin?: string;
   experience?: ExperienceDto[];
   education?: EducationDto[];
   skills?: SkillDto[];
   languages?: LanguageDto[];
   projects?: ProjectDto[];
   sectionOrder?: string[];
+  isOnboardingCompleted?: boolean;
 }
 
 export interface ExperienceDto {
   id: number;
   company: string;
   position: string;
+  description?: string;
+  techStack?: string;
   startDate: string;
   endDate?: string;
-  current: boolean;
-  description?: string;
-  orderIndex: number;
+  isCurrent: boolean;
+  sortOrder: number;
 }
 
 export interface EducationDto {
   id: number;
   institution: string;
   degree: string;
-  fieldOfStudy: string;
+  field?: string;
   startDate: string;
   endDate?: string;
-  current: boolean;
-  description?: string;
-  orderIndex: number;
+  isCurrent: boolean;
+  sortOrder: number;
 }
 
 export interface SkillDto {
   id: number;
   name: string;
-  level: string;
-  orderIndex: number;
+  category?: string;
+  level?: string;
+  sortOrder: number;
 }
 
 export interface LanguageDto {
   id: number;
   name: string;
-  proficiency: string;
-  orderIndex: number;
+  level?: string;
+  sortOrder: number;
 }
 
 export interface ProjectDto {
   id: number;
   name: string;
   description?: string;
-  url?: string;
-  startDate?: string;
-  endDate?: string;
-  orderIndex: number;
+  githubUrl?: string;
+  techStack?: string;
+  sortOrder: number;
 }

@@ -3,8 +3,10 @@ package com.medev.modules.ai.dto;
 import lombok.Data;
 import java.time.LocalDate;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AiParsedResumeDto {
     private String fullName;
     private String headline;

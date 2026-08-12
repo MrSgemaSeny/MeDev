@@ -93,13 +93,14 @@ public class ProfileService {
         if (parsed.getTelegram() != null) profile.setTelegram(parsed.getTelegram());
         if (parsed.getLinkedin() != null) profile.setLinkedin(parsed.getLinkedin());
         
-        profileRepository.save(profile);
-        
         // Clear existing to replace with AI parsed
-        skillRepository.deleteByProfileId(profile.getId());
-        experienceRepository.deleteByProfileId(profile.getId());
-        educationRepository.deleteByProfileId(profile.getId());
-        languageRepository.deleteByProfileId(profile.getId());
+        profile.getSkills().clear();
+        profile.getExperience().clear();
+        profile.getEducation().clear();
+        profile.getLanguages().clear();
+        
+        // Force flush to execute the deletes before inserting new ones
+        profileRepository.saveAndFlush(profile);
 
         if (parsed.getSkills() != null) {
             int order = 0;

@@ -2,8 +2,10 @@ package com.medev.modules.ai.dto;
 
 import lombok.Data;
 import java.time.LocalDate;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AiExperienceDto {
     private String company;
     private String position;

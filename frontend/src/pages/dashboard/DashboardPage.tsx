@@ -1,6 +1,7 @@
 import { useProfile } from '../../shared/api/hooks/useProfile';
 import { useAuthStore } from '../../entities/user/model/store';
 import { Link } from 'react-router-dom';
+import { GitBranch, Link as LinkIcon, Send, Globe, Briefcase, GraduationCap, FolderGit2 } from 'lucide-react';
 
 export const DashboardPage = () => {
   const { data: profile, isLoading } = useProfile();
@@ -143,22 +144,125 @@ export const DashboardPage = () => {
               <span className="ml-3 text-xs text-muted font-mono">medev.io/@{username || 'developer'}</span>
             </div>
             <div className="p-6 sm:p-8">
-              <div className="flex items-center gap-5 mb-8">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full surface-tertiary flex items-center justify-center flex-shrink-0 text-xl font-bold">
-                  {displayName.charAt(0)}
-                </div>
+              <div className="flex items-center gap-5 mb-6">
+                {profile?.avatarUrl ? (
+                  <img src={profile.avatarUrl} alt="Avatar" className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border border-default" />
+                ) : (
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full surface-tertiary flex items-center justify-center flex-shrink-0 text-xl font-bold">
+                    {displayName.charAt(0)}
+                  </div>
+                )}
                 <div>
                   <div className="text-xl sm:text-2xl font-bold text-primary">{displayName}</div>
                   <div className="text-sm text-secondary mt-0.5">{profile?.headline || 'Add a headline...'}</div>
                 </div>
               </div>
-              <p className="text-sm text-secondary leading-relaxed mb-5">{profile?.summary || 'Add a summary to introduce yourself...'}</p>
+
+              {/* Contacts */}
+              <div className="flex flex-wrap gap-4 mb-6">
+                {profile?.githubUsername && (
+                  <a href={`https://github.com/${profile.githubUsername}`} target="_blank" rel="noreferrer" className="text-sm text-secondary hover:text-[var(--color-link)] transition-colors flex items-center gap-1.5">
+                    <GitBranch className="w-4 h-4" /> GitHub
+                  </a>
+                )}
+                {profile?.linkedin && (
+                  <a href={profile.linkedin.startsWith('http') ? profile.linkedin : `https://${profile.linkedin}`} target="_blank" rel="noreferrer" className="text-sm text-secondary hover:text-[var(--color-link)] transition-colors flex items-center gap-1.5">
+                    <LinkIcon className="w-4 h-4" /> LinkedIn
+                  </a>
+                )}
+                {profile?.telegram && (
+                  <a href={`https://t.me/${profile.telegram}`} target="_blank" rel="noreferrer" className="text-sm text-secondary hover:text-[var(--color-link)] transition-colors flex items-center gap-1.5">
+                    <Send className="w-4 h-4" /> Telegram
+                  </a>
+                )}
+                {profile?.website && (
+                  <a href={profile.website.startsWith('http') ? profile.website : `https://${profile.website}`} target="_blank" rel="noreferrer" className="text-sm text-secondary hover:text-[var(--color-link)] transition-colors flex items-center gap-1.5">
+                    <Globe className="w-4 h-4" /> Website
+                  </a>
+                )}
+              </div>
+
+              <p className="text-sm text-secondary leading-relaxed mb-10">{profile?.summary || 'Add a summary to introduce yourself...'}</p>
               
+              {/* Projects */}
+              {profile?.projects && profile.projects.length > 0 && (
+                <div className="mb-10">
+                  <h4 className="text-lg font-bold mb-4 flex items-center gap-2"><FolderGit2 className="w-5 h-5 text-secondary"/> Projects</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {profile.projects.map(proj => (
+                      <div key={proj.id} className="p-4 rounded-xl border border-default surface-secondary">
+                        <div className="font-semibold text-primary mb-1">{proj.name}</div>
+                        {proj.description && <p className="text-xs text-secondary mb-3 line-clamp-2">{proj.description}</p>}
+                        {proj.techStack && (
+                          <div className="flex flex-wrap gap-1 mb-3">
+                            {proj.techStack.split(',').map(tech => (
+                              <span key={tech} className="px-1.5 py-0.5 text-[10px] font-medium rounded surface-tertiary text-secondary">{tech.trim()}</span>
+                            ))}
+                          </div>
+                        )}
+                        {proj.githubUrl && (
+                          <a href={proj.githubUrl} target="_blank" rel="noreferrer" className="text-xs text-[var(--color-link)] hover:underline inline-flex items-center gap-1">
+                            <GitBranch className="w-3 h-3" /> Source
+                          </a>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Experience */}
+              {profile?.experience && profile.experience.length > 0 && (
+                <div className="mb-10">
+                  <h4 className="text-lg font-bold mb-4 flex items-center gap-2"><Briefcase className="w-5 h-5 text-secondary"/> Experience</h4>
+                  <div className="space-y-6">
+                    {profile.experience.map(exp => (
+                      <div key={exp.id} className="relative pl-4 border-l-2 border-default">
+                        <div className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-secondary"></div>
+                        <div className="font-semibold text-primary">{exp.position}</div>
+                        <div className="text-sm text-secondary mb-2">{exp.company} • {exp.startDate} — {exp.isCurrent ? 'Present' : exp.endDate}</div>
+                        {exp.description && <p className="text-sm text-secondary whitespace-pre-wrap mb-2">{exp.description}</p>}
+                        {exp.techStack && (
+                          <div className="flex flex-wrap gap-1.5">
+                            {exp.techStack.split(',').map(tech => (
+                              <span key={tech} className="px-1.5 py-0.5 text-xs font-medium rounded surface-secondary text-primary">{tech.trim()}</span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Education */}
+              {profile?.education && profile.education.length > 0 && (
+                <div className="mb-10">
+                  <h4 className="text-lg font-bold mb-4 flex items-center gap-2"><GraduationCap className="w-5 h-5 text-secondary"/> Education</h4>
+                  <div className="space-y-6">
+                    {profile.education.map(edu => (
+                      <div key={edu.id} className="relative pl-4 border-l-2 border-default">
+                        <div className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-secondary"></div>
+                        <div className="font-semibold text-primary">{edu.institution}</div>
+                        <div className="text-sm text-secondary">{edu.degree}{edu.field ? ` in ${edu.field}` : ''}</div>
+                        <div className="text-xs text-secondary mt-1">{edu.startDate} — {edu.isCurrent ? 'Present' : edu.endDate}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Skills */}
               {profile?.skills && profile.skills.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-8">
-                  {profile.skills.map(skill => (
-                    <span key={skill.name} className="px-2.5 py-1 text-xs font-medium rounded-md surface-secondary text-primary">{skill.name}</span>
-                  ))}
+                <div>
+                  <h4 className="text-lg font-bold mb-4">Skills</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {profile.skills.filter(s => s.name.toUpperCase() !== 'HTML' && s.name.toUpperCase() !== 'CSS').map(skill => (
+                      <span key={skill.name} className="px-2.5 py-1 text-xs font-medium rounded-md surface-secondary text-primary border border-default shadow-sm">
+                        {skill.name}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
