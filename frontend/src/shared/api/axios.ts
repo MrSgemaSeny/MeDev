@@ -11,7 +11,7 @@ export const api = axios.create({
 api.interceptors.request.use((config) => {
   const token = useAuthStore.getState().accessToken;
   if (token && config.headers) {
-    config.headers.Authorization = `Bearer ${token}`;
+    config.headers.set('Authorization', `Bearer ${token}`);
   }
   return config;
 });
@@ -42,7 +42,7 @@ api.interceptors.response.use(
           failedQueue.push({ resolve, reject });
         })
           .then((token) => {
-            originalRequest.headers.Authorization = `Bearer ${token}`;
+            originalRequest.headers.set('Authorization', `Bearer ${token}`);
             return api(originalRequest);
           })
           .catch((err) => {
@@ -65,7 +65,7 @@ api.interceptors.response.use(
         });
         
         useAuthStore.getState().setTokens(data.accessToken, data.refreshToken);
-        originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+        originalRequest.headers.set('Authorization', `Bearer ${data.accessToken}`);
         
         processQueue(null, data.accessToken);
         
