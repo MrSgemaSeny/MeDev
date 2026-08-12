@@ -50,7 +50,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
 
     // Stripe
-    implementation 'com.stripe:stripe-java:25.3.0'
+    implementation 'com.stripe:stripe-java:33.2.0'
 
     // Prod Readiness
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
