@@ -24,20 +24,20 @@ export const AppSidebar = () => {
   const isProfileActive = location.pathname.startsWith('/profile');
 
   return (
-    <aside className="w-[200px] shrink-0 border-r py-5 flex flex-col gap-[2px] bg-surface-1 border-default">
+    <aside className="w-[196px] shrink-0 border-r py-5 flex flex-col gap-1 surface-secondary border-default">
       <div className="px-4 pb-4 text-[13px] font-semibold text-primary tracking-[0.05em] uppercase">
         MeDev
       </div>
 
       <div className="px-2">
-        <div className="text-[10px] text-muted px-[10px] pt-2 pb-1 tracking-[0.08em] uppercase font-medium">Main</div>
+        <div className="text-[11px] text-muted px-3 pt-2 pb-1 tracking-widest uppercase font-medium">Main</div>
         {MAIN_NAV.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
             className={({ isActive }) =>
-              `flex items-center gap-2 py-[0.4rem] px-[0.625rem] rounded-md text-[13px] transition-colors select-none ${
-                isActive ? 'text-primary bg-surface-2' : 'text-secondary hover:bg-surface-2 hover:text-primary'
+              `flex items-center gap-2 py-2 px-3 rounded-md text-[13px] transition-colors select-none ${
+                isActive ? 'text-primary surface-tertiary' : 'text-secondary hover:surface-tertiary hover:text-primary'
               }`
             }
           >
@@ -48,18 +48,17 @@ export const AppSidebar = () => {
       </div>
 
       <div className="px-2 mt-2">
-        <div className="text-[10px] text-muted px-[10px] pt-2 pb-1 tracking-[0.08em] uppercase font-medium">Sections</div>
+        <div className="text-[11px] text-muted px-3 pt-2 pb-1 tracking-widest uppercase font-medium">Sections</div>
         {SECTIONS_NAV.map((item) => {
-          // For now, highlight the first section if we're on profile just to match the mockup
           const isActive = isProfileActive && item.to.includes('about'); 
           return (
             <NavLink
               key={item.to}
               to={item.to}
-              className={`flex items-center gap-2 py-[0.4rem] px-[0.625rem] rounded-md text-[13px] transition-colors select-none ${
+              className={`flex items-center gap-2 py-2 px-3 rounded-md text-[13px] transition-colors select-none ${
                 isActive
                   ? 'bg-[var(--color-accent-muted)] text-accent'
-                  : 'text-secondary hover:bg-surface-2 hover:text-primary'
+                  : 'text-secondary hover:surface-tertiary hover:text-primary'
               }`}
             >
               <item.icon size={15} />
@@ -76,19 +75,19 @@ export const AppSidebar = () => {
         <NavLink
           to="/billing"
           className={({ isActive }) =>
-            `flex items-center gap-2 py-[0.4rem] px-[0.625rem] rounded-md text-[13px] transition-colors select-none ${
-              isActive ? 'text-primary bg-surface-2' : 'text-secondary hover:bg-surface-2 hover:text-primary'
+            `flex items-center gap-2 py-2 px-3 rounded-md text-[13px] transition-colors select-none ${
+              isActive ? 'text-primary surface-tertiary' : 'text-secondary hover:surface-tertiary hover:text-primary'
             }`
           }
         >
           <CreditCard size={15} />
           Billing
         </NavLink>
-        <div className="flex items-center gap-2 py-[0.4rem] px-[0.625rem] rounded-md text-[13px] text-secondary hover:bg-surface-2 hover:text-primary transition-colors cursor-pointer select-none">
+        <button className="w-full flex items-center gap-2 py-2 px-3 rounded-md text-[13px] text-secondary hover:surface-tertiary hover:text-primary transition-colors cursor-pointer select-none">
           <Settings size={15} />
           Settings
-        </div>
-        <div className="mt-2 pt-2 border-t border-muted px-[0.625rem]">
+        </button>
+        <div className="mt-2 pt-2 border-t border-muted px-2">
           <UserProfileDropdown />
         </div>
       </div>
