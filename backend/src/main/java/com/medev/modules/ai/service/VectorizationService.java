@@ -28,6 +28,8 @@ public class VectorizationService {
     private final ProfileRepository profileRepository;
     private final JdbcTemplate jdbcTemplate;
 
+    private final org.springframework.transaction.support.TransactionTemplate transactionTemplate;
+
     @Async
     @EventListener
     public void onProfileUpdated(ProfileUpdatedEvent event) {
@@ -36,44 +38,48 @@ public class VectorizationService {
 
     public void vectorizeUserProfile(Long userId) {
         log.info("Starting background vectorization for user ID: {}", userId);
-        Optional<Profile> optProfile = profileRepository.findByUserId(userId);
-        if (optProfile.isEmpty()) {
-            return;
-        }
         
-        Profile profile = optProfile.get();
-        List<Document> documents = new ArrayList<>();
-
-        // Add Projects
-        for (Project project : profile.getProjects()) {
-            String content = String.format("Project: %s. Tech Stack: %s. Description: %s", 
-                    project.getName(), 
-                    project.getTechStack() != null ? project.getTechStack() : "N/A", 
-                    project.getDescription() != null ? project.getDescription() : "N/A");
+        List<Document> documents = transactionTemplate.execute(status -> {
+            List<Document> docs = new ArrayList<>();
+            Optional<Profile> optProfile = profileRepository.findByUserId(userId);
+            if (optProfile.isEmpty()) {
+                return docs;
+            }
             
-            Document doc = new Document(content, Map.of(
-                    "userId", String.valueOf(userId),
-                    "type", "PROJECT",
-                    "projectId", String.valueOf(project.getId())
-            ));
-            documents.add(doc);
-        }
+            Profile profile = optProfile.get();
 
-        // Add Experiences
-        for (Experience exp : profile.getExperiences()) {
-            String content = String.format("Role: %s at %s. Tech Stack: %s. Description: %s", 
-                    exp.getPosition(), 
-                    exp.getCompany(),
-                    exp.getTechStack() != null ? exp.getTechStack() : "N/A",
-                    exp.getDescription() != null ? exp.getDescription() : "N/A");
-            
-            Document doc = new Document(content, Map.of(
-                    "userId", String.valueOf(userId),
-                    "type", "EXPERIENCE",
-                    "experienceId", String.valueOf(exp.getId())
-            ));
-            documents.add(doc);
-        }
+            // Add Projects
+            for (Project project : profile.getProjects()) {
+                String content = String.format("Project: %s. Tech Stack: %s. Description: %s", 
+                        project.getName(), 
+                        project.getTechStack() != null ? project.getTechStack() : "N/A", 
+                        project.getDescription() != null ? project.getDescription() : "N/A");
+                
+                Document doc = new Document(content, Map.of(
+                        "userId", String.valueOf(userId),
+                        "type", "PROJECT",
+                        "projectId", String.valueOf(project.getId())
+                ));
+                docs.add(doc);
+            }
+
+            // Add Experiences
+            for (Experience exp : profile.getExperiences()) {
+                String content = String.format("Role: %s at %s. Tech Stack: %s. Description: %s", 
+                        exp.getPosition(), 
+                        exp.getCompany(),
+                        exp.getTechStack() != null ? exp.getTechStack() : "N/A",
+                        exp.getDescription() != null ? exp.getDescription() : "N/A");
+                
+                Document doc = new Document(content, Map.of(
+                        "userId", String.valueOf(userId),
+                        "type", "EXPERIENCE",
+                        "experienceId", String.valueOf(exp.getId())
+                ));
+                docs.add(doc);
+            }
+            return docs;
+        });
 
         if (documents.isEmpty()) {
             log.info("No projects or experiences to vectorize for user {}", userId);
