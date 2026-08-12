@@ -15,6 +15,10 @@ const PortfolioPage = lazy(() => import('../../pages/portfolio/PortfolioPage').t
 const PricingPage = lazy(() => import('../../pages/billing/PricingPage').then(m => ({ default: m.PricingPage })));
 const SuccessPage = lazy(() => import('../../pages/billing/SuccessPage').then(m => ({ default: m.SuccessPage })));
 const CancelPage = lazy(() => import('../../pages/billing/CancelPage').then(m => ({ default: m.CancelPage })));
+const AdminDashboardPage = lazy(() => import('../../pages/admin/AdminDashboardPage').then(m => ({ default: m.AdminDashboardPage })));
+const AdminUsersPage = lazy(() => import('../../pages/admin/AdminUsersPage').then(m => ({ default: m.AdminUsersPage })));
+const AdminAuditPage = lazy(() => import('../../pages/admin/AdminAuditPage').then(m => ({ default: m.AdminAuditPage })));
+import { AdminGuard } from '../providers/AdminGuard';
 
 const PageLoader = () => (
   <div
@@ -90,6 +94,15 @@ const router = createBrowserRouter([
       { path: '/billing', element: <PricingPage /> },
       { path: '/billing/success', element: <SuccessPage /> },
       { path: '/billing/cancel', element: <CancelPage /> },
+      {
+        path: '/admin',
+        element: <AdminGuard />,
+        children: [
+          { path: 'dashboard', element: <AdminDashboardPage /> },
+          { path: 'users', element: <AdminUsersPage /> },
+          { path: 'audit', element: <AdminAuditPage /> },
+        ]
+      },
     ],
   },
   {

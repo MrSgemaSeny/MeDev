@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { LogOut, Bell, Globe, Mail, Moon, Sun } from 'lucide-react';
+import { LogOut, Bell, Globe, Mail, Moon, Sun, Shield } from 'lucide-react';
 import { useAuthStore } from '../../entities/user/model/store';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 interface UserProfileDropdownProps {
   variant?: 'sidebar' | 'header';
@@ -11,6 +12,7 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const username = useAuthStore((s) => s.username);
+  const role = useAuthStore((s) => s.role);
   const logout = useAuthStore((s) => s.logout);
   const { i18n } = useTranslation();
 
@@ -138,6 +140,18 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
                 <span className="text-sm font-medium">Уведомления</span>
               </div>
             </button>
+
+            {role === 'ADMIN' && (
+              <button 
+                onClick={() => { setIsOpen(false); window.location.href = '/admin/dashboard'; }}
+                className="w-full px-4 py-2.5 flex items-center justify-between hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-left"
+              >
+                <div className="flex items-center gap-3 text-accent" style={{ color: 'var(--color-accent)' }}>
+                  <Shield size={18} />
+                  <span className="text-sm font-medium">Админ-панель</span>
+                </div>
+              </button>
+            )}
 
             <div className="h-px bg-border-muted my-1 mx-4" style={{ backgroundColor: 'var(--color-border-muted)' }} />
 
