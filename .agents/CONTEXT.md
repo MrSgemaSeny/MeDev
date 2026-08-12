@@ -25,3 +25,4 @@
 ## Next in Backlog
 - Frontend CI/CD / GitHub Pages deployment.
 - Implement Vitest tests for the frontend and expand JUnit/Mockito tests on the backend.
+  - **Dashboard Redesign**: Replaced standard DashboardPage with premium landing-page aesthetics (hero, live portfolio mock window, quick actions cards). Removed all mock data.

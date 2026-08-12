@@ -29,7 +29,7 @@ export const DashboardPage = () => {
 
   return (
     <div className="animate-fade-in w-full pb-20">
-      <style>{\
+      <style>{`
         .glow-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 12px #22c55e; animation: pulse 2s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
         .card-hover { transition: all .2s ease; }
@@ -37,7 +37,7 @@ export const DashboardPage = () => {
         .dark .card-hover:hover { border-color: #e5e5e5; }
         .mock-window { box-shadow: 0 1px 3px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.06); }
         .dark .mock-window { box-shadow: 0 1px 3px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.2); }
-      \}</style>
+      `}</style>
 
       {/* Hero */}
       <section className="pt-12 pb-10 px-6">
@@ -58,7 +58,7 @@ export const DashboardPage = () => {
               Edit Profile
             </Link>
             {username && (
-              <a href={\/portfolio/\\} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold border border-default rounded-xl hover:border-[var(--color-text)] transition-all">
+              <a href={`/portfolio/${username}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold border border-default rounded-xl hover:border-[var(--color-text)] transition-all">
                 View Live Portfolio
               </a>
             )}
