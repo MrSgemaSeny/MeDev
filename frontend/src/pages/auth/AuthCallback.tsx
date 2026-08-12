@@ -15,7 +15,7 @@ export const AuthCallback = () => {
 
     if (code && !exchanged.current) {
       exchanged.current = true;
-      api.post('/v1/auth/oauth2/exchange', { code })
+      api.post('/auth/oauth2/exchange', { code })
         .then((res) => {
           const { accessToken, refreshToken, username, plan } = res.data;
           setAuth(accessToken, refreshToken, username, plan);
