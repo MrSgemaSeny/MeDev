@@ -7,7 +7,7 @@ Stop writing resumes manually. Connect your GitHub account, let the system parse
 - **GitHub & Google Integration (OAuth2)**: One-click login and automated repository import.
 - **AI-Powered Profile Generation**: Integrated Groq AI assistant (streaming responses via SSE) to auto-generate project descriptions, experience summaries, and analyze your GitHub stats.
 - **AI Resume Parsing (Pro)**: Upload an existing PDF resume, and our AI will extract the data and populate your profile automatically.
-- **Resume Generator & Builder**: Export your data to a clean, ATS-friendly PDF resume in one click. Completely customize the order and visibility of your resume sections using a robust `dnd-kit` drag-and-drop React interface.
+- **Resume Generator & Builder**: Export your data to a clean, ATS-friendly PDF resume in one click. Completely customize the order and visibility of your resume sections using a robust data-dense CRM table.
 - **Monetization & Quota Management**: Full Stripe Checkout integration for Pro plan upgrades with automated webhook synchronization. Features real-time AI quota tracking and soft upsell flows.
 - **Strict Rate Limiting & Security**: Implemented Bucket4j for API abuse prevention, strict CORS policies, JWT type segregation, and secure OAuth2 code-exchange flows (No tokens in URLs).
 - **Feature-Sliced Design & UI**: Highly modular frontend architecture following FSD. Features a strict GitHub Dark Mode design system with responsive layouts and global headers.
@@ -24,7 +24,7 @@ Stop writing resumes manually. Connect your GitHub account, let the system parse
 - **Core**: React 19, TypeScript, Vite
 - **State & Data**: Zustand (Global state), React Query (Server state)
 - **Styling & UI**: Tailwind CSS v4, Lucide React (Icons)
-- **Interactions**: `@dnd-kit/core` (Drag and Drop), Server-Sent Events (SSE) for AI streaming
+- **Interactions**: Server-Sent Events (SSE) for AI streaming
 
 ## 🏗 Architecture
 MeDev follows a **Modular Monolith** architecture on the backend, separated into distinct domains (`auth`, `profile`, `github`, `ai`, `portfolio`, `resume`, `billing`). 
@@ -36,8 +36,9 @@ The backend acts as a secure proxy for third-party services (Groq, Stripe, GitHu
 - Node.js 20+
 - PostgreSQL
 - Redis
+- Docker (for CRM and infrastructure services via docker-compose)
 
-### Setup
+### Setup (Manual)
 1. Clone the repository.
 2. Set up environment variables for the backend:
    ```env
@@ -58,3 +59,10 @@ The backend acts as a secure proxy for third-party services (Groq, Stripe, GitHu
    ```
 3. Run the backend: `./gradlew bootRun`
 4. Run the frontend: `cd frontend && npm install && npm run dev`
+
+### Setup (Docker Compose)
+For local development, you can spin up the entire infrastructure (PostgreSQL, Redis) using the provided Docker Compose file:
+```bash
+docker-compose up -d
+```
+Then run the Spring Boot backend and Vite frontend normally.

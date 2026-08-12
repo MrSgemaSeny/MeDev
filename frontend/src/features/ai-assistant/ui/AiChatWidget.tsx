@@ -4,7 +4,7 @@ import { useAiChatStore } from '../model/store';
 import { useAuthStore } from '../../../entities/user/model/store';
 
 export const AiChatWidget = () => {
-  const { isOpen, messages, isLoading, toggleChat, addMessage, updateLastMessage, setLoading, clearChat } = useAiChatStore();
+  const { isOpen, messages, isLoading, pendingPrompt, toggleChat, addMessage, updateLastMessage, setLoading, clearChat, clearPendingPrompt } = useAiChatStore();
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const accessToken = useAuthStore((state) => state.accessToken);
@@ -17,11 +17,19 @@ export const AiChatWidget = () => {
 
   // Welcome message on first open
   useEffect(() => {
-    if (isOpen && messages.length === 0) {
+    if (isOpen && messages.length === 0 && !pendingPrompt) {
       handleSend("Привет! Поздоровайся и расскажи чем можешь помочь коротко.", true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
+
+  // Handle pending prompts triggered from external buttons
+  useEffect(() => {
+    if (pendingPrompt && !isLoading) {
+      handleSend(pendingPrompt);
+      clearPendingPrompt();
+    }
+  }, [pendingPrompt, isLoading]);
 
   const handleSend = async (text: string = input, isHidden: boolean = false) => {
     if (!text.trim() || isLoading) return;

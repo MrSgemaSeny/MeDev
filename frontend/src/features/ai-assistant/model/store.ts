@@ -10,8 +10,11 @@ interface AiChatState {
   isOpen: boolean;
   messages: Message[];
   isLoading: boolean;
+  pendingPrompt: string | null;
   
   toggleChat: () => void;
+  openWithPrompt: (prompt: string) => void;
+  clearPendingPrompt: () => void;
   addMessage: (message: Message) => void;
   updateLastMessage: (content: string) => void;
   setLoading: (loading: boolean) => void;
@@ -22,8 +25,11 @@ export const useAiChatStore = create<AiChatState>((set) => ({
   isOpen: false,
   messages: [],
   isLoading: false,
+  pendingPrompt: null,
 
   toggleChat: () => set((state) => ({ isOpen: !state.isOpen })),
+  openWithPrompt: (prompt) => set({ isOpen: true, pendingPrompt: prompt }),
+  clearPendingPrompt: () => set({ pendingPrompt: null }),
   addMessage: (message) => set((state) => ({ messages: [...state.messages, message] })),
   updateLastMessage: (content) => set((state) => {
     const newMessages = [...state.messages];

@@ -18,21 +18,10 @@ export const ProjectsSection = () => {
   const [editingId, setEditingId] = useState<number | 'new' | null>(null);
   const [showGithubSync, setShowGithubSync] = useState(false);
 
-  const { toggleChat, isOpen } = useAiChatStore();
+  const { openWithPrompt } = useAiChatStore();
 
   const handleAiAnalysis = () => {
-    if (!isOpen) toggleChat();
-    setTimeout(() => {
-      const chatWidget = document.querySelector('textarea[placeholder="Спроси о чём-нибудь..."]') as HTMLTextAreaElement;
-      if (chatWidget) {
-        const form = chatWidget.closest('form');
-        if (form) {
-          chatWidget.value = "Проанализируй мой GitHub профиль: Какие проекты стоит выделить в резюме и почему? Что говорит мой стек о моём уровне?";
-          chatWidget.dispatchEvent(new Event('input', { bubbles: true }));
-          form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
-        }
-      }
-    }, 300);
+    openWithPrompt("Проанализируй мой GitHub профиль: Какие проекты стоит выделить в резюме и почему? Что говорит мой стек о моём уровне?");
   };
 
   if (isLoading) return <div className="text-secondary">Loading...</div>;
