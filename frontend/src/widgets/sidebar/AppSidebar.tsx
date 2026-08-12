@@ -45,7 +45,8 @@ export const AppSidebar = () => {
       <div className="px-2 mt-2">
         <div className="text-[11px] text-muted px-3 pt-2 pb-1 tracking-widest uppercase font-medium">Sections</div>
         {SECTIONS_NAV.map((item) => {
-          const isActive = isProfileActive && item.to.includes('about'); 
+          const activeSectionHash = location.hash || '#about';
+          const isActive = isProfileActive && item.to.includes(activeSectionHash); 
           return (
             <NavLink
               key={item.to}
