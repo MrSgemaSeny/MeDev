@@ -3,8 +3,6 @@ import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import { useAuthStore } from '../../entities/user/model/store';
 import { AppLayout } from '../layouts/AppLayout';
 import { PublicLayout } from '../layouts/PublicLayout';
-
-const LandingPage = lazy(() => import('../../pages/landing/LandingPage').then(m => ({ default: m.LandingPage })));
 const LoginPage = lazy(() => import('../../pages/auth/LoginPage').then(m => ({ default: m.LoginPage })));
 const RegisterPage = lazy(() => import('../../pages/auth/RegisterPage').then(m => ({ default: m.RegisterPage })));
 const AuthCallback = lazy(() => import('../../pages/auth/AuthCallback').then(m => ({ default: m.AuthCallback })));
@@ -68,10 +66,7 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 const router = createBrowserRouter([
-  { 
-    path: '/', 
-    element: (<PublicRoute><LandingPage /></PublicRoute>) 
-  },
+  { path: '/', element: <Navigate to="/dashboard" replace /> },
   {
     path: '/login',
     element: (<PublicRoute><LoginPage /></PublicRoute>),
