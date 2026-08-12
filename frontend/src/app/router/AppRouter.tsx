@@ -32,13 +32,35 @@ const PageLoader = () => (
   </div>
 );
 
+import { useEffect, useState } from 'react';
+
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
+  const [hasHydrated, setHasHydrated] = useState(false);
+
+  useEffect(() => {
+    const unsub = useAuthStore.persist.onFinishHydration(() => setHasHydrated(true));
+    setHasHydrated(useAuthStore.persist.hasHydrated());
+    return unsub;
+  }, []);
+
   const accessToken = useAuthStore((state) => state.accessToken);
+
+  if (!hasHydrated) return <PageLoader />;
   return accessToken ? children : <Navigate to="/login" replace />;
 };
 
 const PublicRoute = ({ children }: { children: React.ReactNode }) => {
+  const [hasHydrated, setHasHydrated] = useState(false);
+
+  useEffect(() => {
+    const unsub = useAuthStore.persist.onFinishHydration(() => setHasHydrated(true));
+    setHasHydrated(useAuthStore.persist.hasHydrated());
+    return unsub;
+  }, []);
+
   const accessToken = useAuthStore((state) => state.accessToken);
+
+  if (!hasHydrated) return <PageLoader />;
   return !accessToken ? children : <Navigate to="/dashboard" replace />;
 };
 
