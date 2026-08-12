@@ -167,6 +167,7 @@ class AuthServiceTest {
         String deviceId = "dev123";
         
         when(jwtService.validateToken(token)).thenReturn(true);
+        when(jwtService.extractType(token)).thenReturn("refresh");
         when(jwtService.extractUserId(token)).thenReturn(1L);
         when(jwtService.extractDeviceId(token)).thenReturn(deviceId);
         

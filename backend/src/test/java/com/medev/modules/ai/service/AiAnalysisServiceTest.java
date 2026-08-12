@@ -1,7 +1,7 @@
 package com.medev.modules.ai.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.medev.modules.profile.dto.UpdateProfileRequest;
+import com.medev.modules.ai.dto.AiParsedResumeDto;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -65,7 +65,7 @@ public class AiAnalysisServiceTest {
         String jsonResponse = "{\"fullName\":\"John Doe\",\"headline\":\"Software Developer\"}";
         when(llmProvider.structuredCompletion(anyString(), anyString())).thenReturn(jsonResponse);
 
-        UpdateProfileRequest result = aiAnalysisService.parseResumePdf(file);
+        AiParsedResumeDto result = aiAnalysisService.parseResumePdf(file);
 
         assertThat(result).isNotNull();
         assertThat(result.getFullName()).isEqualTo("John Doe");
@@ -94,7 +94,7 @@ public class AiAnalysisServiceTest {
         MockMultipartFile file = createPdfFile("Text");
         when(llmProvider.structuredCompletion(anyString(), anyString())).thenReturn("not json");
 
-        UpdateProfileRequest result = aiAnalysisService.parseResumePdf(file);
+        AiParsedResumeDto result = aiAnalysisService.parseResumePdf(file);
         assertThat(result).isNotNull();
         assertThat(result.getFullName()).isNull();
     }
