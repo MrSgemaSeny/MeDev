@@ -70,9 +70,11 @@ api.interceptors.response.use(
         processQueue(null, data.accessToken);
         
         return api(originalRequest);
-      } catch (refreshError) {
+      } catch (refreshError: any) {
         processQueue(refreshError, null);
-        useAuthStore.getState().logout();
+        if (axios.isAxiosError(refreshError) && refreshError.response?.status === 401) {
+          useAuthStore.getState().logout();
+        }
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

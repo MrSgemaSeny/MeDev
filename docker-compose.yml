@@ -19,6 +19,9 @@ services:
     container_name: medev-redis
     ports:
       - "6379:6379"
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis_data:/data
     restart: unless-stopped
 
   backend:
@@ -55,3 +58,4 @@ services:
 
 volumes:
   postgres-data:
+  redis_data:
