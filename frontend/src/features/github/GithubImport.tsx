@@ -35,7 +35,7 @@ interface GitHubRepoDto {
 type Stage = 'idle' | 'fetching' | 'selecting' | 'importing' | 'done' | 'error';
 
 export const GithubImport = () => {
-  const { refetch } = useProfile();
+  const { data: profileData, refetch } = useProfile();
   const [stage, setStage] = useState<Stage>('idle');
   const [error, setError] = useState<string | null>(null);
   const [profile, setProfile] = useState<GitHubProfileDto | null>(null);
@@ -143,10 +143,12 @@ export const GithubImport = () => {
             )}
             
             <div className="flex gap-3 pt-1">
-              <Button type="button" variant="outline" onClick={handleConnect}>
-                <GithubIcon />
-                Connect GitHub
-              </Button>
+              {(!profileData?.githubUsername || error) && (
+                <Button type="button" variant="outline" onClick={handleConnect}>
+                  <GithubIcon />
+                  Connect GitHub
+                </Button>
+              )}
               <Button type="button" variant="primary" onClick={handleFetch} disabled={stage === 'fetching'}>
                 <DownloadCloud size={16} className="mr-2" />
                 {stage === 'fetching' ? 'Fetching...' : 'Fetch Data'}
