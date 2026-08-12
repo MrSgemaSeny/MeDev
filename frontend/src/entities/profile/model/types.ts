@@ -64,3 +64,32 @@ export interface ProjectDto {
   techStack?: string;
   sortOrder: number;
 }
+
+export interface AiParsedResumeDto {
+  fullName?: string;
+  headline?: string;
+  summary?: string;
+  location?: string;
+  website?: string;
+  githubUsername?: string;
+  telegram?: string;
+  linkedin?: string;
+  skills?: { name: string; proficiency?: string }[];
+  languages?: { name: string; proficiency?: string }[];
+  experience?: {
+    company: string;
+    position: string;
+    description?: string;
+    techStack?: string;
+    startDate?: string;
+    endDate?: string;
+    isCurrent?: boolean;
+  }[];
+  education?: {
+    institution: string;
+    degree: string;
+    fieldOfStudy?: string;
+    startDate?: string;
+    endDate?: string;
+  }[];
+}
