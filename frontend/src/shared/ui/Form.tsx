@@ -23,8 +23,8 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           ...style,
         }}
         onFocus={(e) => {
-          e.currentTarget.style.borderColor = 'var(--color-link)';
-          e.currentTarget.style.boxShadow = '0 0 0 3px var(--color-selection)';
+          e.currentTarget.style.borderColor = 'var(--color-border-default)';
+          e.currentTarget.style.boxShadow = '0 0 0 1px var(--color-text-muted)';
           onFocus?.(e);
         }}
         onBlur={(e) => {
@@ -54,8 +54,8 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           ...style,
         }}
         onFocus={(e) => {
-          e.currentTarget.style.borderColor = 'var(--color-link)';
-          e.currentTarget.style.boxShadow = '0 0 0 3px var(--color-selection)';
+          e.currentTarget.style.borderColor = 'var(--color-border-default)';
+          e.currentTarget.style.boxShadow = '0 0 0 1px var(--color-text-muted)';
           onFocus?.(e);
         }}
         onBlur={(e) => {

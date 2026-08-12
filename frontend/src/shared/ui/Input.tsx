@@ -21,8 +21,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           ...style,
         }}
         onFocus={(e) => {
-          e.currentTarget.style.borderColor = 'var(--color-link)';
-          e.currentTarget.style.boxShadow = '0 0 0 3px var(--color-selection)';
+          e.currentTarget.style.borderColor = 'var(--color-border-default)';
+          e.currentTarget.style.boxShadow = '0 0 0 1px var(--color-text-muted)';
           props.onFocus?.(e);
         }}
         onBlur={(e) => {

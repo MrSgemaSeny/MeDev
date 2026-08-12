@@ -52,8 +52,8 @@ export const AppSidebar = () => {
             <NavLink
               key={item.to}
               to={item.to}
-              className={`flex items-center gap-2 py-[0.4rem] px-[0.625rem] rounded-md text-[13px] transition-colors select-none ${
-                isActive ? 'bg-[var(--color-accent-muted)] text-accent' : 'text-secondary hover:bg-surface-2 hover:text-primary'
+              className={`flex items-center gap-2 py-1.5 px-3 rounded-md text-[13px] transition-colors select-none ${
+                isActive ? 'text-primary surface-tertiary' : 'text-secondary hover:surface-tertiary hover:text-primary'
               }`}
             >
               <item.icon size={15} />

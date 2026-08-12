@@ -76,12 +76,12 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
         style={isHeader ? ({ '--tw-ring-color': 'var(--color-border-default)' } as React.CSSProperties) : undefined}
       >
         {isHeader ? (
-          <div className="w-full h-full bg-blue-500 flex items-center justify-center text-white text-xs font-bold">
+          <div className="w-full h-full flex items-center justify-center text-[var(--color-text-primary)] text-xs font-bold" style={{ backgroundColor: 'var(--color-bg-tertiary)', border: '1px solid var(--color-border-default)' }}>
             {username.charAt(0).toUpperCase()}
           </div>
         ) : (
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 shrink-0 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-bold shadow-sm">
+            <div className="w-7 h-7 shrink-0 rounded-full flex items-center justify-center text-[var(--color-text-primary)] text-xs font-bold shadow-sm" style={{ backgroundColor: 'var(--color-bg-tertiary)', border: '1px solid var(--color-border-default)' }}>
               {username.charAt(0).toUpperCase()}
             </div>
             <div className="flex flex-col items-start leading-tight">
@@ -105,7 +105,7 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
           }}
         >
           <div className="px-4 py-3 border-b border-muted flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white text-lg font-bold shrink-0">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center text-[var(--color-text-primary)] text-lg font-bold shrink-0" style={{ backgroundColor: 'var(--color-bg-tertiary)', border: '1px solid var(--color-border-default)' }}>
               {username.charAt(0).toUpperCase()}
             </div>
             <div className="flex flex-col overflow-hidden">
@@ -123,10 +123,10 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
                 <span className="text-sm font-medium">Тема</span>
               </div>
               <div className="flex bg-black/5 dark:bg-white/10 rounded-full p-0.5 text-xs font-semibold">
-                <div className={`px-2.5 py-1 rounded-full transition-colors ${!isDark ? 'bg-white shadow-sm text-green-700' : 'text-muted'}`}>
+                <div className={`px-2.5 py-1 rounded-full transition-colors ${!isDark ? 'bg-white shadow-sm text-accent' : 'text-muted'}`}>
                   Светлая
                 </div>
-                <div className={`px-2.5 py-1 rounded-full transition-colors ${isDark ? 'bg-white dark:bg-[#238636] shadow-sm text-white' : 'text-muted'}`}>
+                <div className={`px-2.5 py-1 rounded-full transition-colors ${isDark ? 'shadow-sm text-white' : 'text-muted'}`} style={isDark ? { backgroundColor: 'var(--color-accent)' } : undefined}>
                   Тёмная
                 </div>
               </div>
@@ -149,13 +149,15 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
               <div className="flex bg-black/5 dark:bg-white/10 rounded-full p-0.5 text-xs font-bold">
                 <button
                   onClick={() => toggleLanguage('ru')}
-                  className={`px-3 py-1 rounded-full transition-colors ${i18n.language?.startsWith('ru') ? 'bg-[#006633] text-white shadow-sm' : 'text-secondary hover:text-primary'}`}
+                  className={`px-3 py-1 rounded-full transition-colors ${i18n.language?.startsWith('ru') ? 'text-white shadow-sm' : 'text-secondary hover:text-primary'}`}
+                  style={i18n.language?.startsWith('ru') ? { backgroundColor: 'var(--color-accent)' } : undefined}
                 >
                   RU
                 </button>
                 <button
                   onClick={() => toggleLanguage('en')}
-                  className={`px-3 py-1 rounded-full transition-colors ${i18n.language?.startsWith('en') ? 'bg-[#006633] text-white shadow-sm' : 'text-secondary hover:text-primary'}`}
+                  className={`px-3 py-1 rounded-full transition-colors ${i18n.language?.startsWith('en') ? 'text-white shadow-sm' : 'text-secondary hover:text-primary'}`}
+                  style={i18n.language?.startsWith('en') ? { backgroundColor: 'var(--color-accent)' } : undefined}
                 >
                   EN
                 </button>
