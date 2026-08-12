@@ -3,10 +3,12 @@ import { useProfile, useAddProject, useUpdateProject, useDeleteProject } from '.
 import type { ProjectDto } from '../../../entities/profile/model/types';
 import { Button } from '../../../shared/ui/Button';
 import { Input, Textarea, Label, Card } from '../../../shared/ui/Form';
+import { Modal } from '../../../shared/ui/Modal';
+import { GithubImport } from '../../github/GithubImport';
 
 import { useAiChatStore } from '../../ai-assistant/model/store';
 import { useGenerateProjectDescription } from '../../ai/hooks/useAiGenerate';
-import { Bot } from 'lucide-react';
+import { Bot, Github } from 'lucide-react';
 
 export const ProjectsSection = () => {
   const { data: profile, isLoading } = useProfile();
@@ -14,6 +16,7 @@ export const ProjectsSection = () => {
   const updateMutation = useUpdateProject();
   const deleteMutation = useDeleteProject();
   const [editingId, setEditingId] = useState<number | 'new' | null>(null);
+  const [showGithubSync, setShowGithubSync] = useState(false);
 
   const { toggleChat, isOpen } = useAiChatStore();
 
@@ -40,6 +43,10 @@ export const ProjectsSection = () => {
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-3">
           <h2 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>Projects</h2>
+          <Button size="sm" variant="secondary" onClick={() => setShowGithubSync(true)} className="flex items-center gap-2">
+            <Github size={16} />
+            Sync GitHub
+          </Button>
           {profile?.githubUrl && (
             <Button size="sm" variant="secondary" onClick={handleAiAnalysis} className="flex items-center gap-2" style={{ color: 'var(--color-accent)', backgroundColor: 'var(--color-accent-muted)', borderColor: 'var(--color-border-accent)' }}>
               <Bot size={16} />
@@ -51,6 +58,11 @@ export const ProjectsSection = () => {
           <Button size="sm" variant="secondary" onClick={() => setEditingId('new')}>Add project</Button>
         )}
       </div>
+
+      <Modal isOpen={showGithubSync} onClose={() => setShowGithubSync(false)} title="Import from GitHub">
+        <GithubImport />
+      </Modal>
+
       <div className="space-y-3">
         {projects.map((proj) =>
           editingId === proj.id ? (

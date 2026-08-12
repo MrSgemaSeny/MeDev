@@ -96,15 +96,24 @@ public class ProfileService {
     @Transactional
     public void importProjects(Long userId, List<com.medev.modules.github.dto.GitHubRepoDto> repos) {
         Profile profile = getProfileEntityByUserId(userId);
+        List<Project> existingProjects = projectRepository.findByProfileIdOrderBySortOrderAsc(profile.getId());
+
         for (com.medev.modules.github.dto.GitHubRepoDto repo : repos) {
-            Project project = Project.builder()
-                    .profile(profile)
-                    .name(repo.getName())
-                    .description(repo.getDescription())
-                    .githubUrl(repo.getHtmlUrl())
-                    .techStack(repo.getLanguage())
-                    .build();
-            projectRepository.save(project);
+            boolean exists = existingProjects.stream().anyMatch(p -> 
+                (p.getGithubUrl() != null && p.getGithubUrl().equalsIgnoreCase(repo.getHtmlUrl())) || 
+                (p.getName() != null && p.getName().equalsIgnoreCase(repo.getName()))
+            );
+
+            if (!exists) {
+                Project project = Project.builder()
+                        .profile(profile)
+                        .name(repo.getName())
+                        .description(repo.getDescription())
+                        .githubUrl(repo.getHtmlUrl())
+                        .techStack(repo.getLanguage())
+                        .build();
+                projectRepository.save(project);
+            }
         }
     }
 
