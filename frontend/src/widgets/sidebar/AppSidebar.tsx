@@ -1,65 +1,97 @@
-import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-
+import { NavLink, useLocation } from 'react-router-dom';
+import { LayoutDashboard, User, FileText, Info, Briefcase, GraduationCap, Code, Globe, Box, GitBranch, CreditCard, Settings } from 'lucide-react';
+import { UserProfileDropdown } from '../header/UserProfileDropdown';
 import { QuotaWidget } from '../../features/billing/components/QuotaWidget';
 
-const NAV = [
-  { to: '/dashboard', label: 'Dashboard' },
-  { to: '/profile/edit', label: 'Profile' },
-  { to: '/resume', label: 'Resume' },
-  { to: '/billing', label: 'Billing' },
+const MAIN_NAV = [
+  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/profile/edit', label: 'Profile', icon: User },
+  { to: '/resume', label: 'Resume', icon: FileText },
+];
+
+const SECTIONS_NAV = [
+  { to: '/profile/edit#about', label: 'About', icon: Info },
+  { to: '/profile/edit#experience', label: 'Experience', icon: Briefcase },
+  { to: '/profile/edit#education', label: 'Education', icon: GraduationCap },
+  { to: '/profile/edit#skills', label: 'Skills', icon: Code },
+  { to: '/profile/edit#languages', label: 'Languages', icon: Globe },
+  { to: '/profile/edit#projects', label: 'Projects', icon: Box },
+  { to: '/profile/edit#github', label: 'GitHub', icon: GitBranch },
 ];
 
 export const AppSidebar = () => {
-  const [hovered, setHovered] = useState(false);
+  const location = useLocation();
+  const isProfileActive = location.pathname.startsWith('/profile');
 
   return (
-    <aside
-      className="group h-full flex flex-col border-r transition-[width] duration-150"
-      style={{
-        width: hovered ? 200 : 48,
-        backgroundColor: 'var(--color-bg-secondary)',
-        borderColor: 'var(--color-border-default)',
-      }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      <div
-        className="flex items-center h-14 px-3 border-b shrink-0 overflow-hidden"
-        style={{ borderColor: 'var(--color-border-default)' }}
-      >
-        <span
-          className="text-base font-semibold whitespace-nowrap"
-          style={{ color: 'var(--color-text-primary)' }}
-        >
-          M
-          <span className="group-hover:opacity-100 opacity-0 transition-opacity duration-150">
-            eDev
-          </span>
-        </span>
+    <aside className="w-[200px] shrink-0 border-r py-5 flex flex-col gap-[2px] bg-surface-1 border-default">
+      <div className="px-4 pb-4 text-[13px] font-semibold text-primary tracking-[0.05em] uppercase">
+        MeDev
       </div>
 
-      <nav className="flex-1 py-2 flex flex-col gap-0.5 overflow-hidden">
-        {NAV.map((item) => (
+      <div className="px-2">
+        <div className="text-[10px] text-muted px-[10px] pt-2 pb-1 tracking-[0.08em] uppercase font-medium">Main</div>
+        {MAIN_NAV.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
-            className="flex items-center h-9 px-3 mx-1 rounded-md text-sm whitespace-nowrap transition-colors duration-100"
-            style={({ isActive }) => ({
-              backgroundColor: isActive ? 'var(--color-btn-hover)' : 'transparent',
-              color: isActive ? 'var(--color-text-primary)' : 'var(--color-text-secondary)',
-              fontWeight: isActive ? 600 : 400,
-            })}
+            className={({ isActive }) =>
+              `flex items-center gap-2 py-[0.4rem] px-[0.625rem] rounded-md text-[13px] transition-colors select-none ${
+                isActive ? 'text-primary bg-surface-2' : 'text-secondary hover:bg-surface-2 hover:text-primary'
+              }`
+            }
           >
-            <span className="w-4 text-center shrink-0">{item.label.charAt(0)}</span>
-            <span className="ml-3 group-hover:opacity-100 opacity-0 transition-opacity duration-150">
-              {item.label}
-            </span>
+            <item.icon size={15} />
+            {item.label}
           </NavLink>
         ))}
-      </nav>
+      </div>
 
-      <QuotaWidget />
+      <div className="px-2 mt-2">
+        <div className="text-[10px] text-muted px-[10px] pt-2 pb-1 tracking-[0.08em] uppercase font-medium">Sections</div>
+        {SECTIONS_NAV.map((item) => {
+          // For now, highlight the first section if we're on profile just to match the mockup
+          const isActive = isProfileActive && item.to.includes('about'); 
+          return (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={`flex items-center gap-2 py-[0.4rem] px-[0.625rem] rounded-md text-[13px] transition-colors select-none ${
+                isActive
+                  ? 'bg-[var(--color-accent-muted)] text-accent'
+                  : 'text-secondary hover:bg-surface-2 hover:text-primary'
+              }`}
+            >
+              <item.icon size={15} />
+              {item.label}
+            </NavLink>
+          );
+        })}
+      </div>
+
+      <div className="mt-auto px-2">
+        <div className="mb-4">
+          <QuotaWidget />
+        </div>
+        <NavLink
+          to="/billing"
+          className={({ isActive }) =>
+            `flex items-center gap-2 py-[0.4rem] px-[0.625rem] rounded-md text-[13px] transition-colors select-none ${
+              isActive ? 'text-primary bg-surface-2' : 'text-secondary hover:bg-surface-2 hover:text-primary'
+            }`
+          }
+        >
+          <CreditCard size={15} />
+          Billing
+        </NavLink>
+        <div className="flex items-center gap-2 py-[0.4rem] px-[0.625rem] rounded-md text-[13px] text-secondary hover:bg-surface-2 hover:text-primary transition-colors cursor-pointer select-none">
+          <Settings size={15} />
+          Settings
+        </div>
+        <div className="mt-2 pt-2 border-t border-muted px-[0.625rem]">
+          <UserProfileDropdown />
+        </div>
+      </div>
     </aside>
   );
 };

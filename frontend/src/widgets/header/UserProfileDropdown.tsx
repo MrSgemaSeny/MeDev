@@ -62,21 +62,23 @@ export const UserProfileDropdown: React.FC = () => {
       {/* Trigger Pill */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-3 px-3 py-1.5 rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+        className="w-full flex items-center justify-between gap-2 py-1.5 rounded-md hover:bg-surface-2 transition-colors"
       >
-        <div className="flex flex-col items-end leading-tight">
-          <span className="text-[13px] font-semibold text-primary">{dateString}</span>
-          <span className="text-[11px] font-medium text-muted">{formatterTime.format(currentTime)}</span>
-        </div>
-        <div className="w-9 h-9 shrink-0 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold shadow-sm">
-          {username.charAt(0).toUpperCase()}
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 shrink-0 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-bold shadow-sm">
+            {username.charAt(0).toUpperCase()}
+          </div>
+          <div className="flex flex-col items-start leading-tight">
+            <span className="text-[13px] font-medium text-primary">{username}</span>
+            <span className="text-[10px] text-muted">{formatterTime.format(currentTime)}</span>
+          </div>
         </div>
       </button>
 
       {/* Dropdown Menu */}
       {isOpen && (
         <div 
-          className="absolute right-0 top-full mt-2 w-72 rounded-xl shadow-lg border z-50 flex flex-col py-2"
+          className="absolute left-0 bottom-full mb-2 w-64 rounded-xl shadow-lg border z-50 flex flex-col py-2"
           style={{ 
             backgroundColor: 'var(--color-bg-primary)',
             borderColor: 'var(--color-border-default)',

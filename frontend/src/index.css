@@ -54,6 +54,10 @@
     --color-selection: rgba(68, 147, 248, 0.2);
     --color-shadow: rgba(0, 0, 0, 0.4);
     --color-preview-bg: #010409;
+    --border-accent: rgba(46, 160, 67, 0.35);
+    --bg-pro: rgba(168, 85, 247, 0.1);
+    --text-pro: #c084fc;
+    --border-pro: rgba(168, 85, 247, 0.3);
   }
 }
 
