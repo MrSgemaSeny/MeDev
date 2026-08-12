@@ -16,10 +16,9 @@
   - Created `Dockerfile` and `fly.toml` for backend deployment on Fly.io.
   - **Implemented Google OAuth2 integration** for universal Auth (added `google_id` to database via Flyway, refactored `CustomOAuth2UserService` to handle multiple providers, added frontend UI buttons).
   - **Dockerized local development**: Created root `docker-compose.yml` (Postgres, Redis, Backend, Frontend) and `frontend/Dockerfile` for isolated full-stack execution.
-  - **Fixed `GroqClient` DNS Resolution**: Switched Reactor Netty's `HttpClient` to use the standard Java DNS resolver (`DefaultAddressResolverGroup.INSTANCE`) to fix `Failed to resolve api.groq.com` on Windows.
-  - **Fixed BillingController routing**: Corrected `@RequestMapping` from `/api/v1/billing` to `/v1/billing` to avoid `NoResourceFoundException` under the global `/api` context path.
-  - **Implemented User Profile Dropdown**: Added `UserProfileDropdown.tsx` matching UI design (Avatar, Role, Notifications, Language, Logout, and a Theme Switcher).
-  - **Fixed AI Generation Endpoints**: Corrected JSON prompting in `summary_generator_v1.txt` and added `application/json` content-type in `AiController` to fix the "Generate with AI" button.
+  - **Security Audit Fixes**: Closed critical OAuth token leak in URLs using short-lived `oauth2_code` in Redis. Added strict `type` checks for JWTs (`access` vs `refresh`). Fixed IP spoofing in Bucket4j by ignoring `X-Forwarded-For`. Prevented race conditions in user registration.
+  - **Billing Synchronization**: Upgraded `StripeService` to handle `customer.subscription.deleted`, `customer.subscription.updated`, and `invoice.payment_failed` webhooks for automatic `FREE` plan downgrading. Enhanced frontend `SuccessPage` to securely poll backend status.
+  - **Global Header & Dark Mode Redesign**: Implemented a strict GitHub Dark Mode design system. Forced `dark` mode by default via blocking inline script. Built a new global `AppHeader` and rewrote `UserProfileDropdown` to handle missing data gracefully.
 
 ## Next in Backlog
 - Frontend CI/CD / GitHub Pages deployment.

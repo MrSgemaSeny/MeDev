@@ -8,9 +8,9 @@ Stop writing resumes manually. Connect your GitHub account, let the system parse
 - **AI-Powered Profile Generation**: Integrated Groq AI assistant (streaming responses via SSE) to auto-generate project descriptions, experience summaries, and analyze your GitHub stats.
 - **AI Resume Parsing (Pro)**: Upload an existing PDF resume, and our AI will extract the data and populate your profile automatically.
 - **Resume Generator & Builder**: Export your data to a clean, ATS-friendly PDF resume in one click. Completely customize the order and visibility of your resume sections using a robust `dnd-kit` drag-and-drop React interface.
-- **Monetization & Quota Management**: Full Stripe Checkout integration for Pro plan upgrades. Features real-time AI quota tracking and soft upsell flows.
-- **Strict Rate Limiting & Security**: Implemented Bucket4j for API abuse prevention, strict CORS policies, and Free/Pro plan access controls.
-- **Feature-Sliced Design**: Highly modular frontend architecture ensuring scalability.
+- **Monetization & Quota Management**: Full Stripe Checkout integration for Pro plan upgrades with automated webhook synchronization. Features real-time AI quota tracking and soft upsell flows.
+- **Strict Rate Limiting & Security**: Implemented Bucket4j for API abuse prevention, strict CORS policies, JWT type segregation, and secure OAuth2 code-exchange flows (No tokens in URLs).
+- **Feature-Sliced Design & UI**: Highly modular frontend architecture following FSD. Features a strict GitHub Dark Mode design system with responsive layouts and global headers.
 
 ## 🛠 Technology Stack
 ### Backend (Modular Monolith)
