@@ -36,6 +36,8 @@ class ProfileServiceTest {
     @Mock
     private LanguageRepository languageRepository;
     @Mock
+    private ProjectRepository projectRepository;
+    @Mock
     private ProfileMapper profileMapper;
     @Mock
     private org.springframework.context.ApplicationEventPublisher eventPublisher;

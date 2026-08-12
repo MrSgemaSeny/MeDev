@@ -116,7 +116,7 @@ export const AiChatWidget = () => {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 w-[400px] h-[550px] flex flex-col surface rounded-xl shadow-2xl border-default overflow-hidden z-50">
+    <div className="fixed bottom-6 right-6 w-[480px] h-[650px] flex flex-col surface rounded-xl shadow-2xl border-default overflow-hidden z-50">
       {/* Header */}
       <div className="surface-secondary border-b border-default p-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -145,11 +145,12 @@ export const AiChatWidget = () => {
         {messages.map((msg) => (
           <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div 
-              className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap border ${
+              className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed border ${
                 msg.role === 'user' 
                   ? 'surface-tertiary border-muted text-primary rounded-br-none' 
                   : 'surface-secondary border-default text-primary rounded-bl-none'
               }`}
+              style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
             >
               {msg.content}
             </div>

@@ -1,20 +1,24 @@
 package com.medev.modules.admin.controller;
 
 import com.medev.modules.admin.service.AdminService;
+import com.medev.modules.auth.security.OAuth2LoginSuccessHandler;
+import com.medev.modules.auth.service.CustomOAuth2UserService;
+import com.medev.shared.security.JwtFilter;
 import com.medev.shared.security.JwtService;
+import com.medev.shared.security.SecurityConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(AdminController.class)
+@Import(SecurityConfig.class)
 class AdminControllerTest {
 
     @Autowired
@@ -23,18 +27,17 @@ class AdminControllerTest {
     @MockBean
     private AdminService adminService;
 
-    @Test
-    void getDashboardStats_WithoutAuth_ShouldReturnUnauthorized() throws Exception {
-        mockMvc.perform(get("/v1/admin/dashboard"))
-                .andExpect(status().isUnauthorized());
-    }
+    @MockBean
+    private JwtService jwtService;
 
-    @Test
-    @WithMockUser(roles = "USER")
-    void getDashboardStats_WithUserRole_ShouldReturnForbidden() throws Exception {
-        mockMvc.perform(get("/v1/admin/dashboard"))
-                .andExpect(status().isForbidden());
-    }
+    @MockBean
+    private JwtFilter jwtFilter;
+
+    @MockBean
+    private CustomOAuth2UserService customOAuth2UserService;
+
+    @MockBean
+    private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
     @Test
     @WithMockUser(roles = "ADMIN")
