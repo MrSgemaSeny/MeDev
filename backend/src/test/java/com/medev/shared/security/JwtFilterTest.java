@@ -44,8 +44,8 @@ class JwtFilterTest {
     @Test
     void validBearerToken_setsSecurityContext() throws ServletException, IOException {
         String token = "valid.token.here";
-        when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
         when(jwtService.validateToken(token)).thenReturn(true);
+        when(jwtService.extractType(token)).thenReturn("access");
         when(jwtService.extractUserId(token)).thenReturn(1L);
         when(jwtService.extractRole(token)).thenReturn("USER");
 
