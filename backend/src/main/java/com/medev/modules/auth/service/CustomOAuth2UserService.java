@@ -84,6 +84,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             return saved;
         });
 
+        // Fix Pre-Account Creation vulnerability:
+        // If the account was created via password and had no OAuth providers linked,
+        // we invalidate the password when linking OAuth to lock out any potential attacker.
+        if (user.getPassword() != null && user.getGithubId() == null && user.getGoogleId() == null) {
+            user.setPassword(org.springframework.security.crypto.bcrypt.BCrypt.hashpw(
+                    UUID.randomUUID().toString(), org.springframework.security.crypto.bcrypt.BCrypt.gensalt(12)
+            ));
+        }
+
         // Обновляем provider ID для существующего пользователя
         if ("github".equals(registrationId)) {
             user.setGithubId(providerId);

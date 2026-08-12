@@ -17,19 +17,23 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final com.medev.modules.auth.service.AuthRateLimiter authRateLimiter;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request, jakarta.servlet.http.HttpServletRequest httpRequest) {
+        authRateLimiter.checkAndConsume(getClientIp(httpRequest));
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request, jakarta.servlet.http.HttpServletRequest httpRequest) {
+        authRateLimiter.checkAndConsume(getClientIp(httpRequest));
         return ResponseEntity.ok(authService.login(request));
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<AuthResponse> refresh(@RequestBody RefreshRequest request) {
+    public ResponseEntity<AuthResponse> refresh(@RequestBody RefreshRequest request, jakarta.servlet.http.HttpServletRequest httpRequest) {
+        authRateLimiter.checkAndConsume(getClientIp(httpRequest));
         return ResponseEntity.ok(authService.refresh(request.getRefreshToken()));
     }
 
@@ -37,5 +41,13 @@ public class AuthController {
     public ResponseEntity<Void> logout(@RequestHeader("Authorization") String token) {
         authService.logout(token);
         return ResponseEntity.noContent().build();
+    }
+
+    private String getClientIp(jakarta.servlet.http.HttpServletRequest request) {
+        String xfHeader = request.getHeader("X-Forwarded-For");
+        if (xfHeader == null || xfHeader.isEmpty() || "unknown".equalsIgnoreCase(xfHeader)) {
+            return request.getRemoteAddr();
+        }
+        return xfHeader.split(",")[0].trim();
     }
 }
