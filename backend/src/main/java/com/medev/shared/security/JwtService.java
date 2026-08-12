@@ -28,19 +28,20 @@ public class JwtService {
     }
 
     public String generateAccessToken(User user, String deviceId) {
-        return buildToken(user, deviceId, expiration);
+        return buildToken(user, deviceId, expiration, "access");
     }
 
     public String generateRefreshToken(User user, String deviceId) {
-        return buildToken(user, deviceId, refreshExpiration);
+        return buildToken(user, deviceId, refreshExpiration, "refresh");
     }
 
-    private String buildToken(User user, String deviceId, long exp) {
+    private String buildToken(User user, String deviceId, long exp, String type) {
         return Jwts.builder()
                 .subject(user.getEmail())
                 .claim("userId", user.getId())
                 .claim("deviceId", deviceId)
                 .claim("role", user.getRole().name())
+                .claim("type", type)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + exp))
                 .signWith(getSigningKey())
@@ -61,6 +62,10 @@ public class JwtService {
 
     public String extractRole(String token) {
         return getClaims(token).get("role", String.class);
+    }
+
+    public String extractType(String token) {
+        return getClaims(token).get("type", String.class);
     }
 
     public boolean validateToken(String token) {

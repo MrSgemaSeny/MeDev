@@ -1,22 +1,32 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../../entities/user/model/store';
+import { api } from '../../shared/api/axios';
+import { toast } from 'sonner';
 
 export const AuthCallback = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const setAuth = useAuthStore((state) => state.setAuth);
+  const exchanged = useRef(false);
 
   useEffect(() => {
-    const accessToken = searchParams.get('accessToken');
-    const refreshToken = searchParams.get('refreshToken');
-    const username = searchParams.get('username') || 'User';
-    const plan = searchParams.get('plan') || 'FREE';
+    const code = searchParams.get('code');
 
-    if (accessToken && refreshToken) {
-      setAuth(accessToken, refreshToken, username, plan);
-      navigate('/dashboard', { replace: true });
-    } else {
+    if (code && !exchanged.current) {
+      exchanged.current = true;
+      api.post('/v1/auth/oauth2/exchange', { code })
+        .then((res) => {
+          const { accessToken, refreshToken, username, plan } = res.data;
+          setAuth(accessToken, refreshToken, username, plan);
+          navigate('/dashboard', { replace: true });
+        })
+        .catch((err) => {
+          console.error('OAuth exchange failed:', err);
+          toast.error('OAuth login failed');
+          navigate('/login', { replace: true });
+        });
+    } else if (!code) {
       navigate('/login', { replace: true });
     }
   }, [searchParams, navigate, setAuth]);

@@ -52,11 +52,31 @@ public class AuthService {
                 .plan(User.Plan.FREE)
                 .build();
 
-        userRepository.save(user);
+        try {
+            userRepository.save(user);
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            throw new ConflictException("Username or Email already in use");
+        }
 
         // Создаём пустой профиль автоматически
         profileService.createEmptyProfile(user);
 
+        return buildAuthResponse(user);
+    }
+    
+    public AuthResponse exchangeOauth2Code(String code) {
+        String userIdStr = redisTemplate.opsForValue().get("oauth2_code:" + code);
+        if (userIdStr == null) {
+            throw new UnauthorizedException("Invalid or expired OAuth2 code");
+        }
+        
+        // Remove code to prevent reuse
+        redisTemplate.delete("oauth2_code:" + code);
+        
+        Long userId = Long.parseLong(userIdStr);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UnauthorizedException("User not found"));
+                
         return buildAuthResponse(user);
     }
 
@@ -74,6 +94,11 @@ public class AuthService {
     public AuthResponse refresh(String refreshToken) {
         if (!jwtService.validateToken(refreshToken)) {
             throw new UnauthorizedException("Invalid refresh token");
+        }
+        
+        String type = jwtService.extractType(refreshToken);
+        if (!"refresh".equals(type)) {
+            throw new UnauthorizedException("Invalid token type");
         }
         
         Long userId = jwtService.extractUserId(refreshToken);

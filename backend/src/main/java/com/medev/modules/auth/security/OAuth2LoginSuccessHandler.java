@@ -40,18 +40,16 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                 .orElseThrow(() -> new RuntimeException("User not found after OAuth2 login"));
 
         String deviceId = UUID.randomUUID().toString();
-        String accessToken = jwtService.generateAccessToken(user, deviceId);
-        String refreshToken = jwtService.generateRefreshToken(user, deviceId);
-
+        String oauth2Code = UUID.randomUUID().toString();
+        
+        // Store user ID in Redis under the oauth2 code
         redisTemplate.opsForValue().set(
-            "refresh:" + user.getId() + ":" + deviceId,
-            refreshToken,
-            Duration.ofDays(30)
+            "oauth2_code:" + oauth2Code,
+            user.getId().toString(),
+            Duration.ofMinutes(5)
         );
 
-        String encodedUsername = java.net.URLEncoder.encode(user.getUsername(), java.nio.charset.StandardCharsets.UTF_8);
-        String planStr = user.getPlan().name();
-        String frontendUrl = "http://localhost:5173/auth/callback?accessToken=" + accessToken + "&refreshToken=" + refreshToken + "&username=" + encodedUsername + "&plan=" + planStr;
+        String frontendUrl = "http://localhost:5173/auth/callback?code=" + oauth2Code;
         getRedirectStrategy().sendRedirect(request, response, frontendUrl);
     }
 }

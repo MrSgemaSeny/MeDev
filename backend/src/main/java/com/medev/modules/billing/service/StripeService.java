@@ -61,6 +61,12 @@ public class StripeService {
         }
     }
 
+    public String getUserPlan(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found: " + userId));
+        return user.getPlan().name();
+    }
+
     @Transactional
     public void handleWebhook(String payload, String sigHeader) {
         Event event;
@@ -78,6 +84,26 @@ public class StripeService {
             Session session = (Session) event.getDataObjectDeserializer().getObject().orElse(null);
             if (session != null) {
                 handleSuccessfulCheckout(session);
+            }
+        } else if ("customer.subscription.deleted".equals(event.getType())) {
+            com.stripe.model.Subscription subscription = (com.stripe.model.Subscription) event.getDataObjectDeserializer().getObject().orElse(null);
+            if (subscription != null) {
+                downgradeUser(subscription.getCustomer());
+            }
+        } else if ("customer.subscription.updated".equals(event.getType())) {
+            com.stripe.model.Subscription subscription = (com.stripe.model.Subscription) event.getDataObjectDeserializer().getObject().orElse(null);
+            if (subscription != null) {
+                String status = subscription.getStatus();
+                if ("canceled".equals(status) || "unpaid".equals(status) || "past_due".equals(status)) {
+                    downgradeUser(subscription.getCustomer());
+                } else if ("active".equals(status)) {
+                    upgradeUserByCustomer(subscription.getCustomer());
+                }
+            }
+        } else if ("invoice.payment_failed".equals(event.getType())) {
+            com.stripe.model.Invoice invoice = (com.stripe.model.Invoice) event.getDataObjectDeserializer().getObject().orElse(null);
+            if (invoice != null) {
+                downgradeUser(invoice.getCustomer());
             }
         }
     }
@@ -97,5 +123,21 @@ public class StripeService {
         } else {
             log.warn("Checkout session {} completed but no userId in metadata", session.getId());
         }
+    }
+
+    private void downgradeUser(String customerId) {
+        userRepository.findByStripeCustomerId(customerId).ifPresent(user -> {
+            user.setPlan(User.Plan.FREE);
+            userRepository.save(user);
+            log.info("Downgraded user {} to FREE plan", user.getId());
+        });
+    }
+
+    private void upgradeUserByCustomer(String customerId) {
+        userRepository.findByStripeCustomerId(customerId).ifPresent(user -> {
+            user.setPlan(User.Plan.PRO);
+            userRepository.save(user);
+            log.info("Upgraded user {} to PRO plan via subscription update", user.getId());
+        });
     }
 }

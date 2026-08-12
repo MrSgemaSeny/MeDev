@@ -37,6 +37,11 @@ public class AuthController {
         return ResponseEntity.ok(authService.refresh(request.getRefreshToken()));
     }
 
+    @PostMapping("/oauth2/exchange")
+    public ResponseEntity<AuthResponse> exchangeOauth2(@RequestBody com.medev.modules.auth.dto.OAuth2ExchangeRequest request) {
+        return ResponseEntity.ok(authService.exchangeOauth2Code(request.getCode()));
+    }
+
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@RequestHeader("Authorization") String token) {
         authService.logout(token);
@@ -44,10 +49,9 @@ public class AuthController {
     }
 
     private String getClientIp(jakarta.servlet.http.HttpServletRequest request) {
-        String xfHeader = request.getHeader("X-Forwarded-For");
-        if (xfHeader == null || xfHeader.isEmpty() || "unknown".equalsIgnoreCase(xfHeader)) {
-            return request.getRemoteAddr();
-        }
-        return xfHeader.split(",")[0].trim();
+        // Prevent X-Forwarded-For spoofing by relying on the remote address.
+        // If behind a trusted proxy (e.g. Fly.io), Spring Boot should be configured 
+        // to trust it via server.forward-headers-strategy=FRAMEWORK, making getRemoteAddr safe.
+        return request.getRemoteAddr();
     }
 }

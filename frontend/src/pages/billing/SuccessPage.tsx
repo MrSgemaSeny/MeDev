@@ -10,9 +10,25 @@ export function SuccessPage() {
   const setPlan = useAuthStore((state) => state.setPlan);
 
   useEffect(() => {
-    if (sessionId) {
-      setPlan('PRO');
-    }
+    if (!sessionId) return;
+    
+    let interval: ReturnType<typeof setInterval>;
+    const checkStatus = async () => {
+      try {
+        const { data } = await import('../../shared/api/axios').then(m => m.api.get('/v1/billing/status'));
+        if (data.plan === 'PRO') {
+          setPlan('PRO');
+          clearInterval(interval);
+        }
+      } catch (err) {
+        console.error('Failed to fetch billing status', err);
+      }
+    };
+
+    checkStatus();
+    interval = setInterval(checkStatus, 2000);
+
+    return () => clearInterval(interval);
   }, [sessionId, setPlan]);
 
   return (

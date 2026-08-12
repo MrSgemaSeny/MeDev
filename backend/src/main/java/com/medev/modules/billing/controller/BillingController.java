@@ -21,6 +21,13 @@ public class BillingController {
         return ResponseEntity.ok(Map.of("url", checkoutUrl));
     }
 
+    @GetMapping("/status")
+    public ResponseEntity<Map<String, String>> getBillingStatus() {
+        Long userId = SecurityUtils.getCurrentUserId();
+        String plan = stripeService.getUserPlan(userId);
+        return ResponseEntity.ok(Map.of("plan", plan));
+    }
+
     @PostMapping("/webhook")
     public ResponseEntity<Void> handleStripeWebhook(
             @RequestBody String payload,
