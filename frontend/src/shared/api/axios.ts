@@ -80,7 +80,13 @@ api.interceptors.response.use(
         isRefreshing = false;
       }
     }
-    
+    // Handle desynced token state (valid token, but user/profile deleted from DB)
+    if (error.response?.status === 404 && originalRequest.url?.includes('/profile')) {
+      useAuthStore.getState().logout();
+      window.location.href = '/';
+      return Promise.reject(error);
+    }
+
     return Promise.reject(error);
   }
 );
