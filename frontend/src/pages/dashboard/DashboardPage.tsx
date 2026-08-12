@@ -40,10 +40,10 @@ export const DashboardPage = () => {
     <div className="p-8 max-w-5xl mx-auto">
       <header className="mb-8 flex justify-between items-end flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-semibold mb-1" style={{ color: 'var(--color-text-primary)' }}>
+          <h1 className="text-2xl font-semibold mb-1 text-primary">
             Welcome back, {profile?.fullName || username || 'Developer'}
           </h1>
-          <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+          <p className="text-sm text-secondary">
             Here's what's happening with your MeDev profile.
           </p>
         </div>
@@ -53,16 +53,15 @@ export const DashboardPage = () => {
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <Card className="p-4">
-          <h3 className="text-xs font-medium mb-3" style={{ color: 'var(--color-text-secondary)' }}>
+        <Card className="p-4 surface-inset border-default">
+          <h3 className="text-xs font-medium mb-3 text-secondary">
             Profile Completeness
           </h3>
-          <div className="text-2xl font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>
+          <div className="text-2xl font-semibold mb-2 text-primary">
             {completeness}%
           </div>
           <div
-            className="w-full rounded-full h-1.5"
-            style={{ backgroundColor: 'var(--color-bg-tertiary)' }}
+            className="w-full rounded-full h-1.5 surface-tertiary"
           >
             <div
               className="h-1.5 rounded-full"
@@ -72,7 +71,7 @@ export const DashboardPage = () => {
         </Card>
       </div>
 
-      <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide" style={{ color: 'var(--color-text-secondary)' }}>
+      <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-secondary">
         Quick Actions
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -80,15 +79,10 @@ export const DashboardPage = () => {
           <Link
             key={a.to}
             to={a.to}
-            className="block rounded-md p-4 transition-colors duration-100"
-            style={{
-              backgroundColor: 'var(--color-bg-secondary)',
-              border: '1px solid var(--color-border-default)',
-              color: 'var(--color-text-primary)',
-            }}
+            className="block rounded-md p-4 transition-colors duration-100 surface-inset border border-default hover:border-[var(--color-text-muted)] group"
           >
-            <h3 className="font-medium mb-0.5">{a.title}</h3>
-            <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+            <h3 className="font-medium mb-0.5 text-[var(--color-link)] group-hover:underline">{a.title}</h3>
+            <p className="text-sm text-secondary">
               {a.desc}
             </p>
           </Link>
@@ -96,4 +90,4 @@ export const DashboardPage = () => {
       </div>
     </div>
   );
-}
+};

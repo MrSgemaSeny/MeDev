@@ -25,7 +25,7 @@ export const ProfileEditor = () => {
   };
 
   return (
-    <div className="max-w-[1100px] mx-auto w-full">
+    <div className="max-w-[1100px] mx-auto w-full p-8">
       {renderActiveSection()}
     </div>
   );

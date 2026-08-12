@@ -1,6 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { LayoutDashboard, User, FileText, Info, Briefcase, GraduationCap, Code, Globe, Box, GitBranch, CreditCard, Settings } from 'lucide-react';
-import { UserProfileDropdown } from '../header/UserProfileDropdown';
 import { QuotaWidget } from '../../features/billing/components/QuotaWidget';
 
 const MAIN_NAV = [
@@ -24,11 +23,7 @@ export const AppSidebar = () => {
   const isProfileActive = location.pathname.startsWith('/profile');
 
   return (
-    <aside className="w-[196px] shrink-0 border-r py-5 flex flex-col gap-1 surface-secondary border-default">
-      <div className="px-4 pb-4 text-[13px] font-semibold text-primary tracking-[0.05em] uppercase">
-        MeDev
-      </div>
-
+    <aside className="w-[260px] shrink-0 border-r py-3 flex flex-col gap-1 surface-inset border-default">
       <div className="px-2">
         <div className="text-[11px] text-muted px-3 pt-2 pb-1 tracking-widest uppercase font-medium">Main</div>
         {MAIN_NAV.map((item) => (
@@ -36,7 +31,7 @@ export const AppSidebar = () => {
             key={item.to}
             to={item.to}
             className={({ isActive }) =>
-              `flex items-center gap-2 py-2 px-3 rounded-md text-[13px] transition-colors select-none ${
+              `flex items-center gap-2 py-1.5 px-3 rounded-md text-[13px] transition-colors select-none ${
                 isActive ? 'text-primary surface-tertiary' : 'text-secondary hover:surface-tertiary hover:text-primary'
               }`
             }
@@ -55,7 +50,7 @@ export const AppSidebar = () => {
             <NavLink
               key={item.to}
               to={item.to}
-              className={`flex items-center gap-2 py-2 px-3 rounded-md text-[13px] transition-colors select-none ${
+              className={`flex items-center gap-2 py-1.5 px-3 rounded-md text-[13px] transition-colors select-none ${
                 isActive
                   ? 'bg-[var(--color-accent-muted)] text-accent'
                   : 'text-secondary hover:surface-tertiary hover:text-primary'
@@ -75,7 +70,7 @@ export const AppSidebar = () => {
         <NavLink
           to="/billing"
           className={({ isActive }) =>
-            `flex items-center gap-2 py-2 px-3 rounded-md text-[13px] transition-colors select-none ${
+            `flex items-center gap-2 py-1.5 px-3 rounded-md text-[13px] transition-colors select-none ${
               isActive ? 'text-primary surface-tertiary' : 'text-secondary hover:surface-tertiary hover:text-primary'
             }`
           }
@@ -83,13 +78,10 @@ export const AppSidebar = () => {
           <CreditCard size={15} />
           Billing
         </NavLink>
-        <button className="w-full flex items-center gap-2 py-2 px-3 rounded-md text-[13px] text-secondary hover:surface-tertiary hover:text-primary transition-colors cursor-pointer select-none">
+        <button className="w-full flex items-center gap-2 py-1.5 px-3 rounded-md text-[13px] text-secondary hover:surface-tertiary hover:text-primary transition-colors cursor-pointer select-none border-none bg-transparent">
           <Settings size={15} />
           Settings
         </button>
-        <div className="mt-2 pt-2 border-t border-muted px-2">
-          <UserProfileDropdown />
-        </div>
       </div>
     </aside>
   );
