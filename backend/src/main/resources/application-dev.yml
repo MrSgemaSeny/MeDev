@@ -36,5 +36,5 @@ groq:
 
 logging:
   level:
-    org.springframework.web.cors: TRACE
-    org.springframework.security: TRACE
+    org.springframework.web.cors: INFO
+    org.springframework.security: INFO
