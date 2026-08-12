@@ -41,6 +41,19 @@ export const DashboardPage = () => {
 
   const completeness = getProfileCompleteness();
 
+  const getActionableItems = () => {
+    if (!profile) return [];
+    const items = [];
+    if (!profile.fullName) items.push({ title: 'Add your Full Name', points: '+20%', to: '/profile/edit#about' });
+    if (!profile.headline) items.push({ title: 'Add a professional Headline', points: '+10%', to: '/profile/edit#about' });
+    if (!profile.summary) items.push({ title: 'Write a short Summary', points: '+20%', to: '/profile/edit#about' });
+    if (!profile.experience || profile.experience.length === 0) items.push({ title: 'Add your latest Experience', points: '+20%', to: '/profile/edit#experience' });
+    if (!profile.education || profile.education.length === 0) items.push({ title: 'Add your Education', points: '+10%', to: '/profile/edit#education' });
+    if (!profile.skills || profile.skills.length === 0) items.push({ title: 'Add 3+ Skills', points: '+10%', to: '/profile/edit#skills' });
+    if (!profile.githubUsername) items.push({ title: 'Link your GitHub Account', points: '+10%', to: '/profile/edit#github' });
+    return items;
+  };
+
   const actions = [
     { to: '/profile/edit', title: 'Edit Profile', desc: 'Update experience, skills, and bio' },
     { to: '/resume', title: 'Generate Resume', desc: 'Export your profile as a PDF' },
@@ -66,23 +79,50 @@ export const DashboardPage = () => {
         </Badge>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <Card className="p-4 surface-inset border-default">
-          <h3 className="text-xs font-medium mb-3 text-secondary">
-            Profile Completeness
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <Card className="p-5 surface-inset border-default col-span-1 md:col-span-1">
+          <h3 className="text-sm font-medium mb-3 text-secondary uppercase tracking-wider">
+            Profile Strength
           </h3>
-          <div className="text-2xl font-semibold mb-2 text-primary">
-            {completeness}%
+          <div className="text-4xl font-semibold mb-2 text-primary flex items-baseline gap-1">
+            {completeness}<span className="text-lg text-secondary">%</span>
           </div>
-          <div
-            className="w-full rounded-full h-1.5 surface-tertiary"
-          >
+          <div className="w-full rounded-full h-2 surface-tertiary mb-3 mt-4">
             <div
-              className="h-1.5 rounded-full"
-              style={{ width: `${completeness}%`, backgroundColor: 'var(--color-accent)' }}
+              className="h-2 rounded-full transition-all duration-1000 ease-out"
+              style={{ width: `${completeness}%`, backgroundColor: completeness === 100 ? 'var(--color-success, #238636)' : 'var(--color-accent)' }}
             />
           </div>
+          {completeness === 100 ? (
+            <p className="text-sm text-[var(--color-success, #238636)] font-medium">All-Star Profile! 🌟</p>
+          ) : (
+            <p className="text-xs text-secondary">Complete the tasks below to reach 100%.</p>
+          )}
         </Card>
+
+        <div className="col-span-1 md:col-span-2 flex flex-col gap-3">
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-secondary mb-1">
+            Next Steps for You
+          </h3>
+          {getActionableItems().length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {getActionableItems().slice(0, 4).map((item, idx) => (
+                <Link
+                  key={idx}
+                  to={item.to}
+                  className="flex items-center justify-between p-4 rounded-lg border border-default surface-secondary hover:border-[var(--color-accent)] transition-all group"
+                >
+                  <span className="font-medium text-sm group-hover:text-[var(--color-link)] transition-colors">{item.title}</span>
+                  <Badge tone="accent" className="font-mono text-xs">{item.points}</Badge>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="p-6 text-center border border-dashed border-default rounded-lg text-secondary text-sm">
+              You've completed all profile steps! Your portfolio is ready to shine.
+            </div>
+          )}
+        </div>
       </div>
 
       <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide text-secondary">
