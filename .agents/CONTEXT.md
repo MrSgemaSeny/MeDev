@@ -21,8 +21,13 @@
   - **Global Header & Dark Mode Redesign**: Implemented a strict GitHub Dark Mode design system. Forced `dark` mode by default via blocking inline script. Built a new global `AppHeader` and rewrote `UserProfileDropdown` to handle missing data gracefully.
   - **Premium Landing Page & Onboarding**: Integrated standalone Landing Page at `/` for public access. Overhauled `OnboardingWizard` with premium animations and scale.
   - **Enterprise Job Tracker & Import**: Replaced drag-and-drop Kanban board with a data-dense CRM table (uninstalled `@dnd-kit`). Extracted "Zero-Input" resume upload to a dedicated `/import` route.
+  - **Dashboard Redesign**: Replaced standard DashboardPage with premium landing-page aesthetics (hero, live portfolio mock window, quick actions cards). Removed all mock data.
+  - **Enterprise Admin Panel & Audit Logs**: Created `audit` module (AuditLog entity, AuditLogRepository, AuditService). Created `admin` module (AdminController, AdminService, AdminDashboardDto). Frontend: AdminGuard, AdminDashboardPage, AdminUsersPage, AdminAuditPage. Flyway V19 migration for audit_logs table. Fixed broken tests (AiAnalysisServiceTest, AuthServiceTest, JwtFilterTest, ProfileServiceTest). Improved AiChatWidget UI (480x650, leading-relaxed). Fixed duplicate `spring:` key in application.yml.
 
 ## Next in Backlog
 - Frontend CI/CD / GitHub Pages deployment.
-- Implement Vitest tests for the frontend and expand JUnit/Mockito tests on the backend.
-  - **Dashboard Redesign**: Replaced standard DashboardPage with premium landing-page aesthetics (hero, live portfolio mock window, quick actions cards). Removed all mock data.
+- Expand test coverage (Vitest frontend, JUnit backend).
+- Fix `MeDevApplicationTests.contextLoads()` (needs test profile with H2 or Testcontainers).
+- Wire AuditService into auth/billing flows (login, register, plan change events).
+- Add pagination controls to AdminUsersPage and AdminAuditPage.
+- Add UserRepository.countByPlan() for accurate PRO user count in admin dashboard.
