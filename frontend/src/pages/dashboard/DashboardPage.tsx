@@ -2,14 +2,28 @@ import { useProfile } from '../../shared/api/hooks/useProfile';
 import { useAuthStore } from '../../entities/user/model/store';
 import { Link } from 'react-router-dom';
 import { Card, Badge } from '../../shared/ui/Form';
+import { OnboardingWizard } from '../../features/onboarding/ui/OnboardingWizard';
+import { useQueryClient } from '@tanstack/react-query';
 
 export const DashboardPage = () => {
   const { data: profile, isLoading } = useProfile();
   const username = useAuthStore((state) => state.username);
   const plan = useAuthStore((state) => state.plan);
 
+  const queryClient = useQueryClient();
+
   if (isLoading) {
     return <div className="p-8 text-secondary">Loading dashboard...</div>;
+  }
+
+  if (profile && !profile.summary && !profile.headline) {
+    return (
+      <div className="p-8 max-w-5xl mx-auto flex items-center justify-center min-h-[80vh]">
+        <div className="w-full">
+          <OnboardingWizard onComplete={() => queryClient.invalidateQueries({ queryKey: ['profile'] })} />
+        </div>
+      </div>
+    );
   }
 
   const getProfileCompleteness = () => {

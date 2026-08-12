@@ -28,6 +28,7 @@ public class AiController {
     private final AiAssistantService  aiAssistantService;
     private final AiContextService    aiContextService;
     private final AiGenerateService   aiGenerateService;
+    private final AiOnboardingService aiOnboardingService;
     private final AiRateLimiter       aiRateLimiter;
     private final ProfileService      profileService;
     private final EvaluationService   evaluationService;
@@ -128,6 +129,19 @@ public class AiController {
                 context, request.getProjectName(), request.getLanguage()
         );
         return ResponseEntity.ok(result);
+    }
+
+    /**
+     * AI Onboarding Wizard
+     * Генерирует и сохраняет профиль пользователя (Bio, Headline, Skills, Experience)
+     */
+    @PostMapping(value = "/onboarding", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<com.medev.modules.ai.dto.AiOnboardingResponse> generateOnboarding(@RequestBody com.medev.modules.ai.dto.AiOnboardingRequest request) {
+        Long userId = SecurityUtils.getCurrentUserId();
+        aiRateLimiter.checkAndConsume(userId);
+
+        com.medev.modules.ai.dto.AiOnboardingResponse response = aiOnboardingService.generateAndSaveProfile(userId, request);
+        return ResponseEntity.ok(response);
     }
 
     // ─────────────────────────────────────────────────

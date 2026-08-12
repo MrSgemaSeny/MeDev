@@ -33,7 +33,8 @@ public class PromptLoader {
             "summary_generator_v1",
             "project_description_v1",
             "resume_analyzer_v1",
-            "assistant_system_v1"
+            "assistant_system_v1",
+            "onboarding_wizard_v1"
         };
 
         for (String name : knownPrompts) {
