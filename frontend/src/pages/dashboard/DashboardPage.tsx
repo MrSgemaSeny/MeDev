@@ -128,10 +128,7 @@ export const DashboardPage = () => {
       {/* Live Preview Mock Window */}
       <section className="py-10 px-6">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3">Portfolio Preview</h2>
-            <p className="text-secondary">How recruiters and visitors see your live web portfolio.</p>
-          </div>
+
           <div className="mock-window rounded-2xl border border-default surface-primary overflow-hidden">
             <div className="flex items-center gap-2 px-5 py-3 border-b border-default surface-secondary">
               <div className="w-3 h-3 rounded-full bg-red-400"></div>
