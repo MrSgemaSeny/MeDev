@@ -45,3 +45,12 @@ export const useDeleteJobApplication = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEY }),
   });
 };
+
+export const useGenerateCoverLetter = () => {
+  return useMutation({
+    mutationFn: async ({ jobDescription, targetRole }: { jobDescription: string; targetRole: string }) => {
+      const { data } = await api.post('/ai/cover-letter', { jobDescription, targetRole });
+      return data; // { coverLetter: string }
+    },
+  });
+};

@@ -1,16 +1,16 @@
 import { useState, useMemo } from 'react';
-import { useJobApplications, useAddJobApplication, useUpdateJobApplication, useDeleteJobApplication } from '../../shared/api/hooks/useJobTracker';
+import { useJobApplications, useAddJobApplication, useDeleteJobApplication, useGenerateCoverLetter } from '../../shared/api/hooks/useJobTracker';
 import type { ApplicationStatus, JobApplicationDto, CreateJobApplicationRequest } from '../../entities/job-tracker/model/types';
 import { Button } from '../../shared/ui/Button';
-import { Input, Label, Card, Badge } from '../../shared/ui/Form';
+import { Input, Label, Badge } from '../../shared/ui/Form';
 import { Modal } from '../../shared/ui/Modal';
-import { Plus, Briefcase, ExternalLink, Calendar, Trash2, Search, Filter, TrendingUp, Target, CheckCircle2, XCircle, Clock } from 'lucide-react';
+import { Plus, Briefcase, ExternalLink, Calendar, Trash2, Search, Filter, TrendingUp, Target, CheckCircle2, XCircle, Clock, Wand2 } from 'lucide-react';
 
-const STATUS_CONFIG: Record<ApplicationStatus, { label: string; tone: 'default' | 'primary' | 'success' | 'danger' | 'warning', icon: any }> = {
+const STATUS_CONFIG: Record<ApplicationStatus, { label: string; tone: 'default' | 'accent' | 'danger', icon: any }> = {
   WISHLIST: { label: 'Wishlist', tone: 'default', icon: Clock },
-  APPLIED: { label: 'Applied', tone: 'primary', icon: Target },
-  INTERVIEW: { label: 'Interviewing', tone: 'warning', icon: TrendingUp },
-  OFFER: { label: 'Offer', tone: 'success', icon: CheckCircle2 },
+  APPLIED: { label: 'Applied', tone: 'accent', icon: Target },
+  INTERVIEW: { label: 'Interviewing', tone: 'accent', icon: TrendingUp },
+  OFFER: { label: 'Offer', tone: 'accent', icon: CheckCircle2 },
   REJECTED: { label: 'Rejected', tone: 'danger', icon: XCircle },
 };
 
@@ -19,6 +19,7 @@ export const JobTrackerPage = () => {
   const deleteApp = useDeleteJobApplication();
   
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [coverLetterModalApp, setCoverLetterModalApp] = useState<JobApplicationDto | null>(null);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<ApplicationStatus | 'ALL'>('ALL');
 
@@ -159,6 +160,9 @@ export const JobTrackerPage = () => {
                         <ExternalLink size={16} />
                       </a>
                     )}
+                    <button onClick={() => setCoverLetterModalApp(app)} className="p-1.5 text-secondary hover:text-purple-400 hover:bg-purple-500/10 rounded-md transition-colors" title="AI Cover Letter">
+                      <Wand2 size={16} />
+                    </button>
                     <button onClick={() => deleteApp.mutate(app.id)} className="p-1.5 text-secondary hover:text-danger hover:bg-red-500/10 rounded-md transition-colors" title="Delete Application">
                       <Trash2 size={16} />
                     </button>
@@ -186,6 +190,13 @@ export const JobTrackerPage = () => {
       </div>
 
       <AddApplicationModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      {coverLetterModalApp && (
+        <AiCoverLetterModal 
+          app={coverLetterModalApp} 
+          isOpen={!!coverLetterModalApp} 
+          onClose={() => setCoverLetterModalApp(null)} 
+        />
+      )}
     </div>
   );
 };
@@ -241,6 +252,74 @@ const AddApplicationModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
           <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
         </div>
       </form>
+    </Modal>
+  );
+};
+
+const AiCoverLetterModal = ({ app, isOpen, onClose }: { app: JobApplicationDto; isOpen: boolean; onClose: () => void }) => {
+  const [jobDescription, setJobDescription] = useState('');
+  const [coverLetter, setCoverLetter] = useState('');
+  const generate = useGenerateCoverLetter();
+
+  const handleGenerate = () => {
+    if (!jobDescription.trim()) return;
+    generate.mutate(
+      { jobDescription, targetRole: app.role },
+      {
+        onSuccess: (data: any) => {
+          setCoverLetter(data.coverLetter);
+        },
+        onError: (err: any) => {
+          console.error(err);
+          alert('Failed to generate cover letter. ' + (err.response?.data?.message || err.message));
+        }
+      }
+    );
+  };
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title="AI Cover Letter Generator">
+      <div className="space-y-4 pt-2 w-[500px] max-w-[90vw]">
+        {!coverLetter ? (
+          <>
+            <div>
+              <Label>Job Description</Label>
+              <textarea 
+                className="w-full h-40 p-3 mt-1 rounded-md bg-[var(--color-bg-primary)] border border-default text-sm text-primary focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] outline-none resize-none"
+                placeholder="Paste the job description here..."
+                value={jobDescription}
+                onChange={e => setJobDescription(e.target.value)}
+              />
+              <p className="text-xs text-secondary mt-1 flex items-center gap-1">
+                <Wand2 size={12} /> AI will use vector search to match your projects to this JD.
+              </p>
+            </div>
+            <div className="flex gap-3 pt-4 border-t border-[var(--color-border-default)]">
+              <Button onClick={handleGenerate} variant="primary" className="flex-1" disabled={generate.isPending || !jobDescription.trim()}>
+                {generate.isPending ? 'Generating (RAG)...' : 'Generate with AI'}
+              </Button>
+              <Button onClick={onClose} variant="outline">Cancel</Button>
+            </div>
+          </>
+        ) : (
+          <>
+            <div>
+              <Label>Generated Cover Letter</Label>
+              <textarea 
+                className="w-full h-64 p-3 mt-1 rounded-md bg-[var(--color-bg-primary)] border border-default text-sm text-primary focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] outline-none"
+                value={coverLetter}
+                onChange={e => setCoverLetter(e.target.value)}
+              />
+            </div>
+            <div className="flex gap-3 pt-4 border-t border-[var(--color-border-default)]">
+              <Button onClick={() => navigator.clipboard.writeText(coverLetter)} variant="primary" className="flex-1">
+                Copy to Clipboard
+              </Button>
+              <Button onClick={() => setCoverLetter('')} variant="outline">Back</Button>
+            </div>
+          </>
+        )}
+      </div>
     </Modal>
   );
 };

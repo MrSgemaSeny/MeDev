@@ -25,6 +25,7 @@ public class ProfileService {
     private final EducationRepository educationRepository;
     private final LanguageRepository languageRepository;
     private final ProfileMapper profileMapper;
+    private final org.springframework.context.ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public void createEmptyProfile(User user) {
@@ -70,6 +71,7 @@ public class ProfileService {
         profile.setLinkedin(request.getLinkedin());
         
         profileRepository.save(profile);
+        eventPublisher.publishEvent(new com.medev.modules.profile.event.ProfileUpdatedEvent(this, userId));
         return mapToProfileDto(profile);
     }
 
@@ -78,6 +80,7 @@ public class ProfileService {
         Profile profile = getProfileEntityByUserId(userId);
         profile.setSectionOrder(sectionOrder);
         profileRepository.save(profile);
+        eventPublisher.publishEvent(new com.medev.modules.profile.event.ProfileUpdatedEvent(this, userId));
     }
 
     @Transactional
@@ -165,6 +168,7 @@ public class ProfileService {
             }
         }
 
+        eventPublisher.publishEvent(new com.medev.modules.profile.event.ProfileUpdatedEvent(this, userId));
         return mapToProfileDto(profile);
     }
 
@@ -194,6 +198,7 @@ public class ProfileService {
         
         profile.setGithubUsername(github.getUsername());
         profileRepository.save(profile);
+        eventPublisher.publishEvent(new com.medev.modules.profile.event.ProfileUpdatedEvent(this, userId));
     }
 
     @Transactional
@@ -234,6 +239,7 @@ public class ProfileService {
                 existingProjects.add(project); // Update local list for subsequent iterations
             }
         }
+        eventPublisher.publishEvent(new com.medev.modules.profile.event.ProfileUpdatedEvent(this, userId));
     }
 
     @Transactional

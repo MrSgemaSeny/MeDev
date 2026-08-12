@@ -8,6 +8,13 @@ java { sourceCompatibility = JavaVersion.VERSION_17 }
 
 repositories {
     mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.ai:spring-ai-bom:1.0.0-M1"
+    }
 }
 
 dependencies {
@@ -58,6 +65,10 @@ dependencies {
     implementation 'com.bucket4j:bucket4j-core:8.10.1'
     implementation 'io.github.resilience4j:resilience4j-circuitbreaker:2.2.0'
     implementation 'io.github.resilience4j:resilience4j-reactor:2.2.0'
+
+    // AI & Vector DB
+    implementation 'org.springframework.ai:spring-ai-pgvector-store-spring-boot-starter'
+    implementation 'org.springframework.ai:spring-ai-transformers-spring-boot-starter'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'

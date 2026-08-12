@@ -17,15 +17,18 @@ public class AiApplicationService extends AbstractAiStructuredService {
 
     private final SubscriptionService subscriptionService;
     private final ProfileService profileService;
+    private final org.springframework.ai.vectorstore.VectorStore vectorStore;
 
     public AiApplicationService(
             LlmProvider llmProvider,
             ObjectMapper objectMapper,
             SubscriptionService subscriptionService,
-            ProfileService profileService) {
+            ProfileService profileService,
+            org.springframework.ai.vectorstore.VectorStore vectorStore) {
         super(llmProvider, objectMapper);
         this.subscriptionService = subscriptionService;
         this.profileService = profileService;
+        this.vectorStore = vectorStore;
     }
 
     public AiApplicationResponse generateCoverLetter(Long userId, AiApplicationRequest request) {
@@ -40,10 +43,22 @@ public class AiApplicationService extends AbstractAiStructuredService {
             throw new RuntimeException("Failed to process profile data", e);
         }
 
+        // RAG: Retrieve top 4 most relevant experiences/projects for this job description
+        org.springframework.ai.vectorstore.SearchRequest searchRequest = org.springframework.ai.vectorstore.SearchRequest.query(request.getJobDescription())
+                .withTopK(4)
+                .withFilterExpression("userId == '" + userId + "'");
+        
+        java.util.List<org.springframework.ai.document.Document> relevantDocs = vectorStore.similaritySearch(searchRequest);
+        String relevantContext = relevantDocs.stream()
+                .map(org.springframework.ai.document.Document::getContent)
+                .collect(java.util.stream.Collectors.joining("\n- "));
+
         String systemPrompt = "You are an expert technical recruiter and career coach. Write a highly professional and tailored cover letter. Output JSON in format: {\"coverLetter\": \"<text>\"}";
         String userMessage = String.format(
-            "Candidate Profile:\n%s\n\nJob Description:\n%s\n\nTarget Role: %s",
-            profileJson, request.getJobDescription(), request.getTargetRole() != null ? request.getTargetRole() : "Software Engineer"
+            "Candidate's Most Relevant Experience & Projects (Retrieved via AI Search):\n- %s\n\nJob Description:\n%s\n\nTarget Role: %s\n\nBase your cover letter heavily on these specific relevant experiences.",
+            relevantContext.isEmpty() ? "No specific data found. Use generic developer skills." : relevantContext, 
+            request.getJobDescription(), 
+            request.getTargetRole() != null ? request.getTargetRole() : "Software Engineer"
         );
 
         JsonNode root = generateStructuredData(systemPrompt, userMessage, JsonNode.class);
@@ -64,10 +79,20 @@ public class AiApplicationService extends AbstractAiStructuredService {
             throw new RuntimeException("Failed to process profile data", e);
         }
 
+        org.springframework.ai.vectorstore.SearchRequest searchRequest = org.springframework.ai.vectorstore.SearchRequest.query(request.getJobDescription())
+                .withTopK(5)
+                .withFilterExpression("userId == '" + userId + "'");
+        
+        java.util.List<org.springframework.ai.document.Document> relevantDocs = vectorStore.similaritySearch(searchRequest);
+        String relevantContext = relevantDocs.stream()
+                .map(org.springframework.ai.document.Document::getContent)
+                .collect(java.util.stream.Collectors.joining("\n- "));
+
         String systemPrompt = "You are an expert technical resume writer. Rewrite the candidate's resume summary and experience to align with the JD. Output JSON in format: {\"suggestions\": \"<markdown text>\"}";
         String userMessage = String.format(
-            "Candidate Profile:\n%s\n\nJob Description:\n%s",
-            profileJson, request.getJobDescription()
+            "Candidate's Most Relevant Experience & Projects (Retrieved via AI Search):\n- %s\n\nJob Description:\n%s",
+            relevantContext.isEmpty() ? "No specific data found." : relevantContext, 
+            request.getJobDescription()
         );
 
         JsonNode root = generateStructuredData(systemPrompt, userMessage, JsonNode.class);

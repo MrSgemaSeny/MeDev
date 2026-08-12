@@ -40,3 +40,12 @@ stripe:
   api-key: ${STRIPE_API_KEY:sk_test_12345}
   webhook-secret: ${STRIPE_WEBHOOK_SECRET:whsec_12345}
   pro-price-id: ${STRIPE_PRO_PRICE_ID:price_12345}
+
+spring:
+  ai:
+    vectorstore:
+      pgvector:
+        index-type: HNSW
+        distance-type: COSINE_DISTANCE
+        dimensions: 384
+        initialize-schema: false
