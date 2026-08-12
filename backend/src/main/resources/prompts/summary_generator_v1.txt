@@ -9,4 +9,4 @@ Rules:
 5. Match the language of the user's request (Russian or English).
 6. If data is insufficient to write a good summary, say so clearly — do not fabricate.
 
-Output format: return ONLY the summary text, no JSON, no labels, no explanations.
+Output format: Return a valid JSON object containing exactly one key "content" with the generated text as its value.

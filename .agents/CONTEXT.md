@@ -19,6 +19,7 @@
   - **Fixed `GroqClient` DNS Resolution**: Switched Reactor Netty's `HttpClient` to use the standard Java DNS resolver (`DefaultAddressResolverGroup.INSTANCE`) to fix `Failed to resolve api.groq.com` on Windows.
   - **Fixed BillingController routing**: Corrected `@RequestMapping` from `/api/v1/billing` to `/v1/billing` to avoid `NoResourceFoundException` under the global `/api` context path.
   - **Implemented User Profile Dropdown**: Added `UserProfileDropdown.tsx` matching UI design (Avatar, Role, Notifications, Language, Logout, and a Theme Switcher).
+  - **Fixed AI Generation Endpoints**: Corrected JSON prompting in `summary_generator_v1.txt` and added `application/json` content-type in `AiController` to fix the "Generate with AI" button.
 
 ## Next in Backlog
 - Frontend CI/CD / GitHub Pages deployment.

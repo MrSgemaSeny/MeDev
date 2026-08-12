@@ -17,7 +17,7 @@ public class AiGenerateService {
     }
 
     public String generateProjectDescription(String context, String projectName, String language) {
-        String systemPrompt = promptLoader.load("summary_generator_v1.txt"); // Можно использовать другой промпт если он есть
+        String systemPrompt = promptLoader.load("project_description_v1.txt");
         String userMessage = String.format("Language: %s\nProject: %s\nContext:\n%s", language, projectName, context);
         return llmProvider.structuredCompletion(systemPrompt, userMessage);
     }

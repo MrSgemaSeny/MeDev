@@ -105,7 +105,7 @@ public class AiController {
      * Генерация professional summary.
      * Возвращает текст, не JSON.
      */
-    @PostMapping("/generate/summary")
+    @PostMapping(value = "/generate/summary", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> generateSummary(@RequestBody GenerateRequest request) {
         Long userId = SecurityUtils.getCurrentUserId();
         aiRateLimiter.checkAndConsume(userId);
@@ -118,7 +118,7 @@ public class AiController {
     /**
      * Генерация описания проекта.
      */
-    @PostMapping("/generate/project-description")
+    @PostMapping(value = "/generate/project-description", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> generateProjectDescription(@RequestBody GenerateRequest request) {
         Long userId = SecurityUtils.getCurrentUserId();
         aiRateLimiter.checkAndConsume(userId);
