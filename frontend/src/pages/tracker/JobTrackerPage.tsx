@@ -52,44 +52,49 @@ export const JobTrackerPage = () => {
         </Button>
       </header>
 
-      <div className="p-6 flex-1 overflow-auto space-y-6">
-        {/* Stats Row */}
-        <div className="grid grid-cols-4 gap-4">
-          <Card className="p-5 bg-[var(--color-bg-primary)] border border-[var(--color-border-default)]">
-            <div className="text-sm font-medium text-secondary mb-1">Total Applications</div>
-            <div className="text-3xl font-bold text-primary">{stats.total}</div>
-          </Card>
-          <Card className="p-5 bg-[var(--color-bg-primary)] border border-[var(--color-border-default)]">
-            <div className="text-sm font-medium text-secondary mb-1">Active Pipeline</div>
-            <div className="text-3xl font-bold text-[var(--color-accent)]">{stats.active}</div>
-          </Card>
-          <Card className="p-5 bg-[var(--color-bg-primary)] border border-[var(--color-border-default)]">
-            <div className="text-sm font-medium text-secondary mb-1">Interviews</div>
-            <div className="text-3xl font-bold text-yellow-500 dark:text-yellow-400">{stats.interviews}</div>
-          </Card>
-          <Card className="p-5 bg-[var(--color-bg-primary)] border border-[var(--color-border-default)]">
-            <div className="text-sm font-medium text-secondary mb-1">Offers</div>
-            <div className="text-3xl font-bold text-green-600 dark:text-green-500">{stats.offers}</div>
-          </Card>
+      <div className="p-6 flex-1 overflow-auto max-w-6xl mx-auto w-full">
+        {/* Compact Stats Row */}
+        <div className="flex flex-wrap items-center gap-3 mb-6 text-sm">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--color-border-default)] bg-[var(--color-bg-primary)] shadow-sm">
+            <Briefcase size={14} className="text-secondary" />
+            <span className="text-secondary font-medium">Total</span>
+            <span className="font-semibold px-2 py-0.5 rounded-full bg-[var(--color-bg-inset)] text-primary text-xs">{stats.total}</span>
+          </div>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--color-border-default)] bg-[var(--color-bg-primary)] shadow-sm">
+            <Target size={14} className="text-[var(--color-accent)]" />
+            <span className="text-[var(--color-accent)] font-medium">Active</span>
+            <span className="font-semibold px-2 py-0.5 rounded-full bg-[var(--color-bg-inset)] text-primary text-xs">{stats.active}</span>
+          </div>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--color-border-default)] bg-[var(--color-bg-primary)] shadow-sm">
+            <TrendingUp size={14} className="text-yellow-500" />
+            <span className="text-yellow-500 font-medium">Interviews</span>
+            <span className="font-semibold px-2 py-0.5 rounded-full bg-[var(--color-bg-inset)] text-primary text-xs">{stats.interviews}</span>
+          </div>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--color-border-default)] bg-[var(--color-bg-primary)] shadow-sm">
+            <CheckCircle2 size={14} className="text-green-500" />
+            <span className="text-green-500 font-medium">Offers</span>
+            <span className="font-semibold px-2 py-0.5 rounded-full bg-[var(--color-bg-inset)] text-primary text-xs">{stats.offers}</span>
+          </div>
         </div>
 
-        {/* Filters & Table */}
-        <Card className="bg-[var(--color-bg-primary)] border border-[var(--color-border-default)] overflow-hidden flex flex-col">
-          <div className="p-4 border-b border-[var(--color-border-default)] flex gap-4 bg-[var(--color-bg-secondary)]">
-            <div className="relative w-64">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary" />
+        {/* GitHub Issues Style List */}
+        <div className="border border-[var(--color-border-default)] rounded-xl bg-[var(--color-bg-primary)] overflow-hidden shadow-sm">
+          {/* Header Bar */}
+          <div className="p-3 border-b border-[var(--color-border-default)] flex flex-col sm:flex-row gap-3 bg-[var(--color-bg-secondary)] items-center justify-between">
+            <div className="relative w-full sm:w-80">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary" />
               <input 
                 type="text" 
                 placeholder="Search company or role..." 
-                className="w-full pl-9 pr-3 py-1.5 text-sm bg-[var(--color-bg-primary)] border border-[var(--color-border-default)] rounded-md focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] outline-none transition-shadow"
+                className="w-full pl-9 pr-3 py-1.5 text-sm bg-[var(--color-bg-primary)] border border-[var(--color-border-default)] rounded-md focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] outline-none transition-shadow text-primary placeholder-muted"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
               />
             </div>
-            <div className="flex items-center gap-2">
-              <Filter size={16} className="text-secondary" />
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <Filter size={14} className="text-secondary" />
               <select 
-                className="py-1.5 px-3 text-sm bg-[var(--color-bg-primary)] border border-[var(--color-border-default)] rounded-md outline-none"
+                className="py-1.5 px-3 text-sm bg-[var(--color-bg-primary)] border border-[var(--color-border-default)] rounded-md outline-none text-primary hover:bg-[var(--color-bg-secondary)] transition-colors cursor-pointer"
                 value={statusFilter}
                 onChange={e => setStatusFilter(e.target.value as ApplicationStatus | 'ALL')}
               >
@@ -101,62 +106,83 @@ export const JobTrackerPage = () => {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm whitespace-nowrap">
-              <thead className="bg-[var(--color-bg-tertiary)] text-secondary text-xs uppercase tracking-wider font-semibold border-b border-[var(--color-border-default)]">
-                <tr>
-                  <th className="px-6 py-4">Company & Role</th>
-                  <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4">Location</th>
-                  <th className="px-6 py-4">Salary Range</th>
-                  <th className="px-6 py-4">Applied Date</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--color-border-default)]">
-                {filteredApps.map(app => {
-                  const StatusIcon = STATUS_CONFIG[app.status].icon;
-                  return (
-                    <tr key={app.id} className="hover:bg-[var(--color-bg-secondary)] transition-colors group">
-                      <td className="px-6 py-4">
-                        <div className="font-semibold text-primary">{app.companyName}</div>
-                        <div className="text-secondary text-xs mt-0.5">{app.role}</div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <Badge tone={STATUS_CONFIG[app.status].tone} className="flex items-center gap-1.5 w-max px-2.5 py-1">
-                          <StatusIcon size={12} />
-                          {STATUS_CONFIG[app.status].label}
-                        </Badge>
-                      </td>
-                      <td className="px-6 py-4 text-secondary">{app.location || '—'}</td>
-                      <td className="px-6 py-4 font-mono text-[var(--color-success,auto)]">{app.salaryRange || '—'}</td>
-                      <td className="px-6 py-4 text-secondary flex items-center gap-1.5">
-                        {app.appliedDate ? <><Calendar size={14} /> {app.appliedDate}</> : '—'}
-                      </td>
-                      <td className="px-6 py-4 text-right space-x-3">
-                        {app.jobUrl && (
-                          <a href={app.jobUrl} target="_blank" rel="noreferrer" className="text-[var(--color-link)] hover:underline inline-flex items-center gap-1">
-                            Link <ExternalLink size={12} />
-                          </a>
-                        )}
-                        <button onClick={() => deleteApp.mutate(app.id)} className="text-secondary hover:text-danger opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Trash2 size={16} />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-                {filteredApps.length === 0 && (
-                  <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-secondary">
-                      No applications found. Adjust filters or add a new one.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+          {/* List Body */}
+          <div className="divide-y divide-[var(--color-border-default)]">
+            {filteredApps.map(app => {
+              const StatusIcon = STATUS_CONFIG[app.status].icon;
+              return (
+                <div key={app.id} className="p-4 hover:bg-[var(--color-bg-secondary)] transition-colors group flex items-start gap-3">
+                  {/* Left Icon */}
+                  <div className="mt-1">
+                    <StatusIcon size={18} className={`
+                      ${app.status === 'OFFER' ? 'text-green-500' : ''}
+                      ${app.status === 'INTERVIEW' ? 'text-yellow-500' : ''}
+                      ${app.status === 'REJECTED' ? 'text-red-500' : ''}
+                      ${app.status === 'APPLIED' ? 'text-[var(--color-accent)]' : ''}
+                      ${app.status === 'WISHLIST' ? 'text-secondary' : ''}
+                    `} />
+                  </div>
+                  
+                  {/* Main Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <h3 className="text-base font-semibold text-primary">{app.role}</h3>
+                      <span className="text-secondary">at</span>
+                      <span className="text-base font-semibold text-primary">{app.companyName}</span>
+                      
+                      <Badge tone={STATUS_CONFIG[app.status].tone} className="ml-2 text-[10px] px-2 py-0.5">
+                        {STATUS_CONFIG[app.status].label}
+                      </Badge>
+                    </div>
+                    
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-secondary mt-1.5">
+                      {app.location && (
+                        <span className="flex items-center gap-1">
+                          <Target size={12} /> {app.location}
+                        </span>
+                      )}
+                      {app.salaryRange && (
+                        <span className="flex items-center gap-1 font-mono text-[var(--color-success,auto)]">
+                          $ {app.salaryRange}
+                        </span>
+                      )}
+                      <span className="flex items-center gap-1">
+                        <Calendar size={12} /> {app.appliedDate || 'No date'}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  {/* Actions */}
+                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {app.jobUrl && (
+                      <a href={app.jobUrl} target="_blank" rel="noreferrer" className="p-1.5 text-secondary hover:text-[var(--color-accent)] hover:bg-[var(--color-bg-tertiary)] rounded-md transition-colors" title="View Job Post">
+                        <ExternalLink size={16} />
+                      </a>
+                    )}
+                    <button onClick={() => deleteApp.mutate(app.id)} className="p-1.5 text-secondary hover:text-danger hover:bg-red-500/10 rounded-md transition-colors" title="Delete Application">
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+            
+            {filteredApps.length === 0 && (
+              <div className="py-16 flex flex-col items-center justify-center text-center px-4">
+                <div className="w-16 h-16 rounded-full bg-[var(--color-bg-inset)] border border-[var(--color-border-default)] flex items-center justify-center mb-4">
+                  <Briefcase size={24} className="text-muted" />
+                </div>
+                <h3 className="text-lg font-semibold text-primary mb-2">No applications found</h3>
+                <p className="text-secondary text-sm max-w-sm mb-6">
+                  You haven't tracked any applications matching this criteria yet.
+                </p>
+                <Button variant="primary" onClick={() => setIsModalOpen(true)}>
+                  Add your first application
+                </Button>
+              </div>
+            )}
           </div>
-        </Card>
+        </div>
       </div>
 
       <AddApplicationModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
