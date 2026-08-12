@@ -42,6 +42,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String providerId;
         String username;
         String nameAttributeKey;
+        String avatarUrl = null;
 
         if ("github".equals(registrationId)) {
             providerId = String.valueOf(attributes.get("id"));
@@ -52,6 +53,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             }
             username = login.toLowerCase();
             nameAttributeKey = "login";
+            avatarUrl = (String) attributes.get("avatar_url");
         } else if ("google".equals(registrationId)) {
             providerId = (String) attributes.get("sub");
             email = (String) attributes.get("email");
@@ -59,6 +61,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             // username из email: "john.doe@gmail.com" -> "john.doe"
             username = email.substring(0, email.indexOf("@")).toLowerCase().replaceAll("[^a-z0-9._-]", "");
             nameAttributeKey = "sub";
+            avatarUrl = (String) attributes.get("picture");
         } else {
             throw new OAuth2AuthenticationException("Unsupported OAuth2 provider: " + registrationId);
         }
@@ -141,6 +144,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             user.setGoogleId(providerId);
         }
         userRepository.save(user);
+
+        if (avatarUrl != null && !avatarUrl.isBlank()) {
+            profileService.setAvatarIfMissing(user.getId(), avatarUrl);
+        }
 
         // Для Google нужно добавить "email" в attributes для SuccessHandler,
         // т.к. DefaultOAuth2User требует nameAttributeKey в attributes map

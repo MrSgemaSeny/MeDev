@@ -46,6 +46,16 @@ public class ProfileService {
         });
     }
 
+    @Transactional
+    public void setAvatarIfMissing(Long userId, String avatarUrl) {
+        profileRepository.findByUserId(userId).ifPresent(profile -> {
+            if (profile.getAvatarUrl() == null || profile.getAvatarUrl().isBlank()) {
+                profile.setAvatarUrl(avatarUrl);
+                profileRepository.save(profile);
+            }
+        });
+    }
+
     public Profile getProfileEntityByUserId(Long userId) {
         return profileRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException("Profile not found"));
