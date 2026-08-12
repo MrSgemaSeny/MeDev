@@ -19,6 +19,8 @@
   - **Security Audit Fixes**: Closed critical OAuth token leak in URLs using short-lived `oauth2_code` in Redis. Added strict `type` checks for JWTs (`access` vs `refresh`). Fixed IP spoofing in Bucket4j by ignoring `X-Forwarded-For`. Prevented race conditions in user registration.
   - **Billing Synchronization**: Upgraded `StripeService` to handle `customer.subscription.deleted`, `customer.subscription.updated`, and `invoice.payment_failed` webhooks for automatic `FREE` plan downgrading. Enhanced frontend `SuccessPage` to securely poll backend status.
   - **Global Header & Dark Mode Redesign**: Implemented a strict GitHub Dark Mode design system. Forced `dark` mode by default via blocking inline script. Built a new global `AppHeader` and rewrote `UserProfileDropdown` to handle missing data gracefully.
+  - **Premium Landing Page & Onboarding**: Integrated standalone Landing Page at `/` for public access. Overhauled `OnboardingWizard` with premium animations and scale.
+  - **Enterprise Job Tracker & Import**: Replaced drag-and-drop Kanban board with a data-dense CRM table (uninstalled `@dnd-kit`). Extracted "Zero-Input" resume upload to a dedicated `/import` route.
 
 ## Next in Backlog
 - Frontend CI/CD / GitHub Pages deployment.
