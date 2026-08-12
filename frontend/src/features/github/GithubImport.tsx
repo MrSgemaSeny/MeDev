@@ -3,10 +3,10 @@ import { api } from '../../shared/api/axios';
 import { useProfile } from '../../shared/api/hooks/useProfile';
 import { Button } from '../../shared/ui/Button';
 import { Card } from '../../shared/ui/Form';
-import { CheckCircle2, DownloadCloud } from 'lucide-react';
+import { CheckCircle2, DownloadCloud, RefreshCw } from 'lucide-react';
 
-export const GithubIcon = () => (
-  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+export const GithubIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className={className || "mr-2"}>
     <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
   </svg>
 );
@@ -118,42 +118,76 @@ export const GithubImport = () => {
       </div>
 
       {stage === 'idle' || stage === 'fetching' || stage === 'error' ? (
-        <Card className="p-5">
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--color-text-primary)' }}>
-                Step 1. Link Account & Fetch Data
-              </label>
-              <p className="text-sm mb-4" style={{ color: 'var(--color-text-secondary)' }}>
-                Authorize MeDev to read your GitHub profile. If you have already connected your account, simply fetch your data.
-              </p>
-            </div>
-            
-            {error && (
-              <div
-                className="rounded-md px-3 py-2 text-sm flex items-start gap-2"
-                style={{
-                  backgroundColor: 'var(--color-bg-tertiary)',
-                  border: '1px solid var(--color-danger)',
-                  color: 'var(--color-danger)',
-                }}
-              >
-                <span>{error}</span>
+        <Card className="p-0 overflow-hidden relative border border-[var(--color-border-default)] bg-[var(--color-bg-primary)] shadow-sm">
+          {/* Subtle gradient background element for premium feel */}
+          <div className="absolute -top-24 -right-24 w-48 h-48 bg-[var(--color-accent)] opacity-[0.03] rounded-full blur-3xl pointer-events-none"></div>
+          
+          <div className="p-6">
+            {profileData?.githubUsername && !error ? (
+              // Connected State
+              <div className="space-y-5">
+                <div className="flex items-center gap-4 p-4 rounded-xl border border-[var(--color-border-default)] bg-[var(--color-bg-secondary)]">
+                  <div className="w-14 h-14 rounded-full border-2 border-[var(--color-border-default)] bg-[var(--color-bg-inset)] flex items-center justify-center overflow-hidden shrink-0">
+                    {profileData?.avatarUrl ? (
+                      <img src={profileData.avatarUrl} alt="GitHub Avatar" className="w-full h-full object-cover" />
+                    ) : (
+                      <GithubIcon className="w-7 h-7 text-secondary" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-base font-semibold text-primary truncate">
+                        @{profileData.githubUsername}
+                      </h3>
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-[var(--color-success)]/10 text-[var(--color-success)] border border-[var(--color-success)]/20">
+                        <CheckCircle2 size={10} /> Connected
+                      </span>
+                    </div>
+                    <p className="text-sm text-secondary truncate">
+                      Your GitHub account is securely linked to MeDev.
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex gap-3 pt-2">
+                  <Button type="button" variant="primary" onClick={handleFetch} disabled={stage === 'fetching'} className="flex-1 sm:flex-none">
+                    <RefreshCw size={16} className={`mr-2 ${stage === 'fetching' ? 'animate-spin' : ''}`} />
+                    {stage === 'fetching' ? 'Syncing...' : 'Sync Repositories'}
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              // Disconnected State
+              <div className="space-y-5">
+                <div>
+                  <h3 className="text-base font-semibold text-primary mb-1.5">
+                    Step 1. Link Account & Fetch Data
+                  </h3>
+                  <p className="text-sm text-secondary">
+                    Authorize MeDev to read your GitHub profile. If you have already connected your account, simply fetch your data.
+                  </p>
+                </div>
+                
+                {error && (
+                  <div className="rounded-md px-4 py-3 text-sm flex items-start gap-2 bg-[var(--color-danger)]/10 border border-[var(--color-danger)]/20 text-[var(--color-danger)]">
+                    <span>{error}</span>
+                  </div>
+                )}
+                
+                <div className="flex flex-wrap gap-3 pt-2">
+                  <Button type="button" variant="outline" onClick={handleConnect}>
+                    <GithubIcon className="mr-2" />
+                    Connect GitHub
+                  </Button>
+                  {profileData?.githubUsername && (
+                    <Button type="button" variant="primary" onClick={handleFetch} disabled={stage === 'fetching'}>
+                      <DownloadCloud size={16} className="mr-2" />
+                      {stage === 'fetching' ? 'Fetching...' : 'Fetch Data Anyway'}
+                    </Button>
+                  )}
+                </div>
               </div>
             )}
-            
-            <div className="flex gap-3 pt-1">
-              {(!profileData?.githubUsername || error) && (
-                <Button type="button" variant="outline" onClick={handleConnect}>
-                  <GithubIcon />
-                  Connect GitHub
-                </Button>
-              )}
-              <Button type="button" variant="primary" onClick={handleFetch} disabled={stage === 'fetching'}>
-                <DownloadCloud size={16} className="mr-2" />
-                {stage === 'fetching' ? 'Fetching...' : 'Fetch Data'}
-              </Button>
-            </div>
           </div>
         </Card>
       ) : null}
