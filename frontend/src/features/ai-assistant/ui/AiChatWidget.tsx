@@ -121,7 +121,7 @@ export const AiChatWidget = () => {
       <div className="surface-secondary border-b border-default p-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg" style={{ backgroundColor: 'var(--color-bg-tertiary)' }}>
-            <Bot size={20} style={{ color: 'var(--color-accent)' }} />
+            <Bot size={20} className="text-primary" />
           </div>
           <div>
             <h3 className="font-semibold text-sm">MeDev Assistant</h3>
@@ -145,12 +145,11 @@ export const AiChatWidget = () => {
         {messages.map((msg) => (
           <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div 
-              className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap ${
+              className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap border ${
                 msg.role === 'user' 
-                  ? 'text-white rounded-br-none' 
+                  ? 'surface-tertiary border-muted text-primary rounded-br-none' 
                   : 'surface-secondary border-default text-primary rounded-bl-none'
               }`}
-              style={msg.role === 'user' ? { backgroundColor: 'var(--color-accent)' } : undefined}
             >
               {msg.content}
             </div>
@@ -182,14 +181,13 @@ export const AiChatWidget = () => {
               }
             }}
             placeholder="Спроси о чём-нибудь..."
-            className="w-full bg-transparent border border-default rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-accent)] resize-none max-h-32 min-h-[40px]"
+            className="w-full bg-transparent border border-default rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-text-secondary)] resize-none max-h-32 min-h-[40px]"
             rows={1}
           />
           <button 
             type="submit" 
             disabled={!input.trim() || isLoading}
-            className="p-2.5 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors shrink-0"
-            style={{ backgroundColor: 'var(--color-accent)' }}
+            className="p-2.5 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors shrink-0 surface-tertiary border border-default hover:bg-[var(--color-bg-secondary)] text-primary"
           >
             <Send size={18} />
           </button>

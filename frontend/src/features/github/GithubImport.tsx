@@ -147,7 +147,7 @@ export const GithubImport = () => {
                 <GithubIcon />
                 Connect GitHub
               </Button>
-              <Button type="button" variant="secondary" onClick={handleFetch} disabled={stage === 'fetching'}>
+              <Button type="button" variant="primary" onClick={handleFetch} disabled={stage === 'fetching'}>
                 <DownloadCloud size={16} className="mr-2" />
                 {stage === 'fetching' ? 'Fetching...' : 'Fetch Data'}
               </Button>
