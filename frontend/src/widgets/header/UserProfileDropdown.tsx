@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { LogOut, Bell, Globe, Mail, Moon, Sun } from 'lucide-react';
-import { useAuthStore } from '../../../entities/user/model/store';
+import { useAuthStore } from '../../entities/user/model/store';
 import { useTranslation } from 'react-i18next';
 
 export const UserProfileDropdown: React.FC = () => {

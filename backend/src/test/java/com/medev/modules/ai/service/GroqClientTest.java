@@ -31,6 +31,7 @@ public class GroqClientTest {
 
     @BeforeEach
     void setUp() {
+        when(webClientBuilder.clientConnector(org.mockito.ArgumentMatchers.any())).thenReturn(webClientBuilder);
         when(webClientBuilder.baseUrl(anyString())).thenReturn(webClientBuilder);
         when(webClientBuilder.defaultHeader(anyString(), anyString())).thenReturn(webClientBuilder);
         when(webClientBuilder.build()).thenReturn(webClient);

@@ -2,6 +2,8 @@ package com.medev.modules.ai.service;
 
 import com.medev.modules.auth.entity.User;
 import com.medev.modules.auth.repository.UserRepository;
+import com.medev.modules.github.dto.GitHubStatsDto;
+import com.medev.modules.github.service.GitHubGraphQLService;
 import com.medev.modules.github.service.GitHubService;
 import com.medev.modules.profile.dto.ProfileDto;
 import com.medev.modules.profile.service.ProfileService;
@@ -35,6 +37,7 @@ public class AiContextService {
     private final ProfileService profileService;
     private final UserRepository userRepository;
     private final GitHubService gitHubService;
+    private final GitHubGraphQLService gitHubGraphQLService;
     private final PromptLoader promptLoader;
 
     /**
@@ -101,10 +104,27 @@ public class AiContextService {
 
         // GitHub данные кэшируются отдельно — они медленные и меняются редко
         if (profile.getGithubUsername() != null && !profile.getGithubUsername().isBlank()) {
-            sb.append("=== GITHUB ===\n");
-            sb.append("Username: ").append(profile.getGithubUsername()).append("\n");
+            sb.append("<github_data>\n");
+            sb.append("  Username: ").append(profile.getGithubUsername()).append("\n");
+            
             String githubData = fetchGithubCached(profile.getGithubUsername());
-            sb.append(truncate(githubData, MAX_GITHUB_CHARS)).append("\n");
+            sb.append("  ").append(truncate(githubData, MAX_GITHUB_CHARS).replace("\n", "\n  ")).append("\n");
+            
+            GitHubStatsDto stats = gitHubGraphQLService.fetchContributionsCached(
+                userId, profile.getGithubUsername(), user.getGithubAccessToken()
+            );
+            
+            if (stats != null) {
+                sb.append("  contributions_last_90_days:\n");
+                sb.append("    commits: ").append(stats.totalCommits()).append("\n");
+                sb.append("    repositories_contributed: ").append(stats.totalRepositoriesContributed()).append("\n");
+                sb.append("    total_contribution_events: ").append(stats.totalContributions()).append("\n");
+                sb.append("    period: ").append(stats.from()).append(" to ").append(stats.to()).append("\n");
+            } else {
+                sb.append("  contributions: unavailable\n");
+            }
+            
+            sb.append("</github_data>\n");
         }
 
         int estimatedTokens = sb.length() / 4;
