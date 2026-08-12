@@ -95,8 +95,8 @@ public class ProfileService {
         
         // Clear existing to replace with AI parsed
         profile.getSkills().clear();
-        profile.getExperience().clear();
-        profile.getEducation().clear();
+        profile.getExperiences().clear();
+        profile.getEducations().clear();
         profile.getLanguages().clear();
         
         // Force flush to execute the deletes before inserting new ones
