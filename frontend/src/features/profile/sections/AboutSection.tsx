@@ -97,13 +97,13 @@ export const AboutSection = () => {
 
       {/* Avatar row */}
       <div className="flex items-center gap-4 mb-6">
-        <div className="w-12 h-12 rounded-full bg-[var(--color-accent-muted)] border border-[var(--border-accent)] flex items-center justify-center text-[16px] font-medium text-accent shrink-0">
+        <div className="w-12 h-12 rounded-full flex items-center justify-center text-[16px] font-medium shrink-0" style={{ backgroundColor: 'var(--color-bg-tertiary)', color: 'var(--color-text-primary)', border: '1px solid var(--color-border-default)' }}>
           {username ? username.charAt(0).toUpperCase() : 'U'}
         </div>
         <div className="flex flex-col">
           <strong className="text-[14px] text-primary font-medium">{formData.fullName || username}</strong>
           <p className="text-[12px] text-secondary mt-0.5">{formData.headline || 'No headline set'}</p>
-          <button type="button" className="text-[12px] text-accent mt-1 inline-flex items-center gap-1 bg-transparent border-none p-0 hover:underline cursor-pointer">
+          <button type="button" className="text-[12px] mt-1 inline-flex items-center gap-1 bg-transparent border-none p-0 hover:underline cursor-pointer" style={{ color: 'var(--color-text-secondary)' }}>
             <Camera size={13} />
             Upload photo
           </button>
@@ -147,7 +147,7 @@ export const AboutSection = () => {
             type="button" 
             onClick={handleGenerateSummary}
             disabled={isGenerating}
-            className="inline-flex items-center gap-1.5 text-[11px] py-1 px-2 rounded-md border border-[var(--border-accent)] bg-[var(--color-accent-muted)] text-accent hover:bg-[rgba(59,130,246,0.18)] transition-colors cursor-pointer disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 text-[11px] py-1 px-2 rounded-md border border-[var(--color-border-default)] surface-secondary text-secondary hover:surface-tertiary hover:text-primary transition-colors cursor-pointer disabled:opacity-50"
           >
             <Sparkles size={13} />
             {isGenerating ? 'Generating...' : 'Generate with AI'}
