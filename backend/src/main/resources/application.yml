@@ -26,6 +26,9 @@ jwt:
   expiration: 86400000            # 24 часа
   refresh-expiration: 2592000000  # 30 дней
 
+encryption:
+  secret: ${ENCRYPTION_SECRET:super_secret_encryption_key_that_is_at_least_32_bytes_long_12345}
+
 github:
   api-url: https://api.github.com
 

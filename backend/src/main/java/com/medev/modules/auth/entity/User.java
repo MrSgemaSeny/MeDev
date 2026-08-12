@@ -1,5 +1,6 @@
 package com.medev.modules.auth.entity;
 
+import com.medev.shared.security.EncryptedStringConverter;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -40,6 +41,7 @@ public class User {
     @Column(name = "github_id")
     private String githubId;
 
+    @Convert(converter = EncryptedStringConverter.class)
     @Column(name = "github_access_token")
     private String githubAccessToken;
 

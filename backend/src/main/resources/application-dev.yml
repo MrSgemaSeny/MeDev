@@ -24,6 +24,9 @@ spring:
 jwt:
   secret: super_secret_jwt_key_that_is_at_least_256_bits_long_for_hs256_algorithm_12345
 
+encryption:
+  secret: ${ENCRYPTION_SECRET:super_secret_encryption_key_that_is_at_least_32_bytes_long_12345}
+
 stripe:
   secret-key: sk_test_123
   webhook-secret: whsec_123
