@@ -43,10 +43,6 @@ export const DashboardPage = () => {
       {/* Hero */}
       <section className="pt-12 pb-10 px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-default surface-secondary mb-8">
-            <span className="glow-dot"></span>
-            <span className="text-xs font-semibold text-secondary uppercase tracking-wider">Live Dashboard</span>
-          </div>
           <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight leading-[1.05] mb-6">
             Welcome back,<br/>
             <span className="text-muted">{displayName}.</span>
