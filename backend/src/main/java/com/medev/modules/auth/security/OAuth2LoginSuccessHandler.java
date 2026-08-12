@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,9 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final RedisTemplate<String, String> redisTemplate;
+
+    @Value("${cors.allowed-origins:http://localhost:5173}")
+    private String allowedOrigins;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -49,7 +53,19 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             Duration.ofMinutes(5)
         );
 
-        String frontendUrl = "http://localhost:5173/auth/callback?code=" + oauth2Code;
+        String frontendOrigin = allowedOrigins.split(",")[0];
+        String frontendUrl = frontendOrigin + "/auth/callback?code=" + oauth2Code;
+        
+        String action = (String) oAuth2User.getAttributes().get("_action");
+        if ("LINK_ACCOUNT".equals(action)) {
+            jakarta.servlet.http.Cookie linkCookie = new jakarta.servlet.http.Cookie("medev_link_jwt", "");
+            linkCookie.setPath("/");
+            linkCookie.setMaxAge(0);
+            response.addCookie(linkCookie);
+            
+            frontendUrl = frontendOrigin + "/profile/edit?github_linked=true&code=" + oauth2Code;
+        }
+
         getRedirectStrategy().sendRedirect(request, response, frontendUrl);
     }
 }

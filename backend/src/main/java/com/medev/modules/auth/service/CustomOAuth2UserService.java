@@ -16,6 +16,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Cookie;
+import com.medev.shared.security.JwtService;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +28,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
     private final ProfileService profileService;
+    private final JwtService jwtService;
 
     @Override
     @Transactional
@@ -56,41 +62,69 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         } else {
             throw new OAuth2AuthenticationException("Unsupported OAuth2 provider: " + registrationId);
         }
+        
+        boolean isLinking = false;
+        Long currentUserId = null;
+        
+        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attr != null) {
+            HttpServletRequest request = attr.getRequest();
+            if (request.getCookies() != null) {
+                for (Cookie c : request.getCookies()) {
+                    if ("medev_link_jwt".equals(c.getName())) {
+                        String token = c.getValue();
+                        try {
+                            if (jwtService.validateToken(token)) {
+                                currentUserId = jwtService.extractUserId(token);
+                                isLinking = true;
+                            }
+                        } catch (Exception ignored) {}
+                        break;
+                    }
+                }
+            }
+        }
 
         final String finalEmail = email;
         final String finalUsername = username;
         final String finalProviderId = providerId;
+        final boolean linkingFlow = isLinking;
 
-        User user = userRepository.findByEmail(finalEmail).orElseGet(() -> {
-            String uname = finalUsername;
-            if (userRepository.existsByUsername(uname)) {
-                uname = uname + "_" + UUID.randomUUID().toString().substring(0, 4);
+        User user;
+        
+        if (linkingFlow && currentUserId != null) {
+            user = userRepository.findById(currentUserId)
+                    .orElseThrow(() -> new OAuth2AuthenticationException("User not found for linking"));
+        } else {
+            user = userRepository.findByEmail(finalEmail).orElseGet(() -> {
+                String uname = finalUsername;
+                if (userRepository.existsByUsername(uname)) {
+                    uname = uname + "_" + UUID.randomUUID().toString().substring(0, 4);
+                }
+
+                User.UserBuilder builder = User.builder()
+                        .email(finalEmail)
+                        .username(uname)
+                        .role(User.Role.USER)
+                        .plan(User.Plan.FREE);
+
+                if ("github".equals(registrationId)) {
+                    builder.githubId(finalProviderId);
+                } else if ("google".equals(registrationId)) {
+                    builder.googleId(finalProviderId);
+                }
+
+                User saved = userRepository.save(builder.build());
+                profileService.createEmptyProfile(saved);
+                return saved;
+            });
+
+            // Fix Pre-Account Creation vulnerability:
+            if (user.getPassword() != null && user.getGithubId() == null && user.getGoogleId() == null) {
+                user.setPassword(org.springframework.security.crypto.bcrypt.BCrypt.hashpw(
+                        UUID.randomUUID().toString(), org.springframework.security.crypto.bcrypt.BCrypt.gensalt(12)
+                ));
             }
-
-            User.UserBuilder builder = User.builder()
-                    .email(finalEmail)
-                    .username(uname)
-                    .role(User.Role.USER)
-                    .plan(User.Plan.FREE);
-
-            if ("github".equals(registrationId)) {
-                builder.githubId(finalProviderId);
-            } else if ("google".equals(registrationId)) {
-                builder.googleId(finalProviderId);
-            }
-
-            User saved = userRepository.save(builder.build());
-            profileService.createEmptyProfile(saved);
-            return saved;
-        });
-
-        // Fix Pre-Account Creation vulnerability:
-        // If the account was created via password and had no OAuth providers linked,
-        // we invalidate the password when linking OAuth to lock out any potential attacker.
-        if (user.getPassword() != null && user.getGithubId() == null && user.getGoogleId() == null) {
-            user.setPassword(org.springframework.security.crypto.bcrypt.BCrypt.hashpw(
-                    UUID.randomUUID().toString(), org.springframework.security.crypto.bcrypt.BCrypt.gensalt(12)
-            ));
         }
 
         // Обновляем provider ID для существующего пользователя
@@ -112,7 +146,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         // т.к. DefaultOAuth2User требует nameAttributeKey в attributes map
         Map<String, Object> enrichedAttributes = new HashMap<>(attributes);
         enrichedAttributes.put("_provider", registrationId);
-        enrichedAttributes.put("_email", finalEmail);
+        // User could have been looked up by currentUserId, so their actual email might differ from finalEmail
+        enrichedAttributes.put("_email", user.getEmail());
+        if (linkingFlow) {
+            enrichedAttributes.put("_action", "LINK_ACCOUNT");
+        }
 
         return new DefaultOAuth2User(
                 Collections.singletonList(() -> "ROLE_" + user.getRole().name()),

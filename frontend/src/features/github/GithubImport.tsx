@@ -4,6 +4,7 @@ import { useProfile } from '../../shared/api/hooks/useProfile';
 import { Button } from '../../shared/ui/Button';
 import { Card } from '../../shared/ui/Form';
 import { CheckCircle2, DownloadCloud, RefreshCw } from 'lucide-react';
+import { useAuthStore } from '../../entities/user/model/store';
 
 export const GithubIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className={className || "mr-2"}>
@@ -40,6 +41,7 @@ export const GithubImport = () => {
   const [error, setError] = useState<string | null>(null);
   const [profile, setProfile] = useState<GitHubProfileDto | null>(null);
   const [selected, setSelected] = useState<Set<number>>(new Set());
+  const accessToken = useAuthStore(state => state.accessToken);
 
   const handleFetch = async (e: React.FormEvent | React.MouseEvent) => {
     e.preventDefault();
@@ -102,6 +104,11 @@ export const GithubImport = () => {
   const handleConnect = () => {
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1';
     const baseUrl = apiUrl.replace('/api/v1', '');
+    
+    if (accessToken) {
+        document.cookie = `medev_link_jwt=${accessToken}; path=/; max-age=60`;
+    }
+    
     window.location.href = `${baseUrl}/api/oauth2/authorization/github`;
   };
 
@@ -118,16 +125,16 @@ export const GithubImport = () => {
       </div>
 
       {stage === 'idle' || stage === 'fetching' || stage === 'error' ? (
-        <Card className="p-0 overflow-hidden relative border border-[var(--color-border-default)] bg-[var(--color-bg-primary)] shadow-sm">
+        <Card className="p-0 overflow-hidden relative" style={{ backgroundColor: 'var(--color-bg-primary)', border: '1px solid var(--color-border-default)' }}>
           {/* Subtle gradient background element for premium feel */}
-          <div className="absolute -top-24 -right-24 w-48 h-48 bg-[var(--color-accent)] opacity-[0.03] rounded-full blur-3xl pointer-events-none"></div>
+          <div className="absolute -top-24 -right-24 w-48 h-48 opacity-[0.05] rounded-full blur-3xl pointer-events-none" style={{ backgroundColor: 'var(--color-accent)' }}></div>
           
           <div className="p-6">
             {profileData?.githubUsername && !error ? (
               // Connected State
               <div className="space-y-5">
-                <div className="flex items-center gap-4 p-4 rounded-xl border border-[var(--color-border-default)] bg-[var(--color-bg-secondary)]">
-                  <div className="w-14 h-14 rounded-full border-2 border-[var(--color-border-default)] bg-[var(--color-bg-inset)] flex items-center justify-center overflow-hidden shrink-0">
+                <div className="flex items-center gap-4 p-4 rounded-xl" style={{ border: '1px solid var(--color-border-default)', backgroundColor: 'var(--color-bg-secondary)' }}>
+                  <div className="w-14 h-14 rounded-full flex items-center justify-center overflow-hidden shrink-0" style={{ border: '2px solid var(--color-border-default)', backgroundColor: 'var(--color-bg-inset)' }}>
                     {profileData?.avatarUrl ? (
                       <img src={profileData.avatarUrl} alt="GitHub Avatar" className="w-full h-full object-cover" />
                     ) : (
@@ -136,14 +143,14 @@ export const GithubImport = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-base font-semibold text-primary truncate">
+                      <h3 className="text-base font-semibold truncate" style={{ color: 'var(--color-text-primary)' }}>
                         @{profileData.githubUsername}
                       </h3>
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-[var(--color-success)]/10 text-[var(--color-success)] border border-[var(--color-success)]/20">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium" style={{ backgroundColor: 'var(--color-success-muted)', color: 'var(--color-success)', border: '1px solid var(--color-border-success)' }}>
                         <CheckCircle2 size={10} /> Connected
                       </span>
                     </div>
-                    <p className="text-sm text-secondary truncate">
+                    <p className="text-sm truncate" style={{ color: 'var(--color-text-secondary)' }}>
                       Your GitHub account is securely linked to MeDev.
                     </p>
                   </div>
@@ -160,16 +167,16 @@ export const GithubImport = () => {
               // Disconnected State
               <div className="space-y-5">
                 <div>
-                  <h3 className="text-base font-semibold text-primary mb-1.5">
+                  <h3 className="text-base font-semibold mb-1.5" style={{ color: 'var(--color-text-primary)' }}>
                     Step 1. Link Account & Fetch Data
                   </h3>
-                  <p className="text-sm text-secondary">
+                  <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
                     Authorize MeDev to read your GitHub profile. If you have already connected your account, simply fetch your data.
                   </p>
                 </div>
                 
                 {error && (
-                  <div className="rounded-md px-4 py-3 text-sm flex items-start gap-2 bg-[var(--color-danger)]/10 border border-[var(--color-danger)]/20 text-[var(--color-danger)]">
+                  <div className="rounded-md px-4 py-3 text-sm flex items-start gap-2" style={{ backgroundColor: 'var(--color-danger-muted)', border: '1px solid var(--color-border-danger)', color: 'var(--color-danger)' }}>
                     <span>{error}</span>
                   </div>
                 )}
@@ -285,13 +292,13 @@ export const GithubImport = () => {
                           border: `1px solid ${checked ? 'var(--color-accent)' : 'var(--color-border-default)'}`,
                         }}
                       >
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          onChange={() => toggleRepo(repo.id)}
-                          className="mt-0.5 w-4 h-4 rounded border-gray-300"
-                          style={{ accentColor: 'var(--color-accent)' }}
-                        />
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => toggleRepo(repo.id)}
+                            className="mt-0.5 w-4 h-4 rounded"
+                            style={{ accentColor: 'var(--color-accent)', border: '1px solid var(--color-border-default)' }}
+                          />
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between">
                             <span className="font-semibold text-sm truncate" style={{ color: 'var(--color-text-primary)' }}>

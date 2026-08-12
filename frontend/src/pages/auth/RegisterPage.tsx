@@ -6,6 +6,11 @@ import { useAuthStore } from '../../entities/user/model/store';
 import { useState } from 'react';
 
 export function RegisterPage() {
+  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1';
+  const baseUrl = apiUrl.replace('/api/v1', '');
+  const githubUrl = `${baseUrl}/api/oauth2/authorization/github`;
+  const googleUrl = `${baseUrl}/api/oauth2/authorization/google`;
+
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -47,7 +52,7 @@ export function RegisterPage() {
         </p>
 
         <a
-          href="http://localhost:8080/api/oauth2/authorization/github"
+          href={githubUrl}
           className="w-full flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors"
           style={{
             backgroundColor: 'var(--color-bg-secondary)',
@@ -70,7 +75,7 @@ export function RegisterPage() {
         </a>
 
         <a
-          href="http://localhost:8080/api/oauth2/authorization/google"
+          href={googleUrl}
           className="w-full flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors mt-3"
           style={{
             backgroundColor: 'var(--color-bg-secondary)',
