@@ -29,6 +29,7 @@ public class AiController {
     private final AiContextService    aiContextService;
     private final AiGenerateService   aiGenerateService;
     private final AiOnboardingService aiOnboardingService;
+    private final AiApplicationService aiApplicationService;
     private final AiRateLimiter       aiRateLimiter;
     private final ProfileService      profileService;
     private final EvaluationService   evaluationService;
@@ -143,6 +144,29 @@ public class AiController {
         com.medev.modules.ai.dto.AiOnboardingResponse response = aiOnboardingService.generateAndSaveProfile(userId, request);
         return ResponseEntity.ok(response);
     }
+
+    // ─────────────────────────────────────────────────
+    // APPLICATION (Cover Letter & Tailor - Pro Features)
+    // ─────────────────────────────────────────────────
+
+    @PostMapping(value = "/cover-letter", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<com.medev.modules.ai.dto.AiApplicationResponse> generateCoverLetter(@RequestBody com.medev.modules.ai.dto.AiApplicationRequest request) {
+        Long userId = SecurityUtils.getCurrentUserId();
+        aiRateLimiter.checkAndConsume(userId);
+        
+        com.medev.modules.ai.dto.AiApplicationResponse response = aiApplicationService.generateCoverLetter(userId, request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping(value = "/tailor", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<com.medev.modules.ai.dto.AiApplicationResponse> tailorResume(@RequestBody com.medev.modules.ai.dto.AiApplicationRequest request) {
+        Long userId = SecurityUtils.getCurrentUserId();
+        aiRateLimiter.checkAndConsume(userId);
+        
+        com.medev.modules.ai.dto.AiApplicationResponse response = aiApplicationService.tailorResume(userId, request);
+        return ResponseEntity.ok(response);
+    }
+
 
     // ─────────────────────────────────────────────────
     // PARSE RESUME
