@@ -49,7 +49,9 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             Duration.ofDays(30)
         );
 
-        String frontendUrl = "http://localhost:5173/auth/callback?accessToken=" + accessToken + "&refreshToken=" + refreshToken;
+        String encodedUsername = java.net.URLEncoder.encode(user.getUsername(), java.nio.charset.StandardCharsets.UTF_8);
+        String planStr = user.getPlan().name();
+        String frontendUrl = "http://localhost:5173/auth/callback?accessToken=" + accessToken + "&refreshToken=" + refreshToken + "&username=" + encodedUsername + "&plan=" + planStr;
         getRedirectStrategy().sendRedirect(request, response, frontendUrl);
     }
 }

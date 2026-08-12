@@ -5,22 +5,21 @@ import { useAuthStore } from '../../entities/user/model/store';
 export const AuthCallback = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const setTokens = useAuthStore((state) => state.setTokens);
+  const setAuth = useAuthStore((state) => state.setAuth);
 
   useEffect(() => {
     const accessToken = searchParams.get('accessToken');
     const refreshToken = searchParams.get('refreshToken');
+    const username = searchParams.get('username') || 'User';
+    const plan = searchParams.get('plan') || 'FREE';
 
     if (accessToken && refreshToken) {
-      setTokens(accessToken, refreshToken);
-      // Если у нас в JWT не сохраняется план/username напрямую для стора, 
-      // то здесь нужно сделать запрос /profile, чтобы получить данные, 
-      // но в рамках этой системы стор AuthStore сохраняет токены и этого достаточно для PrivateRoute.
+      setAuth(accessToken, refreshToken, username, plan);
       navigate('/dashboard', { replace: true });
     } else {
       navigate('/login', { replace: true });
     }
-  }, [searchParams, navigate, setTokens]);
+  }, [searchParams, navigate, setAuth]);
 
   return (
     <div

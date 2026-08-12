@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { useAuthStore } from '../../entities/user/model/store';
+
 import { QuotaWidget } from '../../features/billing/components/QuotaWidget';
 
 const NAV = [
@@ -12,7 +12,6 @@ const NAV = [
 
 export const AppSidebar = () => {
   const [hovered, setHovered] = useState(false);
-  const username = useAuthStore((s) => s.username);
 
   return (
     <aside

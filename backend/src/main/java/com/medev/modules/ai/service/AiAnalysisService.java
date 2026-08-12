@@ -29,7 +29,7 @@ public class AiAnalysisService {
             pdfText = pdfText.substring(0, 10000);
         }
 
-        String systemPrompt = promptLoader.load("resume_parser_v1.txt");
+        String systemPrompt = promptLoader.load("resume_parser_v1");
 
         String jsonResponse = llmProvider.structuredCompletion(systemPrompt, pdfText);
         

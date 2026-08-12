@@ -110,7 +110,7 @@ public class GroqClient implements LlmProvider {
                 .transformDeferred(CircuitBreakerOperator.of(circuitBreaker))
                 .retryWhen(retrySpec())
                 .mapNotNull(sse -> extractStreamChunk(sse.data()))
-                .filter(s -> !s.isBlank())
+                .filter(s -> !s.isEmpty())
                 .takeUntil(chunk -> "[DONE]".equals(chunk))
                 .filter(chunk -> !"[DONE]".equals(chunk))
                 .onErrorMap(this::wrapIfNeeded);
