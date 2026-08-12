@@ -4,6 +4,7 @@ import com.medev.modules.auth.entity.User;
 import com.medev.modules.profile.dto.*;
 import com.medev.modules.profile.entity.*;
 import com.medev.modules.profile.repository.*;
+import com.medev.modules.ai.dto.*;
 import com.medev.shared.exception.ForbiddenException;
 import com.medev.shared.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,9 @@ public class ProfileService {
     private final ProfileRepository profileRepository;
     private final SkillRepository skillRepository;
     private final ProjectRepository projectRepository;
+    private final ExperienceRepository experienceRepository;
+    private final EducationRepository educationRepository;
+    private final LanguageRepository languageRepository;
     private final ProfileMapper profileMapper;
 
     @Transactional
@@ -75,6 +79,94 @@ public class ProfileService {
         profile.setSectionOrder(sectionOrder);
         profileRepository.save(profile);
     }
+
+    @Transactional
+    public ProfileDto importParsedResume(Long userId, AiParsedResumeDto parsed) {
+        Profile profile = getProfileEntityByUserId(userId);
+        
+        if (parsed.getFullName() != null) profile.setFullName(parsed.getFullName());
+        if (parsed.getHeadline() != null) profile.setHeadline(parsed.getHeadline());
+        if (parsed.getSummary() != null) profile.setSummary(parsed.getSummary());
+        if (parsed.getLocation() != null) profile.setLocation(parsed.getLocation());
+        if (parsed.getWebsite() != null) profile.setWebsite(parsed.getWebsite());
+        if (parsed.getGithubUsername() != null) profile.setGithubUsername(parsed.getGithubUsername());
+        if (parsed.getTelegram() != null) profile.setTelegram(parsed.getTelegram());
+        if (parsed.getLinkedin() != null) profile.setLinkedin(parsed.getLinkedin());
+        
+        profileRepository.save(profile);
+        
+        // Clear existing to replace with AI parsed
+        skillRepository.deleteByProfileId(profile.getId());
+        experienceRepository.deleteByProfileId(profile.getId());
+        educationRepository.deleteByProfileId(profile.getId());
+        languageRepository.deleteByProfileId(profile.getId());
+
+        if (parsed.getSkills() != null) {
+            int order = 0;
+            for (AiSkillDto s : parsed.getSkills()) {
+                if (s.getName() != null && !s.getName().isBlank()) {
+                    Skill skill = Skill.builder()
+                            .profile(profile)
+                            .name(s.getName())
+                            .sortOrder(order++)
+                            .build();
+                    skillRepository.save(skill);
+                }
+            }
+        }
+
+        if (parsed.getExperience() != null) {
+            int order = 0;
+            for (AiExperienceDto e : parsed.getExperience()) {
+                Experience exp = Experience.builder()
+                        .profile(profile)
+                        .company(e.getCompany())
+                        .position(e.getPosition())
+                        .description(e.getDescription())
+                        .techStack(e.getTechStack())
+                        .startDate(e.getStartDate())
+                        .endDate(e.getEndDate())
+                        .isCurrent(e.getIsCurrent() != null ? e.getIsCurrent() : false)
+                        .sortOrder(order++)
+                        .build();
+                experienceRepository.save(exp);
+            }
+        }
+
+        if (parsed.getEducation() != null) {
+            int order = 0;
+            for (AiEducationDto ed : parsed.getEducation()) {
+                Education edu = Education.builder()
+                        .profile(profile)
+                        .institution(ed.getInstitution())
+                        .degree(ed.getDegree())
+                        .field(ed.getFieldOfStudy())
+                        .startDate(ed.getStartDate())
+                        .endDate(ed.getEndDate())
+                        .sortOrder(order++)
+                        .build();
+                educationRepository.save(edu);
+            }
+        }
+
+        if (parsed.getLanguages() != null) {
+            int order = 0;
+            for (AiLanguageDto l : parsed.getLanguages()) {
+                if (l.getName() != null && !l.getName().isBlank()) {
+                    Language lang = Language.builder()
+                            .profile(profile)
+                            .name(l.getName())
+                            .level(l.getProficiency())
+                            .sortOrder(order++)
+                            .build();
+                    languageRepository.save(lang);
+                }
+            }
+        }
+
+        return mapToProfileDto(profile);
+    }
+
 
 
 

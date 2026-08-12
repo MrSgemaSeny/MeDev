@@ -11,6 +11,7 @@ import java.util.List;
 public interface ExperienceRepository extends JpaRepository<Experience, Long> {
     
     List<Experience> findByProfileIdOrderBySortOrderAsc(Long profileId);
+    void deleteByProfileId(Long profileId);
     
     @Modifying
     @Query("UPDATE Experience e SET e.sortOrder = :sortOrder WHERE e.id = :id")

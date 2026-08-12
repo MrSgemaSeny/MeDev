@@ -4,8 +4,10 @@ import com.medev.modules.ai.dto.ChatRequest;
 import com.medev.modules.ai.dto.GenerateRequest;
 import com.medev.modules.ai.dto.QuotaResponse;
 import com.medev.modules.ai.model.LlmException;
+import com.medev.modules.ai.dto.AiParsedResumeDto;
 import com.medev.modules.ai.service.*;
 import com.medev.modules.profile.dto.UpdateProfileRequest;
+import com.medev.modules.profile.dto.ProfileDto;
 import com.medev.modules.profile.service.ProfileService;
 import com.medev.shared.exception.TooManyRequestsException;
 import com.medev.shared.security.SecurityUtils;
@@ -173,18 +175,17 @@ public class AiController {
     // ─────────────────────────────────────────────────
 
     @PostMapping("/parse-resume")
-    public ResponseEntity<UpdateProfileRequest> parseResume(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<ProfileDto> parseResume(@RequestParam("file") MultipartFile file) {
         Long userId = SecurityUtils.getCurrentUserId();
         aiRateLimiter.checkAndConsume(userId);
 
-        // File size guard — не ждём пока AI схарчит огромный файл
-        if (file.getSize() > 10 * 1024 * 1024) { // 10MB
+        if (file.getSize() > 10 * 1024 * 1024) { 
             return ResponseEntity.badRequest().build();
         }
 
-        UpdateProfileRequest parsed = aiAnalysisService.parseResumePdf(file);
-        profileService.update(userId, parsed);
-        return ResponseEntity.ok(parsed);
+        AiParsedResumeDto parsed = aiAnalysisService.parseResumePdf(file);
+        ProfileDto updatedProfile = profileService.importParsedResume(userId, parsed);
+        return ResponseEntity.ok(updatedProfile);
     }
 
     // ─────────────────────────────────────────────────

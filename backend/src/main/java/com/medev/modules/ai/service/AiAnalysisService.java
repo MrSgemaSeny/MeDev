@@ -1,6 +1,7 @@
 package com.medev.modules.ai.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.medev.modules.ai.dto.AiParsedResumeDto;
 import com.medev.modules.profile.dto.UpdateProfileRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,7 @@ public class AiAnalysisService {
     private final PromptLoader promptLoader;
     private final ObjectMapper objectMapper;
 
-    public UpdateProfileRequest parseResumePdf(MultipartFile file) {
+    public AiParsedResumeDto parseResumePdf(MultipartFile file) {
         String pdfText = extractTextFromPdf(file);
         
         // Ограничиваем размер текста, чтобы не превысить лимиты (например 10000 символов)
@@ -45,10 +46,10 @@ public class AiAnalysisService {
             }
             jsonResponse = jsonResponse.trim();
             
-            return objectMapper.readValue(jsonResponse, UpdateProfileRequest.class);
+            return objectMapper.readValue(jsonResponse, AiParsedResumeDto.class);
         } catch (Exception e) {
             log.error("Failed to parse Groq response: {}", jsonResponse, e);
-            return new UpdateProfileRequest(); // Graceful degradation
+            return new AiParsedResumeDto(); // Graceful degradation
         }
     }
 

@@ -11,6 +11,7 @@ import java.util.List;
 @Repository
 public interface SkillRepository extends JpaRepository<Skill, Long> {
     List<Skill> findByProfileIdOrderBySortOrderAsc(Long profileId);
+    void deleteByProfileId(Long profileId);
     
     @Modifying
     @Query("UPDATE Skill s SET s.sortOrder = :sortOrder WHERE s.id = :id")

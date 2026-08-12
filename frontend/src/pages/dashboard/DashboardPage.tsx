@@ -72,7 +72,13 @@ export const DashboardPage = () => {
             <div className="text-xs text-secondary mt-1 font-medium uppercase tracking-wider">Profile Strength</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl sm:text-4xl font-extrabold tabular-nums text-primary">{profile?.githubUsername ? 'Synced' : 'None'}</div>
+            <div className="text-3xl sm:text-4xl font-extrabold tabular-nums text-primary">
+              {profile?.githubUsername ? (
+                <a href={`https://github.com/${profile.githubUsername}`} target="_blank" rel="noreferrer" className="hover:underline text-[var(--color-link)] transition-all">
+                  Synced
+                </a>
+              ) : 'None'}
+            </div>
             <div className="text-xs text-secondary mt-1 font-medium uppercase tracking-wider">GitHub</div>
           </div>
           <div className="text-center">

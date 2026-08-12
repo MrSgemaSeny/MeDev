@@ -11,6 +11,7 @@ import java.util.List;
 @Repository
 public interface LanguageRepository extends JpaRepository<Language, Long> {
     List<Language> findByProfileIdOrderBySortOrderAsc(Long profileId);
+    void deleteByProfileId(Long profileId);
     
     @Modifying
     @Query("UPDATE Language l SET l.sortOrder = :sortOrder WHERE l.id = :id")
