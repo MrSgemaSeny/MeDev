@@ -45,16 +45,15 @@ export const AppSidebar = () => {
       <div className="px-2 mt-2">
         <div className="text-[11px] text-muted px-3 pt-2 pb-1 tracking-widest uppercase font-medium">Sections</div>
         {SECTIONS_NAV.map((item) => {
-          const activeSectionHash = location.hash || '#about';
-          const isActive = isProfileActive && item.to.includes(activeSectionHash); 
+          const currentHash = location.hash.replace('#', '') || 'about';
+          const sectionId = item.to.split('#')[1];
+          const isActive = isProfileActive && currentHash === sectionId;
           return (
             <NavLink
               key={item.to}
               to={item.to}
-              className={`flex items-center gap-2 py-1.5 px-3 rounded-md text-[13px] transition-colors select-none ${
-                isActive
-                  ? 'bg-[var(--color-accent-muted)] text-accent'
-                  : 'text-secondary hover:surface-tertiary hover:text-primary'
+              className={`flex items-center gap-2 py-[0.4rem] px-[0.625rem] rounded-md text-[13px] transition-colors select-none ${
+                isActive ? 'bg-[var(--color-accent-muted)] text-accent' : 'text-secondary hover:bg-surface-2 hover:text-primary'
               }`}
             >
               <item.icon size={15} />
@@ -79,10 +78,13 @@ export const AppSidebar = () => {
           <CreditCard size={15} />
           Billing
         </NavLink>
-        <button className="w-full flex items-center gap-2 py-1.5 px-3 rounded-md text-[13px] text-secondary hover:surface-tertiary hover:text-primary transition-colors cursor-pointer select-none border-none bg-transparent">
+        <div
+          className="flex items-center gap-2 py-[0.4rem] px-[0.625rem] rounded-md text-[13px] text-muted select-none opacity-50 cursor-default"
+          title="Скоро"
+        >
           <Settings size={15} />
           Settings
-        </button>
+        </div>
       </div>
     </aside>
   );

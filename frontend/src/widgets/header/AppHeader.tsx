@@ -1,45 +1,51 @@
-import { Link } from 'react-router-dom';
-import { Search, Plus, Bell } from 'lucide-react';
+import { Search, Bell } from 'lucide-react';
 import { UserProfileDropdown } from './UserProfileDropdown';
 
 export const AppHeader = () => {
   return (
-    <header className="h-[60px] surface-inset border-b border-default px-4 flex items-center justify-between shrink-0">
-      <div className="flex items-center gap-4">
-        {/* Logo/Brand */}
-        <Link to="/dashboard" className="text-[14px] font-semibold text-primary tracking-wide flex items-center gap-2 select-none hover:text-[var(--color-text-primary)]">
-          <div className="w-8 h-8 rounded-full bg-[var(--color-bg-tertiary)] flex items-center justify-center text-[14px]">
-            M
-          </div>
-          MeDev
-        </Link>
-        <span className="text-[14px] text-muted font-medium ml-2">Dashboard</span>
-      </div>
-
-      <div className="flex items-center gap-3">
-        {/* Search bar */}
-        <div className="relative flex items-center">
-          <Search size={14} className="absolute left-2.5 text-muted" />
-          <input 
-            type="text" 
-            placeholder="Type / to search" 
-            className="surface border border-default rounded-md pl-8 pr-3 py-1.5 text-[13px] text-primary w-[260px] outline-none focus:border-[var(--color-accent)] transition-colors placeholder:text-muted"
+    <header
+      className="h-14 shrink-0 flex items-center gap-4 px-6 border-b"
+      style={{ backgroundColor: 'var(--color-header-bg)', borderColor: 'var(--color-border-default)' }}
+    >
+      <div className="flex-1 max-w-md">
+        <div className="relative">
+          <Search
+            size={14}
+            className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+            style={{ color: 'var(--color-text-muted)' }}
+          />
+          <input
+            type="text"
+            placeholder="Search..."
+            className="w-full h-8 pl-8 pr-3 rounded-md text-sm outline-none transition-[border-color,box-shadow]"
+            style={{
+              backgroundColor: 'var(--color-bg-inset)',
+              border: '1px solid var(--color-border-default)',
+              color: 'var(--color-text-primary)',
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = 'var(--color-link)';
+              e.currentTarget.style.boxShadow = '0 0 0 3px var(--color-selection)';
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = 'var(--color-border-default)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
           />
         </div>
-        
-        {/* Actions */}
-        <div className="flex items-center gap-1.5 border-r border-muted pr-3 mr-1">
-          <button className="w-8 h-8 flex items-center justify-center rounded-md text-secondary hover:surface-tertiary transition-colors border border-default cursor-pointer">
-            <Plus size={15} />
-          </button>
-          <button className="w-8 h-8 flex items-center justify-center rounded-md text-secondary hover:surface-tertiary transition-colors border border-default cursor-pointer">
-            <Bell size={15} />
-          </button>
-        </div>
-
-        {/* Profile */}
-        <UserProfileDropdown />
       </div>
+
+      <button
+        className="h-8 w-8 flex items-center justify-center rounded-md transition-colors"
+        style={{ color: 'var(--color-text-secondary)' }}
+        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--color-btn-hover)')}
+        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+        aria-label="Notifications"
+      >
+        <Bell size={16} />
+      </button>
+
+      <UserProfileDropdown variant="header" />
     </header>
   );
 };
