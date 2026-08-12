@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MeDev — About (Redesign)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --surface-0:    #0f1117;
+    --surface-1:    #161b27;
+    --surface-2:    #1e2333;
+    --border:       rgba(255,255,255,0.07);
+    --border-strong:rgba(255,255,255,0.13);
+    --text-primary: #f1f5f9;
+    --text-secondary:#94a3b8;
+    --text-muted:   #64748b;
+    --accent:       #3b82f6;
+    --bg-accent:    rgba(59,130,246,0.1);
+    --text-accent:  #60a5fa;
+    --border-accent:rgba(59,130,246,0.35);
+    --pro:          #a855f7;
+    --bg-pro:       rgba(168,85,247,0.1);
+    --text-pro:     #c084fc;
+    --border-pro:   rgba(168,85,247,0.3);
+    --danger:       #ef4444;
+    --radius:       6px;
+    --font: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  }
+
+  body {
+    background: var(--surface-0);
+    font-family: var(--font);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .shell {
+    display: flex;
+    width: 100%;
+    max-width: 1100px;
+    min-height: 680px;
+    background: var(--surface-0);
+    border: 0.5px solid var(--border-strong);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 200px;
+    flex-shrink: 0;
+    border-right: 0.5px solid var(--border);
+    padding: 1.25rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: var(--surface-1);
+  }
+
+  .sidebar-logo {
+    padding: 0 1rem 1rem;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .nav-group { padding: 0 0.5rem; }
+
+  .nav-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    padding: 0.5rem 0.625rem 0.25rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.4rem 0.625rem;
+    border-radius: var(--radius);
+    font-size: 13px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+    user-select: none;
+  }
+  .nav-item:hover { background: var(--surface-2); color: var(--text-primary); }
+  .nav-item.active-main { color: var(--text-primary); background: var(--surface-2); }
+  .nav-item.active-section { background: var(--bg-accent); color: var(--text-accent); }
+  .nav-item i { font-size: 15px; }
+
+  .sidebar-bottom { margin-top: auto; padding: 0 0.5rem; }
+
+  /* ── Content ── */
+  .content {
+    flex: 1;
+    padding: 2rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    background: var(--surface-0);
+  }
+
+  /* Page header */
+  .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .page-header h1 { font-size: 17px; font-weight: 500; color: var(--text-primary); margin-bottom: 2px; }
+  .page-header p { font-size: 13px; color: var(--text-secondary); }
+
+  .import-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    padding: 6px 11px;
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border-strong);
+    background: var(--surface-1);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-family: var(--font);
+    transition: background 0.1s, color 0.1s;
+    white-space: nowrap;
+  }
+  .import-btn:hover { background: var(--surface-2); color: var(--text-primary); }
+  .import-btn i { font-size: 14px; }
+
+  .pro-badge {
+    font-size: 10px;
+    padding: 2px 5px;
+    background: var(--bg-pro);
+    color: var(--text-pro);
+    border: 0.5px solid var(--border-pro);
+    border-radius: 4px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+  }
+
+  /* Avatar row */
+  .avatar-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 1.5rem;
+  }
+  .avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--bg-accent);
+    border: 0.5px solid var(--border-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-accent);
+    flex-shrink: 0;
+  }
+  .avatar-meta strong { font-size: 14px; color: var(--text-primary); font-weight: 500; }
+  .avatar-meta p { font-size: 12px; color: var(--text-secondary); margin-top: 1px; }
+  .upload-link {
+    font-size: 12px;
+    color: var(--text-accent);
+    cursor: pointer;
+    margin-top: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    font-family: var(--font);
+    padding: 0;
+  }
+  .upload-link:hover { text-decoration: underline; }
+  .upload-link i { font-size: 13px; }
+
+  /* Section label */
+  .section-label {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  /* Fields grid */
+  .fields-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 1.25rem;
+  }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field.span2 { grid-column: span 2; }
+  .field label {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .field input,
+  .field textarea {
+    background: var(--surface-1);
+    border: 0.5px solid var(--border-strong);
+    border-radius: var(--radius);
+    padding: 7px 10px;
+    font-size: 13px;
+    color: var(--text-primary);
+    font-family: var(--font);
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+    width: 100%;
+  }
+  .field input:focus,
+  .field textarea:focus {
+    border-color: var(--border-accent);
+    background: var(--surface-2);
+  }
+  .field input::placeholder,
+  .field textarea::placeholder { color: var(--text-muted); }
+  .field textarea { resize: none; line-height: 1.6; }
+
+  /* Summary block */
+  .summary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .ai-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    padding: 4px 9px;
+    border-radius: 5px;
+    border: 0.5px solid var(--border-accent);
+    background: var(--bg-accent);
+    color: var(--text-accent);
+    cursor: pointer;
+    font-family: var(--font);
+    transition: background 0.1s;
+  }
+  .ai-btn:hover { background: rgba(59,130,246,0.18); }
+  .ai-btn i { font-size: 13px; }
+
+  .char-count {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: right;
+    margin-top: 3px;
+  }
+
+  /* Divider */
+  .divider {
+    border: none;
+    border-top: 0.5px solid var(--border);
+    margin: 1.25rem 0;
+  }
+
+  /* Actions */
+  .actions { display: flex; align-items: center; gap: 10px; }
+  .btn-primary {
+    padding: 8px 18px;
+    border-radius: var(--radius);
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: var(--font);
+    transition: opacity 0.1s;
+  }
+  .btn-primary:hover { opacity: 0.88; }
+  .btn-ghost {
+    padding: 8px 14px;
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border-strong);
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 13px;
+    cursor: pointer;
+    font-family: var(--font);
+    transition: background 0.1s, color 0.1s;
+  }
+  .btn-ghost:hover { background: var(--surface-1); color: var(--text-primary); }
+
+  .saved-toast {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #4ade80;
+    margin-left: 4px;
+  }
+  .saved-toast.show { display: inline-flex; }
+  .saved-toast i { font-size: 14px; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">MeDev</div>
+
+    <div class="nav-group">
+      <div class="nav-label">Main</div>
+      <div class="nav-item"><i class="ti ti-layout-dashboard"></i>Dashboard</div>
+      <div class="nav-item active-main"><i class="ti ti-user"></i>Profile</div>
+      <div class="nav-item"><i class="ti ti-file-text"></i>Resume</div>
+    </div>
+
+    <div class="nav-group" style="margin-top:0.5rem">
+      <div class="nav-label">Sections</div>
+      <div class="nav-item active-section"><i class="ti ti-info-circle"></i>About</div>
+      <div class="nav-item"><i class="ti ti-briefcase"></i>Experience</div>
+      <div class="nav-item"><i class="ti ti-school"></i>Education</div>
+      <div class="nav-item"><i class="ti ti-code"></i>Skills</div>
+      <div class="nav-item"><i class="ti ti-language"></i>Languages</div>
+      <div class="nav-item"><i class="ti ti-box"></i>Projects</div>
+      <div class="nav-item"><i class="ti ti-brand-github"></i>GitHub</div>
+    </div>
+
+    <div class="sidebar-bottom">
+      <div class="nav-item"><i class="ti ti-credit-card"></i>Billing</div>
+      <div class="nav-item"><i class="ti ti-settings"></i>Settings</div>
+    </div>
+  </aside>
+
+  <!-- Content -->
+  <main class="content">
+    <!-- Header -->
+    <div class="page-header">
+      <div>
+        <h1>About you</h1>
+        <p>Shown on your public profile and resume.</p>
+      </div>
+      <button class="import-btn">
+        <i class="ti ti-upload"></i>
+        Import from PDF
+        <span class="pro-badge">Pro</span>
+      </button>
+    </div>
+
+    <!-- Avatar -->
+    <div class="avatar-row">
+      <div class="avatar">О</div>
+      <div class="avatar-meta">
+        <strong>Орынбасар</strong>
+        <p>No headline set</p>
+        <button class="upload-link"><i class="ti ti-camera"></i>Upload photo</button>
+      </div>
+    </div>
+
+    <!-- Basic info -->
+    <div class="section-label">Basic info</div>
+    <div class="fields-grid">
+      <div class="field">
+        <label>Full name</label>
+        <input type="text" value="Орынбасар" />
+      </div>
+      <div class="field span2">
+        <label>Headline</label>
+        <input type="text" placeholder="e.g. Full-Stack Engineer" />
+      </div>
+      <div class="field">
+        <label>Location</label>
+        <input type="text" placeholder="City, Country" />
+      </div>
+      <div class="field">
+        <label>Website</label>
+        <input type="text" placeholder="https://" />
+      </div>
+      <div class="field">
+        <label>GitHub</label>
+        <input type="text" placeholder="github.com/username" />
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- Summary -->
+    <div class="summary-header">
+      <span class="section-label" style="margin:0">Summary</span>
+      <button class="ai-btn"><i class="ti ti-sparkles"></i>Generate with AI</button>
+    </div>
+    <div class="field">
+      <textarea
+        id="summary"
+        rows="3"
+        oninput="updateCount(this)"
+      >Разработчик с опытом работы над CRM-платформой для финансовой компании и личным рабочим штабом соло-разработчика. TypeScript, Java, JavaScript, Python.</textarea>
+      <div class="char-count"><span id="cc">155</span> / 600</div>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- Actions -->
+    <div class="actions">
+      <button class="btn-primary" onclick="handleSave()">Save changes</button>
+      <button class="btn-ghost">Discard</button>
+      <span class="saved-toast" id="toast"><i class="ti ti-check"></i>Saved</span>
+    </div>
+  </main>
+</div>
+
+<script>
+  function updateCount(el) {
+    const cc = document.getElementById('cc');
+    cc.textContent = el.value.length;
+    cc.style.color = el.value.length > 600 ? '#ef4444' : '';
+  }
+
+  function handleSave() {
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+  }
+
+  // Init count
+  const ta = document.getElementById('summary');
+  if (ta) document.getElementById('cc').textContent = ta.value.length;
+</script>
+</body>
+</html>
