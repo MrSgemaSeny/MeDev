@@ -39,6 +39,9 @@ dependencies {
     // Template Engine (для PDF генерации)
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
+    // HTML Parsing
+    implementation 'org.jsoup:jsoup:1.17.2'
+
     // Utils
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
