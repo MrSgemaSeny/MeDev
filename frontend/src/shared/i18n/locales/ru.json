@@ -19,7 +19,9 @@
     "copyLinkedin": "Скопировать для LinkedIn",
     "copyLinkedinDesc": "Сгенерировать раздел 'О себе' для LinkedIn с помощью AI.",
     "copyReadme": "Скопировать README",
-    "copyReadmeDesc": "Скопируйте Markdown README для профиля на GitHub."
+    "copyReadmeDesc": "Скопируйте Markdown README для профиля на GitHub.",
+    "smartSync": "Умная AI-Синхронизация",
+    "smartSyncDesc": "Объедините данные из PDF и GitHub для создания идеального профиля."
   },
   "auth": {
     "login": "Войти",

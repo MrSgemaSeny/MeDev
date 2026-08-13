@@ -182,6 +182,31 @@ export const DashboardPage = () => {
               <h3 className="font-bold mb-1.5 text-primary">{t('dashboard.copyLinkedin', 'Copy for LinkedIn')}</h3>
               <p className="text-sm text-secondary leading-relaxed">{t('dashboard.copyLinkedinDesc', 'Generate a tailored About section for LinkedIn via AI.')}</p>
             </button>
+
+            <button
+              onClick={async () => {
+                try {
+                  const { toast } = await import('sonner');
+                  toast.loading('AI is rewriting your profile...', { id: 'ai-sync' });
+                  const { api } = await import('../../shared/api/axios');
+                  await api.post('/ai/generate-profile');
+                  
+                  // Reload page to refetch everything (or invalidate queries if we had queryClient here)
+                  window.location.reload();
+                } catch (e: any) {
+                  const { toast } = await import('sonner');
+                  toast.error(e.response?.data?.message || 'Failed to sync profile', { id: 'ai-sync' });
+                }
+              }}
+              className="p-6 rounded-2xl border border-default surface-primary card-hover text-left flex flex-col items-start w-full cursor-pointer relative overflow-hidden"
+            >
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 via-emerald-400 to-teal-500"></div>
+              <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center mb-4">
+                <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+              </div>
+              <h3 className="font-bold mb-1.5 text-primary">{t('dashboard.smartSync', 'Smart AI Sync')}</h3>
+              <p className="text-sm text-secondary leading-relaxed">{t('dashboard.smartSyncDesc', 'Merge PDF data and GitHub to generate the perfect profile.')}</p>
+            </button>
           </div>
         </div>
       </section>

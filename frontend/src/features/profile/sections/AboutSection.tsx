@@ -50,7 +50,16 @@ export const AboutSection = () => {
     if (e.target.files && e.target.files[0]) {
       parseResume.mutate(e.target.files[0], {
         onSuccess: (data) => {
-          setFormData((prev) => ({ ...prev, ...data }));
+          setFormData((prev) => ({
+            ...prev,
+            fullName: data.fullName ?? prev.fullName,
+            headline: data.headline ?? prev.headline,
+            summary: data.summary ?? prev.summary,
+            location: data.location ?? prev.location,
+            website: data.website ?? prev.website,
+            githubUsername: data.githubUsername ?? prev.githubUsername,
+            linkedin: data.linkedin ?? prev.linkedin,
+          }));
         },
         onError: (err: any) => {
           alert(err.response?.data?.error || "Failed to parse resume");

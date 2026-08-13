@@ -19,7 +19,9 @@
     "copyLinkedin": "Copy for LinkedIn",
     "copyLinkedinDesc": "Generate a tailored About section for LinkedIn via AI.",
     "copyReadme": "Copy README",
-    "copyReadmeDesc": "Copy your Markdown README to paste into your GitHub profile."
+    "copyReadmeDesc": "Copy your Markdown README to paste into your GitHub profile.",
+    "smartSync": "Smart AI Sync",
+    "smartSyncDesc": "Merge PDF data and GitHub to generate the perfect profile."
   },
   "auth": {
     "login": "Sign In",

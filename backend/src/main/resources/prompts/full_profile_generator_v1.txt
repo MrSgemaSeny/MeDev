@@ -52,6 +52,7 @@ Required schema:
 
 CRITICAL RULES:
 - GITHUB IS THE SOURCE OF TRUTH FOR PROJECTS AND LANGUAGES: Use the GitHub Snapshot to populate the `projects`, `detectedTechnologies`, `githubOrganizations`, and `skills`.
+- IF GITHUB SNAPSHOT IS EMPTY ({}): rely entirely on CURRENT PROFILE JSON for all fields including projects and skills. Do not leave arrays empty if the current profile contains data.
 - DO NOT HALLUCINATE: If a piece of information is missing from both inputs, leave it null. Do not invent companies, degrees, or dates.
 - ONBOARDING DATA: Use the CURRENT PROFILE JSON for education, experience, and personal details if they exist.
 - EXTRACT ORGANIZATIONS: Map the organizations found in the GitHub Snapshot to the `githubOrganizations` field, and also consider adding them to `experience` if it makes logical sense.
