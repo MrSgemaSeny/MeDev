@@ -48,4 +48,7 @@ stripe:
   webhook-secret: ${STRIPE_WEBHOOK_SECRET:whsec_12345}
   pro-price-id: ${STRIPE_PRO_PRICE_ID:price_12345}
 
-
+kaspi:
+  merchant-id: ${KASPI_MERCHANT_ID:dummy-merchant}
+  secret-key: ${KASPI_SECRET_KEY:dummy-secret-key}
+  pro-price-amount: 15000

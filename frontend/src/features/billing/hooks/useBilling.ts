@@ -23,3 +23,25 @@ export const useCheckout = () => {
 
   return { checkout, isPending };
 };
+
+export const useKaspiCheckout = () => {
+  const [isPending, setIsPending] = useState(false);
+
+  const checkoutKaspi = async () => {
+    setIsPending(true);
+    try {
+      const response = await api.post('/billing/checkout/kaspi');
+      const data = response.data;
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Failed to initiate Kaspi checkout. Please try again.');
+    } finally {
+      setIsPending(false);
+    }
+  };
+
+  return { checkoutKaspi, isPending };
+};

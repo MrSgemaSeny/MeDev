@@ -31,6 +31,11 @@ stripe:
   secret-key: sk_test_123
   webhook-secret: whsec_123
 
+kaspi:
+  merchant-id: dummy-merchant
+  secret-key: dummy-secret-key
+  pro-price-amount: 15000
+
 groq:
   api-key: ${GROQ_API_KEY:placeholder_groq_api_key}
 

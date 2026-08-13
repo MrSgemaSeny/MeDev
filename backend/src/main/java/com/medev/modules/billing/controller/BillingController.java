@@ -13,6 +13,7 @@ import java.util.Map;
 public class BillingController {
 
     private final StripeService stripeService;
+    private final com.medev.modules.billing.service.KaspiPayService kaspiPayService;
 
     @PostMapping("/checkout")
     public ResponseEntity<Map<String, String>> createCheckoutSession() {
@@ -34,6 +35,30 @@ public class BillingController {
             @RequestHeader("Stripe-Signature") String sigHeader) {
         
         stripeService.handleWebhook(payload, sigHeader);
+        return ResponseEntity.ok().build();
+    }
+
+    // --- KASPI PAY ENDPOINTS --- //
+
+    @PostMapping("/checkout/kaspi")
+    public ResponseEntity<Map<String, String>> createKaspiCheckoutSession() {
+        Long userId = SecurityUtils.getCurrentUserId();
+        String checkoutUrl = kaspiPayService.createPaymentLink(userId);
+        return ResponseEntity.ok(Map.of("url", checkoutUrl));
+    }
+
+    @PostMapping("/webhook/kaspi")
+    public ResponseEntity<Void> handleKaspiWebhook(
+            @RequestBody Map<String, Object> payload,
+            @RequestHeader(value = "X-Kaspi-Signature", required = false) String sigHeader) {
+        
+        // В реальности Kaspi требует 200 OK при любом исходе вебхука, 
+        // чтобы они перестали повторять отправку.
+        try {
+            kaspiPayService.handleWebhook(payload, sigHeader);
+        } catch (Exception e) {
+            // Логируем ошибку, но возвращаем 200 (или 400, в зависимости от доков)
+        }
         return ResponseEntity.ok().build();
     }
 }

@@ -38,6 +38,9 @@ public class User {
     @Column(name = "stripe_customer_id")
     private String stripeCustomerId;
 
+    @Column(name = "kaspi_customer_id")
+    private String kaspiCustomerId;
+
     @Column(name = "github_id")
     private String githubId;
 

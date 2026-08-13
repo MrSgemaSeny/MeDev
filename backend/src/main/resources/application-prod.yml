@@ -21,6 +21,12 @@ jwt:
 stripe:
   secret-key: ${STRIPE_SECRET_KEY}
   webhook-secret: ${STRIPE_WEBHOOK_SECRET}
+  pro-price-id: ${STRIPE_PRO_PRICE_ID}
+
+kaspi:
+  merchant-id: ${KASPI_MERCHANT_ID}
+  secret-key: ${KASPI_SECRET_KEY}
+  pro-price-amount: 15000
 
 management:
   endpoints:
