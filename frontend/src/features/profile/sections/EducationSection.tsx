@@ -71,8 +71,8 @@ const EducationForm: React.FC<EducationFormProps> = ({ initialData, onSave, onCa
     institution: initialData?.institution || '',
     degree: initialData?.degree || '',
     field: initialData?.field || '',
-    startDate: initialData?.startDate || '',
-    endDate: initialData?.endDate || '',
+    startDate: initialData?.startDate?.substring(0, 7) || '',
+    endDate: initialData?.endDate?.substring(0, 7) || '',
     isCurrent: initialData?.isCurrent || false,
     sortOrder: initialData?.sortOrder || 0,
   });
@@ -88,7 +88,12 @@ const EducationForm: React.FC<EducationFormProps> = ({ initialData, onSave, onCa
       return;
     }
     const payload = { ...formData };
-    if (!payload.endDate) delete (payload as any).endDate;
+    if (payload.startDate && payload.startDate.length === 7) payload.startDate = `${payload.startDate}-01`;
+    if (payload.endDate && payload.endDate.length === 7) {
+      payload.endDate = `${payload.endDate}-01`;
+    } else if (!payload.endDate) {
+      delete (payload as any).endDate;
+    }
     onSave(payload); 
   };
 

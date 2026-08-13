@@ -73,8 +73,8 @@ const ExperienceForm: React.FC<ExperienceFormProps> = ({ initialData, onSave, on
   const [formData, setFormData] = useState({
     company: initialData?.company || '',
     position: initialData?.position || '',
-    startDate: initialData?.startDate || '',
-    endDate: initialData?.endDate || '',
+    startDate: initialData?.startDate?.substring(0, 7) || '',
+    endDate: initialData?.endDate?.substring(0, 7) || '',
     isCurrent: initialData?.isCurrent || false,
     description: initialData?.description || '',
     sortOrder: initialData?.sortOrder || 0,
@@ -93,7 +93,12 @@ const ExperienceForm: React.FC<ExperienceFormProps> = ({ initialData, onSave, on
       return;
     }
     const payload = { ...formData };
-    if (!payload.endDate) delete (payload as any).endDate;
+    if (payload.startDate && payload.startDate.length === 7) payload.startDate = `${payload.startDate}-01`;
+    if (payload.endDate && payload.endDate.length === 7) {
+      payload.endDate = `${payload.endDate}-01`;
+    } else if (!payload.endDate) {
+      delete (payload as any).endDate;
+    }
     onSave(payload); 
   };
 
