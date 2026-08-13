@@ -98,14 +98,37 @@ export const SettingsPage = () => {
                 <div className="text-sm font-medium text-primary mb-1">{t('settings.theme', 'Theme')}</div>
                 <div className="text-sm text-secondary">{t('settings.themeDesc', 'Application color theme')}</div>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-lg border border-default bg-[var(--color-bg-secondary)] opacity-70 cursor-not-allowed">
-                <Moon size={16} className="text-[var(--color-accent)]" />
-                <span className="text-sm font-medium">Dark Mode (Enforced)</span>
+              <div className="flex bg-[var(--color-bg-secondary)] p-1 rounded-lg border border-default">
+                <button
+                  onClick={() => {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                  }}
+                  className={`px-4 py-1.5 flex items-center gap-2 rounded-md text-sm font-medium transition-all ${
+                    !document.documentElement.classList.contains('dark')
+                      ? 'bg-[var(--color-accent)] text-white shadow-sm'
+                      : 'text-secondary hover:text-primary'
+                  }`}
+                >
+                  <Sun size={14} />
+                  Light
+                </button>
+                <button
+                  onClick={() => {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                  }}
+                  className={`px-4 py-1.5 flex items-center gap-2 rounded-md text-sm font-medium transition-all ${
+                    document.documentElement.classList.contains('dark')
+                      ? 'bg-[var(--color-accent)] text-white shadow-sm'
+                      : 'text-secondary hover:text-primary'
+                  }`}
+                >
+                  <Moon size={14} />
+                  Dark
+                </button>
               </div>
             </div>
-            <p className="text-xs text-muted max-w-lg">
-              * Note: We enforce a strict GitHub Dark Mode design system for premium aesthetics. Light mode is not supported.
-            </p>
           </div>
         </section>
 
