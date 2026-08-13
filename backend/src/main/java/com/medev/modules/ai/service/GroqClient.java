@@ -71,7 +71,7 @@ public class GroqClient implements LlmProvider {
         CircuitBreakerConfig config = CircuitBreakerConfig.custom()
                 .failureRateThreshold(50)
                 .slidingWindowSize(10)
-                .waitDurationInOpenState(Duration.ofSeconds(30))
+                .waitDurationInOpenState(Duration.ofSeconds(60))
                 .permittedNumberOfCallsInHalfOpenState(1)
                 .recordExceptions(LlmException.class, WebClientResponseException.class)
                 .build();
@@ -105,8 +105,8 @@ public class GroqClient implements LlmProvider {
                 .onStatus(HttpStatusCode::is5xxServerError, resp ->
                         Mono.error(new LlmException(Reason.PROVIDER_UNAVAILABLE, "Groq 5xx")))
                 .bodyToFlux(new ParameterizedTypeReference<ServerSentEvent<String>>() {})
-                .timeout(Duration.ofSeconds(60),
-                        Flux.error(new LlmException(Reason.TIMEOUT, "Stream timeout after 60s")))
+                .timeout(Duration.ofSeconds(90),
+                        Flux.error(new LlmException(Reason.TIMEOUT, "Stream timeout after 90s")))
                 .transformDeferred(CircuitBreakerOperator.of(circuitBreaker))
                 .retryWhen(retrySpec())
                 .mapNotNull(sse -> extractStreamChunk(sse.data()))
@@ -145,8 +145,8 @@ public class GroqClient implements LlmProvider {
                 .onStatus(HttpStatusCode::is5xxServerError, resp ->
                         Mono.error(new LlmException(Reason.PROVIDER_UNAVAILABLE, "Groq 5xx")))
                 .bodyToMono(JsonNode.class)
-                .timeout(Duration.ofSeconds(45),
-                        Mono.error(new LlmException(Reason.TIMEOUT, "Structured completion timeout")))
+                .timeout(Duration.ofSeconds(90),
+                        Mono.error(new LlmException(Reason.TIMEOUT, "Structured completion timeout after 90s")))
                 .transformDeferred(CircuitBreakerOperator.of(circuitBreaker))
                 .retryWhen(retrySpec())
                 .map(response -> extractContentAndRecordUsage(response, userId, "/v1/ai/generate"))
@@ -174,8 +174,8 @@ public class GroqClient implements LlmProvider {
      * НЕ ретраит 400/401/422 — это программные ошибки.
      */
     private Retry retrySpec() {
-        return Retry.backoff(3, Duration.ofSeconds(1))
-                .maxBackoff(Duration.ofSeconds(8))
+        return Retry.backoff(4, Duration.ofSeconds(4))
+                .maxBackoff(Duration.ofSeconds(20))
                 .filter(e -> e instanceof LlmException && ((LlmException) e).isRetryable())
                 .doBeforeRetry(signal ->
                     log.warn("[GroqClient] Retry attempt {} after: {}",
