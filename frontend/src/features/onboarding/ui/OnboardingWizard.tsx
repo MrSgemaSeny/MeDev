@@ -17,11 +17,14 @@ export const OnboardingWizard = () => {
     recentExperience: '',
   });
 
+  const [hasOpened, setHasOpened] = useState(false);
+
   useEffect(() => {
-    if (!isLoading && profile && profile.isOnboardingCompleted === false) {
+    if (!isLoading && profile && profile.isOnboardingCompleted === false && !hasOpened) {
       setIsOpen(true);
+      setHasOpened(true);
     }
-  }, [profile, isLoading]);
+  }, [profile, isLoading, hasOpened]);
 
   if (!isOpen) return null;
 
@@ -51,101 +54,106 @@ export const OnboardingWizard = () => {
 
   return (
     <Modal isOpen={isOpen} onClose={handleSkip} title="Welcome to MeDev!">
-      <div className="p-4 w-[500px] max-w-full">
-        <div className="flex gap-2 mb-8">
+      <div className="w-[500px] max-w-full flex flex-col pt-2 pb-2">
+        <div className="flex gap-2 mb-10 px-2">
           {[1, 2, 3].map((s) => (
             <div
               key={s}
-              className="h-1.5 flex-1 rounded-full transition-colors duration-300"
+              className="h-1 flex-1 rounded-full transition-colors duration-300"
               style={{
-                backgroundColor: step >= s ? 'var(--color-accent)' : 'var(--color-border-default)'
+                backgroundColor: step >= s ? 'var(--color-accent)' : 'var(--color-border-default)',
+                opacity: step >= s ? 1 : 0.5
               }}
             />
           ))}
         </div>
 
-        <form onSubmit={step === 3 ? handleSubmit : (e) => { e.preventDefault(); handleNext(); }}>
-          {step === 1 && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-              <div className="text-center">
-                <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>What is your primary role?</h3>
-                <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>This helps us tailor your profile and AI suggestions.</p>
+        <form onSubmit={step === 3 ? handleSubmit : (e) => { e.preventDefault(); handleNext(); }} className="flex flex-col min-h-[250px]">
+          <div className="flex-1">
+            {step === 1 && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                <div className="text-center space-y-2">
+                  <h3 className="text-2xl font-bold tracking-tight" style={{ color: 'var(--color-text-primary)' }}>What is your primary role?</h3>
+                  <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>This helps us tailor your profile and AI suggestions.</p>
+                </div>
+                <div className="space-y-2 mx-auto max-w-[400px]">
+                  <Label htmlFor="role" className="text-xs uppercase tracking-wider font-semibold text-muted">Role</Label>
+                  <Input
+                    id="role"
+                    name="role"
+                    value={formData.role}
+                    onChange={handleChange}
+                    placeholder="e.g. Senior Frontend Engineer"
+                    required
+                    autoFocus
+                    className="w-full text-base py-3"
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="role">Role</Label>
-                <Input
-                  id="role"
-                  name="role"
-                  value={formData.role}
-                  onChange={handleChange}
-                  placeholder="e.g. Senior Frontend Engineer, Full-Stack Developer"
-                  required
-                  autoFocus
-                  className="w-full"
-                />
-              </div>
-            </div>
-          )}
+            )}
 
-          {step === 2 && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-              <div className="text-center">
-                <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>What is your tech stack?</h3>
-                <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>List the main technologies you work with.</p>
+            {step === 2 && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                <div className="text-center space-y-2">
+                  <h3 className="text-2xl font-bold tracking-tight" style={{ color: 'var(--color-text-primary)' }}>What is your tech stack?</h3>
+                  <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>List the main technologies you work with.</p>
+                </div>
+                <div className="space-y-2 mx-auto max-w-[400px]">
+                  <Label htmlFor="stack" className="text-xs uppercase tracking-wider font-semibold text-muted">Tech Stack</Label>
+                  <Textarea
+                    id="stack"
+                    name="stack"
+                    value={formData.stack}
+                    onChange={handleChange}
+                    placeholder="e.g. React, TypeScript, Node.js"
+                    required
+                    rows={3}
+                    autoFocus
+                    className="w-full resize-none text-base p-3"
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="stack">Tech Stack</Label>
-                <Textarea
-                  id="stack"
-                  name="stack"
-                  value={formData.stack}
-                  onChange={handleChange}
-                  placeholder="e.g. React, TypeScript, Node.js, PostgreSQL"
-                  required
-                  rows={3}
-                  autoFocus
-                  className="w-full resize-none"
-                />
-              </div>
-            </div>
-          )}
+            )}
 
-          {step === 3 && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-              <div className="text-center">
-                <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>Recent Experience</h3>
-                <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Briefly describe your most recent role or project.</p>
+            {step === 3 && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                <div className="text-center space-y-2">
+                  <h3 className="text-2xl font-bold tracking-tight" style={{ color: 'var(--color-text-primary)' }}>Recent Experience</h3>
+                  <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Briefly describe your most recent role or project.</p>
+                </div>
+                <div className="space-y-2 mx-auto max-w-[400px]">
+                  <Label htmlFor="recentExperience" className="text-xs uppercase tracking-wider font-semibold text-muted">Experience</Label>
+                  <Textarea
+                    id="recentExperience"
+                    name="recentExperience"
+                    value={formData.recentExperience}
+                    onChange={handleChange}
+                    placeholder="e.g. Worked at Google as a Software Engineer..."
+                    required
+                    rows={4}
+                    autoFocus
+                    className="w-full resize-none text-base p-3"
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="recentExperience">Experience</Label>
-                <Textarea
-                  id="recentExperience"
-                  name="recentExperience"
-                  value={formData.recentExperience}
-                  onChange={handleChange}
-                  placeholder="e.g. Worked at Google as a Software Engineer for 3 years, building scalable microservices..."
-                  required
-                  rows={4}
-                  autoFocus
-                  className="w-full resize-none"
-                />
-              </div>
-            </div>
-          )}
+            )}
+          </div>
 
-          <div className="flex justify-between items-center mt-10 pt-4 border-t" style={{ borderColor: 'var(--color-border-default)' }}>
+          <div className="flex justify-between items-center mt-10 pt-6 border-t" style={{ borderColor: 'var(--color-border-default)' }}>
             <Button
               type="button"
               variant="secondary"
               onClick={step === 1 ? handleSkip : handleBack}
+              className="px-6"
             >
-              {step === 1 ? 'Skip' : 'Back'}
+              {step === 1 ? 'Skip for now' : 'Back'}
             </Button>
             
             <Button
               type="submit"
               variant="primary"
               disabled={onboardingMutation.isPending}
+              className="px-8 font-semibold bg-green-600 hover:bg-green-500 text-white"
             >
               {onboardingMutation.isPending ? 'Generating...' : step === 3 ? 'Generate Profile' : 'Next'}
             </Button>

@@ -51,11 +51,11 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
           </h2>
           <button
             onClick={onClose}
-            className="rounded p-1 cursor-pointer"
+            className="rounded p-1.5 cursor-pointer hover:bg-white/10 transition-colors"
             style={{ color: 'var(--color-text-muted)' }}
             aria-label="Close"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
         <div className="flex-1 overflow-y-auto p-4">{children}</div>
