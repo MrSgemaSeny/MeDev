@@ -61,6 +61,8 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             jakarta.servlet.http.Cookie linkCookie = new jakarta.servlet.http.Cookie("medev_link_jwt", "");
             linkCookie.setPath("/");
             linkCookie.setMaxAge(0);
+            linkCookie.setHttpOnly(true);
+            linkCookie.setSecure(true);
             response.addCookie(linkCookie);
             
             frontendUrl = frontendOrigin + "/profile/edit?github_linked=true&code=" + oauth2Code;

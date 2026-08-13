@@ -52,13 +52,7 @@ public class BillingController {
             @RequestBody Map<String, Object> payload,
             @RequestHeader(value = "X-Kaspi-Signature", required = false) String sigHeader) {
         
-        // В реальности Kaspi требует 200 OK при любом исходе вебхука, 
-        // чтобы они перестали повторять отправку.
-        try {
-            kaspiPayService.handleWebhook(payload, sigHeader);
-        } catch (Exception e) {
-            // Логируем ошибку, но возвращаем 200 (или 400, в зависимости от доков)
-        }
-        return ResponseEntity.ok().build();
+        // Temporarily closed due to missing HMAC verification (Tech Debt Security #2)
+        return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN).build();
     }
 }

@@ -228,6 +228,20 @@ public class AiController {
             return ResponseEntity.badRequest().build();
         }
 
+        if (!"application/pdf".equals(file.getContentType())) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        try {
+            byte[] magic = new byte[4];
+            java.io.InputStream is = file.getInputStream();
+            if (is.read(magic) != 4 || !new String(magic).startsWith("%PDF")) {
+                return ResponseEntity.badRequest().build();
+            }
+        } catch (java.io.IOException e) {
+            return ResponseEntity.badRequest().build();
+        }
+
         ProfileDto currentProfile = profileService.getByUserId(userId);
         AiParsedResumeDto parsed = aiAnalysisService.parseResumePdf(file, currentProfile);
         ProfileDto updatedProfile = profileService.importParsedResume(userId, parsed);

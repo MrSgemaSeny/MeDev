@@ -26,5 +26,9 @@ public class SubscriptionService {
         if (user.getPlan() != User.Plan.PRO) {
             throw new AccessDeniedException("This feature requires a PRO subscription.");
         }
+        
+        if (user.getSubscriptionExpiresAt() != null && user.getSubscriptionExpiresAt().isBefore(java.time.LocalDateTime.now())) {
+            throw new AccessDeniedException("Your PRO subscription has expired.");
+        }
     }
 }
