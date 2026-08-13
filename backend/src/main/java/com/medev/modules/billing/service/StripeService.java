@@ -42,15 +42,6 @@ public class StripeService {
             throw new IllegalStateException("User is already on PRO plan");
         }
 
-        // MOCK MODE FOR LOCAL DEVELOPMENT
-        if (stripeApiKey == null || stripeApiKey.contains("12345")) {
-            log.info("Using MOCK Stripe Checkout for userId: {}", userId);
-            user.setPlan(User.Plan.PRO);
-            user.setStripeCustomerId("cus_mock_" + userId);
-            userRepository.save(user);
-            return frontendUrl + "/billing/success?session_id=cs_test_mock_" + userId;
-        }
-
         try {
             SessionCreateParams.Builder paramsBuilder = SessionCreateParams.builder()
                     .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
