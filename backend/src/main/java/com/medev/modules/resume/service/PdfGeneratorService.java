@@ -32,6 +32,22 @@ public class PdfGeneratorService {
         Context context = new Context();
         context.setVariable("profile", profile);
         context.setVariable("generatedAt", LocalDate.now());
+        
+        if (profile.getSkills() != null) {
+            java.util.Map<String, java.util.List<String>> groupedSkills = profile.getSkills().stream()
+                    .collect(java.util.stream.Collectors.groupingBy(
+                            s -> s.getCategory() != null && !s.getCategory().isBlank() ? s.getCategory() : "General",
+                            java.util.stream.Collectors.mapping(com.medev.modules.profile.dto.SkillDto::getName, java.util.stream.Collectors.toList())
+                    ));
+            context.setVariable("groupedSkills", groupedSkills);
+        }
+
+        if (profile.getLanguages() != null) {
+            String languagesStr = profile.getLanguages().stream()
+                    .map(l -> l.getName() + (l.getLevel() != null && !l.getLevel().isBlank() ? " (" + l.getLevel() + ")" : ""))
+                    .collect(java.util.stream.Collectors.joining(", "));
+            context.setVariable("languagesStr", languagesStr);
+        }
         String html = templateEngine.process("resume/" + templateName, context);
 
         try {

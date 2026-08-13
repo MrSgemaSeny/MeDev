@@ -1,16 +1,15 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useResumeEditorStore } from '../../entities/resume/model/resumeEditorStore';
-import { Button } from '../../shared/ui/Button';
 import { api } from '../../shared/api/axios';
 import { useAiChatStore } from '../../features/ai-assistant/model/store';
-import { Bot } from 'lucide-react';
+import { Bot, Download, ArrowUp, ArrowDown, FileText } from 'lucide-react';
 
 const TEMPLATES = [
-  { id: 'github', name: 'GitHub', bg: '#0d1117', color: '#e6edf3', accent: '#238636' },
-  { id: 'milky-soft', name: 'Milky Soft', bg: '#fdfbf7', color: '#4a443b', accent: '#d4b7a1' },
-  { id: 'apple-modern', name: 'Apple', bg: '#ffffff', color: '#1d1d1f', accent: '#0071e3' },
-  { id: 'groq-monolith', name: 'Groq', bg: '#000000', color: '#ffffff', accent: '#f55036' },
-  { id: 'phub-orange', name: 'PH Orange', bg: '#1b1b1b', color: '#ffffff', accent: '#f90' }
+  { id: 'github', name: 'GitHub', desc: 'Dev Standard', accent: '#238636' },
+  { id: 'milky-soft', name: 'Milky Soft', desc: 'Warm Indie', accent: '#d4b7a1' },
+  { id: 'apple-modern', name: 'Apple', desc: 'Minimalist', accent: '#0071e3' },
+  { id: 'groq-monolith', name: 'Groq', desc: 'Brutalist', accent: '#f55036' },
+  { id: 'phub-orange', name: 'PH Orange', desc: 'High Contrast', accent: '#ff9900' }
 ];
 
 export const ResumeBuilder = () => {
@@ -64,120 +63,180 @@ export const ResumeBuilder = () => {
   const moveUp = (index: number) => { if (index > 0) reorderSections(index, index - 1); };
   const moveDown = (index: number) => { if (index < sections.length - 1) reorderSections(index, index + 1); };
 
-  const [previewMode, setPreviewMode] = React.useState<'pdf'>('pdf');
-  const [pdfUrl, setPdfUrl] = React.useState<string | null>(null);
-  const [pdfLoading, setPdfLoading] = React.useState(false);
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const [pdfLoading, setPdfLoading] = useState(false);
 
-  React.useEffect(() => {
-    if (previewMode === 'pdf') {
-      let active = true;
-      const loadPdf = async () => {
-        setPdfLoading(true);
-        try {
-          const { data } = await api.get(`/resume/generate/${selectedTemplate}?preview=true`, { responseType: 'blob' });
-          if (active) {
-            const url = window.URL.createObjectURL(new Blob([data], { type: 'application/pdf' }));
-            setPdfUrl(url);
-          }
-        } catch (e) {
-          console.error(e);
-        } finally {
-          if (active) setPdfLoading(false);
+  useEffect(() => {
+    let active = true;
+    const loadPdf = async () => {
+      setPdfLoading(true);
+      try {
+        const { data } = await api.get(`/resume/generate/${selectedTemplate}?preview=true`, { responseType: 'blob' });
+        if (active) {
+          const url = window.URL.createObjectURL(new Blob([data], { type: 'application/pdf' }));
+          setPdfUrl(url);
         }
-      };
-      loadPdf();
-      return () => {
-        active = false;
-        if (pdfUrl) window.URL.revokeObjectURL(pdfUrl);
-      };
-    }
-  }, [previewMode, selectedTemplate]);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        if (active) setPdfLoading(false);
+      }
+    };
+    loadPdf();
+    return () => {
+      active = false;
+      if (pdfUrl) window.URL.revokeObjectURL(pdfUrl);
+    };
+  }, [selectedTemplate]);
 
   return (
-    <div className="flex h-full" style={{ color: 'var(--color-text-primary)' }}>
-      <div
-        className="w-72 border-r p-4 flex flex-col gap-6 overflow-y-auto shrink-0"
-        style={{ borderColor: 'var(--color-border-default)', backgroundColor: 'var(--color-bg-primary)' }}
-      >
-        <div>
-          <h2 className="text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>Preview Mode</h2>
-          <div className="flex gap-2">
-            <Button variant="primary" className="flex-1">Live PDF Preview</Button>
-          </div>
+    <div className="flex h-full bg-[#010409] text-[#c9d1d9] overflow-hidden font-sans">
+      
+      {/* Left Sidebar - GitHub Dark Mode Style */}
+      <div className="w-[320px] bg-[#0d1117] border-r border-[#30363d] flex flex-col shrink-0">
+        
+        {/* Header */}
+        <div className="p-5 border-b border-[#30363d]">
+          <h1 className="text-lg font-semibold text-white">Resume Builder</h1>
+          <p className="text-xs text-[#8b949e] mt-1">Configure layout & appearance</p>
         </div>
 
-        <div>
-          <h2 className="text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>Templates</h2>
-          <div className="grid grid-cols-2 gap-2">
-            {TEMPLATES.map((t) => (
-              <button
-                key={t.id}
-                onClick={() => setTemplate(t.id)}
-                className="p-2 rounded-md transition-colors duration-100 flex items-center justify-center relative overflow-hidden"
-                style={{ 
-                  border: selectedTemplate === t.id ? `2px solid ${t.accent}` : '1px solid var(--color-border-default)' 
-                }}
-              >
-                <div 
-                  className="w-full h-10 rounded flex items-center justify-center text-xs relative overflow-hidden" 
-                  style={{ backgroundColor: t.bg, color: t.color, border: '1px solid var(--color-border-default)' }}
-                >
-                  <div className="absolute left-0 top-0 bottom-0 w-1.5" style={{ backgroundColor: t.accent }} />
-                  {t.name}
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <h2 className="text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>Sections</h2>
-          <div className="space-y-1.5">
-            {sections.map((section, index) => (
-              <div
-                key={section.id}
-                className="flex items-center justify-between p-2 rounded-md"
-                style={{ backgroundColor: 'var(--color-bg-secondary)', border: '1px solid var(--color-border-default)' }}
-              >
-                <label className="flex items-center gap-2 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-                  <input type="checkbox" checked={section.visible} onChange={() => toggleSection(section.id)} style={{ accentColor: 'var(--color-accent)' }} />
-                  {section.label}
-                </label>
-                <div className="flex gap-1">
-                  <button onClick={() => moveUp(index)} disabled={index === 0} className="px-1 disabled:opacity-30" style={{ color: 'var(--color-text-muted)' }}>&#8593;</button>
-                  <button onClick={() => moveDown(index)} disabled={index === sections.length - 1} className="px-1 disabled:opacity-30" style={{ color: 'var(--color-text-muted)' }}>&#8595;</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-auto pt-4 border-t space-y-3" style={{ borderColor: 'var(--color-border-default)' }}>
-          <Button variant="secondary" className="w-full flex items-center justify-center gap-2" onClick={handleAiAnalysis}>
-            <Bot size={16} />
-            Analyze Resume
-          </Button>
-          <Button variant="primary" className="w-full" onClick={handleDownloadPdf}>Export PDF</Button>
-          <Button variant="outline" className="w-full" onClick={handleDownload}>Export README</Button>
-        </div>
-      </div>
-
-      <div
-        className="flex-1 overflow-auto p-8 flex justify-center"
-        style={{ backgroundColor: 'var(--color-preview-bg)' }}
-      >
-        <div className="origin-top w-full max-w-[800px] h-full">
-            <div className="w-full h-[800px] bg-white rounded shadow-lg overflow-hidden flex items-center justify-center">
-              {pdfLoading ? (
-                <div className="text-gray-500">Generating PDF...</div>
-              ) : pdfUrl ? (
-                <iframe src={pdfUrl} className="w-full h-full border-0" title="PDF Preview" />
-              ) : (
-                <div className="text-gray-500">Failed to load PDF</div>
-              )}
+        <div className="flex-1 overflow-y-auto p-5 space-y-8">
+          
+          {/* Templates Section */}
+          <section>
+            <h2 className="text-xs font-bold text-[#8b949e] uppercase tracking-wider mb-4">Templates</h2>
+            <div className="flex flex-col gap-2">
+              {TEMPLATES.map((t) => {
+                const isActive = selectedTemplate === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    onClick={() => setTemplate(t.id)}
+                    className={`w-full flex items-center justify-between p-3 rounded-md border text-left transition-all duration-200 ${
+                      isActive 
+                        ? 'bg-[#161b22] border-[#238636]' 
+                        : 'bg-[#0d1117] border-[#30363d] hover:border-[#8b949e] hover:bg-[#161b22]'
+                    }`}
+                  >
+                    <div>
+                      <div className={`text-sm font-medium ${isActive ? 'text-white' : 'text-[#c9d1d9]'}`}>
+                        {t.name}
+                      </div>
+                      <div className="text-xs text-[#8b949e] mt-0.5">{t.desc}</div>
+                    </div>
+                    {isActive && (
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: t.accent }}></div>
+                    )}
+                  </button>
+                );
+              })}
             </div>
+          </section>
+
+          {/* Sections Management */}
+          <section>
+            <h2 className="text-xs font-bold text-[#8b949e] uppercase tracking-wider mb-4">Sections Content</h2>
+            <div className="space-y-2">
+              {sections.map((section, index) => (
+                <div
+                  key={section.id}
+                  className="flex items-center justify-between p-2.5 rounded-md bg-[#161b22] border border-[#30363d] group"
+                >
+                  <label className="flex items-center gap-3 text-sm cursor-pointer select-none text-[#c9d1d9] group-hover:text-white transition-colors">
+                    <input 
+                      type="checkbox" 
+                      checked={section.visible} 
+                      onChange={() => toggleSection(section.id)} 
+                      className="w-4 h-4 rounded border-[#30363d] bg-[#0d1117] checked:bg-[#238636] checked:border-[#238636] focus:ring-0 focus:ring-offset-0 cursor-pointer appearance-none relative
+                        before:content-[''] before:absolute before:inset-0 before:bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwb2x5bGluZSBwb2ludHM9IjIwIDYgOSAxNyA0IDEyIi8+PC9zdmc+')] 
+                        before:bg-center before:bg-no-repeat before:scale-0 checked:before:scale-[0.6] before:transition-transform"
+                    />
+                    {section.label}
+                  </label>
+                  <div className="flex gap-1 opacity-40 group-hover:opacity-100 transition-opacity">
+                    <button 
+                      onClick={() => moveUp(index)} 
+                      disabled={index === 0} 
+                      className="p-1 rounded hover:bg-[#30363d] hover:text-white disabled:opacity-30 disabled:hover:bg-transparent"
+                    >
+                      <ArrowUp size={14} />
+                    </button>
+                    <button 
+                      onClick={() => moveDown(index)} 
+                      disabled={index === sections.length - 1} 
+                      className="p-1 rounded hover:bg-[#30363d] hover:text-white disabled:opacity-30 disabled:hover:bg-transparent"
+                    >
+                      <ArrowDown size={14} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+        </div>
+
+        {/* Footer Actions */}
+        <div className="p-5 border-t border-[#30363d] bg-[#0d1117] space-y-3">
+          <button 
+            onClick={handleAiAnalysis}
+            className="w-full flex items-center justify-center gap-2 bg-[#161b22] hover:bg-[#30363d] border border-[#30363d] text-[#c9d1d9] hover:text-white py-2 px-4 rounded-md text-sm font-medium transition-colors"
+          >
+            <Bot size={16} />
+            AI Analysis
+          </button>
+          
+          <button 
+            onClick={handleDownloadPdf}
+            className="w-full flex items-center justify-center gap-2 bg-[#238636] hover:bg-[#2ea043] border border-[rgba(240,246,252,0.1)] text-white py-2 px-4 rounded-md text-sm font-medium transition-colors shadow-sm"
+          >
+            <Download size={16} />
+            Export PDF
+          </button>
+
+          <button 
+            onClick={handleDownload}
+            className="w-full flex items-center justify-center gap-2 bg-transparent hover:underline text-[#8b949e] hover:text-[#58a6ff] py-1.5 px-4 rounded-md text-xs font-medium transition-colors"
+          >
+            <FileText size={14} />
+            Download Markdown (README)
+          </button>
         </div>
       </div>
+
+      {/* Main Content - PDF Viewer */}
+      <div className="flex-1 flex flex-col p-8 overflow-hidden relative">
+        {/* Top bar for preview */}
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-lg font-medium text-white">Live PDF Preview</h2>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#161b22] border border-[#30363d] text-xs text-[#8b949e]">
+            <span className="w-2 h-2 rounded-full bg-[#238636] animate-pulse"></span>
+            Real-time rendering
+          </div>
+        </div>
+
+        {/* PDF Container */}
+        <div className="flex-1 w-full max-w-[900px] mx-auto bg-[#0d1117] border border-[#30363d] rounded-xl shadow-2xl overflow-hidden flex flex-col">
+          {pdfLoading ? (
+            <div className="flex-1 flex items-center justify-center flex-col gap-4 text-[#8b949e]">
+              <div className="w-8 h-8 border-2 border-[#30363d] border-t-[#238636] rounded-full animate-spin"></div>
+              <div className="text-sm">Generating flawless PDF...</div>
+            </div>
+          ) : pdfUrl ? (
+            <iframe 
+              src={pdfUrl + '#toolbar=0&navpanes=0&scrollbar=0'} 
+              className="w-full h-full border-0 bg-white" 
+              title="PDF Preview" 
+            />
+          ) : (
+            <div className="flex-1 flex items-center justify-center text-[#8b949e] text-sm">
+              Failed to load PDF engine
+            </div>
+          )}
+        </div>
+      </div>
+
     </div>
   );
 };

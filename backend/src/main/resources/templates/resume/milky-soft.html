@@ -39,17 +39,16 @@
                 <div class="contact-item" th:if="${profile.linkedin}"><span th:text="${profile.linkedin}"></span></div>
                 <div class="contact-item" th:if="${profile.telegram}"><span th:text="${profile.telegram}"></span></div>
                 
-                <h2 class="left-title" th:if="${profile.skills != null and !profile.skills.isEmpty()}">Skills</h2>
-                <div th:each="skill : ${profile.skills}" style="margin-bottom: 10px;">
-                    <strong style="display:block; margin-bottom:5px; font-size: 10px;" th:text="${skill.category != null ? skill.category : 'Core'}"></strong>
-                    <span class="tag" th:text="${skill.name}"></span>
+                <h2 class="left-title" th:if="${groupedSkills != null and !groupedSkills.isEmpty()}">Skills</h2>
+                <div th:each="entry : ${groupedSkills}" style="margin-bottom: 10px;">
+                    <strong style="display:block; margin-bottom:5px; font-size: 10px;" th:text="${entry.key}"></strong>
+                    <span class="tag" th:each="skillName : ${entry.value}" th:text="${skillName}"></span>
                 </div>
 
-                <h2 class="left-title" th:if="${profile.languages != null and !profile.languages.isEmpty()}">Languages</h2>
+                <h2 class="left-title" th:if="${languagesStr != null and !languagesStr.isEmpty()}">Languages</h2>
                 <table class="lang-table">
-                    <tr th:each="lang : ${profile.languages}">
-                        <td th:text="${lang.name}"></td>
-                        <td style="text-align: right; color:#8F7466;" th:text="${lang.level != null ? lang.level : ''}"></td>
+                    <tr>
+                        <td style="padding-bottom: 8px;" th:text="${languagesStr}"></td>
                     </tr>
                 </table>
             </td>

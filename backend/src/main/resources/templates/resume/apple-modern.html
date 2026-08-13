@@ -71,22 +71,24 @@
                 </div>
             </div>
 
-            <div th:case="'skills'" th:if="${profile.skills != null and !profile.skills.isEmpty()}">
+            <div th:case="'skills'" th:if="${groupedSkills != null and !groupedSkills.isEmpty()}">
                 <h2>Skills</h2>
                 <table class="skills-table">
-                    <tr th:each="skill : ${profile.skills}">
-                        <td class="cat-col" th:text="${skill.category != null ? skill.category : 'General'}"></td>
-                        <td class="det-col" th:text="${skill.name}"></td>
+                    <tr th:each="entry : ${groupedSkills}">
+                        <td class="cat-col" th:text="${entry.key}"></td>
+                        <td class="det-col">
+                            <span th:each="skillName, iterStat : ${entry.value}" th:text="${skillName + (!iterStat.last ? ', ' : '')}"></span>
+                        </td>
                     </tr>
                 </table>
             </div>
 
-            <div th:case="'languages'" th:if="${profile.languages != null and !profile.languages.isEmpty()}">
+            <div th:case="'languages'" th:if="${languagesStr != null and !languagesStr.isEmpty()}">
                 <h2>Languages</h2>
                 <table class="skills-table">
-                    <tr th:each="lang : ${profile.languages}">
-                        <td class="cat-col" th:text="${lang.name}"></td>
-                        <td class="det-col" th:text="${lang.level != null ? lang.level : ''}"></td>
+                    <tr>
+                        <td class="cat-col">Languages</td>
+                        <td class="det-col" th:text="${languagesStr}"></td>
                     </tr>
                 </table>
             </div>
