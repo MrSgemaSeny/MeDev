@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '../../shared/ui/Button';
 import { Card } from '../../shared/ui/Form';
 import { useKaspiCheckout } from '../../features/billing/hooks/useBilling';
-import { X, Check } from 'lucide-react';
+import { ArrowLeft, Check } from 'lucide-react';
 
 export const PricingPage = () => {
   const { checkoutKaspi, isPending: isKaspiPending } = useKaspiCheckout();
@@ -86,17 +86,18 @@ export const PricingPage = () => {
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex flex-col" style={{ backgroundColor: 'var(--color-bg-primary)' }}>
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b" style={{ borderColor: 'var(--color-border-default)' }}>
-            <div className="text-xl font-semibold" style={{ color: 'var(--color-text-primary)' }}>Upgrade to PRO</div>
+          <div className="flex items-center p-6 border-b" style={{ borderColor: 'var(--color-border-default)' }}>
             <button 
               onClick={() => setIsModalOpen(false)} 
-              className="p-2 rounded-md transition-colors" 
+              className="flex items-center gap-2 p-2 rounded-md transition-colors" 
               style={{ color: 'var(--color-text-muted)' }} 
               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--color-bg-inset)'}
               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
             >
-              <X className="w-6 h-6" />
+              <ArrowLeft className="w-5 h-5" />
+              <span className="text-sm font-medium">Назад</span>
             </button>
+            <div className="text-xl font-semibold ml-4" style={{ color: 'var(--color-text-primary)' }}>Upgrade to PRO</div>
           </div>
 
           {/* Content */}
