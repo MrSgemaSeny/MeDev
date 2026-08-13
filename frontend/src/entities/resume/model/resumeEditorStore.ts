@@ -35,7 +35,7 @@ const DEFAULT_SECTIONS: Section[] = [
 
 export const useResumeEditorStore = create<ResumeEditorStore>((set) => ({
   sections: DEFAULT_SECTIONS,
-  selectedTemplate: 'classic',
+  selectedTemplate: 'github',
 
   setSections: (sections) => set({ sections }),
 

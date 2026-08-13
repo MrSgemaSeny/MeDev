@@ -45,6 +45,7 @@ dependencies {
 
     // Template Engine (для PDF генерации)
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'ognl:ognl:3.4.3'
 
     // HTML Parsing
     implementation 'org.jsoup:jsoup:1.17.2'

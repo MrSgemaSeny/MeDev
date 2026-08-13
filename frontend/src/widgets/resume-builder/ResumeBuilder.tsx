@@ -1,11 +1,17 @@
 import React from 'react';
-import { ClassicTemplate } from '../../features/resume/templates/ClassicTemplate';
-import { ModernTemplate } from '../../features/resume/templates/ModernTemplate';
 import { useResumeEditorStore } from '../../entities/resume/model/resumeEditorStore';
 import { Button } from '../../shared/ui/Button';
 import { api } from '../../shared/api/axios';
 import { useAiChatStore } from '../../features/ai-assistant/model/store';
 import { Bot } from 'lucide-react';
+
+const TEMPLATES = [
+  { id: 'github', name: 'GitHub', bg: '#0d1117', color: '#e6edf3', accent: '#238636' },
+  { id: 'milky-soft', name: 'Milky Soft', bg: '#fdfbf7', color: '#4a443b', accent: '#d4b7a1' },
+  { id: 'apple-modern', name: 'Apple', bg: '#ffffff', color: '#1d1d1f', accent: '#0071e3' },
+  { id: 'groq-monolith', name: 'Groq', bg: '#000000', color: '#ffffff', accent: '#f55036' },
+  { id: 'phub-orange', name: 'PH Orange', bg: '#1b1b1b', color: '#ffffff', accent: '#f90' }
+];
 
 export const ResumeBuilder = () => {
   const { sections, selectedTemplate, setTemplate, toggleSection, reorderSections } = useResumeEditorStore();
@@ -58,7 +64,7 @@ export const ResumeBuilder = () => {
   const moveUp = (index: number) => { if (index > 0) reorderSections(index, index - 1); };
   const moveDown = (index: number) => { if (index < sections.length - 1) reorderSections(index, index + 1); };
 
-  const [previewMode, setPreviewMode] = React.useState<'html' | 'pdf'>('html');
+  const [previewMode, setPreviewMode] = React.useState<'pdf'>('pdf');
   const [pdfUrl, setPdfUrl] = React.useState<string | null>(null);
   const [pdfLoading, setPdfLoading] = React.useState(false);
 
@@ -96,33 +102,31 @@ export const ResumeBuilder = () => {
         <div>
           <h2 className="text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>Preview Mode</h2>
           <div className="flex gap-2">
-            <Button variant={previewMode === 'html' ? 'primary' : 'outline'} className="flex-1" onClick={() => setPreviewMode('html')}>HTML</Button>
-            <Button variant={previewMode === 'pdf' ? 'primary' : 'outline'} className="flex-1" onClick={() => setPreviewMode('pdf')}>PDF</Button>
+            <Button variant="primary" className="flex-1">Live PDF Preview</Button>
           </div>
         </div>
 
         <div>
           <h2 className="text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>Templates</h2>
           <div className="grid grid-cols-2 gap-2">
-            <button
-              onClick={() => setTemplate('classic')}
-              className="p-2 rounded-md transition-colors duration-100"
-              style={{ border: selectedTemplate === 'classic' ? '2px solid var(--color-accent)' : '1px solid var(--color-border-default)' }}
-            >
-              <div className="h-14 rounded flex items-center justify-center text-xs font-serif" style={{ backgroundColor: '#ffffff', color: '#000000' }}>
-                Classic
-              </div>
-            </button>
-            <button
-              onClick={() => setTemplate('modern')}
-              className="p-2 rounded-md transition-colors duration-100"
-              style={{ border: selectedTemplate === 'modern' ? '2px solid var(--color-accent)' : '1px solid var(--color-border-default)' }}
-            >
-              <div className="h-14 rounded flex items-center justify-center text-xs relative overflow-hidden" style={{ backgroundColor: '#0d1117', color: '#e6edf3', border: '1px solid #30363d' }}>
-                <div className="absolute left-0 top-0 bottom-0 w-1.5" style={{ backgroundColor: 'var(--color-accent)' }} />
-                Modern
-              </div>
-            </button>
+            {TEMPLATES.map((t) => (
+              <button
+                key={t.id}
+                onClick={() => setTemplate(t.id)}
+                className="p-2 rounded-md transition-colors duration-100 flex items-center justify-center relative overflow-hidden"
+                style={{ 
+                  border: selectedTemplate === t.id ? `2px solid ${t.accent}` : '1px solid var(--color-border-default)' 
+                }}
+              >
+                <div 
+                  className="w-full h-10 rounded flex items-center justify-center text-xs relative overflow-hidden" 
+                  style={{ backgroundColor: t.bg, color: t.color, border: '1px solid var(--color-border-default)' }}
+                >
+                  <div className="absolute left-0 top-0 bottom-0 w-1.5" style={{ backgroundColor: t.accent }} />
+                  {t.name}
+                </div>
+              </button>
+            ))}
           </div>
         </div>
 
@@ -163,11 +167,6 @@ export const ResumeBuilder = () => {
         style={{ backgroundColor: 'var(--color-preview-bg)' }}
       >
         <div className="origin-top w-full max-w-[800px] h-full">
-          {previewMode === 'html' ? (
-            <div className="scale-[0.85] xl:scale-95 origin-top">
-              {selectedTemplate === 'classic' ? <ClassicTemplate /> : <ModernTemplate />}
-            </div>
-          ) : (
             <div className="w-full h-[800px] bg-white rounded shadow-lg overflow-hidden flex items-center justify-center">
               {pdfLoading ? (
                 <div className="text-gray-500">Generating PDF...</div>
@@ -177,7 +176,6 @@ export const ResumeBuilder = () => {
                 <div className="text-gray-500">Failed to load PDF</div>
               )}
             </div>
-          )}
         </div>
       </div>
     </div>
