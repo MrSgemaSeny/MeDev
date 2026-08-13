@@ -15,7 +15,7 @@ export function SuccessPage() {
     let interval: ReturnType<typeof setInterval>;
     const checkStatus = async () => {
       try {
-        const { data } = await import('../../shared/api/axios').then(m => m.api.get('/v1/billing/status'));
+        const { data } = await import('../../shared/api/axios').then(m => m.api.get('/billing/status'));
         if (data.plan === 'PRO') {
           setPlan('PRO');
           clearInterval(interval);
