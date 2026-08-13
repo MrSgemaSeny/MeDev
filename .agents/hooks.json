@@ -1,9 +1,9 @@
 {
-  "enforce-brains-protocol": {
-    "Stop": [
+  "inject-brains-protocol": {
+    "PreInvocation": [
       {
         "type": "command",
-        "command": "powershell.exe -ExecutionPolicy Bypass -NoProfile -File scripts/check-protocol.ps1"
+        "command": "powershell.exe -ExecutionPolicy Bypass -NoProfile -File scripts/pre-invocation.ps1"
       }
     ]
   }
