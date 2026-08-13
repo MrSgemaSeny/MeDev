@@ -27,10 +27,10 @@ export const useCheckout = () => {
 export const useKaspiCheckout = () => {
   const [isPending, setIsPending] = useState(false);
 
-  const checkoutKaspi = async () => {
+  const checkoutKaspi = async (months: number = 1) => {
     setIsPending(true);
     try {
-      const response = await api.post('/billing/checkout/kaspi');
+      const response = await api.post(`/billing/checkout/kaspi?months=${months}`);
       const data = response.data;
       if (data.url) {
         window.location.href = data.url;

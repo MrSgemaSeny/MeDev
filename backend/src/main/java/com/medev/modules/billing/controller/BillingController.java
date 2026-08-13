@@ -41,9 +41,9 @@ public class BillingController {
     // --- KASPI PAY ENDPOINTS --- //
 
     @PostMapping("/checkout/kaspi")
-    public ResponseEntity<Map<String, String>> createKaspiCheckoutSession() {
+    public ResponseEntity<Map<String, String>> createKaspiCheckoutSession(@RequestParam(defaultValue = "1") int months) {
         Long userId = SecurityUtils.getCurrentUserId();
-        String checkoutUrl = kaspiPayService.createPaymentLink(userId);
+        String checkoutUrl = kaspiPayService.createPaymentLink(userId, months);
         return ResponseEntity.ok(Map.of("url", checkoutUrl));
     }
 

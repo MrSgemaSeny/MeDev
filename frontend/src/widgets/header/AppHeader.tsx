@@ -1,12 +1,10 @@
-import { Search, Bell, Globe, Rocket, Zap, Moon, Sun } from 'lucide-react';
+import { Search, Globe, Moon, Sun } from 'lucide-react';
 import { UserProfileDropdown } from './UserProfileDropdown';
-import { useUpsellStore } from '../../entities/user/model/upsellStore';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { toggleTheme } from '../../shared/lib/theme';
 
 export const AppHeader = () => {
-  const { openUpsell } = useUpsellStore();
   const { i18n } = useTranslation();
   
   const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));

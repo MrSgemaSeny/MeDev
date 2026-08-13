@@ -51,6 +51,9 @@ public class User {
     @Column(name = "google_id")
     private String googleId;
 
+    @Column(name = "subscription_expires_at")
+    private LocalDateTime subscriptionExpiresAt;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 

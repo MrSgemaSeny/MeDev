@@ -30,10 +30,8 @@ public class KaspiPayService {
 
     /**
      * Создает сессию оплаты или генерирует ссылку на оплату в Kaspi.
-     * В реальном API Kaspi (REST) мы бы отправляли POST-запрос с деталями заказа
-     * и получали URL для редиректа.
      */
-    public String createPaymentLink(Long userId) {
+    public String createPaymentLink(Long userId, int months) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
@@ -47,12 +45,16 @@ public class KaspiPayService {
         // ... (сборка payload)
         // String response = restTemplate.postForObject("https://api.kaspi.kz/v1/payments", payload, String.class);
 
+        int amountToPay = proPriceAmount * months;
+        if (months == 3) amountToPay = 40000;
+        if (months == 6) amountToPay = 75000;
+
         // Имитируем получение ссылки на оплату
         String mockTxnId = UUID.randomUUID().toString();
-        log.info("Mock Kaspi: Generated payment link for user {} with txnId {}", userId, mockTxnId);
+        log.info("Mock Kaspi: Generated payment link for user {} for {} months", userId, months);
         
-        // Возвращаем фейковый, но правдоподобный URL
-        return "https://pay.kaspi.kz/pay/" + merchantId + "?amount=" + proPriceAmount + "&orderId=" + userId + "&txn=" + mockTxnId;
+        // Передаем {userId}_{months} в orderId
+        return "https://pay.kaspi.kz/pay/" + merchantId + "?amount=" + amountToPay + "&orderId=" + userId + "_" + months + "&txn=" + mockTxnId;
     }
 
     /**
@@ -76,7 +78,10 @@ public class KaspiPayService {
         String kaspiCustomer = (String) payload.get("kaspiCustomer");
 
         if ("COMPLETED".equalsIgnoreCase(status) && orderIdStr != null) {
-            Long userId = Long.parseLong(orderIdStr);
+            String[] parts = orderIdStr.split("_");
+            Long userId = Long.parseLong(parts[0]);
+            int months = parts.length > 1 ? Integer.parseInt(parts[1]) : 1;
+
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new NotFoundException("User not found from Kaspi payload: " + userId));
 
@@ -84,8 +89,16 @@ public class KaspiPayService {
             if (kaspiCustomer != null) {
                 user.setKaspiCustomerId(kaspiCustomer);
             }
+            
+            java.time.LocalDateTime now = java.time.LocalDateTime.now();
+            if (user.getSubscriptionExpiresAt() != null && user.getSubscriptionExpiresAt().isAfter(now)) {
+                user.setSubscriptionExpiresAt(user.getSubscriptionExpiresAt().plusMonths(months));
+            } else {
+                user.setSubscriptionExpiresAt(now.plusMonths(months));
+            }
+            
             userRepository.save(user);
-            log.info("Successfully upgraded user {} to PRO via Kaspi Pay", userId);
+            log.info("Successfully upgraded user {} to PRO for {} months via Kaspi Pay", userId, months);
         } else if ("FAILED".equalsIgnoreCase(status) || "REFUNDED".equalsIgnoreCase(status)) {
             // Если оплата отменена или возврат
             if (kaspiCustomer != null) {
