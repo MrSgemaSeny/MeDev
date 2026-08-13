@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>GitHub Style Resume</title>
+    <style>
+        @page { size: A4; margin: 15mm; }
+        body { font-family: Consolas, 'Courier New', monospace; background-color: #0d1117; color: #c9d1d9; margin: 0; font-size: 11px; line-height: 1.5; }
+        .header { border-bottom: 1px solid #30363d; padding-bottom: 15px; margin-bottom: 20px; }
+        h1 { color: #c9d1d9; font-size: 32px; margin: 0 0 8px 0; font-weight: bold; letter-spacing: -1px; }
+        .contact { color: #8b949e; font-size: 10px; margin-bottom: 15px; }
+        .contact span { margin-right: 15px; display: inline-block; }
+        a { color: #58a6ff; text-decoration: none; }
+        h2 { color: #238636; font-size: 16px; border-bottom: 1px solid #30363d; padding-bottom: 5px; margin-top: 25px; margin-bottom: 15px; text-transform: uppercase; font-weight: normal; }
+        .layout { width: 100%; border-collapse: collapse; margin-bottom: 3px; }
+        .layout td { vertical-align: top; padding: 0; }
+        .left { text-align: left; font-weight: bold; font-size: 13px; color: #c9d1d9; }
+        .right { text-align: right; font-size: 11px; color: #8b949e; }
+        .item { margin-bottom: 15px; }
+        .item-subheader { color: #8b949e; font-style: italic; font-size: 12px; margin-bottom: 5px; }
+        .item-desc { margin-top: 5px; font-size: 11px; color: #c9d1d9; }
+        .tech-tag { display: inline-block; border: 1px solid #30363d; border-radius: 4px; padding: 2px 6px; margin-right: 5px; margin-top: 5px; font-size: 9px; color: #8b949e; background-color: #161b22; }
+        .skills-table { width: 100%; border-collapse: collapse; }
+        .skills-table td { padding: 4px 0; vertical-align: top; border-bottom: 1px dashed #30363d; }
+        .cat-col { width: 30%; color: #c9d1d9; font-weight: bold; }
+        .det-col { width: 70%; color: #8b949e; }
+        .footer { margin-top: 30px; font-size: 9px; color: #484f58; text-align: center; border-top: 1px solid #30363d; padding-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 th:text="${profile.fullName}">Name</h1>
+        <div class="contact">
+            <span th:if="${profile.location}">📍 <span th:text="${profile.location}"></span></span>
+            <span th:if="${profile.website}">🔗 <a th:href="${profile.website}" th:text="${profile.website}"></a></span>
+            <span th:if="${profile.githubUsername}">🐙 github.com/<span th:text="${profile.githubUsername}"></span></span>
+            <span th:if="${profile.linkedin}">💼 <span th:text="${profile.linkedin}"></span></span>
+            <span th:if="${profile.telegram}">✉️ <span th:text="${profile.telegram}"></span></span>
+        </div>
+    </div>
+
+    <div th:each="sectionName : ${profile.sectionOrder != null and !profile.sectionOrder.isEmpty() ? profile.sectionOrder : {'summary','experience','education','skills','languages','projects'}}">
+        <div th:switch="${sectionName}">
+            
+            <div th:case="'summary'" th:if="${profile.summary != null and !profile.summary.isEmpty()}">
+                <h2>README.md</h2>
+                <div class="item-desc" th:text="${profile.summary}"></div>
+            </div>
+
+            <div th:case="'experience'" th:if="${profile.experience != null and !profile.experience.isEmpty()}">
+                <h2>Experience</h2>
+                <div class="item" th:each="exp : ${profile.experience}">
+                    <table class="layout">
+                        <tr>
+                            <td class="left" th:text="${exp.position}">Position</td>
+                            <td class="right" th:text="${exp.startDate + ' - ' + (exp.isCurrent ? 'Present' : exp.endDate)}">Date</td>
+                        </tr>
+                    </table>
+                    <div class="item-subheader" th:text="${exp.company}">Company</div>
+                    <div class="item-desc" th:text="${exp.description}">Description</div>
+                    <div th:if="${exp.techStack != null and !exp.techStack.isEmpty()}">
+                        <span class="tech-tag" th:text="${exp.techStack}"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div th:case="'education'" th:if="${profile.education != null and !profile.education.isEmpty()}">
+                <h2>Education</h2>
+                <div class="item" th:each="edu : ${profile.education}">
+                    <table class="layout">
+                        <tr>
+                            <td class="left" th:text="${edu.institution}">Institution</td>
+                            <td class="right" th:text="${edu.startDate + ' - ' + (edu.isCurrent ? 'Present' : edu.endDate)}">Date</td>
+                        </tr>
+                    </table>
+                    <div class="item-subheader" th:text="${edu.degree} + (edu.field != null ? ' in ' + edu.field : '')">Degree</div>
+                </div>
+            </div>
+
+            <div th:case="'skills'" th:if="${profile.skills != null and !profile.skills.isEmpty()}">
+                <h2>Tech Stack</h2>
+                <table class="skills-table">
+                    <tr th:each="skill : ${profile.skills}">
+                        <td class="cat-col" th:text="${skill.category != null ? skill.category : 'Core'}"></td>
+                        <td class="det-col">
+                            <span class="tech-tag" th:text="${skill.name}"></span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div th:case="'languages'" th:if="${profile.languages != null and !profile.languages.isEmpty()}">
+                <h2>Languages</h2>
+                <table class="skills-table">
+                    <tr th:each="lang : ${profile.languages}">
+                        <td class="cat-col" th:text="${lang.name}"></td>
+                        <td class="det-col" th:text="${lang.level != null ? lang.level : ''}"></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div th:case="'projects'" th:if="${profile.projects != null and !profile.projects.isEmpty()}">
+                <h2>Repositories</h2>
+                <div class="item" th:each="proj : ${profile.projects}" th:if="${proj.isVisible}">
+                    <table class="layout">
+                        <tr>
+                            <td class="left" style="color:#58a6ff;">🗂️ <span th:text="${proj.name}">Project Name</span></td>
+                            <td class="right">
+                                <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}">[GitHub]</a>
+                                <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}">[Live]</a>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="item-desc" th:text="${proj.description}">Description</div>
+                    <div th:if="${proj.techStack != null and !proj.techStack.isEmpty()}">
+                        <span class="tech-tag" th:text="${proj.techStack}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        Generated by MeDev Platform on <span th:text="${generatedAt}"></span> | GitHub Style
+    </div>
+</body>
+</html>
