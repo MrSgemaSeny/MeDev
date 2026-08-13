@@ -2,53 +2,56 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Groq Monolith Style Resume</title>
+    <title>Grok Monolith Style Resume</title>
     <style>
         @page { size: A4; margin: 15mm; }
-        body { font-family: 'Courier New', Courier, monospace; background-color: #000000; color: #FFFFFF; margin: 0; font-size: 11px; line-height: 1.4; border: 1px solid #333333; padding: 20px; }
-        .header { border-bottom: 2px solid #F87171; padding-bottom: 15px; margin-bottom: 20px; }
-        h1 { color: #FFFFFF; font-size: 34px; margin: 0 0 10px 0; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
-        .contact { color: #A1A1AA; font-size: 10px; margin-bottom: 15px; }
+        body { font-family: 'Courier New', Courier, monospace; background-color: #000000; color: #FFFFFF; margin: 0; font-size: 10px; line-height: 1.4; border: 2px solid #FFFFFF; padding: 15px; text-transform: uppercase; }
+        .header { border-bottom: 2px solid #FFFFFF; padding-bottom: 15px; margin-bottom: 20px; }
+        h1 { color: #FFFFFF; font-size: 32px; margin: 0 0 5px 0; font-weight: bold; letter-spacing: 3px; }
+        .contact { color: #A1A1AA; font-size: 10px; }
         .contact span { margin-right: 15px; display: inline-block; }
-        a { color: #F87171; text-decoration: none; }
-        h2 { color: #F87171; font-size: 14px; border-bottom: 1px solid #333333; padding-bottom: 5px; margin-top: 25px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; }
-        .layout { width: 100%; border-collapse: collapse; margin-bottom: 3px; }
+        a { color: #FFFFFF; text-decoration: underline; }
+        .section-box { border: 1px solid #FFFFFF; margin-bottom: 15px; padding: 10px; }
+        h2 { color: #000000; background-color: #FFFFFF; font-size: 12px; margin: -10px -10px 10px -10px; padding: 5px 10px; display: block; letter-spacing: 2px; }
+        .layout { width: 100%; border-collapse: collapse; margin-bottom: 5px; }
         .layout td { vertical-align: top; padding: 0; }
-        .left { text-align: left; font-weight: bold; font-size: 12px; color: #FFFFFF; }
-        .right { text-align: right; font-size: 10px; color: #A1A1AA; text-transform: uppercase; }
-        .item { margin-bottom: 20px; border-left: 1px solid #333333; padding-left: 10px; }
-        .item-subheader { color: #A1A1AA; font-size: 11px; margin-bottom: 5px; text-transform: uppercase; }
-        .item-desc { font-size: 11px; color: #FFFFFF; }
-        .tech-tag { display: inline-block; border: 1px solid #F87171; padding: 2px 6px; margin-right: 5px; margin-top: 5px; font-size: 9px; color: #F87171; text-transform: uppercase; }
-        .skills-table { width: 100%; border-collapse: collapse; border-top: 1px solid #333333; }
+        .left { text-align: left; font-weight: bold; font-size: 11px; color: #FFFFFF; }
+        .right { text-align: right; font-size: 10px; color: #A1A1AA; }
+        .item { margin-bottom: 15px; border-bottom: 1px dashed #555555; padding-bottom: 10px; }
+        .item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .item-subheader { color: #A1A1AA; font-size: 10px; margin-bottom: 5px; }
+        .item-desc { font-size: 10px; color: #CCCCCC; text-transform: none; }
+        .tech-tag { display: inline-block; border: 1px solid #FFFFFF; padding: 2px 6px; margin-right: 4px; margin-top: 4px; font-size: 9px; color: #FFFFFF; }
+        .skills-table { width: 100%; border-collapse: collapse; }
         .skills-table td { padding: 8px 0; vertical-align: top; border-bottom: 1px solid #333333; }
-        .cat-col { width: 30%; color: #FFFFFF; font-weight: bold; text-transform: uppercase; font-size: 10px; }
-        .det-col { width: 70%; color: #A1A1AA; }
-        .footer { margin-top: 30px; font-size: 9px; color: #333333; text-align: right; font-weight: bold; }
+        .skills-table tr:last-child td { border-bottom: none; }
+        .cat-col { width: 25%; color: #FFFFFF; font-weight: bold; font-size: 10px; border-right: 1px solid #333333; padding-right: 10px; }
+        .det-col { width: 75%; padding-left: 10px; }
+        .footer { margin-top: 20px; font-size: 9px; color: #555555; text-align: right; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="header">
         <h1 th:text="${profile.fullName}">Name</h1>
         <div class="contact">
-            <span th:if="${profile.location}">[LOC] <span th:text="${profile.location}"></span></span>
-            <span th:if="${profile.website}">[WEB] <a th:href="${profile.website}" th:text="${profile.website}"></a></span>
-            <span th:if="${profile.githubUsername}">[GIT] <span th:text="${profile.githubUsername}"></span></span>
-            <span th:if="${profile.linkedin}">[IN] <span th:text="${profile.linkedin}"></span></span>
-            <span th:if="${profile.telegram}">[TG] <span th:text="${profile.telegram}"></span></span>
+            <span th:if="${profile.location}">LOC: <span th:text="${profile.location}"></span></span>
+            <span th:if="${profile.website}">WEB: <a th:href="${profile.website}" th:text="${profile.website}"></a></span>
+            <span th:if="${profile.githubUsername}">GIT: <span th:text="${profile.githubUsername}"></span></span>
+            <span th:if="${profile.linkedin}">LKD: <span th:text="${profile.linkedin}"></span></span>
+            <span th:if="${profile.telegram}">TLG: <span th:text="${profile.telegram}"></span></span>
         </div>
     </div>
 
     <div th:each="sectionName : ${profile.sectionOrder != null and !profile.sectionOrder.isEmpty() ? profile.sectionOrder : {'summary','experience','education','skills','languages','projects'}}">
         <div th:switch="${sectionName}">
             
-            <div th:case="'summary'" th:if="${profile.summary != null and !profile.summary.isEmpty()}">
-                <h2>// SYS.INIT</h2>
+            <div class="section-box" th:case="'summary'" th:if="${profile.summary != null and !profile.summary.isEmpty()}">
+                <h2>> SYS.INIT / SUMMARY</h2>
                 <div class="item-desc" th:text="${profile.summary}"></div>
             </div>
 
-            <div th:case="'experience'" th:if="${profile.experience != null and !profile.experience.isEmpty()}">
-                <h2>// EXPERIENCE</h2>
+            <div class="section-box" th:case="'experience'" th:if="${profile.experience != null and !profile.experience.isEmpty()}">
+                <h2>> PROC.EXEC / EXPERIENCE</h2>
                 <div class="item" th:each="exp : ${profile.experience}">
                     <table class="layout">
                         <tr>
@@ -64,8 +67,8 @@
                 </div>
             </div>
 
-            <div th:case="'education'" th:if="${profile.education != null and !profile.education.isEmpty()}">
-                <h2>// EDUCATION</h2>
+            <div class="section-box" th:case="'education'" th:if="${profile.education != null and !profile.education.isEmpty()}">
+                <h2>> DATA.LOAD / EDUCATION</h2>
                 <div class="item" th:each="edu : ${profile.education}">
                     <table class="layout">
                         <tr>
@@ -77,8 +80,8 @@
                 </div>
             </div>
 
-            <div th:case="'skills'" th:if="${groupedSkills != null and !groupedSkills.isEmpty()}">
-                <h2>// TECH_STACK</h2>
+            <div class="section-box" th:case="'skills'" th:if="${groupedSkills != null and !groupedSkills.isEmpty()}">
+                <h2>> MOD.LOAD / TECH_STACK</h2>
                 <table class="skills-table">
                     <tr th:each="entry : ${groupedSkills}">
                         <td class="cat-col" th:text="${entry.key}"></td>
@@ -89,25 +92,25 @@
                 </table>
             </div>
 
-            <div th:case="'languages'" th:if="${languagesStr != null and !languagesStr.isEmpty()}">
-                <h2>// LANGUAGES</h2>
+            <div class="section-box" th:case="'languages'" th:if="${languagesStr != null and !languagesStr.isEmpty()}">
+                <h2>> LANG.CFG / LANGUAGES</h2>
                 <table class="skills-table">
                     <tr>
                         <td class="cat-col">LANGUAGES</td>
-                        <td class="det-col" style="color: #F87171;" th:text="${languagesStr}"></td>
+                        <td class="det-col" style="color: #FFFFFF;" th:text="${languagesStr}"></td>
                     </tr>
                 </table>
             </div>
 
-            <div th:case="'projects'" th:if="${profile.projects != null and !profile.projects.isEmpty()}">
-                <h2>// PROJECTS</h2>
+            <div class="section-box" th:case="'projects'" th:if="${profile.projects != null and !profile.projects.isEmpty()}">
+                <h2>> BIN.EXEC / PROJECTS</h2>
                 <div class="item" th:each="proj : ${profile.projects}" th:if="${proj.isVisible}">
                     <table class="layout">
                         <tr>
                             <td class="left" th:text="${proj.name}">Project Name</td>
                             <td class="right">
                                 <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}">[SRC]</a>
-                                <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}">[LIVE]</a>
+                                <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}">[LIV]</a>
                             </td>
                         </tr>
                     </table>
@@ -121,7 +124,7 @@
     </div>
     
     <div class="footer">
-        [MEDEV_GEN_V1]
+        EOF
     </div>
 </body>
 </html>

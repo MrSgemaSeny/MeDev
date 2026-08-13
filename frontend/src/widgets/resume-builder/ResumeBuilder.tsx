@@ -8,7 +8,7 @@ const TEMPLATES = [
   { id: 'github', name: 'GitHub', desc: 'Dev Standard', accent: '#238636' },
   { id: 'milky-soft', name: 'Milky Soft', desc: 'Warm Indie', accent: '#d4b7a1' },
   { id: 'apple-modern', name: 'Apple', desc: 'Minimalist', accent: '#0071e3' },
-  { id: 'groq-monolith', name: 'Groq', desc: 'Brutalist', accent: '#f55036' },
+  { id: 'grok-monolith', name: 'Grok', desc: 'Brutalist', accent: '#ffffff' },
   { id: 'phub-orange', name: 'PH Orange', desc: 'High Contrast', accent: '#ff9900' }
 ];
 

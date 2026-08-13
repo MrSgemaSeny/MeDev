@@ -2,37 +2,39 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Orange Black Style Resume</title>
+    <title>PH Orange Style Resume</title>
     <style>
-        @page { size: A4; margin: 0; padding: 0; }
-        body { font-family: Arial, sans-serif; background-color: #FFFFFF; color: #111111; margin: 0; padding: 0; font-size: 11px; line-height: 1.5; }
-        .hero { background-color: #000000; padding: 40px; border-bottom: 5px solid #FFA31A; }
-        .logo-wrap { font-size: 36px; font-weight: bold; font-family: 'Arial Black', Impact, sans-serif; letter-spacing: -1px; margin-bottom: 10px; }
+        @page { size: A4; margin: 15mm; }
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #000000; color: #FFFFFF; margin: 0; padding: 0; font-size: 12px; line-height: 1.5; }
+        .hero { background-color: #000000; text-align: center; margin-bottom: 30px; }
+        .logo-wrap { display: inline-block; font-family: 'Arial Black', Impact, sans-serif; font-size: 42px; text-transform: lowercase; letter-spacing: -2px; margin-bottom: 10px; }
         .logo-w1 { color: #FFFFFF; }
-        .logo-w2 { background-color: #FFA31A; color: #000000; padding: 0 8px; border-radius: 4px; display: inline-block; }
-        .contact { color: #AAAAAA; font-size: 11px; font-weight: bold; }
-        .contact span { margin-right: 15px; }
+        .logo-w2 { background-color: #FFA31A; color: #000000; padding: 0 10px; border-radius: 6px; margin-left: 5px; }
+        
+        .contact { color: #AAAAAA; font-size: 12px; font-weight: bold; }
+        .contact span { margin: 0 12px; }
         a { color: #FFA31A; text-decoration: none; }
         
-        .content { padding: 30px 40px; }
-        h2 { color: #000000; font-size: 16px; border-bottom: 2px solid #000000; padding-bottom: 5px; margin-top: 25px; margin-bottom: 15px; text-transform: uppercase; font-family: 'Arial Black', Impact, sans-serif; }
+        .section-header { background-color: #FFA31A; color: #000000; font-family: 'Arial Black', Impact, sans-serif; font-size: 16px; text-transform: uppercase; padding: 6px 12px; margin-bottom: 20px; display: inline-block; letter-spacing: 1px; border-radius: 4px; }
+        .section-wrap { margin-bottom: 30px; }
         
-        .layout { width: 100%; border-collapse: collapse; margin-bottom: 3px; }
+        .layout { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
         .layout td { vertical-align: top; padding: 0; }
-        .left { text-align: left; font-weight: bold; font-size: 14px; color: #000000; }
-        .right { text-align: right; font-size: 11px; color: #666666; font-weight: bold; }
-        .item { margin-bottom: 20px; }
-        .item-subheader { color: #FFA31A; font-weight: bold; font-size: 12px; margin-bottom: 5px; }
-        .item-desc { font-size: 11px; color: #222222; }
-        .tech-stack { color: #000000; font-size: 10px; font-weight: bold; margin-top: 5px; padding-left: 10px; border-left: 3px solid #FFA31A; }
+        .left { width: 75%; }
+        .right { width: 25%; text-align: right; color: #FFA31A; font-weight: bold; font-size: 11px; }
+        
+        .item-title { font-size: 16px; font-weight: bold; color: #FFFFFF; margin-bottom: 2px; }
+        .item-subtitle { font-size: 12px; color: #AAAAAA; font-weight: bold; margin-bottom: 8px; }
+        .item-desc { font-size: 12px; color: #DDDDDD; }
+        .tech-tag { display: inline-block; border: 1px solid #FFA31A; color: #FFA31A; font-weight: bold; padding: 3px 8px; margin-right: 5px; margin-top: 8px; font-size: 10px; border-radius: 3px; }
         
         .skills-table { width: 100%; border-collapse: collapse; }
-        .skills-table td { padding: 6px 0; vertical-align: top; border-bottom: 1px solid #EEEEEE; }
-        .cat-col { width: 30%; color: #000000; font-weight: bold; text-transform: uppercase; font-size: 11px; }
-        .det-col { width: 70%; color: #444444; }
-        .tag { display: inline-block; background-color: #EEEEEE; color: #000; padding: 2px 6px; font-weight: bold; font-size: 9px; margin-right: 4px; margin-bottom: 4px; }
+        .skills-table td { padding: 10px 0; border-bottom: 1px solid #222222; }
+        .skills-table tr:last-child td { border-bottom: none; }
+        .cat-col { width: 30%; color: #FFA31A; font-weight: bold; font-size: 12px; text-transform: uppercase; font-family: 'Arial Black', Impact, sans-serif; }
+        .det-col { width: 70%; }
         
-        .footer { margin-top: 30px; font-size: 9px; color: #AAAAAA; text-align: center; font-weight: bold; text-transform: uppercase; }
+        .tag { display: inline-block; background-color: #222222; color: #FFFFFF; font-weight: bold; padding: 4px 10px; margin-right: 5px; margin-bottom: 5px; font-size: 11px; border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -49,86 +51,90 @@
         </div>
     </div>
 
-    <div class="content">
-        <div th:each="sectionName : ${profile.sectionOrder != null and !profile.sectionOrder.isEmpty() ? profile.sectionOrder : {'summary','experience','education','skills','languages','projects'}}">
-            <div th:switch="${sectionName}">
-                
-                <div th:case="'summary'" th:if="${profile.summary != null and !profile.summary.isEmpty()}">
-                    <h2>Profile</h2>
-                    <div class="item-desc" th:text="${profile.summary}" style="font-size: 13px; font-weight: bold;"></div>
-                </div>
+    <div th:each="sectionName : ${profile.sectionOrder != null and !profile.sectionOrder.isEmpty() ? profile.sectionOrder : {'summary','experience','education','skills','languages','projects'}}">
+        <div th:switch="${sectionName}" class="section-wrap">
+            
+            <div th:case="'summary'" th:if="${profile.summary != null and !profile.summary.isEmpty()}">
+                <div class="section-header">Summary</div>
+                <div class="item-desc" th:text="${profile.summary}" style="font-size: 14px; font-weight: bold;"></div>
+            </div>
 
-                <div th:case="'experience'" th:if="${profile.experience != null and !profile.experience.isEmpty()}">
-                    <h2>Experience</h2>
-                    <div class="item" th:each="exp : ${profile.experience}">
-                        <table class="layout">
-                            <tr>
-                                <td class="left" th:text="${exp.position}">Position</td>
-                                <td class="right" th:text="${exp.startDate + ' - ' + (exp.isCurrent ? 'Present' : exp.endDate)}">Date</td>
-                            </tr>
-                        </table>
-                        <div class="item-subheader" th:text="${exp.company}">Company</div>
-                        <div class="item-desc" th:text="${exp.description}">Description</div>
-                        <div class="tech-stack" th:if="${exp.techStack != null and !exp.techStack.isEmpty()}" th:text="${exp.techStack}"></div>
-                    </div>
-                </div>
-
-                <div th:case="'education'" th:if="${profile.education != null and !profile.education.isEmpty()}">
-                    <h2>Education</h2>
-                    <div class="item" th:each="edu : ${profile.education}">
-                        <table class="layout">
-                            <tr>
-                                <td class="left" th:text="${edu.institution}">Institution</td>
-                                <td class="right" th:text="${edu.startDate + ' - ' + (edu.isCurrent ? 'Present' : edu.endDate)}">Date</td>
-                            </tr>
-                        </table>
-                        <div class="item-subheader" th:text="${edu.degree} + (edu.field != null ? ' in ' + edu.field : '')">Degree</div>
-                    </div>
-                </div>
-
-                <div th:case="'skills'" th:if="${groupedSkills != null and !groupedSkills.isEmpty()}">
-                    <h2>Skills</h2>
-                    <table class="skills-table">
-                        <tr th:each="entry : ${groupedSkills}">
-                            <td class="cat-col" th:text="${entry.key}"></td>
-                            <td class="det-col">
-                                <span class="tag" th:each="skillName : ${entry.value}" th:text="${skillName}"></span>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-
-                <div th:case="'languages'" th:if="${languagesStr != null and !languagesStr.isEmpty()}">
-                    <h2>Languages</h2>
-                    <table class="skills-table">
+            <div th:case="'experience'" th:if="${profile.experience != null and !profile.experience.isEmpty()}">
+                <div class="section-header">Experience</div>
+                <div th:each="exp : ${profile.experience}" style="margin-bottom: 20px;">
+                    <table class="layout">
                         <tr>
-                            <td class="cat-col">Languages</td>
-                            <td class="det-col" style="font-weight: bold; color:#FFA31A;" th:text="${languagesStr}"></td>
+                            <td class="left">
+                                <div class="item-title" th:text="${exp.position}">Position</div>
+                                <div class="item-subtitle" th:text="${exp.company}">Company</div>
+                            </td>
+                            <td class="right" th:text="${exp.startDate + ' - ' + (exp.isCurrent ? 'Present' : exp.endDate)}">Date</td>
                         </tr>
                     </table>
-                </div>
-
-                <div th:case="'projects'" th:if="${profile.projects != null and !profile.projects.isEmpty()}">
-                    <h2>Projects</h2>
-                    <div class="item" th:each="proj : ${profile.projects}" th:if="${proj.isVisible}">
-                        <table class="layout">
-                            <tr>
-                                <td class="left" th:text="${proj.name}">Project Name</td>
-                                <td class="right">
-                                    <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}">[HUB]</a>
-                                    <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}">[LIVE]</a>
-                                </td>
-                            </tr>
-                        </table>
-                        <div class="item-desc" th:text="${proj.description}">Description</div>
-                        <div class="tech-stack" th:if="${proj.techStack != null and !proj.techStack.isEmpty()}" th:text="${proj.techStack}"></div>
+                    <div class="item-desc" th:text="${exp.description}">Description</div>
+                    <div th:if="${exp.techStack != null and !exp.techStack.isEmpty()}">
+                        <span class="tech-tag" th:text="${exp.techStack}"></span>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="footer">
-            POWERED BY MEDEV
+
+            <div th:case="'education'" th:if="${profile.education != null and !profile.education.isEmpty()}">
+                <div class="section-header">Education</div>
+                <div th:each="edu : ${profile.education}" style="margin-bottom: 20px;">
+                    <table class="layout">
+                        <tr>
+                            <td class="left">
+                                <div class="item-title" th:text="${edu.institution}">Institution</div>
+                                <div class="item-subtitle" th:text="${edu.degree} + (edu.field != null ? ' in ' + edu.field : '')">Degree</div>
+                            </td>
+                            <td class="right" th:text="${edu.startDate + ' - ' + (edu.isCurrent ? 'Present' : edu.endDate)}">Date</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div th:case="'skills'" th:if="${groupedSkills != null and !groupedSkills.isEmpty()}">
+                <div class="section-header">Skills</div>
+                <table class="skills-table">
+                    <tr th:each="entry : ${groupedSkills}">
+                        <td class="cat-col" th:text="${entry.key}"></td>
+                        <td class="det-col">
+                            <span class="tag" th:each="skillName : ${entry.value}" th:text="${skillName}"></span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div th:case="'languages'" th:if="${languagesStr != null and !languagesStr.isEmpty()}">
+                <div class="section-header">Languages</div>
+                <table class="skills-table">
+                    <tr>
+                        <td class="cat-col">Spoken</td>
+                        <td class="det-col" style="font-weight: bold; font-size: 14px; color:#FFA31A;" th:text="${languagesStr}"></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div th:case="'projects'" th:if="${profile.projects != null and !profile.projects.isEmpty()}">
+                <div class="section-header">Projects</div>
+                <div th:each="proj : ${profile.projects}" th:if="${proj.isVisible}" style="margin-bottom: 20px;">
+                    <table class="layout">
+                        <tr>
+                            <td class="left">
+                                <div class="item-title" th:text="${proj.name}">Project Name</div>
+                            </td>
+                            <td class="right">
+                                <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}">[HUB]</a>
+                                <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}">[LIVE]</a>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="item-desc" th:text="${proj.description}">Description</div>
+                    <div th:if="${proj.techStack != null and !proj.techStack.isEmpty()}">
+                        <span class="tech-tag" th:text="${proj.techStack}"></span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>
