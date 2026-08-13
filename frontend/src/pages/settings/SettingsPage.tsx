@@ -40,11 +40,15 @@ export const SettingsPage = () => {
                 <div className="text-sm text-secondary capitalize">{plan || 'Free'} Plan</div>
               </div>
             </div>
-
-            <div className="pt-4 border-t border-default flex justify-start">
+            
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-[var(--color-border-default)] pt-4 mt-2">
+              <div>
+                <div className="text-sm font-medium text-primary mb-1">Session</div>
+                <div className="text-sm text-secondary">Sign out of your account on this device</div>
+              </div>
               <button
                 onClick={logout}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:surface-tertiary text-secondary hover:text-primary"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-[var(--color-bg-secondary)] border border-[var(--color-border-default)] text-secondary hover:text-primary hover:bg-[var(--color-bg-tertiary)]"
               >
                 <LogOut size={16} />
                 {t('settings.logout', 'Sign Out')}

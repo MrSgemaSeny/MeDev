@@ -54,5 +54,20 @@
     "submit": "Submit",
     "noAccount": "Don't have an account?",
     "hasAccount": "Already have an account?"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your account settings and application preferences.",
+    "account": "Account",
+    "logout": "Sign Out",
+    "preferences": "Preferences",
+    "language": "Language",
+    "languageDesc": "Choose your preferred language",
+    "theme": "Theme",
+    "themeDesc": "Application color theme",
+    "dangerZone": "Danger Zone",
+    "deleteAccount": "Delete Account",
+    "deleteAccountDesc": "Permanently delete your account and all associated data. This action cannot be undone.",
+    "deleteBtn": "Delete Account"
   }
 }
