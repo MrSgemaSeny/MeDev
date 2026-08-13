@@ -31,12 +31,24 @@ public class StripeService {
     @Value("${app.frontend-url:http://localhost:5173}")
     private String frontendUrl;
 
+    @Value("${stripe.api-key}")
+    private String stripeApiKey;
+
     public String createCheckoutSession(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
         if (user.getPlan() == User.Plan.PRO) {
             throw new IllegalStateException("User is already on PRO plan");
+        }
+
+        // MOCK MODE FOR LOCAL DEVELOPMENT
+        if (stripeApiKey == null || stripeApiKey.contains("12345")) {
+            log.info("Using MOCK Stripe Checkout for userId: {}", userId);
+            user.setPlan(User.Plan.PRO);
+            user.setStripeCustomerId("cus_mock_" + userId);
+            userRepository.save(user);
+            return frontendUrl + "/billing/success?session_id=cs_test_mock_" + userId;
         }
 
         try {
