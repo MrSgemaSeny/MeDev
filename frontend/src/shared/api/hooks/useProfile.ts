@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { api } from '../axios';
 import type { ProfileDto } from '../../../entities/profile/model/types';
 
@@ -91,7 +92,23 @@ const createCrudHooks = <T,>(sectionName: string) => {
           const { data } = await api.post(`/profile/${sectionName}`, payload);
           return data;
         },
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['profile'] }),
+        onMutate: async (payload) => {
+          await queryClient.cancelQueries({ queryKey: ['profile'] });
+          const previousProfile = queryClient.getQueryData(['profile']);
+          queryClient.setQueryData(['profile'], (old: any) => {
+            if (!old) return old;
+            return { ...old, [sectionName]: [...(old[sectionName] || []), { id: Date.now(), ...payload }] };
+          });
+          return { previousProfile };
+        },
+        onError: (_error: any, _, context) => {
+          queryClient.setQueryData(['profile'], context?.previousProfile);
+          toast.error('Failed to add item');
+        },
+        onSuccess: () => {
+          toast.success('Added successfully');
+        },
+        onSettled: () => queryClient.invalidateQueries({ queryKey: ['profile'] }),
       });
     },
     useUpdate: () => {
@@ -101,7 +118,26 @@ const createCrudHooks = <T,>(sectionName: string) => {
           const { data } = await api.put(`/profile/${sectionName}/${id}`, payload);
           return data;
         },
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['profile'] }),
+        onMutate: async ({ id, payload }) => {
+          await queryClient.cancelQueries({ queryKey: ['profile'] });
+          const previousProfile = queryClient.getQueryData(['profile']);
+          queryClient.setQueryData(['profile'], (old: any) => {
+            if (!old) return old;
+            return {
+              ...old,
+              [sectionName]: (old[sectionName] || []).map((item: any) => item.id === id ? { ...item, ...payload } : item)
+            };
+          });
+          return { previousProfile };
+        },
+        onError: (_error: any, _, context) => {
+          queryClient.setQueryData(['profile'], context?.previousProfile);
+          toast.error('Failed to update item');
+        },
+        onSuccess: () => {
+          toast.success('Updated successfully');
+        },
+        onSettled: () => queryClient.invalidateQueries({ queryKey: ['profile'] }),
       });
     },
     useDelete: () => {
@@ -110,7 +146,23 @@ const createCrudHooks = <T,>(sectionName: string) => {
         mutationFn: async (id: number) => {
           await api.delete(`/profile/${sectionName}/${id}`);
         },
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['profile'] }),
+        onMutate: async (id) => {
+          await queryClient.cancelQueries({ queryKey: ['profile'] });
+          const previousProfile = queryClient.getQueryData(['profile']);
+          queryClient.setQueryData(['profile'], (old: any) => {
+            if (!old) return old;
+            return { ...old, [sectionName]: (old[sectionName] || []).filter((item: any) => item.id !== id) };
+          });
+          return { previousProfile };
+        },
+        onError: (error: any, _, context) => {
+          queryClient.setQueryData(['profile'], context?.previousProfile);
+          toast.error(error.response?.data?.message || `Failed to reorder ${sectionName}`);
+        },
+        onSuccess: () => {
+          toast.success('Deleted successfully');
+        },
+        onSettled: () => queryClient.invalidateQueries({ queryKey: ['profile'] }),
       });
     },
   };

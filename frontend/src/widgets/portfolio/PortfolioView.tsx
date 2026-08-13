@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { api } from '../../shared/api/axios';
 import type { ProfileDto } from '../../entities/profile/model/types';
 import { Card } from '../../shared/ui/Form';
@@ -30,8 +31,36 @@ export const PortfolioView = () => {
     );
   }
 
+  const structuredData = profile ? {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": profile.fullName || username,
+    "jobTitle": profile.headline,
+    "url": `https://medev.app/${username}`,
+    "sameAs": [
+      profile.githubUsername ? `https://github.com/${profile.githubUsername}` : null,
+      profile.linkedin,
+      profile.website
+    ].filter(Boolean)
+  } : null;
+
   return (
-    <div className="max-w-4xl mx-auto py-10 px-6" style={{ color: 'var(--color-text-primary)' }}>
+    <>
+      <Helmet>
+        <title>{profile.fullName || username} | Portfolio</title>
+        <meta name="description" content={profile.summary || profile.headline || 'Developer Portfolio'} />
+        <meta property="og:title" content={`${profile.fullName || username} | Portfolio`} />
+        <meta property="og:description" content={profile.summary || profile.headline || 'Developer Portfolio'} />
+        <meta property="og:type" content="profile" />
+        <meta property="og:url" content={`https://medev.app/${username}`} />
+        {profile.avatarUrl && <meta property="og:image" content={profile.avatarUrl} />}
+        {structuredData && (
+          <script type="application/ld+json">
+            {JSON.stringify(structuredData)}
+          </script>
+        )}
+      </Helmet>
+      <div className="max-w-4xl mx-auto py-10 px-6" style={{ color: 'var(--color-text-primary)' }}>
       <header className="mb-10 flex flex-col md:flex-row items-center md:items-start gap-6">
         <div
           className="w-24 h-24 rounded-full flex-shrink-0 flex items-center justify-center text-3xl font-semibold"
@@ -130,6 +159,20 @@ export const PortfolioView = () => {
           )}
         </div>
       </div>
+      
+      {profile.githubUsername && (
+        <div className="mt-12">
+          <h2 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-text-primary)' }}>GitHub Activity</h2>
+          <Card className="p-4 overflow-x-auto">
+            <img 
+              src={`https://ghchart.rshah.org/238636/${profile.githubUsername}`} 
+              alt={`${profile.githubUsername}'s GitHub chart`} 
+              className="w-full min-w-[600px] select-none pointer-events-none"
+            />
+          </Card>
+        </div>
+      )}
     </div>
+    </>
   );
 };

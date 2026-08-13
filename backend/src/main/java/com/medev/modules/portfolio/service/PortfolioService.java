@@ -15,6 +15,7 @@ public class PortfolioService {
 
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
+    private final com.medev.modules.portfolio.dto.PortfolioMapper portfolioMapper;
 
     public PublicProfileDto getPublicProfile(String username) {
         User user = userRepository.findByUsername(username.toLowerCase())
@@ -27,6 +28,6 @@ public class PortfolioService {
             throw new NotFoundException("Profile not found");
         }
 
-        return PublicProfileDto.fromProfile(profile, user);
+        return portfolioMapper.toDto(profile, user);
     }
 }

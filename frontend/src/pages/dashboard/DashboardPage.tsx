@@ -124,6 +124,28 @@ export const DashboardPage = () => {
               <h3 className="font-bold mb-1.5 text-primary">Billing & Quota</h3>
               <p className="text-sm text-secondary leading-relaxed">Upgrade to Pro for unlimited AI generation and features.</p>
             </Link>
+
+            <button
+              onClick={async () => {
+                try {
+                  const { api } = await import('../../shared/api/axios');
+                  const { toast } = await import('sonner');
+                  const res = await api.get('/profile/readme');
+                  await navigator.clipboard.writeText(res.data);
+                  toast.success('README copied to clipboard!');
+                } catch (e) {
+                  const { toast } = await import('sonner');
+                  toast.error('Failed to generate README');
+                }
+              }}
+              className="p-6 rounded-2xl border border-default surface-primary card-hover text-left flex flex-col items-start w-full cursor-pointer"
+            >
+              <div className="w-10 h-10 rounded-lg surface-tertiary flex items-center justify-center mb-4">
+                <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+              </div>
+              <h3 className="font-bold mb-1.5 text-primary">Copy README</h3>
+              <p className="text-sm text-secondary leading-relaxed">Copy your Markdown README to paste into your GitHub profile.</p>
+            </button>
           </div>
         </div>
       </section>

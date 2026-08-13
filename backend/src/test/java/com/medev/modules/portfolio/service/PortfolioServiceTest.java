@@ -27,6 +27,9 @@ class PortfolioServiceTest {
     @Mock
     private ProfileRepository profileRepository;
 
+    @Mock
+    private com.medev.modules.portfolio.dto.PortfolioMapper portfolioMapper;
+
     @InjectMocks
     private PortfolioService portfolioService;
 
@@ -37,6 +40,7 @@ class PortfolioServiceTest {
 
         when(userRepository.findByUsername("johndoe")).thenReturn(Optional.of(user));
         when(profileRepository.findByUserId(1L)).thenReturn(Optional.of(profile));
+        when(portfolioMapper.toDto(profile, user)).thenReturn(PublicProfileDto.builder().build());
 
         PublicProfileDto result = portfolioService.getPublicProfile("johndoe");
 

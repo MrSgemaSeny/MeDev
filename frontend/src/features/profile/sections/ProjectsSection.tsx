@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { useProfile, useAddProject, useUpdateProject, useDeleteProject } from '../../../shared/api/hooks/useProfile';
+import { useProfile, useAddProject, useUpdateProject, useDeleteProject, useReorderSection } from '../../../shared/api/hooks/useProfile';
 import type { ProjectDto } from '../../../entities/profile/model/types';
 import { Button } from '../../../shared/ui/Button';
 import { Input, Textarea, Label, Card } from '../../../shared/ui/Form';
 import { Modal } from '../../../shared/ui/Modal';
+import { SortableList } from '../../../shared/ui/SortableList';
 import { GithubImport, GithubIcon } from '../../github/GithubImport';
 
 import { useAiChatStore } from '../../ai-assistant/model/store';
@@ -15,6 +16,7 @@ export const ProjectsSection = () => {
   const addMutation = useAddProject();
   const updateMutation = useUpdateProject();
   const deleteMutation = useDeleteProject();
+  const reorderMutation = useReorderSection('projects');
   const [editingId, setEditingId] = useState<number | 'new' | null>(null);
   const [showGithubSync, setShowGithubSync] = useState(false);
 
@@ -28,7 +30,7 @@ export const ProjectsSection = () => {
   const projects = profile?.projects || [];
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-2xl pl-6">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-3">
           <h2 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>Projects</h2>
@@ -36,7 +38,7 @@ export const ProjectsSection = () => {
             <GithubIcon />
             Sync GitHub
           </Button>
-          {profile?.githubUrl && (
+          {profile?.githubUsername && (
             <Button size="sm" variant="secondary" onClick={handleAiAnalysis} className="flex items-center gap-2" style={{ color: 'var(--color-accent)', backgroundColor: 'var(--color-accent-muted)', borderColor: 'var(--color-border-accent)' }}>
               <Bot size={16} />
               Analyze GitHub
@@ -52,23 +54,23 @@ export const ProjectsSection = () => {
         <GithubImport />
       </Modal>
 
-      <div className="space-y-3">
-        {projects.map((proj) =>
+      <SortableList
+        items={projects}
+        onReorder={(newItems) => reorderMutation.mutate(newItems.map(i => i.id))}
+        renderItem={(proj) =>
           editingId === proj.id ? (
-            <ProjectForm key={proj.id} initialData={proj}
+            <ProjectForm initialData={proj}
               onSave={(data) => { updateMutation.mutate({ id: proj.id, payload: data }); setEditingId(null); }}
               onCancel={() => setEditingId(null)} isPending={updateMutation.isPending} />
           ) : (
-            <Card key={proj.id} className="p-3">
+            <Card className="p-3 bg-card border-default">
               <div className="flex justify-between items-start gap-3">
                 <div className="min-w-0">
                   <h3 className="font-semibold text-sm" style={{ color: 'var(--color-text-primary)' }}>{proj.name}</h3>
                   {proj.githubUrl && (
                     <a href={proj.githubUrl} target="_blank" rel="noreferrer" className="text-sm hover:underline" style={{ color: 'var(--color-link)' }}>{proj.githubUrl}</a>
                   )}
-                  {(proj.startDate || proj.endDate) && (
-                    <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>{proj.startDate} {proj.endDate ? `— ${proj.endDate}` : ''}</p>
-                  )}
+
                   {proj.description && <p className="mt-2 text-sm whitespace-pre-wrap" style={{ color: 'var(--color-text-secondary)' }}>{proj.description}</p>}
                 </div>
                 <div className="flex gap-2 shrink-0">
@@ -78,12 +80,14 @@ export const ProjectsSection = () => {
               </div>
             </Card>
           )
-        )}
-        {editingId === 'new' && (
+        }
+      />
+      {editingId === 'new' && (
+        <div className="mt-4">
           <ProjectForm onSave={(data) => { addMutation.mutate(data); setEditingId(null); }}
             onCancel={() => setEditingId(null)} isPending={addMutation.isPending} />
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -98,10 +102,9 @@ interface ProjectFormProps {
 const ProjectForm: React.FC<ProjectFormProps> = ({ initialData, onSave, onCancel, isPending }) => {
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
-    url: initialData?.url || '',
-    startDate: initialData?.startDate || '',
-    endDate: initialData?.endDate || '',
+    githubUrl: initialData?.githubUrl || '',
     description: initialData?.description || '',
+    sortOrder: initialData?.sortOrder || 0,
   });
   const { generateProjectDescription, isGenerating } = useGenerateProjectDescription();
 
@@ -127,11 +130,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData, onSave, onCancel
       <form onSubmit={handleSubmit} className="space-y-3">
         <div className="grid grid-cols-2 gap-3">
           <div><Label htmlFor="name">Project Name</Label><Input id="name" required name="name" value={formData.name} onChange={handleChange} /></div>
-          <div><Label htmlFor="url">URL (Optional)</Label><Input id="url" type="url" name="url" value={formData.url} onChange={handleChange} placeholder="https://" /></div>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div><Label htmlFor="startDate">Start Date (Optional)</Label><Input id="startDate" type="month" name="startDate" value={formData.startDate} onChange={handleChange} /></div>
-          <div><Label htmlFor="endDate">End Date (Optional)</Label><Input id="endDate" type="month" name="endDate" value={formData.endDate} onChange={handleChange} /></div>
+          <div><Label htmlFor="githubUrl">GitHub URL (Optional)</Label><Input id="githubUrl" type="url" name="githubUrl" value={formData.githubUrl} onChange={handleChange} placeholder="https://" /></div>
         </div>
         <div>
           <div className="flex items-center justify-between mb-1">

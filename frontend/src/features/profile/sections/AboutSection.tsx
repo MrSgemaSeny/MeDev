@@ -14,7 +14,7 @@ export const AboutSection = () => {
   
   const [formData, setFormData] = useState({
     fullName: '', headline: '', summary: '', location: '',
-    website: '', githubUrl: '', linkedinUrl: '',
+    website: '', githubUsername: '', linkedin: '',
   });
 
   const [toastVisible, setToastVisible] = useState(false);
@@ -24,8 +24,8 @@ export const AboutSection = () => {
       setFormData({
         fullName: profile.fullName || '', headline: profile.headline || '',
         summary: profile.summary || '', location: profile.location || '',
-        website: profile.website || '', githubUrl: profile.githubUrl || '',
-        linkedinUrl: profile.linkedinUrl || '',
+        website: profile.website || '', githubUsername: profile.githubUsername || '',
+        linkedin: profile.linkedin || '',
       });
     }
   }, [profile]);
@@ -134,7 +134,7 @@ export const AboutSection = () => {
           </div>
           <div className="flex flex-col gap-1.5">
             <label className="text-[11px] text-muted font-medium tracking-wide uppercase">GitHub</label>
-            <input name="githubUrl" value={formData.githubUrl} onChange={handleChange} placeholder="github.com/username" className="surface-inset border border-default rounded-md py-2 px-3 text-[13px] text-primary w-full outline-none focus:border-[var(--color-accent)] hover:border-[var(--color-border-muted)] transition-colors placeholder:text-muted" />
+            <input name="githubUsername" value={formData.githubUsername} onChange={handleChange} placeholder="github.com/username" className="surface-inset border border-default rounded-md py-2 px-3 text-[13px] text-primary w-full outline-none focus:border-[var(--color-accent)] hover:border-[var(--color-border-muted)] transition-colors placeholder:text-muted" />
           </div>
         </div>
 

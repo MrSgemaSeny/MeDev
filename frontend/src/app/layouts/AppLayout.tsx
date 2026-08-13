@@ -3,6 +3,7 @@ import { AppSidebar } from '../../widgets/sidebar/AppSidebar';
 import { AppHeader } from '../../widgets/header/AppHeader';
 import { AiChatWidget } from '../../features/ai-assistant/ui/AiChatWidget';
 import { UpsellModal } from '../../shared/ui/UpsellModal';
+import { OnboardingWizard } from '../../features/onboarding/ui/OnboardingWizard';
 
 export const AppLayout = () => {
   return (
@@ -15,6 +16,7 @@ export const AppLayout = () => {
         </div>
         <AiChatWidget />
         <UpsellModal />
+        <OnboardingWizard />
       </main>
     </div>
   );

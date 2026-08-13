@@ -126,9 +126,6 @@ export const ClassicTemplate = () => {
                               </a>
                             )}
                           </h3>
-                          <span className="text-sm font-medium">
-                            {proj.startDate} {proj.endDate ? `– ${proj.endDate}` : ''}
-                          </span>
                         </div>
                         {proj.description && (
                           <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">{proj.description}</p>

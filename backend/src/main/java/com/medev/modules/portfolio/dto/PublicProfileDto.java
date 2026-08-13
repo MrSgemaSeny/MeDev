@@ -18,20 +18,11 @@ public class PublicProfileDto {
     private String githubUsername;
     private String telegram;
     private String linkedin;
-
-    public static PublicProfileDto fromProfile(Profile profile, User user) {
-        return PublicProfileDto.builder()
-                .username(user.getUsername())
-                .fullName(profile.getFullName())
-                .headline(profile.getHeadline())
-                .summary(profile.getSummary())
-                .avatarUrl(profile.getAvatarUrl())
-                .location(profile.getLocation())
-                .website(profile.getWebsite())
-                .githubUsername(profile.getGithubUsername())
-                .telegram(profile.getTelegram())
-                .linkedin(profile.getLinkedin())
-                // In the future, add experiences, skills, projects
-                .build();
-    }
+    
+    private java.util.List<com.medev.modules.profile.dto.ExperienceDto> experience;
+    private java.util.List<com.medev.modules.profile.dto.EducationDto> education;
+    private java.util.List<com.medev.modules.profile.dto.SkillDto> skills;
+    private java.util.List<com.medev.modules.profile.dto.LanguageDto> languages;
+    private java.util.List<com.medev.modules.profile.dto.ProjectDto> projects;
+    private java.util.List<String> sectionOrder;
 }

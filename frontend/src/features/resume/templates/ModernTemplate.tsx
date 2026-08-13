@@ -39,9 +39,9 @@ export const ModernTemplate = () => {
               <a href={profile.website} className="hover:text-white truncate">{profile.website.replace(/^https?:\/\//, '')}</a>
             </div>
           )}
-          {(profile.githubUsername ? `https://github.com/${profile.githubUsername}` : null) && (
+          {profile.githubUsername && (
             <div className="text-sm text-gray-300">
-              <a href={(profile.githubUsername ? `https://github.com/${profile.githubUsername}` : null)} className="hover:text-white truncate">{(profile.githubUsername ? `https://github.com/${profile.githubUsername}` : null).replace(/^https?:\/\/(www\.)?github\.com\//, '')}</a>
+              <a href={`https://github.com/${profile.githubUsername}`} className="hover:text-white truncate">{profile.githubUsername}</a>
             </div>
           )}
           {profile.linkedin && (
@@ -167,9 +167,6 @@ export const ModernTemplate = () => {
                               </a>
                             )}
                           </h3>
-                          <span className="text-xs font-semibold text-gray-500 whitespace-nowrap ml-4">
-                            {proj.startDate} {proj.endDate ? `– ${proj.endDate}` : ''}
-                          </span>
                         </div>
                         {proj.description && (
                           <p className="text-sm text-gray-600 whitespace-pre-wrap leading-relaxed">{proj.description}</p>

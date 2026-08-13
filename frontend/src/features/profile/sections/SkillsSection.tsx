@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { useProfile, useAddSkill, useUpdateSkill, useDeleteSkill } from '../../../shared/api/hooks/useProfile';
+import { useProfile, useAddSkill, useUpdateSkill, useDeleteSkill, useReorderSection } from '../../../shared/api/hooks/useProfile';
 import type { SkillDto } from '../../../entities/profile/model/types';
 import { Button } from '../../../shared/ui/Button';
 import { Input, Select, Label, Card } from '../../../shared/ui/Form';
+import { SortableList } from '../../../shared/ui/SortableList';
 
 const LEVELS = ['Beginner', 'Intermediate', 'Advanced', 'Expert'];
 
@@ -11,27 +12,30 @@ export const SkillsSection = () => {
   const addMutation = useAddSkill();
   const updateMutation = useUpdateSkill();
   const deleteMutation = useDeleteSkill();
+  const reorderMutation = useReorderSection('skills');
   const [editingId, setEditingId] = useState<number | 'new' | null>(null);
 
   if (isLoading) return <div className="text-secondary">Loading...</div>;
   const skills = profile?.skills || [];
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-2xl pl-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>Skills</h2>
         {editingId === null && (
           <Button size="sm" variant="secondary" onClick={() => setEditingId('new')}>Add skill</Button>
         )}
       </div>
-      <div className="space-y-2">
-        {skills.map((skill) =>
+      <SortableList
+        items={skills}
+        onReorder={(newItems) => reorderMutation.mutate(newItems.map(i => i.id))}
+        renderItem={(skill) =>
           editingId === skill.id ? (
-            <SkillForm key={skill.id} initialData={skill}
+            <SkillForm initialData={skill}
               onSave={(data) => { updateMutation.mutate({ id: skill.id, payload: data }); setEditingId(null); }}
               onCancel={() => setEditingId(null)} isPending={updateMutation.isPending} />
           ) : (
-            <Card key={skill.id} className="p-3 flex justify-between items-center">
+            <Card className="p-3 flex justify-between items-center bg-card border-default">
               <div>
                 <h3 className="font-medium text-sm" style={{ color: 'var(--color-text-primary)' }}>{skill.name}</h3>
                 <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>{skill.level}</p>
@@ -42,12 +46,14 @@ export const SkillsSection = () => {
               </div>
             </Card>
           )
-        )}
-        {editingId === 'new' && (
+        }
+      />
+      {editingId === 'new' && (
+        <div className="mt-4">
           <SkillForm onSave={(data) => { addMutation.mutate(data); setEditingId(null); }}
             onCancel={() => setEditingId(null)} isPending={addMutation.isPending} />
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -63,6 +69,7 @@ const SkillForm: React.FC<SkillFormProps> = ({ initialData, onSave, onCancel, is
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
     level: initialData?.level || 'Intermediate',
+    sortOrder: initialData?.sortOrder || 0,
   });
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));

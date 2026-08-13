@@ -5,6 +5,7 @@ import { useAuthStore } from '../../entities/user/model/store';
 // В проде baseURL будет заменен на относительный путь или из env
 export const api = axios.create({
   baseURL: 'http://localhost:8080/api/v1',
+  withCredentials: true,
 });
 
 // Interceptor для подстановки токена
@@ -54,17 +55,11 @@ api.interceptors.response.use(
       isRefreshing = true;
       
       try {
-        const refreshToken = localStorage.getItem('refreshToken');
-        if (!refreshToken) {
-          useAuthStore.getState().logout();
-          return Promise.reject(error);
-        }
-        
-        const { data } = await axios.post('http://localhost:8080/api/v1/auth/refresh', {
-          refreshToken,
+        const { data } = await axios.post('http://localhost:8080/api/v1/auth/refresh', {}, {
+          withCredentials: true,
         });
         
-        useAuthStore.getState().setTokens(data.accessToken, data.refreshToken);
+        useAuthStore.getState().setTokens(data.accessToken, ''); // HttpOnly cookie manages refresh token
         originalRequest.headers.set('Authorization', `Bearer ${data.accessToken}`);
         
         processQueue(null, data.accessToken);

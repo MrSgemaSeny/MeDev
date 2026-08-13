@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { useProfile, useAddLanguage, useUpdateLanguage, useDeleteLanguage } from '../../../shared/api/hooks/useProfile';
+import { useProfile, useAddLanguage, useUpdateLanguage, useDeleteLanguage, useReorderSection } from '../../../shared/api/hooks/useProfile';
 import type { LanguageDto } from '../../../entities/profile/model/types';
 import { Button } from '../../../shared/ui/Button';
 import { Input, Select, Label, Card } from '../../../shared/ui/Form';
+import { SortableList } from '../../../shared/ui/SortableList';
 
 const PROFICIENCIES = ['Elementary', 'Limited Working', 'Professional Working', 'Full Professional', 'Native'];
 
@@ -11,27 +12,30 @@ export const LanguagesSection = () => {
   const addMutation = useAddLanguage();
   const updateMutation = useUpdateLanguage();
   const deleteMutation = useDeleteLanguage();
+  const reorderMutation = useReorderSection('languages');
   const [editingId, setEditingId] = useState<number | 'new' | null>(null);
 
   if (isLoading) return <div className="text-secondary">Loading...</div>;
   const languages = profile?.languages || [];
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-2xl pl-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>Languages</h2>
         {editingId === null && (
           <Button size="sm" variant="secondary" onClick={() => setEditingId('new')}>Add language</Button>
         )}
       </div>
-      <div className="space-y-2">
-        {languages.map((lang) =>
+      <SortableList
+        items={languages}
+        onReorder={(newItems) => reorderMutation.mutate(newItems.map(i => i.id))}
+        renderItem={(lang) =>
           editingId === lang.id ? (
-            <LanguageForm key={lang.id} initialData={lang}
+            <LanguageForm initialData={lang}
               onSave={(data) => { updateMutation.mutate({ id: lang.id, payload: data }); setEditingId(null); }}
               onCancel={() => setEditingId(null)} isPending={updateMutation.isPending} />
           ) : (
-            <Card key={lang.id} className="p-3 flex justify-between items-center">
+            <Card className="p-3 flex justify-between items-center bg-card border-default">
               <div>
                 <h3 className="font-medium text-sm" style={{ color: 'var(--color-text-primary)' }}>{lang.name}</h3>
                 <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>{lang.level}</p>
@@ -42,12 +46,14 @@ export const LanguagesSection = () => {
               </div>
             </Card>
           )
-        )}
-        {editingId === 'new' && (
+        }
+      />
+      {editingId === 'new' && (
+        <div className="mt-4">
           <LanguageForm onSave={(data) => { addMutation.mutate(data); setEditingId(null); }}
             onCancel={() => setEditingId(null)} isPending={addMutation.isPending} />
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -62,7 +68,8 @@ interface LanguageFormProps {
 const LanguageForm: React.FC<LanguageFormProps> = ({ initialData, onSave, onCancel, isPending }) => {
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
-    level: initialData?.proficiency || 'Native',
+    level: initialData?.level || 'Native',
+    sortOrder: initialData?.sortOrder || 0,
   });
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -74,8 +81,8 @@ const LanguageForm: React.FC<LanguageFormProps> = ({ initialData, onSave, onCanc
       <form onSubmit={handleSubmit} className="space-y-3">
         <div className="grid grid-cols-2 gap-3">
           <div><Label htmlFor="name">Language</Label><Input id="name" required name="name" value={formData.name} onChange={handleChange} placeholder="e.g. English, Spanish" /></div>
-          <div><Label htmlFor="proficiency">Proficiency</Label>
-            <Select id="proficiency" name="proficiency" value={formData.proficiency} onChange={handleChange}>
+          <div><Label htmlFor="level">Proficiency</Label>
+            <Select id="level" name="level" value={formData.level} onChange={handleChange}>
               {PROFICIENCIES.map((p) => <option key={p} value={p}>{p}</option>)}
             </Select>
           </div>
