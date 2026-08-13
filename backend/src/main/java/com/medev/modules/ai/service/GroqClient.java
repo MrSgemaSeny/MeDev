@@ -155,8 +155,7 @@ public class GroqClient implements LlmProvider {
                 // только в AiAnalysisService, который вызывается из @PostMapping (thread-per-request)
                 .block();
 
-        validateJson(raw);
-        return raw;
+        return cleanAndValidateJson(raw);
     }
 
     @Override
@@ -244,10 +243,23 @@ public class GroqClient implements LlmProvider {
         }
     }
 
-    /** Проверяет, что строка — валидный JSON */
-    private void validateJson(String content) {
+    /** Проверяет, что строка — валидный JSON и очищает маркдаун если нужно */
+    private String cleanAndValidateJson(String content) {
+        if (content == null) return "{}";
+        String cleaned = content.trim();
+        if (cleaned.startsWith("```json")) {
+            cleaned = cleaned.substring(7);
+        }
+        if (cleaned.startsWith("```")) {
+            cleaned = cleaned.substring(3);
+        }
+        if (cleaned.endsWith("```")) {
+            cleaned = cleaned.substring(0, cleaned.length() - 3);
+        }
+        cleaned = cleaned.trim();
         try {
-            objectMapper.readTree(content);
+            objectMapper.readTree(cleaned);
+            return cleaned;
         } catch (Exception e) {
             log.error("[GroqClient] Response is not valid JSON: {}", content);
             throw new LlmException(Reason.INVALID_RESPONSE, "LLM returned invalid JSON");

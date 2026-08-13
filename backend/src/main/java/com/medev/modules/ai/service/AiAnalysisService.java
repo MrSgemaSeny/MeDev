@@ -58,7 +58,7 @@ public class AiAnalysisService {
             return objectMapper.readValue(jsonResponse, AiParsedResumeDto.class);
         } catch (Exception e) {
             log.error("Failed to parse Groq response: {}", jsonResponse, e);
-            return new AiParsedResumeDto(); // Graceful degradation
+            throw new RuntimeException("AI generation failed or returned invalid format. Aborting to prevent data loss.", e);
         }
     }
 
@@ -100,7 +100,7 @@ public class AiAnalysisService {
             return objectMapper.readValue(jsonResponse, AiParsedResumeDto.class);
         } catch (Exception e) {
             log.error("Failed to parse Groq response: {}", jsonResponse, e);
-            return new AiParsedResumeDto(); // Graceful degradation
+            throw new RuntimeException("AI generation failed or returned invalid format. Aborting to prevent data loss.", e);
         }
     }
 }
