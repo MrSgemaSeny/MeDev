@@ -38,9 +38,13 @@ Explain WHY, not just WHAT (Senior Tech Lead mentoring approach: architect think
 10. **FSD Compliance (MeDev)**: Frontend обязан строго следовать Feature-Sliced Design (app, pages, features, entities, shared).
 
 ## Current Technical Debt & Unfinished Phases (Sprint Backlog)
-- **[WARNING] GroqClient Reliability**: Добавить таймауты (30s/60s), ретраи с backoff и JSON-валидацию ответов AI с graceful degradation.
-- **[INFO] Infra**: Подготовить `fly.toml` и Dockerfile для деплоя бэкенда.
-- **[INFO] i18n**: Продолжить перевод остального UI на react-i18next (переведены ResumeBuilder и Dashboard).
+- **[CRITICAL] Security #1 (SSRF)**: Внедрить белый список хостов в `WebScraperService` (HH, LinkedIn) и запретить private IPs.
+- **[CRITICAL] Security #2 (Kaspi Webhook)**: Написать реальную HMAC верификацию `X-Kaspi-Signature` или закрыть эндпоинт.
+- **[CRITICAL] Security #4 (Actuator)**: Убрать `show-details: always` для анонимов в `application-prod.yml`.
+- **[CRITICAL] Security #5 (RateLimiter)**: Заменить `X-Forwarded-For` на `getRemoteAddr()` в `RateLimitFilter` или полностью удалить фильтр, если дублирует `AuthRateLimiter`.
+- **[CRITICAL] Security #3 (AES)**: Переписать `EncryptionUtils` с ECB на AES/GCM с рандомным IV.
+- **[WARNING] Infra/Prod**: Настроить `VITE_API_URL` во фронтенде (Axios) и открыть `/v1/billing/webhook` для Stripe в `SecurityConfig`.
+- **[INFO] UX/Limits**: Добавить `@Size` на `jobDescription`, убрать refreshToken из JSON-ответа, настроить Secure флаг для cookies.
 
 ## Behavior & Communication Rules
 - **Logical Troubleshooting (NO TUNNEL VISION)**: Think logically and broadly before diving deep. If an issue occurs, map out ALL possible horizontal paths/causes first. Do NOT fall into the trap of: 'problem -> guess path -> not here -> dig deeper in the same wrong place'. Verify the root cause across all potential points of failure before spending tokens on deep dives.
