@@ -32,8 +32,8 @@ import java.util.Map;
 @Service
 public class GroqClient implements LlmProvider {
 
-    private static final String STREAM_MODEL    = "llama-3.3-70b-versatile";
-    private static final String STRUCTURED_MODEL = "llama-3.3-70b-versatile"; // стабильный JSON mode
+    private static final String STREAM_MODEL    = "llama3-70b-8192";
+    private static final String STRUCTURED_MODEL = "llama3-70b-8192"; // стабильный JSON mode
     private static final int    MAX_TOKENS       = 2048;
 
     private final WebClient webClient;
