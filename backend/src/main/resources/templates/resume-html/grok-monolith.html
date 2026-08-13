@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${profile.fullName} + ' - Grok Resume'">Grok</title>
+    <title th:text="${profile.fullName} + ' - Grok Dashboard'">Grok</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #000000;
+            --bg-body: #09090b;
+            --bg-card: #000000;
             --text-primary: #f4f4f5;
             --text-secondary: #a1a1aa;
             --border-color: #27272a;
@@ -17,237 +18,202 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
-            background-color: var(--bg-color);
+            background-color: var(--bg-body);
             color: var(--text-primary);
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
-            max-width: 860px;
-            margin: 0 auto;
-            padding: 60px 40px;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-        h1 {
-            font-size: 56px;
-            font-weight: 700;
-            letter-spacing: -2px;
-            margin-bottom: 24px;
-            color: #ffffff;
-        }
-        .contact-info {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        .contact-pill {
-            background-color: #09090b;
-            border: 1px solid var(--border-color);
-            padding: 8px 20px;
-            border-radius: 9999px;
-            font-size: 14px;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .contact-pill a {
-            color: var(--text-primary);
-            text-decoration: none;
-            font-weight: 500;
-        }
-        
-        .section {
-            border: 1px solid var(--border-color);
-            border-radius: 24px;
-            margin-bottom: 24px;
             padding: 40px;
-            background-color: #000000;
         }
-        
-        h2.section-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 32px;
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        h2.section-title::before {
-            content: '';
-            display: block;
-            width: 12px;
-            height: 12px;
-            border: 2px solid #ffffff;
-            border-radius: 50%;
-        }
-        
-        .summary-text {
-            font-size: 18px;
-            color: var(--text-primary);
-            line-height: 1.7;
-        }
-        
-        .item-list {
-            display: flex;
-            flex-direction: column;
+        .bento-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
             gap: 24px;
         }
-        .item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 8px;
-        }
-        .item-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #ffffff;
-        }
-        .item-date {
-            color: var(--text-secondary);
-            font-size: 14px;
-            font-variant-numeric: tabular-nums;
-        }
-        .item-subtitle {
-            font-size: 16px;
-            color: var(--text-secondary);
-            margin-bottom: 12px;
-        }
-        .item-desc {
-            font-size: 15px;
-            color: var(--text-primary);
-        }
-        
-        .tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 16px;
-        }
-        .tag {
-            background-color: #09090b;
+        .bento-item {
+            background-color: var(--bg-card);
             border: 1px solid var(--border-color);
-            color: var(--text-secondary);
-            padding: 6px 16px;
-            font-size: 13px;
-            border-radius: 9999px;
-            font-weight: 500;
+            border-radius: 24px;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
         }
         
-        .skills-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 32px;
-        }
-        .skill-group-name {
-            font-size: 14px;
-            color: #ffffff;
-            font-weight: 600;
-            margin-bottom: 16px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+        /* Grid Spans */
+        .card-profile { grid-column: span 12; display: flex; justify-content: space-between; align-items: center; }
+        .card-summary { grid-column: span 8; }
+        .card-contact { grid-column: span 4; }
+        .card-experience { grid-column: span 8; }
+        .card-education { grid-column: span 4; }
+        .card-skills { grid-column: span 6; }
+        .card-languages { grid-column: span 6; }
+        .card-projects { grid-column: span 12; }
         
+        @media (max-width: 1024px) {
+            .card-summary, .card-experience { grid-column: span 12; }
+            .card-contact, .card-education { grid-column: span 12; }
+        }
         @media (max-width: 768px) {
-            body { padding: 30px 20px; }
-            h1 { font-size: 40px; }
-            .section { padding: 24px; border-radius: 20px; }
-            .item-header { flex-direction: column; align-items: flex-start; gap: 4px; }
+            .bento-container { display: flex; flex-direction: column; }
+            .card-profile { flex-direction: column; align-items: flex-start; gap: 16px; }
+            body { padding: 20px; }
         }
+
+        h1 { font-size: 40px; font-weight: 700; letter-spacing: -1.5px; }
+        .username { color: var(--text-secondary); font-size: 18px; margin-top: 4px; }
+        h2.card-title { font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); margin-bottom: 24px; display: flex; align-items: center; gap: 8px; }
+        h2.card-title::before { content: ''; display: inline-block; width: 8px; height: 8px; background: var(--text-primary); border-radius: 50%; }
+        
+        /* Typography */
+        .text-body { font-size: 16px; color: var(--text-primary); }
+        .text-dim { color: var(--text-secondary); }
+        
+        /* Links & Pills */
+        a { color: var(--text-primary); text-decoration: none; transition: opacity 0.2s; }
+        a:hover { opacity: 0.7; }
+        
+        .contact-list { display: flex; flex-direction: column; gap: 12px; }
+        .contact-row { display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; font-size: 15px; }
+        .contact-row:last-child { border-bottom: none; }
+        
+        /* Lists */
+        .feed { display: flex; flex-direction: column; gap: 24px; }
+        .feed-item { border-left: 2px solid var(--border-color); padding-left: 16px; position: relative; }
+        .feed-item::before { content: ''; position: absolute; left: -5px; top: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--border-color); }
+        .feed-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+        .feed-title { font-size: 18px; font-weight: 600; }
+        .feed-date { font-size: 14px; font-variant-numeric: tabular-nums; color: var(--text-secondary); }
+        .feed-subtitle { font-size: 15px; color: var(--text-secondary); margin-bottom: 8px; }
+        
+        /* Grid Layouts inside cards */
+        .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+        .project-card { border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; background: var(--bg-body); }
+        .project-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .project-links a { color: var(--text-secondary); font-size: 14px; margin-left: 8px; }
+        
+        .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+        .tag { background: var(--bg-body); border: 1px solid var(--border-color); padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 500; color: var(--text-secondary); }
+        
+        .skills-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+        .skill-group-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1 th:text="${profile.fullName}">Name</h1>
-        <div class="contact-info">
-            <div class="contact-pill" th:if="${profile.location}" th:text="${profile.location}"></div>
-            <div class="contact-pill" th:if="${profile.website}"><a th:href="${profile.website}" th:text="${profile.website}" target="_blank"></a></div>
-            <div class="contact-pill" th:if="${profile.githubUsername}">X / <span th:text="${profile.githubUsername}"></span></div>
-            <div class="contact-pill" th:if="${profile.linkedin}">IN / <span th:text="${profile.linkedin}"></span></div>
+    <div class="bento-container">
+        
+        <!-- Profile Header -->
+        <div class="bento-item card-profile">
+            <div>
+                <h1 th:text="${profile.fullName}">Name</h1>
+                <div class="username" th:text="${profile.githubUsername != null ? '@' + profile.githubUsername : ''}"></div>
+            </div>
+            <div style="text-align: right; color: var(--text-secondary);">
+                <div th:text="${profile.location}"></div>
+            </div>
         </div>
-    </div>
 
-    <div th:each="sectionName : ${profile.sectionOrder != null and !profile.sectionOrder.isEmpty() ? profile.sectionOrder : {'summary','experience','education','skills','languages','projects'}}">
-        <div th:switch="${sectionName}">
-            
-            <div th:case="'summary'" th:if="${profile.summary != null and !profile.summary.isEmpty()}" class="section">
-                <h2 class="section-title">Summary</h2>
-                <div class="summary-text" th:text="${profile.summary}"></div>
-            </div>
-
-            <div th:case="'experience'" th:if="${profile.experience != null and !profile.experience.isEmpty()}" class="section">
-                <h2 class="section-title">Experience</h2>
-                <div class="item-list">
-                    <div class="item" th:each="exp : ${profile.experience}">
-                        <div class="item-header">
-                            <div class="item-title" th:text="${exp.position}">Position</div>
-                            <div class="item-date" th:text="${exp.startDate + ' - ' + (exp.isCurrent ? 'Present' : exp.endDate)}">Date</div>
-                        </div>
-                        <div class="item-subtitle" th:text="${exp.company}">Company</div>
-                        <div class="item-desc" th:text="${exp.description}">Description</div>
-                        <div class="tags" th:if="${exp.techStack != null and !exp.techStack.isEmpty()}">
-                            <span class="tag" th:text="${exp.techStack}"></span>
-                        </div>
-                    </div>
+        <!-- Contact (Span 4) -->
+        <div class="bento-item card-contact" th:if="${profile.website != null or profile.linkedin != null or profile.telegram != null}">
+            <h2 class="card-title">Connect</h2>
+            <div class="contact-list">
+                <div class="contact-row" th:if="${profile.website}">
+                    <span class="text-dim">Web</span>
+                    <a th:href="${profile.website}" th:text="${profile.website}" target="_blank"></a>
+                </div>
+                <div class="contact-row" th:if="${profile.githubUsername}">
+                    <span class="text-dim">GitHub</span>
+                    <a th:href="'https://github.com/' + ${profile.githubUsername}" th:text="${profile.githubUsername}" target="_blank"></a>
+                </div>
+                <div class="contact-row" th:if="${profile.linkedin}">
+                    <span class="text-dim">LinkedIn</span>
+                    <span th:text="${profile.linkedin}"></span>
+                </div>
+                <div class="contact-row" th:if="${profile.telegram}">
+                    <span class="text-dim">Telegram</span>
+                    <span th:text="${profile.telegram}"></span>
                 </div>
             </div>
+        </div>
 
-            <div th:case="'education'" th:if="${profile.education != null and !profile.education.isEmpty()}" class="section">
-                <h2 class="section-title">Education</h2>
-                <div class="item-list">
-                    <div class="item" th:each="edu : ${profile.education}">
-                        <div class="item-header">
-                            <div class="item-title" th:text="${edu.institution}">Institution</div>
-                            <div class="item-date" th:text="${edu.startDate + ' - ' + (edu.isCurrent ? 'Present' : edu.endDate)}">Date</div>
-                        </div>
-                        <div class="item-subtitle" th:text="${edu.degree} + (edu.field != null ? ' in ' + edu.field : '')">Degree</div>
-                    </div>
+        <!-- Dynamic Sections -->
+        <th:block th:each="sectionName : ${profile.sectionOrder != null and !profile.sectionOrder.isEmpty() ? profile.sectionOrder : {'summary','experience','education','skills','languages','projects'}}">
+            <th:block th:switch="${sectionName}">
+                
+                <div class="bento-item card-summary" th:case="'summary'" th:if="${profile.summary != null and !profile.summary.isEmpty()}">
+                    <h2 class="card-title">Summary</h2>
+                    <div class="text-body" th:text="${profile.summary}"></div>
                 </div>
-            </div>
 
-            <div th:case="'skills'" th:if="${groupedSkills != null and !groupedSkills.isEmpty()}" class="section">
-                <h2 class="section-title">Capabilities</h2>
-                <div class="skills-grid">
-                    <div class="skill-group" th:each="entry : ${groupedSkills}">
-                        <div class="skill-group-name" th:text="${entry.key}"></div>
-                        <div class="tags" style="margin-top:0;">
-                            <span class="tag" th:each="skillName : ${entry.value}" th:text="${skillName}"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div th:case="'languages'" th:if="${languagesStr != null and !languagesStr.isEmpty()}" class="section">
-                <h2 class="section-title">Languages</h2>
-                <div style="font-size: 16px; color: var(--text-secondary);" th:text="${languagesStr}"></div>
-            </div>
-
-            <div th:case="'projects'" th:if="${profile.projects != null and !profile.projects.isEmpty()}" class="section">
-                <h2 class="section-title">Projects</h2>
-                <div class="item-list">
-                    <div class="item" th:each="proj : ${profile.projects}" th:if="${proj.isVisible}">
-                        <div class="item-header">
-                            <div class="item-title" th:text="${proj.name}">Project</div>
-                            <div class="item-date">
-                                <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" target="_blank" style="color:var(--text-secondary); text-decoration:none;">GitHub</a>
-                                <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" target="_blank" style="color:var(--text-secondary); text-decoration:none; margin-left:12px;">Live</a>
+                <div class="bento-item card-experience" th:case="'experience'" th:if="${profile.experience != null and !profile.experience.isEmpty()}">
+                    <h2 class="card-title">Experience</h2>
+                    <div class="feed">
+                        <div class="feed-item" th:each="exp : ${profile.experience}">
+                            <div class="feed-header">
+                                <div class="feed-title" th:text="${exp.position}"></div>
+                                <div class="feed-date" th:text="${exp.startDate + ' - ' + (exp.isCurrent ? 'Present' : exp.endDate)}"></div>
+                            </div>
+                            <div class="feed-subtitle" th:text="${exp.company}"></div>
+                            <div class="text-body" th:text="${exp.description}"></div>
+                            <div class="tags" th:if="${exp.techStack != null and !exp.techStack.isEmpty()}">
+                                <span class="tag" th:text="${exp.techStack}"></span>
                             </div>
                         </div>
-                        <div class="item-desc" th:text="${proj.description}">Description</div>
-                        <div class="tags" th:if="${proj.techStack != null and !proj.techStack.isEmpty()}">
-                            <span class="tag" th:text="${proj.techStack}"></span>
+                    </div>
+                </div>
+
+                <div class="bento-item card-education" th:case="'education'" th:if="${profile.education != null and !profile.education.isEmpty()}">
+                    <h2 class="card-title">Education</h2>
+                    <div class="feed">
+                        <div class="feed-item" th:each="edu : ${profile.education}">
+                            <div class="feed-header">
+                                <div class="feed-title" th:text="${edu.institution}"></div>
+                            </div>
+                            <div class="feed-subtitle" th:text="${edu.degree} + (edu.field != null ? ' in ' + edu.field : '')"></div>
+                            <div class="feed-date text-dim" th:text="${edu.startDate + ' - ' + (edu.isCurrent ? 'Present' : edu.endDate)}"></div>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-        </div>
+
+                <div class="bento-item card-skills" th:case="'skills'" th:if="${groupedSkills != null and !groupedSkills.isEmpty()}">
+                    <h2 class="card-title">Capabilities</h2>
+                    <div class="skills-grid">
+                        <div th:each="entry : ${groupedSkills}">
+                            <div class="skill-group-title" th:text="${entry.key}"></div>
+                            <div class="tags" style="margin-top:0;">
+                                <span class="tag" th:each="skillName : ${entry.value}" th:text="${skillName}"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bento-item card-languages" th:case="'languages'" th:if="${languagesStr != null and !languagesStr.isEmpty()}">
+                    <h2 class="card-title">Languages</h2>
+                    <div class="text-body" th:text="${languagesStr}"></div>
+                </div>
+
+                <div class="bento-item card-projects" th:case="'projects'" th:if="${profile.projects != null and !profile.projects.isEmpty()}">
+                    <h2 class="card-title">Projects</h2>
+                    <div class="projects-grid">
+                        <div class="project-card" th:each="proj : ${profile.projects}" th:if="${proj.isVisible}">
+                            <div class="project-header">
+                                <div class="feed-title" th:text="${proj.name}"></div>
+                                <div class="project-links">
+                                    <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" target="_blank">Git</a>
+                                    <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" target="_blank">Live</a>
+                                </div>
+                            </div>
+                            <div class="text-body" style="font-size: 14px; margin-bottom: 16px;" th:text="${proj.description}"></div>
+                            <div class="tags" th:if="${proj.techStack != null and !proj.techStack.isEmpty()}">
+                                <span class="tag" th:text="${proj.techStack}"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </th:block>
+        </th:block>
+
     </div>
 </body>
 </html>
-

@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${profile.fullName} + ' - Resume'">Apple Modern Resume</title>
+    <title th:text="${profile.fullName} + ' - Apple Resume'">Apple Modern</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-color: #ffffff;
             --text-primary: #1d1d1f;
             --text-secondary: #86868b;
             --accent-blue: #0071e3;
-            --bg-tag: #f5f5f7;
-            --border-light: #e5e5ea;
+            --border-light: #d2d2d7;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -23,223 +22,153 @@
             color: var(--text-primary);
             line-height: 1.5;
             -webkit-font-smoothing: antialiased;
-            max-width: 1000px;
+            max-width: 1040px;
             margin: 0 auto;
             padding: 80px 40px;
         }
-        .hero {
-            text-align: center;
-            margin-bottom: 80px;
-        }
-        h1 {
-            font-size: 56px;
-            font-weight: 700;
-            letter-spacing: -1.5px;
-            margin-bottom: 16px;
-        }
-        .contact-info {
-            display: flex;
-            justify-content: center;
-            gap: 24px;
-            color: var(--text-secondary);
-            font-size: 15px;
-            font-weight: 400;
-        }
-        a {
-            color: var(--accent-blue);
-            text-decoration: none;
-            transition: opacity 0.2s;
-        }
-        a:hover { opacity: 0.7; }
         
-        .section {
+        /* Header */
+        .hero { margin-bottom: 80px; text-align: center; }
+        h1 { font-size: 48px; font-weight: 700; letter-spacing: -1px; margin-bottom: 16px; }
+        .hero-meta { display: flex; justify-content: center; gap: 24px; color: var(--text-secondary); font-size: 15px; }
+        .hero-meta a { color: var(--accent-blue); text-decoration: none; }
+        .hero-meta a:hover { text-decoration: underline; }
+        
+        /* Sticky Section Layout */
+        .spec-section {
             display: grid;
             grid-template-columns: 240px 1fr;
             gap: 40px;
             padding: 40px 0;
             border-bottom: 1px solid var(--border-light);
         }
-        .section:last-child { border-bottom: none; }
+        .spec-section:last-child { border-bottom: none; }
         
-        h2.section-title {
+        .sticky-label {
+            position: sticky;
+            top: 40px;
+            height: max-content;
             font-size: 18px;
-            color: var(--text-secondary);
-            font-weight: 500;
-            letter-spacing: -0.2px;
-        }
-        
-        .summary-text {
-            font-size: 21px;
-            line-height: 1.4;
-            font-weight: 400;
-            letter-spacing: -0.3px;
-        }
-        
-        .item-list {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-        .item {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-        }
-        .item-title {
-            font-size: 21px;
             font-weight: 600;
-            letter-spacing: -0.3px;
-        }
-        .item-date {
-            color: var(--text-secondary);
-            font-size: 15px;
-        }
-        .item-subtitle {
-            font-size: 17px;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-        .item-desc {
-            font-size: 15px;
             color: var(--text-primary);
-            margin-top: 8px;
         }
         
-        .tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 12px;
-        }
-        .tag {
-            background-color: var(--bg-tag);
-            color: var(--text-primary);
-            padding: 6px 14px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: 500;
-        }
-        
-        .skills-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 24px;
-        }
-        .skill-group {
+        .content-area {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 32px;
         }
-        .skill-group-name {
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-secondary);
-            font-weight: 600;
-        }
+        
+        /* Content formatting */
+        .summary-text { font-size: 21px; line-height: 1.5; color: var(--text-secondary); font-weight: 400; letter-spacing: -0.3px; }
+        
+        .spec-item { display: flex; flex-direction: column; gap: 8px; }
+        .item-row { display: flex; justify-content: space-between; align-items: baseline; }
+        .item-title { font-size: 21px; font-weight: 600; letter-spacing: -0.3px; }
+        .item-date { color: var(--text-secondary); font-size: 15px; }
+        .item-subtitle { font-size: 17px; font-weight: 500; }
+        .item-desc { font-size: 15px; color: var(--text-primary); margin-top: 8px; }
+        
+        .spec-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+        .spec-tag { background: #f5f5f7; color: var(--text-primary); padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; }
+        
+        .skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .skill-title { font-size: 14px; font-weight: 600; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; }
         
         @media (max-width: 768px) {
-            .section { grid-template-columns: 1fr; gap: 20px; }
+            .spec-section { grid-template-columns: 1fr; gap: 16px; padding: 32px 0; }
+            .sticky-label { position: relative; top: 0; font-size: 24px; }
+            .hero-meta { flex-direction: column; gap: 8px; }
             body { padding: 40px 20px; }
-            h1 { font-size: 40px; }
-            .contact-info { flex-direction: column; align-items: center; gap: 8px; }
+            .skills-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
+    
     <div class="hero">
         <h1 th:text="${profile.fullName}">Name</h1>
-        <div class="contact-info">
+        <div class="hero-meta">
             <span th:if="${profile.location}" th:text="${profile.location}"></span>
             <span th:if="${profile.website}"><a th:href="${profile.website}" th:text="${profile.website}" target="_blank"></a></span>
-            <span th:if="${profile.githubUsername}">github.com/<span th:text="${profile.githubUsername}"></span></span>
-            <span th:if="${profile.linkedin}">in/<span th:text="${profile.linkedin}"></span></span>
-            <span th:if="${profile.telegram}">tg/<span th:text="${profile.telegram}"></span></span>
+            <span th:if="${profile.githubUsername}">GH: <span th:text="${profile.githubUsername}"></span></span>
+            <span th:if="${profile.linkedin}">IN: <span th:text="${profile.linkedin}"></span></span>
         </div>
     </div>
 
-    <div th:each="sectionName : ${profile.sectionOrder != null and !profile.sectionOrder.isEmpty() ? profile.sectionOrder : {'summary','experience','education','skills','languages','projects'}}">
-        <div th:switch="${sectionName}">
+    <th:block th:each="sectionName : ${profile.sectionOrder != null and !profile.sectionOrder.isEmpty() ? profile.sectionOrder : {'summary','experience','education','skills','projects'}}">
+        <th:block th:switch="${sectionName}">
             
-            <div th:case="'summary'" th:if="${profile.summary != null and !profile.summary.isEmpty()}" class="section">
-                <h2 class="section-title">Profile</h2>
-                <div class="summary-text" th:text="${profile.summary}"></div>
+            <div class="spec-section" th:case="'summary'" th:if="${profile.summary != null and !profile.summary.isEmpty()}">
+                <div class="sticky-label">Overview</div>
+                <div class="content-area">
+                    <div class="summary-text" th:text="${profile.summary}"></div>
+                </div>
             </div>
 
-            <div th:case="'experience'" th:if="${profile.experience != null and !profile.experience.isEmpty()}" class="section">
-                <h2 class="section-title">Experience</h2>
-                <div class="item-list">
-                    <div class="item" th:each="exp : ${profile.experience}">
-                        <div class="item-header">
-                            <div class="item-title" th:text="${exp.position}">Position</div>
-                            <div class="item-date" th:text="${exp.startDate + ' - ' + (exp.isCurrent ? 'Present' : exp.endDate)}">Date</div>
+            <div class="spec-section" th:case="'experience'" th:if="${profile.experience != null and !profile.experience.isEmpty()}">
+                <div class="sticky-label">Experience</div>
+                <div class="content-area">
+                    <div class="spec-item" th:each="exp : ${profile.experience}">
+                        <div class="item-row">
+                            <div class="item-title" th:text="${exp.position}"></div>
+                            <div class="item-date" th:text="${exp.startDate + ' - ' + (exp.isCurrent ? 'Present' : exp.endDate)}"></div>
                         </div>
-                        <div class="item-subtitle" th:text="${exp.company}">Company</div>
-                        <div class="item-desc" th:text="${exp.description}">Description</div>
-                        <div class="tags" th:if="${exp.techStack != null and !exp.techStack.isEmpty()}">
-                            <span class="tag" th:text="${exp.techStack}"></span>
+                        <div class="item-subtitle" th:text="${exp.company}"></div>
+                        <div class="item-desc" th:text="${exp.description}"></div>
+                        <div class="spec-tags" th:if="${exp.techStack != null and !exp.techStack.isEmpty()}">
+                            <span class="spec-tag" th:text="${exp.techStack}"></span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div th:case="'education'" th:if="${profile.education != null and !profile.education.isEmpty()}" class="section">
-                <h2 class="section-title">Education</h2>
-                <div class="item-list">
-                    <div class="item" th:each="edu : ${profile.education}">
-                        <div class="item-header">
-                            <div class="item-title" th:text="${edu.institution}">Institution</div>
-                            <div class="item-date" th:text="${edu.startDate + ' - ' + (edu.isCurrent ? 'Present' : edu.endDate)}">Date</div>
+            <div class="spec-section" th:case="'education'" th:if="${profile.education != null and !profile.education.isEmpty()}">
+                <div class="sticky-label">Education</div>
+                <div class="content-area">
+                    <div class="spec-item" th:each="edu : ${profile.education}">
+                        <div class="item-row">
+                            <div class="item-title" th:text="${edu.institution}"></div>
+                            <div class="item-date" th:text="${edu.startDate + ' - ' + (edu.isCurrent ? 'Present' : edu.endDate)}"></div>
                         </div>
-                        <div class="item-subtitle" th:text="${edu.degree} + (edu.field != null ? ' in ' + edu.field : '')">Degree</div>
+                        <div class="item-subtitle" th:text="${edu.degree} + (edu.field != null ? ' in ' + edu.field : '')"></div>
                     </div>
                 </div>
             </div>
 
-            <div th:case="'skills'" th:if="${groupedSkills != null and !groupedSkills.isEmpty()}" class="section">
-                <h2 class="section-title">Skills</h2>
-                <div class="skills-grid">
-                    <div class="skill-group" th:each="entry : ${groupedSkills}">
-                        <div class="skill-group-name" th:text="${entry.key}"></div>
-                        <div class="tags">
-                            <span class="tag" th:each="skillName : ${entry.value}" th:text="${skillName}"></span>
+            <div class="spec-section" th:case="'skills'" th:if="${groupedSkills != null and !groupedSkills.isEmpty()}">
+                <div class="sticky-label">Core Skills</div>
+                <div class="content-area skills-grid">
+                    <div th:each="entry : ${groupedSkills}">
+                        <div class="skill-title" th:text="${entry.key}"></div>
+                        <div class="spec-tags" style="margin-top:0;">
+                            <span class="spec-tag" th:each="skillName : ${entry.value}" th:text="${skillName}"></span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div th:case="'languages'" th:if="${languagesStr != null and !languagesStr.isEmpty()}" class="section">
-                <h2 class="section-title">Languages</h2>
-                <div style="font-size: 17px; font-weight: 500;" th:text="${languagesStr}"></div>
-            </div>
-
-            <div th:case="'projects'" th:if="${profile.projects != null and !profile.projects.isEmpty()}" class="section">
-                <h2 class="section-title">Projects</h2>
-                <div class="item-list">
-                    <div class="item" th:each="proj : ${profile.projects}" th:if="${proj.isVisible}">
-                        <div class="item-header">
-                            <div class="item-title" th:text="${proj.name}">Project</div>
+            <div class="spec-section" th:case="'projects'" th:if="${profile.projects != null and !profile.projects.isEmpty()}">
+                <div class="sticky-label">Projects</div>
+                <div class="content-area">
+                    <div class="spec-item" th:each="proj : ${profile.projects}" th:if="${proj.isVisible}">
+                        <div class="item-row">
+                            <div class="item-title" th:text="${proj.name}"></div>
                             <div class="item-date">
-                                <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" target="_blank">GitHub</a>
-                                <span th:if="${proj.githubUrl != null and proj.liveUrl != null}"> &middot; </span>
-                                <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" target="_blank">Live Demo</a>
+                                <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" target="_blank" style="color:var(--accent-blue); text-decoration:none;">GitHub</a>
+                                <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" target="_blank" style="color:var(--accent-blue); text-decoration:none; margin-left:12px;">Live Demo</a>
                             </div>
                         </div>
-                        <div class="item-desc" th:text="${proj.description}">Description</div>
-                        <div class="tags" th:if="${proj.techStack != null and !proj.techStack.isEmpty()}">
-                            <span class="tag" th:text="${proj.techStack}"></span>
+                        <div class="item-desc" th:text="${proj.description}"></div>
+                        <div class="spec-tags" th:if="${proj.techStack != null and !proj.techStack.isEmpty()}">
+                            <span class="spec-tag" th:text="${proj.techStack}"></span>
                         </div>
                     </div>
                 </div>
             </div>
-            
-        </div>
-    </div>
+
+        </th:block>
+    </th:block>
+
 </body>
 </html>
-

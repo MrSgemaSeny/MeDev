@@ -3,269 +3,222 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title th:text="${profile.fullName} + ' - PH Resume'">PH Orange Resume</title>
+    <title th:text="${profile.fullName} + ' - Hero Resume'">PH Orange</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
     <style>
         :root {
-            --bg-color: #000000;
-            --text-primary: #ffffff;
-            --text-secondary: #aaaaaa;
-            --accent-orange: #ffa31a;
+            --bg-dark: #000000;
+            --bg-alt: #111111;
+            --text-main: #ffffff;
+            --text-muted: #888888;
+            --accent: #ffa31a;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            line-height: 1.6;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 40px;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
         }
-        a {
-            color: var(--accent-orange);
-            text-decoration: none;
-            transition: opacity 0.2s;
-        }
-        a:hover { opacity: 0.8; }
-        .hero {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-        .logo {
-            font-family: 'Arial Black', Impact, sans-serif;
-            font-size: 56px;
-            text-transform: lowercase;
-            letter-spacing: -2px;
-            margin-bottom: 16px;
-            display: inline-block;
-        }
-        .logo-w1 { color: #ffffff; }
-        .logo-w2 {
-            background-color: var(--accent-orange);
-            color: #000000;
-            padding: 0 12px;
-            border-radius: 8px;
-            margin-left: 4px;
-        }
-        .contact-info {
+        
+        /* Hero Header */
+        .hero-section {
+            background-color: var(--bg-dark);
+            padding: 100px 40px;
             display: flex;
+            flex-direction: column;
             justify-content: center;
-            gap: 20px;
-            color: var(--text-secondary);
-            font-size: 14px;
-            font-weight: 700;
-        }
-        .contact-info a {
-            color: var(--accent-orange);
-            text-decoration: none;
-        }
-        
-        .section {
-            margin-bottom: 40px;
-        }
-        h2.section-title {
-            background-color: var(--accent-orange);
-            color: #000000;
-            font-family: 'Arial Black', Impact, sans-serif;
-            font-size: 20px;
-            text-transform: uppercase;
-            padding: 8px 16px;
-            display: inline-block;
-            border-radius: 4px;
-            margin-bottom: 30px;
-        }
-        
-        .item-list {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-        .item {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 16px;
-        }
-        .item-left {
-            display: flex;
-            flex-direction: column;
-        }
-        .item-right {
-            text-align: right;
-            color: var(--accent-orange);
-            font-weight: 700;
-            font-size: 14px;
-        }
-        
-        .item-title {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-        .item-subtitle {
-            font-size: 14px;
-            color: var(--text-secondary);
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-        .item-desc {
-            font-size: 15px;
-            color: #dddddd;
-            grid-column: 1 / -1;
-        }
-        
-        .tags {
-            grid-column: 1 / -1;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 8px;
-        }
-        .tag {
-            border: 2px solid var(--accent-orange);
-            color: var(--accent-orange);
-            padding: 4px 10px;
-            font-weight: 700;
-            font-size: 12px;
-            border-radius: 4px;
-        }
-        
-        .skills-grid {
-            display: grid;
-            grid-template-columns: 200px 1fr;
-            gap: 20px;
             align-items: center;
-            border-bottom: 1px solid #222222;
-            padding-bottom: 20px;
-            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--accent);
         }
-        .skills-grid:last-child { border-bottom: none; margin-bottom: 0; }
-        
-        .skill-cat {
-            color: var(--accent-orange);
-            font-family: 'Arial Black', Impact, sans-serif;
-            font-size: 14px;
+        .hero-name {
+            font-family: 'Anton', sans-serif;
+            font-size: 80px;
             text-transform: uppercase;
+            line-height: 1;
+            margin-bottom: 24px;
+            letter-spacing: 2px;
         }
-        .skill-tags {
+        .hero-name span { color: var(--accent); }
+        .hero-contact {
             display: flex;
+            gap: 24px;
             flex-wrap: wrap;
-            gap: 8px;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-muted);
         }
-        .skill-tag {
-            background-color: #222222;
-            color: #ffffff;
-            padding: 6px 12px;
-            font-weight: 700;
-            font-size: 12px;
-            border-radius: 4px;
+        .hero-contact a { color: var(--text-main); text-decoration: none; transition: color 0.2s; }
+        .hero-contact a:hover { color: var(--accent); }
+        
+        /* Full-bleed Bands */
+        .band {
+            padding: 80px 40px;
+            width: 100%;
+        }
+        .band:nth-child(odd) { background-color: var(--bg-alt); }
+        .band:nth-child(even) { background-color: var(--bg-dark); }
+        
+        .band-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 60px;
+            align-items: start;
         }
         
-        @media (max-width: 768px) {
-            .item { grid-template-columns: 1fr; gap: 8px; }
-            .item-right { text-align: left; }
-            .skills-grid { grid-template-columns: 1fr; gap: 12px; }
-            body { padding: 40px 20px; }
-            .logo { font-size: 40px; }
-            .contact-info { flex-direction: column; align-items: center; gap: 10px; }
+        /* Vertical Titles */
+        .vertical-title {
+            font-family: 'Anton', sans-serif;
+            font-size: 48px;
+            color: var(--text-main);
+            text-transform: uppercase;
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            text-align: right;
+            line-height: 1;
+            letter-spacing: 2px;
+            opacity: 0.1;
+            transition: opacity 0.3s;
+        }
+        .band:hover .vertical-title { opacity: 1; color: var(--accent); }
+        
+        /* Content Formatting */
+        .band-content { width: 100%; }
+        
+        .summary-txt { font-size: 24px; font-weight: 400; line-height: 1.5; border-left: 4px solid var(--accent); padding-left: 24px; }
+        
+        .grid-list { display: flex; flex-direction: column; gap: 40px; }
+        .entry { display: flex; flex-direction: column; }
+        .entry-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; border-bottom: 1px solid #333; padding-bottom: 8px; }
+        .entry-title { font-size: 24px; font-weight: 800; color: var(--accent); text-transform: uppercase; }
+        .entry-date { font-size: 16px; font-weight: 600; color: var(--text-muted); }
+        .entry-subtitle { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
+        .entry-desc { font-size: 16px; color: #ccc; line-height: 1.6; }
+        
+        .hero-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+        .hero-tag { background: var(--accent); color: #000; padding: 4px 12px; font-weight: 800; text-transform: uppercase; font-size: 12px; }
+        
+        /* Projects as massive cards */
+        .poster-projects { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 32px; }
+        .poster-card { background: #000; border: 2px solid #333; padding: 32px; transition: border-color 0.3s; }
+        .poster-card:hover { border-color: var(--accent); }
+        .pc-title { font-size: 28px; font-family: 'Anton', sans-serif; text-transform: uppercase; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .pc-links a { color: var(--accent); font-size: 14px; font-family: 'Inter', sans-serif; text-decoration: none; margin-left: 12px; }
+        
+        @media (max-width: 900px) {
+            .band-inner { grid-template-columns: 1fr; gap: 24px; }
+            .vertical-title { writing-mode: horizontal-tb; transform: none; text-align: left; opacity: 1; font-size: 32px; color: var(--accent); }
+            .hero-name { font-size: 50px; }
         }
     </style>
 </head>
 <body>
-    <div class="hero">
-        <div class="logo">
-            <span class="logo-w1" th:text="${profile.fullName != null ? profile.fullName.split(' ')[0] : 'First'}">First</span><span th:if="${profile.fullName != null and profile.fullName.split(' ').length > 1}" class="logo-w2" th:text="${profile.fullName.substring(profile.fullName.indexOf(' ') + 1)}">Last</span>
+    
+    <header class="hero-section">
+        <div class="hero-name">
+            <span th:text="${profile.fullName != null ? profile.fullName.split(' ')[0] : ''}"></span>
+            <th:block th:if="${profile.fullName != null and profile.fullName.split(' ').length &gt; 1}">
+                <span style="color:white;" th:text="${profile.fullName.substring(profile.fullName.indexOf(' ') + 1)}"></span>
+            </th:block>
         </div>
-        <div class="contact-info">
-            <span th:if="${profile.location}" th:text="${profile.location}"></span>
-            <span th:if="${profile.website}"><a th:href="${profile.website}" th:text="${profile.website}"></a></span>
-            <span th:if="${profile.githubUsername}">github.com/<span th:text="${profile.githubUsername}"></span></span>
-            <span th:if="${profile.linkedin}">in/<span th:text="${profile.linkedin}"></span></span>
-            <span th:if="${profile.telegram}">tg/<span th:text="${profile.telegram}"></span></span>
+        <div class="hero-contact">
+            <div th:if="${profile.location}" th:text="${profile.location}"></div>
+            <div th:if="${profile.website}"><a th:href="${profile.website}" th:text="${profile.website}" target="_blank"></a></div>
+            <div th:if="${profile.githubUsername}">GH/ <a th:href="'https://github.com/' + ${profile.githubUsername}" th:text="${profile.githubUsername}" target="_blank"></a></div>
+            <div th:if="${profile.linkedin}">IN/ <span th:text="${profile.linkedin}"></span></div>
         </div>
-    </div>
+    </header>
 
-    <div th:each="sectionName : ${profile.sectionOrder != null and !profile.sectionOrder.isEmpty() ? profile.sectionOrder : {'summary','experience','education','skills','languages','projects'}}">
+    <th:block th:each="sectionName : ${profile.sectionOrder != null and !profile.sectionOrder.isEmpty() ? profile.sectionOrder : {'summary','experience','education','skills','projects'}}">
         <th:block th:switch="${sectionName}">
             
-            <div th:case="'summary'" th:if="${profile.summary != null and !profile.summary.isEmpty()}" class="section">
-                <h2 class="section-title">Summary</h2>
-                <div class="item-desc" th:text="${profile.summary}" style="font-size: 18px; font-weight: 500;"></div>
+            <div class="band" th:case="'summary'" th:if="${profile.summary != null and !profile.summary.isEmpty()}">
+                <div class="band-inner">
+                    <h2 class="vertical-title">PROFILE</h2>
+                    <div class="band-content">
+                        <div class="summary-txt" th:text="${profile.summary}"></div>
+                    </div>
+                </div>
             </div>
 
-            <div th:case="'experience'" th:if="${profile.experience != null and !profile.experience.isEmpty()}" class="section">
-                <h2 class="section-title">Experience</h2>
-                <div class="item-list">
-                    <div class="item" th:each="exp : ${profile.experience}">
-                        <div class="item-left">
-                            <div class="item-title" th:text="${exp.position}">Position</div>
-                            <div class="item-subtitle" th:text="${exp.company}">Company</div>
-                        </div>
-                        <div class="item-right" th:text="${exp.startDate + ' - ' + (exp.isCurrent ? 'Present' : exp.endDate)}">Date</div>
-                        <div class="item-desc" th:text="${exp.description}">Description</div>
-                        <div class="tags" th:if="${exp.techStack != null and !exp.techStack.isEmpty()}">
-                            <span class="tag" th:text="${exp.techStack}"></span>
+            <div class="band" th:case="'experience'" th:if="${profile.experience != null and !profile.experience.isEmpty()}">
+                <div class="band-inner">
+                    <h2 class="vertical-title">WORK</h2>
+                    <div class="band-content grid-list">
+                        <div class="entry" th:each="exp : ${profile.experience}">
+                            <div class="entry-header">
+                                <div class="entry-title" th:text="${exp.position}"></div>
+                                <div class="entry-date" th:text="${exp.startDate + ' - ' + (exp.isCurrent ? 'Present' : exp.endDate)}"></div>
+                            </div>
+                            <div class="entry-subtitle" th:text="${exp.company}"></div>
+                            <div class="entry-desc" th:text="${exp.description}"></div>
+                            <div class="hero-tags" th:if="${exp.techStack != null and !exp.techStack.isEmpty()}">
+                                <span class="hero-tag" th:text="${exp.techStack}"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div th:case="'education'" th:if="${profile.education != null and !profile.education.isEmpty()}" class="section">
-                <h2 class="section-title">Education</h2>
-                <div class="item-list">
-                    <div class="item" th:each="edu : ${profile.education}">
-                        <div class="item-left">
-                            <div class="item-title" th:text="${edu.institution}">Institution</div>
-                            <div class="item-subtitle" th:text="${edu.degree} + (edu.field != null ? ' in ' + edu.field : '')">Degree</div>
-                        </div>
-                        <div class="item-right" th:text="${edu.startDate + ' - ' + (edu.isCurrent ? 'Present' : edu.endDate)}">Date</div>
-                    </div>
-                </div>
-            </div>
-
-            <div th:case="'skills'" th:if="${groupedSkills != null and !groupedSkills.isEmpty()}" class="section">
-                <h2 class="section-title">Skills</h2>
-                <div>
-                    <div class="skills-grid" th:each="entry : ${groupedSkills}">
-                        <div class="skill-cat" th:text="${entry.key}"></div>
-                        <div class="skill-tags">
-                            <span class="skill-tag" th:each="skillName : ${entry.value}" th:text="${skillName}"></span>
+            <div class="band" th:case="'education'" th:if="${profile.education != null and !profile.education.isEmpty()}">
+                <div class="band-inner">
+                    <h2 class="vertical-title">EDU</h2>
+                    <div class="band-content grid-list">
+                        <div class="entry" th:each="edu : ${profile.education}">
+                            <div class="entry-header">
+                                <div class="entry-title" th:text="${edu.institution}"></div>
+                                <div class="entry-date" th:text="${edu.startDate + ' - ' + (edu.isCurrent ? 'Present' : edu.endDate)}"></div>
+                            </div>
+                            <div class="entry-subtitle" th:text="${edu.degree} + (edu.field != null ? ' in ' + edu.field : '')"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div th:case="'languages'" th:if="${languagesStr != null and !languagesStr.isEmpty()}" class="section">
-                <h2 class="section-title">Languages</h2>
-                <div style="font-size: 18px; font-weight: 700; color: var(--accent-orange);" th:text="${languagesStr}"></div>
-            </div>
-
-            <div th:case="'projects'" th:if="${profile.projects != null and !profile.projects.isEmpty()}" class="section">
-                <h2 class="section-title">Projects</h2>
-                <div class="item-list">
-                    <div class="item" th:each="proj : ${profile.projects}" th:if="${proj.isVisible}">
-                        <div class="item-left">
-                            <div class="item-title" th:text="${proj.name}">Project Name</div>
-                        </div>
-                        <div class="item-right">
-                            <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" target="_blank">HUB</a>
-                            <span th:if="${proj.githubUrl != null and proj.liveUrl != null}"> / </span>
-                            <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" target="_blank">LIVE</a>
-                        </div>
-                        <div class="item-desc" th:text="${proj.description}">Description</div>
-                        <div class="tags" th:if="${proj.techStack != null and !proj.techStack.isEmpty()}">
-                            <span class="tag" th:text="${proj.techStack}"></span>
+            <div class="band" th:case="'skills'" th:if="${groupedSkills != null and !groupedSkills.isEmpty()}">
+                <div class="band-inner">
+                    <h2 class="vertical-title">SKILLS</h2>
+                    <div class="band-content poster-projects">
+                        <div class="poster-card" th:each="entry : ${groupedSkills}" style="padding:24px;">
+                            <div class="pc-title" style="font-size:20px; color:#fff;" th:text="${entry.key}"></div>
+                            <div class="hero-tags" style="margin-top:0;">
+                                <span class="hero-tag" style="background:#333; color:#fff;" th:each="skillName : ${entry.value}" th:text="${skillName}"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            
-        </div>
-    </div>
+
+            <div class="band" th:case="'projects'" th:if="${profile.projects != null and !profile.projects.isEmpty()}">
+                <div class="band-inner">
+                    <h2 class="vertical-title">BUILDS</h2>
+                    <div class="band-content poster-projects">
+                        <div class="poster-card" th:each="proj : ${profile.projects}" th:if="${proj.isVisible}">
+                            <div class="pc-title">
+                                <span th:text="${proj.name}"></span>
+                                <div class="pc-links">
+                                    <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" target="_blank">GIT</a>
+                                    <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" target="_blank">LIVE</a>
+                                </div>
+                            </div>
+                            <div class="entry-desc" th:text="${proj.description}"></div>
+                            <div class="hero-tags" th:if="${proj.techStack != null and !proj.techStack.isEmpty()}">
+                                <span class="hero-tag" th:text="${proj.techStack}"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </th:block>
+    </th:block>
+
 </body>
 </html>
-
-
 
