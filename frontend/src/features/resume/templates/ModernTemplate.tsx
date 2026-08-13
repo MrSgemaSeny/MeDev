@@ -39,14 +39,14 @@ export const ModernTemplate = () => {
               <a href={profile.website} className="hover:text-white truncate">{profile.website.replace(/^https?:\/\//, '')}</a>
             </div>
           )}
-          {profile.githubUrl && (
+          {(profile.githubUsername ? `https://github.com/${profile.githubUsername}` : null) && (
             <div className="text-sm text-gray-300">
-              <a href={profile.githubUrl} className="hover:text-white truncate">{profile.githubUrl.replace(/^https?:\/\/(www\.)?github\.com\//, '')}</a>
+              <a href={(profile.githubUsername ? `https://github.com/${profile.githubUsername}` : null)} className="hover:text-white truncate">{(profile.githubUsername ? `https://github.com/${profile.githubUsername}` : null).replace(/^https?:\/\/(www\.)?github\.com\//, '')}</a>
             </div>
           )}
-          {profile.linkedinUrl && (
+          {profile.linkedin && (
             <div className="text-sm text-gray-300">
-              <a href={profile.linkedinUrl} className="hover:text-white truncate">LinkedIn Profile</a>
+              <a href={profile.linkedin} className="hover:text-white truncate">LinkedIn Profile</a>
             </div>
           )}
         </div>
@@ -72,7 +72,7 @@ export const ModernTemplate = () => {
               {profile.languages.map(lang => (
                 <div key={lang.id}>
                   <div className="text-sm font-medium text-gray-200">{lang.name}</div>
-                  <div className="text-xs text-blue-300 mt-0.5">{lang.proficiency}</div>
+                  <div className="text-xs text-blue-300 mt-0.5">{lang.level}</div>
                 </div>
               ))}
             </div>
@@ -110,7 +110,7 @@ export const ModernTemplate = () => {
                         <div className="flex justify-between items-baseline mb-1">
                           <h3 className="font-bold text-gray-900">{exp.position}</h3>
                           <span className="text-xs font-semibold text-gray-500 whitespace-nowrap ml-4">
-                            {exp.startDate} – {exp.current ? 'Present' : exp.endDate}
+                            {exp.startDate} – {exp.isCurrent ? 'Present' : exp.endDate}
                           </span>
                         </div>
                         <div className="text-sm font-medium text-blue-600 mb-2">{exp.company}</div>
@@ -135,9 +135,9 @@ export const ModernTemplate = () => {
                         <div className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-blue-600 ring-4 ring-white"></div>
                         
                         <div className="flex justify-between items-baseline mb-1">
-                          <h3 className="font-bold text-gray-900">{edu.degree} in {edu.fieldOfStudy}</h3>
+                          <h3 className="font-bold text-gray-900">{edu.degree} in {edu.field}</h3>
                           <span className="text-xs font-semibold text-gray-500 whitespace-nowrap ml-4">
-                            {edu.startDate} – {edu.current ? 'Present' : edu.endDate}
+                            {edu.startDate} – {edu.isCurrent ? 'Present' : edu.endDate}
                           </span>
                         </div>
                         <div className="text-sm font-medium text-blue-600">{edu.institution}</div>
@@ -161,8 +161,8 @@ export const ModernTemplate = () => {
                         <div className="flex justify-between items-baseline mb-1">
                           <h3 className="font-bold text-gray-900">
                             {proj.name}
-                            {proj.url && (
-                              <a href={proj.url} className="ml-2 text-xs font-normal text-blue-600 hover:underline">
+                            {proj.githubUrl && (
+                              <a href={proj.githubUrl} className="ml-2 text-xs font-normal text-blue-600 hover:underline">
                                 [Link]
                               </a>
                             )}

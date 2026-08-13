@@ -37,7 +37,7 @@ export const ExperienceSection = () => {
                   <h3 className="font-semibold text-sm" style={{ color: 'var(--color-text-primary)' }}>{exp.position}</h3>
                   <p className="text-sm" style={{ color: 'var(--color-link)' }}>{exp.company}</p>
                   <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
-                    {exp.startDate} — {exp.current ? 'Present' : exp.endDate}
+                    {exp.startDate} — {exp.isCurrent ? 'Present' : exp.endDate}
                   </p>
                   {exp.description && (
                     <p className="mt-2 text-sm whitespace-pre-wrap" style={{ color: 'var(--color-text-secondary)' }}>{exp.description}</p>
@@ -73,7 +73,7 @@ const ExperienceForm: React.FC<ExperienceFormProps> = ({ initialData, onSave, on
     position: initialData?.position || '',
     startDate: initialData?.startDate || '',
     endDate: initialData?.endDate || '',
-    current: initialData?.current || false,
+    isCurrent: initialData?.current || false,
     description: initialData?.description || '',
   });
   const { generate, isGenerating } = useAiGenerate();

@@ -34,7 +34,7 @@ export const LanguagesSection = () => {
             <Card key={lang.id} className="p-3 flex justify-between items-center">
               <div>
                 <h3 className="font-medium text-sm" style={{ color: 'var(--color-text-primary)' }}>{lang.name}</h3>
-                <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>{lang.proficiency}</p>
+                <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>{lang.level}</p>
               </div>
               <div className="flex gap-2">
                 <button onClick={() => setEditingId(lang.id)} className="text-sm hover:underline" style={{ color: 'var(--color-link)' }}>Edit</button>
@@ -62,7 +62,7 @@ interface LanguageFormProps {
 const LanguageForm: React.FC<LanguageFormProps> = ({ initialData, onSave, onCancel, isPending }) => {
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
-    proficiency: initialData?.proficiency || 'Native',
+    level: initialData?.proficiency || 'Native',
   });
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));

@@ -101,5 +101,32 @@ public class AiApplicationService extends AbstractAiStructuredService {
         }
         throw new RuntimeException("AI generated invalid structure: missing 'suggestions'");
     }
+
+    public com.medev.modules.ai.dto.AiMatchResponse matchJob(Long userId, String jobDescription) {
+        ProfileDto profile = profileService.getByUserId(userId);
+        
+        String profileJson;
+        try {
+            profileJson = objectMapper.writeValueAsString(profile);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to process profile data", e);
+        }
+
+        String systemPrompt = "You are an expert technical recruiter. Evaluate how well the candidate's profile matches the job description. Provide a match score from 0 to 100 and brief constructive feedback on missing skills. Output JSON in format: {\"score\": 85, \"feedback\": \"<text>\"}";
+        String userMessage = String.format(
+            "Candidate Profile:\n%s\n\nJob Description:\n%s",
+            profileJson, 
+            jobDescription
+        );
+
+        JsonNode root = generateStructuredData(systemPrompt, userMessage, JsonNode.class);
+        if (root != null && root.has("score") && root.has("feedback")) {
+            return new com.medev.modules.ai.dto.AiMatchResponse(
+                root.get("score").asInt(),
+                root.get("feedback").asText()
+            );
+        }
+        throw new RuntimeException("AI generated invalid structure: missing 'score' or 'feedback'");
+    }
 }
 

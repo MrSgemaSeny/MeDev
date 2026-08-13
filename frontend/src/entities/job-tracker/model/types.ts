@@ -9,6 +9,9 @@ export interface JobApplicationDto {
   location?: string;
   salaryRange?: string;
   notes?: string;
+  jobDescription?: string;
+  matchScore?: number;
+  matchFeedback?: string;
   appliedDate?: string;
   updatedAt: string;
 }

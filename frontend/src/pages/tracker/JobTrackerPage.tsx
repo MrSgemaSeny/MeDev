@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
-import { useJobApplications, useAddJobApplication, useDeleteJobApplication, useGenerateCoverLetter } from '../../shared/api/hooks/useJobTracker';
+import { useJobApplications, useAddJobApplication, useDeleteJobApplication, useUpdateJobApplication, useGenerateCoverLetter, useScrapeJob, useMatchJob } from '../../shared/api/hooks/useJobTracker';
+import { KanbanBoard } from '../../features/job-tracker/ui/KanbanBoard';
 import type { ApplicationStatus, JobApplicationDto, CreateJobApplicationRequest } from '../../entities/job-tracker/model/types';
 import { Button } from '../../shared/ui/Button';
 import { Input, Label, Badge } from '../../shared/ui/Form';
@@ -22,6 +23,8 @@ export const JobTrackerPage = () => {
   const [coverLetterModalApp, setCoverLetterModalApp] = useState<JobApplicationDto | null>(null);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<ApplicationStatus | 'ALL'>('ALL');
+  const [viewMode, setViewMode] = useState<'list' | 'kanban'>('kanban');
+  const updateApp = useUpdateJobApplication();
 
   const filteredApps = useMemo(() => {
     return applications.filter(app => {
@@ -92,100 +95,130 @@ export const JobTrackerPage = () => {
                 onChange={e => setSearch(e.target.value)}
               />
             </div>
-            <div className="flex items-center gap-2 w-full sm:w-auto">
-              <Filter size={14} className="text-secondary" />
-              <select 
-                className="py-1.5 px-3 text-sm bg-[var(--color-bg-primary)] border border-[var(--color-border-default)] rounded-md outline-none text-primary hover:bg-[var(--color-bg-secondary)] transition-colors cursor-pointer"
-                value={statusFilter}
-                onChange={e => setStatusFilter(e.target.value as ApplicationStatus | 'ALL')}
-              >
-                <option value="ALL">All Statuses</option>
-                {Object.entries(STATUS_CONFIG).map(([k, v]) => (
-                  <option key={k} value={k}>{v.label}</option>
-                ))}
-              </select>
+            <div className="flex items-center gap-4 w-full sm:w-auto">
+              <div className="flex items-center gap-1 border border-[var(--color-border-default)] p-1 rounded-md bg-[var(--color-bg-primary)]">
+                <button 
+                  onClick={() => setViewMode('kanban')} 
+                  className={`px-2 py-1 text-xs rounded ${viewMode === 'kanban' ? 'bg-[var(--color-bg-secondary)] text-primary font-medium' : 'text-secondary hover:text-primary'}`}
+                >Board</button>
+                <button 
+                  onClick={() => setViewMode('list')} 
+                  className={`px-2 py-1 text-xs rounded ${viewMode === 'list' ? 'bg-[var(--color-bg-secondary)] text-primary font-medium' : 'text-secondary hover:text-primary'}`}
+                >List</button>
+              </div>
+              {viewMode === 'list' && (
+                <div className="flex items-center gap-2">
+                  <Filter size={14} className="text-secondary" />
+                  <select 
+                    className="py-1.5 px-3 text-sm bg-[var(--color-bg-primary)] border border-[var(--color-border-default)] rounded-md outline-none text-primary hover:bg-[var(--color-bg-secondary)] transition-colors cursor-pointer"
+                    value={statusFilter}
+                    onChange={e => setStatusFilter(e.target.value as ApplicationStatus | 'ALL')}
+                  >
+                    <option value="ALL">All Statuses</option>
+                    {Object.entries(STATUS_CONFIG).map(([k, v]) => (
+                      <option key={k} value={k}>{v.label}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
             </div>
           </div>
 
           {/* List Body */}
-          <div className="divide-y divide-[var(--color-border-default)]">
-            {filteredApps.map(app => {
-              const StatusIcon = STATUS_CONFIG[app.status].icon;
-              return (
-                <div key={app.id} className="p-4 hover:bg-[var(--color-bg-secondary)] transition-colors group flex items-start gap-3">
-                  {/* Left Icon */}
-                  <div className="mt-1">
-                    <StatusIcon size={18} className={`
-                      ${app.status === 'OFFER' ? 'text-green-500' : ''}
-                      ${app.status === 'INTERVIEW' ? 'text-yellow-500' : ''}
-                      ${app.status === 'REJECTED' ? 'text-red-500' : ''}
-                      ${app.status === 'APPLIED' ? 'text-[var(--color-accent)]' : ''}
-                      ${app.status === 'WISHLIST' ? 'text-secondary' : ''}
-                    `} />
-                  </div>
-                  
-                  {/* Main Content */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <h3 className="text-base font-semibold text-primary">{app.role}</h3>
-                      <span className="text-secondary">at</span>
-                      <span className="text-base font-semibold text-primary">{app.companyName}</span>
-                      
-                      <Badge tone={STATUS_CONFIG[app.status].tone} className="ml-2 text-[10px] px-2 py-0.5">
-                        {STATUS_CONFIG[app.status].label}
-                      </Badge>
+          {viewMode === 'kanban' ? (
+            <div className="h-[600px] bg-[var(--color-bg-inset)]">
+              <KanbanBoard 
+                applications={filteredApps} 
+                onStatusChange={(id, status) => updateApp.mutate({ id, payload: { status } })}
+                onCoverLetter={setCoverLetterModalApp}
+                onDelete={(id) => deleteApp.mutate(id)}
+              />
+            </div>
+          ) : (
+            <div className="divide-y divide-[var(--color-border-default)]">
+              {filteredApps.map(app => {
+                const StatusIcon = STATUS_CONFIG[app.status].icon;
+                return (
+                  <div key={app.id} className="p-4 hover:bg-[var(--color-bg-secondary)] transition-colors group flex items-start gap-3">
+                    {/* Left Icon */}
+                    <div className="mt-1">
+                      <StatusIcon size={18} className={`
+                        ${app.status === 'OFFER' ? 'text-green-500' : ''}
+                        ${app.status === 'INTERVIEW' ? 'text-yellow-500' : ''}
+                        ${app.status === 'REJECTED' ? 'text-red-500' : ''}
+                        ${app.status === 'APPLIED' ? 'text-[var(--color-accent)]' : ''}
+                        ${app.status === 'WISHLIST' ? 'text-secondary' : ''}
+                      `} />
                     </div>
                     
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-secondary mt-1.5">
-                      {app.location && (
+                    {/* Main Content */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap items-center gap-2 mb-1">
+                        <h3 className="text-base font-semibold text-primary">{app.role}</h3>
+                        <span className="text-secondary">at</span>
+                        <span className="text-base font-semibold text-primary">{app.companyName}</span>
+                        
+                        <Badge tone={STATUS_CONFIG[app.status].tone} className="ml-2 text-[10px] px-2 py-0.5">
+                          {STATUS_CONFIG[app.status].label}
+                        </Badge>
+                        {app.matchScore != null && (
+                          <Badge tone={app.matchScore > 75 ? 'accent' : 'default'} className="ml-2 text-[10px] px-2 py-0.5">
+                            {app.matchScore}% Match
+                          </Badge>
+                        )}
+                      </div>
+                      
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-secondary mt-1.5">
+                        {app.location && (
+                          <span className="flex items-center gap-1">
+                            <Target size={12} /> {app.location}
+                          </span>
+                        )}
+                        {app.salaryRange && (
+                          <span className="flex items-center gap-1 font-mono text-[var(--color-success,auto)]">
+                            $ {app.salaryRange}
+                          </span>
+                        )}
                         <span className="flex items-center gap-1">
-                          <Target size={12} /> {app.location}
+                          <Calendar size={12} /> {app.appliedDate || 'No date'}
                         </span>
+                      </div>
+                    </div>
+                    
+                    {/* Actions */}
+                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {app.jobUrl && (
+                        <a href={app.jobUrl} target="_blank" rel="noreferrer" className="p-1.5 text-secondary hover:text-[var(--color-accent)] hover:bg-[var(--color-bg-tertiary)] rounded-md transition-colors" title="View Job Post">
+                          <ExternalLink size={16} />
+                        </a>
                       )}
-                      {app.salaryRange && (
-                        <span className="flex items-center gap-1 font-mono text-[var(--color-success,auto)]">
-                          $ {app.salaryRange}
-                        </span>
-                      )}
-                      <span className="flex items-center gap-1">
-                        <Calendar size={12} /> {app.appliedDate || 'No date'}
-                      </span>
+                      <button onClick={() => setCoverLetterModalApp(app)} className="p-1.5 text-secondary hover:text-purple-400 hover:bg-purple-500/10 rounded-md transition-colors" title="AI Cover Letter">
+                        <Wand2 size={16} />
+                      </button>
+                      <button onClick={() => deleteApp.mutate(app.id)} className="p-1.5 text-secondary hover:text-danger hover:bg-red-500/10 rounded-md transition-colors" title="Delete Application">
+                        <Trash2 size={16} />
+                      </button>
                     </div>
                   </div>
-                  
-                  {/* Actions */}
-                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    {app.jobUrl && (
-                      <a href={app.jobUrl} target="_blank" rel="noreferrer" className="p-1.5 text-secondary hover:text-[var(--color-accent)] hover:bg-[var(--color-bg-tertiary)] rounded-md transition-colors" title="View Job Post">
-                        <ExternalLink size={16} />
-                      </a>
-                    )}
-                    <button onClick={() => setCoverLetterModalApp(app)} className="p-1.5 text-secondary hover:text-purple-400 hover:bg-purple-500/10 rounded-md transition-colors" title="AI Cover Letter">
-                      <Wand2 size={16} />
-                    </button>
-                    <button onClick={() => deleteApp.mutate(app.id)} className="p-1.5 text-secondary hover:text-danger hover:bg-red-500/10 rounded-md transition-colors" title="Delete Application">
-                      <Trash2 size={16} />
-                    </button>
+                );
+              })}
+              
+              {filteredApps.length === 0 && (
+                <div className="py-16 flex flex-col items-center justify-center text-center px-4">
+                  <div className="w-16 h-16 rounded-full bg-[var(--color-bg-inset)] border border-[var(--color-border-default)] flex items-center justify-center mb-4">
+                    <Briefcase size={24} className="text-muted" />
                   </div>
+                  <h3 className="text-lg font-semibold text-primary mb-2">No applications found</h3>
+                  <p className="text-secondary text-sm max-w-sm mb-6">
+                    You haven't tracked any applications matching this criteria yet.
+                  </p>
+                  <Button variant="primary" onClick={() => setIsModalOpen(true)}>
+                    Add your first application
+                  </Button>
                 </div>
-              );
-            })}
-            
-            {filteredApps.length === 0 && (
-              <div className="py-16 flex flex-col items-center justify-center text-center px-4">
-                <div className="w-16 h-16 rounded-full bg-[var(--color-bg-inset)] border border-[var(--color-border-default)] flex items-center justify-center mb-4">
-                  <Briefcase size={24} className="text-muted" />
-                </div>
-                <h3 className="text-lg font-semibold text-primary mb-2">No applications found</h3>
-                <p className="text-secondary text-sm max-w-sm mb-6">
-                  You haven't tracked any applications matching this criteria yet.
-                </p>
-                <Button variant="primary" onClick={() => setIsModalOpen(true)}>
-                  Add your first application
-                </Button>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -203,6 +236,11 @@ export const JobTrackerPage = () => {
 
 const AddApplicationModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const addApp = useAddJobApplication();
+  const scrapeJob = useScrapeJob();
+  const matchJob = useMatchJob();
+
+  const [importUrl, setImportUrl] = useState('');
+  
   const [formData, setFormData] = useState<CreateJobApplicationRequest>({
     companyName: '',
     role: '',
@@ -210,48 +248,118 @@ const AddApplicationModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
     jobUrl: '',
     location: '',
     salaryRange: '',
+    jobDescription: '',
+    matchScore: undefined,
+    matchFeedback: '',
     appliedDate: new Date().toISOString().split('T')[0],
   });
+
+  const handleImport = () => {
+    if (!importUrl) return;
+    scrapeJob.mutate(importUrl, {
+      onSuccess: (data) => {
+        setFormData(prev => ({
+          ...prev,
+          ...data,
+          jobUrl: importUrl,
+        }));
+        
+        // After scraping, if there's a job description, trigger match
+        if (data.jobDescription) {
+          matchJob.mutate(data.jobDescription, {
+            onSuccess: (matchData) => {
+              setFormData(prev => ({
+                ...prev,
+                matchScore: matchData.score,
+                matchFeedback: matchData.feedback
+              }));
+            }
+          });
+        }
+      }
+    });
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     addApp.mutate(formData, {
       onSuccess: () => {
         onClose();
-        setFormData({ ...formData, companyName: '', role: '', jobUrl: '', location: '', salaryRange: '' });
+        setFormData({ 
+          companyName: '', role: '', status: 'WISHLIST', jobUrl: '', location: '', salaryRange: '', jobDescription: '', matchScore: undefined, matchFeedback: '', appliedDate: new Date().toISOString().split('T')[0] 
+        });
+        setImportUrl('');
       }
     });
   };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Add Job Application">
-      <form onSubmit={handleSubmit} className="space-y-4 pt-2">
-        <div className="grid grid-cols-2 gap-4">
-          <div><Label htmlFor="companyName">Company</Label><Input id="companyName" required value={formData.companyName} onChange={e => setFormData({...formData, companyName: e.target.value})} /></div>
-          <div><Label htmlFor="role">Role</Label><Input id="role" required value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})} /></div>
+      <div className="space-y-4 pt-2">
+        {/* Import section */}
+        <div className="flex gap-2 items-end border-b border-[var(--color-border-default)] pb-4 mb-4">
+          <div className="flex-1">
+            <Label htmlFor="importUrl">Import from URL (HH.kz, LinkedIn)</Label>
+            <Input id="importUrl" placeholder="https://hh.kz/vacancy/..." value={importUrl} onChange={e => setImportUrl(e.target.value)} />
+          </div>
+          <Button type="button" variant="primary" onClick={handleImport} disabled={scrapeJob.isPending || !importUrl}>
+            {scrapeJob.isPending ? 'Scraping...' : 'Import'}
+          </Button>
         </div>
-        <div>
-          <Label htmlFor="status">Pipeline Status</Label>
-          <select 
-            id="status" 
-            className="w-full h-10 px-3 rounded-md bg-[var(--color-bg-primary)] border border-default text-sm text-primary focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] outline-none"
-            value={formData.status} 
-            onChange={e => setFormData({...formData, status: e.target.value as ApplicationStatus})}
-          >
-            {Object.entries(STATUS_CONFIG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
-          </select>
-        </div>
-        <div><Label htmlFor="jobUrl">Job URL</Label><Input id="jobUrl" type="url" value={formData.jobUrl} onChange={e => setFormData({...formData, jobUrl: e.target.value})} /></div>
-        <div className="grid grid-cols-2 gap-4">
-          <div><Label htmlFor="location">Location</Label><Input id="location" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} /></div>
-          <div><Label htmlFor="salaryRange">Salary Range</Label><Input id="salaryRange" value={formData.salaryRange} onChange={e => setFormData({...formData, salaryRange: e.target.value})} /></div>
-        </div>
-        <div><Label htmlFor="appliedDate">Applied Date</Label><Input id="appliedDate" type="date" value={formData.appliedDate} onChange={e => setFormData({...formData, appliedDate: e.target.value})} /></div>
-        <div className="flex gap-3 pt-4 border-t border-[var(--color-border-default)]">
-          <Button type="submit" variant="primary" className="flex-1" disabled={addApp.isPending}>{addApp.isPending ? 'Saving...' : 'Save'}</Button>
-          <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
-        </div>
-      </form>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div><Label htmlFor="companyName">Company</Label><Input id="companyName" required value={formData.companyName} onChange={e => setFormData({...formData, companyName: e.target.value})} /></div>
+            <div><Label htmlFor="role">Role</Label><Input id="role" required value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})} /></div>
+          </div>
+          <div>
+            <Label htmlFor="status">Pipeline Status</Label>
+            <select 
+              id="status" 
+              className="w-full h-10 px-3 rounded-md bg-[var(--color-bg-primary)] border border-default text-sm text-primary focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] outline-none"
+              value={formData.status} 
+              onChange={e => setFormData({...formData, status: e.target.value as ApplicationStatus})}
+            >
+              {Object.entries(STATUS_CONFIG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+            </select>
+          </div>
+          <div><Label htmlFor="jobUrl">Job URL</Label><Input id="jobUrl" type="url" value={formData.jobUrl} onChange={e => setFormData({...formData, jobUrl: e.target.value})} /></div>
+          <div className="grid grid-cols-2 gap-4">
+            <div><Label htmlFor="location">Location</Label><Input id="location" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} /></div>
+            <div><Label htmlFor="salaryRange">Salary Range</Label><Input id="salaryRange" value={formData.salaryRange} onChange={e => setFormData({...formData, salaryRange: e.target.value})} /></div>
+          </div>
+          
+          {formData.jobDescription && (
+            <div>
+              <Label>Job Description (Auto-extracted)</Label>
+              <div className="text-xs text-secondary max-h-24 overflow-y-auto bg-[var(--color-bg-inset)] p-2 rounded border border-[var(--color-border-default)]">
+                {formData.jobDescription}
+              </div>
+            </div>
+          )}
+
+          {formData.matchScore != null && (
+            <div className="p-3 bg-[var(--color-bg-secondary)] border border-[var(--color-border-default)] rounded-md">
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-sm font-semibold text-primary">AI Profile Match</span>
+                <Badge tone={formData.matchScore > 75 ? 'accent' : 'default'} className="text-xs">{formData.matchScore}%</Badge>
+              </div>
+              <p className="text-xs text-secondary mt-1">{formData.matchFeedback}</p>
+            </div>
+          )}
+          {matchJob.isPending && (
+            <div className="text-xs text-[var(--color-accent)] flex items-center gap-1 animate-pulse">
+              <Wand2 size={12} /> Analyzing match with your profile...
+            </div>
+          )}
+
+          <div><Label htmlFor="appliedDate">Applied Date</Label><Input id="appliedDate" type="date" value={formData.appliedDate} onChange={e => setFormData({...formData, appliedDate: e.target.value})} /></div>
+          <div className="flex gap-3 pt-4 border-t border-[var(--color-border-default)]">
+            <Button type="submit" variant="primary" className="flex-1" disabled={addApp.isPending}>{addApp.isPending ? 'Saving...' : 'Save'}</Button>
+            <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
+          </div>
+        </form>
+      </div>
     </Modal>
   );
 };

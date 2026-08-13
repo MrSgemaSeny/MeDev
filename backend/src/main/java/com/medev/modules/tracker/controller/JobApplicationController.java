@@ -18,10 +18,16 @@ import java.util.List;
 public class JobApplicationController {
 
     private final JobApplicationService service;
+    private final com.medev.modules.tracker.service.WebScraperService scraperService;
 
     @GetMapping
     public List<JobApplicationDto> getAll() {
         return service.getAll(SecurityUtils.getCurrentUserId());
+    }
+
+    @GetMapping("/scrape")
+    public CreateJobApplicationRequest scrape(@RequestParam String url) {
+        return scraperService.scrapeJobUrl(url);
     }
 
     @PostMapping

@@ -1,3 +1,4 @@
+import React from 'react';
 import { ClassicTemplate } from '../../features/resume/templates/ClassicTemplate';
 import { ModernTemplate } from '../../features/resume/templates/ModernTemplate';
 import { useResumeEditorStore } from '../../entities/resume/model/resumeEditorStore';
@@ -39,8 +40,52 @@ export const ResumeBuilder = () => {
     }
   };
 
+  const handleDownloadPdf = async () => {
+    try {
+      const { data } = await api.get(`/resume/generate/${selectedTemplate}`, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([data], { type: 'application/pdf' }));
+      const a = window.document.createElement('a');
+      a.href = url;
+      a.download = 'resume.pdf';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error(e);
+      window.alert('PDF export failed.');
+    }
+  };
+
   const moveUp = (index: number) => { if (index > 0) reorderSections(index, index - 1); };
   const moveDown = (index: number) => { if (index < sections.length - 1) reorderSections(index, index + 1); };
+
+  const [previewMode, setPreviewMode] = React.useState<'html' | 'pdf'>('html');
+  const [pdfUrl, setPdfUrl] = React.useState<string | null>(null);
+  const [pdfLoading, setPdfLoading] = React.useState(false);
+
+  React.useEffect(() => {
+    if (previewMode === 'pdf') {
+      let active = true;
+      const loadPdf = async () => {
+        setPdfLoading(true);
+        try {
+          const { data } = await api.get(`/resume/generate/${selectedTemplate}?preview=true`, { responseType: 'blob' });
+          if (active) {
+            const url = window.URL.createObjectURL(new Blob([data], { type: 'application/pdf' }));
+            setPdfUrl(url);
+          }
+        } catch (e) {
+          console.error(e);
+        } finally {
+          if (active) setPdfLoading(false);
+        }
+      };
+      loadPdf();
+      return () => {
+        active = false;
+        if (pdfUrl) window.URL.revokeObjectURL(pdfUrl);
+      };
+    }
+  }, [previewMode, selectedTemplate]);
 
   return (
     <div className="flex h-full" style={{ color: 'var(--color-text-primary)' }}>
@@ -48,6 +93,14 @@ export const ResumeBuilder = () => {
         className="w-72 border-r p-4 flex flex-col gap-6 overflow-y-auto shrink-0"
         style={{ borderColor: 'var(--color-border-default)', backgroundColor: 'var(--color-bg-primary)' }}
       >
+        <div>
+          <h2 className="text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>Preview Mode</h2>
+          <div className="flex gap-2">
+            <Button variant={previewMode === 'html' ? 'primary' : 'outline'} className="flex-1" onClick={() => setPreviewMode('html')}>HTML</Button>
+            <Button variant={previewMode === 'pdf' ? 'primary' : 'outline'} className="flex-1" onClick={() => setPreviewMode('pdf')}>PDF</Button>
+          </div>
+        </div>
+
         <div>
           <h2 className="text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>Templates</h2>
           <div className="grid grid-cols-2 gap-2">
@@ -100,7 +153,8 @@ export const ResumeBuilder = () => {
             <Bot size={16} />
             Analyze Resume
           </Button>
-          <Button variant="primary" className="w-full" onClick={handleDownload}>Export README</Button>
+          <Button variant="primary" className="w-full" onClick={handleDownloadPdf}>Export PDF</Button>
+          <Button variant="outline" className="w-full" onClick={handleDownload}>Export README</Button>
         </div>
       </div>
 
@@ -108,8 +162,22 @@ export const ResumeBuilder = () => {
         className="flex-1 overflow-auto p-8 flex justify-center"
         style={{ backgroundColor: 'var(--color-preview-bg)' }}
       >
-        <div className="origin-top scale-[0.85] xl:scale-95">
-          {selectedTemplate === 'classic' ? <ClassicTemplate /> : <ModernTemplate />}
+        <div className="origin-top w-full max-w-[800px] h-full">
+          {previewMode === 'html' ? (
+            <div className="scale-[0.85] xl:scale-95 origin-top">
+              {selectedTemplate === 'classic' ? <ClassicTemplate /> : <ModernTemplate />}
+            </div>
+          ) : (
+            <div className="w-full h-[800px] bg-white rounded shadow-lg overflow-hidden flex items-center justify-center">
+              {pdfLoading ? (
+                <div className="text-gray-500">Generating PDF...</div>
+              ) : pdfUrl ? (
+                <iframe src={pdfUrl} className="w-full h-full border-0" title="PDF Preview" />
+              ) : (
+                <div className="text-gray-500">Failed to load PDF</div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

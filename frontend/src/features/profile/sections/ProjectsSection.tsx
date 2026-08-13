@@ -63,8 +63,8 @@ export const ProjectsSection = () => {
               <div className="flex justify-between items-start gap-3">
                 <div className="min-w-0">
                   <h3 className="font-semibold text-sm" style={{ color: 'var(--color-text-primary)' }}>{proj.name}</h3>
-                  {proj.url && (
-                    <a href={proj.url} target="_blank" rel="noreferrer" className="text-sm hover:underline" style={{ color: 'var(--color-link)' }}>{proj.url}</a>
+                  {proj.githubUrl && (
+                    <a href={proj.githubUrl} target="_blank" rel="noreferrer" className="text-sm hover:underline" style={{ color: 'var(--color-link)' }}>{proj.githubUrl}</a>
                   )}
                   {(proj.startDate || proj.endDate) && (
                     <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>{proj.startDate} {proj.endDate ? `— ${proj.endDate}` : ''}</p>

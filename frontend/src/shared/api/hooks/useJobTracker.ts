@@ -54,3 +54,21 @@ export const useGenerateCoverLetter = () => {
     },
   });
 };
+
+export const useScrapeJob = () => {
+  return useMutation({
+    mutationFn: async (url: string) => {
+      const { data } = await api.get('/tracker/applications/scrape', { params: { url } });
+      return data as CreateJobApplicationRequest;
+    },
+  });
+};
+
+export const useMatchJob = () => {
+  return useMutation({
+    mutationFn: async (jobDescription: string) => {
+      const { data } = await api.post('/ai/match-job', { jobDescription });
+      return data as { score: number; feedback: string };
+    },
+  });
+};

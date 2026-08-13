@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { api } from '../../shared/api/axios';
-import { useProfile } from '../../shared/api/hooks/useProfile';
+import { useProfile, useGenerateProfile } from '../../shared/api/hooks/useProfile';
 import { Button } from '../../shared/ui/Button';
 import { Card } from '../../shared/ui/Form';
 import { CheckCircle2, DownloadCloud, RefreshCw } from 'lucide-react';
@@ -37,6 +37,7 @@ type Stage = 'idle' | 'fetching' | 'selecting' | 'importing' | 'done' | 'error';
 
 export const GithubImport = () => {
   const { data: profileData, refetch } = useProfile();
+  const { mutate: generateProfile, isPending: isGenerating } = useGenerateProfile();
   const [stage, setStage] = useState<Stage>('idle');
   const [error, setError] = useState<string | null>(null);
   const [profile, setProfile] = useState<GitHubProfileDto | null>(null);
@@ -348,6 +349,17 @@ export const GithubImport = () => {
               {stage !== 'done' && (
                 <Button variant="primary" onClick={handleImport} disabled={stage === 'importing' || selected.size === 0}>
                   {stage === 'importing' ? 'Importing...' : `Import ${selected.size} Projects`}
+                </Button>
+              )}
+              {stage === 'done' && (
+                <Button variant="primary" onClick={() => {
+                  generateProfile(undefined, {
+                    onSuccess: () => {
+                      reset();
+                    }
+                  });
+                }} disabled={isGenerating}>
+                  {isGenerating ? 'Generating...' : 'Enhance with AI'}
                 </Button>
               )}
               <Button variant="outline" onClick={reset}>

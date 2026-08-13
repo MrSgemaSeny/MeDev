@@ -44,6 +44,19 @@ export const useParseResume = () => {
   });
 };
 
+export const useGenerateProfile = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      const { data } = await api.post('/ai/generate-profile');
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+    },
+  });
+};
+
 export const useReorderSection = (section: string) => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -103,7 +116,7 @@ const createCrudHooks = <T,>(sectionName: string) => {
   };
 };
 
-import type { ExperienceDto, EducationDto, SkillDto, LanguageDto, ProjectDto, AiParsedResumeDto } from '../../../entities/profile/model/types';
+import type { ExperienceDto, EducationDto, SkillDto, LanguageDto, ProjectDto } from '../../../entities/profile/model/types';
 
 export const { useAdd: useAddExperience, useUpdate: useUpdateExperience, useDelete: useDeleteExperience } = createCrudHooks<ExperienceDto>('experience');
 export const { useAdd: useAddEducation, useUpdate: useUpdateEducation, useDelete: useDeleteEducation } = createCrudHooks<EducationDto>('education');

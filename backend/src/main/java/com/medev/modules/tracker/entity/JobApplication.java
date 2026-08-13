@@ -47,6 +47,15 @@ public class JobApplication {
     @Column(columnDefinition = "TEXT")
     private String notes;
 
+    @Column(name = "job_description", columnDefinition = "TEXT")
+    private String jobDescription;
+
+    @Column(name = "match_score")
+    private Integer matchScore;
+
+    @Column(name = "match_feedback", columnDefinition = "TEXT")
+    private String matchFeedback;
+
     @Column(name = "applied_date")
     private LocalDate appliedDate;
 

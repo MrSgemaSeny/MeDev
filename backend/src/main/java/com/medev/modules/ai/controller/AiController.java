@@ -188,6 +188,19 @@ public class AiController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping(value = "/match-job", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<com.medev.modules.ai.dto.AiMatchResponse> matchJob(@RequestBody java.util.Map<String, String> body) {
+        Long userId = SecurityUtils.getCurrentUserId();
+        aiRateLimiter.checkAndConsume(userId);
+        
+        String jobDescription = body.get("jobDescription");
+        if (jobDescription == null || jobDescription.isBlank()) {
+            return ResponseEntity.badRequest().build();
+        }
+        
+        com.medev.modules.ai.dto.AiMatchResponse response = aiApplicationService.matchJob(userId, jobDescription);
+        return ResponseEntity.ok(response);
+    }
 
     // ─────────────────────────────────────────────────
     // PARSE RESUME

@@ -15,7 +15,7 @@ public class ResumeController {
     private final PdfGeneratorService pdfGeneratorService;
 
     @GetMapping("/generate/{template}")
-    public ResponseEntity<byte[]> generate(@PathVariable String template) {
+    public ResponseEntity<byte[]> generate(@PathVariable String template, @RequestParam(defaultValue = "false") boolean preview) {
         Long userId = SecurityUtils.getCurrentUserId();
         
         // Ensure user is PRO if they request pro templates
@@ -25,9 +25,10 @@ public class ResumeController {
         
         byte[] pdf = pdfGeneratorService.generatePdf(userId, template);
 
+        String disposition = preview ? "inline" : "attachment";
         return ResponseEntity.ok()
                 .header("Content-Type", "application/pdf")
-                .header("Content-Disposition", "attachment; filename=resume.pdf")
+                .header("Content-Disposition", disposition + "; filename=resume.pdf")
                 .body(pdf);
     }
 }

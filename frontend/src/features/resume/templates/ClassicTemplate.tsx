@@ -21,12 +21,12 @@ export const ClassicTemplate = () => {
         
         <div className="text-sm text-gray-800 flex justify-center items-center flex-wrap gap-2">
           {profile.location && <span>{profile.location}</span>}
-          {profile.location && (profile.website || profile.githubUrl || profile.linkedinUrl) && <span>•</span>}
-          {profile.website && <a href={profile.website} className="hover:underline">{profile.website}</a>}
-          {profile.website && (profile.githubUrl || profile.linkedinUrl) && <span>•</span>}
-          {profile.githubUrl && <a href={profile.githubUrl} className="hover:underline">{profile.githubUrl}</a>}
-          {profile.githubUrl && profile.linkedinUrl && <span>•</span>}
-          {profile.linkedinUrl && <a href={profile.linkedinUrl} className="hover:underline">{profile.linkedinUrl}</a>}
+          {profile.githubUsername && (
+            <span><a href={`https://github.com/${profile.githubUsername}`} target="_blank" rel="noreferrer">GitHub</a></span>
+          )}
+          {profile.linkedin && (
+            <span><a href={profile.linkedin} target="_blank" rel="noreferrer">LinkedIn</a></span>
+          )}
         </div>
       </header>
 
@@ -50,10 +50,10 @@ export const ClassicTemplate = () => {
                         <div className="flex justify-between items-baseline">
                           <h3 className="font-bold text-base">{exp.company}</h3>
                           <span className="text-sm font-medium">
-                            {exp.startDate} – {exp.current ? 'Present' : exp.endDate}
+                            <span className="text-secondary">{exp.isCurrent ? 'Present' : exp.endDate}</span>
                           </span>
                         </div>
-                        <div className="italic text-sm mb-1">{exp.position}</div>
+                        <div className="text-xs mt-0.5 text-muted"></div>
                         {exp.description && (
                           <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">{exp.description}</p>
                         )}
@@ -72,11 +72,11 @@ export const ClassicTemplate = () => {
                         <div className="flex justify-between items-baseline">
                           <h3 className="font-bold text-base">{edu.institution}</h3>
                           <span className="text-sm font-medium">
-                            {edu.startDate} – {edu.current ? 'Present' : edu.endDate}
+                            <span className="text-secondary">{edu.isCurrent ? 'Present' : edu.endDate}</span>
                           </span>
                         </div>
                         <div className="italic text-sm">
-                          {edu.degree} in {edu.fieldOfStudy}
+                          {edu.degree} in {edu.field}
                         </div>
                       </div>
                     ))}
@@ -91,7 +91,7 @@ export const ClassicTemplate = () => {
                     {profile.skills.map(skill => (
                       <span key={skill.id} className="mr-3">
                         <span className="font-bold">{skill.name}</span>
-                        {skill.level && <span className="text-gray-600 ml-1">({skill.level})</span>}
+                        {skill.level && <span className="text-secondary opacity-75">{skill.level}</span>}
                       </span>
                     ))}
                   </div>
@@ -104,7 +104,7 @@ export const ClassicTemplate = () => {
                   <div className="text-sm leading-relaxed">
                     {profile.languages.map(lang => (
                       <span key={lang.id} className="mr-4">
-                        <span className="font-bold">{lang.name}</span>: {lang.proficiency}
+                        <span className="font-bold">{lang.name}</span>: {lang.level}
                       </span>
                     ))}
                   </div>
@@ -120,8 +120,8 @@ export const ClassicTemplate = () => {
                         <div className="flex justify-between items-baseline">
                           <h3 className="font-bold text-base">
                             {proj.name}
-                            {proj.url && (
-                              <a href={proj.url} className="ml-2 text-sm font-normal text-blue-600 hover:underline">
+                            {proj.githubUrl && (
+                              <a href={proj.githubUrl} className="ml-2 text-sm font-normal text-blue-600 hover:underline">
                                 [Link]
                               </a>
                             )}

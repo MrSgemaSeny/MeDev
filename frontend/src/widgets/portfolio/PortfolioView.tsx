@@ -46,8 +46,8 @@ export const PortfolioView = () => {
           <div className="flex flex-wrap justify-center md:justify-start gap-x-4 gap-y-1 text-sm" style={{ color: 'var(--color-text-muted)' }}>
             {profile.location && <span>{profile.location}</span>}
             {profile.website && <a href={profile.website} target="_blank" rel="noreferrer">Website</a>}
-            {profile.githubUrl && <a href={profile.githubUrl} target="_blank" rel="noreferrer">GitHub</a>}
-            {profile.linkedinUrl && <a href={profile.linkedinUrl} target="_blank" rel="noreferrer">LinkedIn</a>}
+            {profile.githubUsername && <a href={`https://github.com/${profile.githubUsername}`} target="_blank" rel="noreferrer">GitHub</a>}
+            {profile.linkedin && <a href={profile.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>}
           </div>
         </div>
       </header>
@@ -63,7 +63,7 @@ export const PortfolioView = () => {
                     <div className="absolute w-2 h-2 rounded-full -left-[5px] top-1.5" style={{ backgroundColor: 'var(--color-accent)' }} />
                     <h3 className="font-semibold text-sm" style={{ color: 'var(--color-text-primary)' }}>{exp.position}</h3>
                     <div className="text-sm font-medium" style={{ color: 'var(--color-link)' }}>{exp.company}</div>
-                    <div className="text-xs mb-2" style={{ color: 'var(--color-text-muted)' }}>{exp.startDate} — {exp.current ? 'Present' : exp.endDate}</div>
+                    <div className="text-xs mb-2" style={{ color: 'var(--color-text-muted)' }}>{exp.startDate} — {exp.isCurrent ? 'Present' : exp.endDate}</div>
                     {exp.description && <p className="text-sm whitespace-pre-wrap" style={{ color: 'var(--color-text-secondary)' }}>{exp.description}</p>}
                   </div>
                 ))}
@@ -76,8 +76,10 @@ export const PortfolioView = () => {
               <div className="grid grid-cols-1 gap-3">
                 {profile.projects.map((proj) => (
                   <Card key={proj.id} className="p-4">
-                    <h3 className="font-semibold text-sm mb-1" style={{ color: 'var(--color-text-primary)' }}>{proj.name}</h3>
-                    {proj.url && <a href={proj.url} target="_blank" rel="noreferrer" className="text-sm hover:underline block mb-2" style={{ color: 'var(--color-link)' }}>{proj.url}</a>}
+                    <h3 className="font-semibold text-sm mb-1" style={{ color: 'var(--color-text-primary)' }}>
+                      {proj.githubUrl ? <a href={proj.githubUrl} target="_blank" rel="noreferrer" className="hover:underline">{proj.name}</a> : proj.name}
+                    </h3>
+                    {proj.githubUrl && <a href={proj.githubUrl} target="_blank" rel="noreferrer" className="text-sm hover:underline block mb-2" style={{ color: 'var(--color-link)' }}>{proj.githubUrl}</a>}
                     {proj.description && <p className="text-sm whitespace-pre-wrap" style={{ color: 'var(--color-text-secondary)' }}>{proj.description}</p>}
                   </Card>
                 ))}
@@ -107,7 +109,7 @@ export const PortfolioView = () => {
                   <div key={edu.id}>
                     <h3 className="font-semibold text-sm" style={{ color: 'var(--color-text-primary)' }}>{edu.degree}</h3>
                     <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>{edu.institution}</div>
-                    <div className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>{edu.startDate} — {edu.current ? 'Present' : edu.endDate}</div>
+                    <div className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>{edu.startDate} — {edu.isCurrent ? 'Present' : edu.endDate}</div>
                   </div>
                 ))}
               </div>
@@ -120,7 +122,7 @@ export const PortfolioView = () => {
                 {profile.languages.map((lang) => (
                   <div key={lang.id} className="flex justify-between items-center text-sm">
                     <span style={{ color: 'var(--color-text-secondary)' }}>{lang.name}</span>
-                    <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>{lang.proficiency}</span>
+                    <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>{lang.level}</span>
                   </div>
                 ))}
               </div>

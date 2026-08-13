@@ -44,6 +44,9 @@ public class JobApplicationService {
                 .location(request.getLocation())
                 .salaryRange(request.getSalaryRange())
                 .notes(request.getNotes())
+                .jobDescription(request.getJobDescription())
+                .matchScore(request.getMatchScore())
+                .matchFeedback(request.getMatchFeedback())
                 .appliedDate(request.getAppliedDate())
                 .build();
 
@@ -61,6 +64,9 @@ public class JobApplicationService {
         if (request.getLocation() != null) entity.setLocation(request.getLocation());
         if (request.getSalaryRange() != null) entity.setSalaryRange(request.getSalaryRange());
         if (request.getNotes() != null) entity.setNotes(request.getNotes());
+        if (request.getJobDescription() != null) entity.setJobDescription(request.getJobDescription());
+        if (request.getMatchScore() != null) entity.setMatchScore(request.getMatchScore());
+        if (request.getMatchFeedback() != null) entity.setMatchFeedback(request.getMatchFeedback());
         if (request.getAppliedDate() != null) entity.setAppliedDate(request.getAppliedDate());
 
         return toDto(repository.save(entity));
@@ -91,6 +97,9 @@ public class JobApplicationService {
                 .location(entity.getLocation())
                 .salaryRange(entity.getSalaryRange())
                 .notes(entity.getNotes())
+                .jobDescription(entity.getJobDescription())
+                .matchScore(entity.getMatchScore())
+                .matchFeedback(entity.getMatchFeedback())
                 .appliedDate(entity.getAppliedDate())
                 .updatedAt(entity.getUpdatedAt())
                 .build();

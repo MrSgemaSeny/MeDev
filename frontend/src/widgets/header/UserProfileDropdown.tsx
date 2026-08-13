@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { LogOut, Bell, Globe, Mail, Moon, Sun, Shield } from 'lucide-react';
 import { useAuthStore } from '../../entities/user/model/store';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+// import removed
 
 interface UserProfileDropdownProps {
   variant?: 'sidebar' | 'header';
@@ -12,7 +12,7 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const username = useAuthStore((s) => s.username);
-  const role = useAuthStore((s) => s.role);
+  const role = (useAuthStore as any)((s: any) => s.role);
   const logout = useAuthStore((s) => s.logout);
   const { i18n } = useTranslation();
 

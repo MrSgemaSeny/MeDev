@@ -14,5 +14,8 @@ public class UpdateJobApplicationRequest {
     private String location;
     private String salaryRange;
     private String notes;
+    private String jobDescription;
+    private Integer matchScore;
+    private String matchFeedback;
     private LocalDate appliedDate;
 }

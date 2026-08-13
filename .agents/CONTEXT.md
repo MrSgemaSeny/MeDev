@@ -24,6 +24,8 @@
   - **Enterprise Job Tracker & Import**: Replaced drag-and-drop Kanban board with a data-dense CRM table (uninstalled `@dnd-kit`). Extracted "Zero-Input" resume upload to a dedicated `/import` route.
   - **Dashboard Redesign**: Replaced standard DashboardPage with premium landing-page aesthetics (hero, live portfolio mock window, quick actions cards). Removed all mock data.
   - **Enterprise Admin Panel & Audit Logs**: Created `audit` module (AuditLog entity, AuditLogRepository, AuditService). Created `admin` module (AdminController, AdminService, AdminDashboardDto). Frontend: AdminGuard, AdminDashboardPage, AdminUsersPage, AdminAuditPage. Flyway V19 migration for audit_logs table. Fixed broken tests (AiAnalysisServiceTest, AuthServiceTest, JwtFilterTest, ProfileServiceTest). Improved AiChatWidget UI (480x650, leading-relaxed). Fixed duplicate `spring:` key in application.yml.
+  - **Roadmap Phase 3 (PDF Preview)**: Added backend logic to return base64 embedded PDFs or preview blobs. Created frontend component in ResumeBuilder to preview the generated PDF inline using an iframe.
+  - **Roadmap Phase 4 (Job Tracker AI & Kanban)**: Added AI matcher to compare Job Description vs Profile. Built WebScraperService to pull JD from HH.kz and LinkedIn URLs. Added `dnd-kit` powered Kanban Board to `JobTrackerPage` alongside the CRM List View. Added Import by URL flow to Job Application modal.
 
 ## Next in Backlog
 - Frontend CI/CD / GitHub Pages deployment.
