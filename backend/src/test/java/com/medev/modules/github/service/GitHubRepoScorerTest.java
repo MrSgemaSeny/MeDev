@@ -23,62 +23,50 @@ class GitHubRepoScorerTest {
     }
 
     @Test
-    void calculateScore_WithStarsAndForks_CalculatesCorrectly() {
-        GitHubRepoDto repo = new GitHubRepoDto();
-        repo.setStargazersCount(10); // 10 * 10 = 100
-        repo.setForksCount(5);       // 5 * 5 = 25
-        
-        assertEquals(125, GitHubRepoScorer.calculateScore(repo));
-    }
-
-    @Test
-    void calculateScore_WithSize_CapsAt50() {
+    void calculateScore_ForkOrArchived_ReturnsZero() {
         GitHubRepoDto repo1 = new GitHubRepoDto();
-        repo1.setSize(200); // 200 / 100 = 2
-        assertEquals(2, GitHubRepoScorer.calculateScore(repo1));
+        repo1.setFork(true);
+        repo1.setSize(100000);
+        assertEquals(0, GitHubRepoScorer.calculateScore(repo1));
 
         GitHubRepoDto repo2 = new GitHubRepoDto();
-        repo2.setSize(10000); // 10000 / 100 = 100, capped at 50
-        assertEquals(50, GitHubRepoScorer.calculateScore(repo2));
+        repo2.setArchived(true);
+        repo2.setSize(100000);
+        assertEquals(0, GitHubRepoScorer.calculateScore(repo2));
     }
 
     @Test
-    void calculateScore_WithDescriptionAndLanguage_AddsBonus() {
-        GitHubRepoDto repo = new GitHubRepoDto();
-        repo.setDescription("A cool project"); // +5
-        repo.setLanguage("Java");              // +5
-        
-        assertEquals(10, GitHubRepoScorer.calculateScore(repo));
+    void calculateScore_WithSize_CalculatesCorrectly() {
+        GitHubRepoDto repo1 = new GitHubRepoDto();
+        repo1.setSize(250_000); // 0.5 * 0.6 = 0.3 * 1000 = 300
+        assertEquals(300, GitHubRepoScorer.calculateScore(repo1));
+
+        GitHubRepoDto repo2 = new GitHubRepoDto();
+        repo2.setSize(1_000_000); // 1.0 (capped) * 0.6 = 0.6 * 1000 = 600
+        assertEquals(600, GitHubRepoScorer.calculateScore(repo2));
     }
 
     @Test
-    void calculateScore_WithRecentUpdate_AddsBonus() {
+    void calculateScore_WithRecency_CalculatesCorrectly() {
         GitHubRepoDto repoRecent = new GitHubRepoDto();
-        repoRecent.setUpdatedAt(Instant.now().minus(10, ChronoUnit.DAYS).toString()); // < 90 days -> +20
-        assertEquals(20, GitHubRepoScorer.calculateScore(repoRecent));
+        repoRecent.setUpdatedAt(Instant.now().toString()); // daysAgo = 0 -> 1.0 * 0.4 = 0.4 * 1000 = 400
+        assertEquals(400, GitHubRepoScorer.calculateScore(repoRecent));
 
         GitHubRepoDto repoOld = new GitHubRepoDto();
-        repoOld.setUpdatedAt(Instant.now().minus(200, ChronoUnit.DAYS).toString()); // < 365 days -> +10
-        assertEquals(10, GitHubRepoScorer.calculateScore(repoOld));
+        repoOld.setUpdatedAt(Instant.now().minus(365, ChronoUnit.DAYS).toString()); // daysAgo = 365 -> 0.5 * 0.4 = 0.2 * 1000 = 200
+        assertEquals(200, GitHubRepoScorer.calculateScore(repoOld));
         
         GitHubRepoDto repoVeryOld = new GitHubRepoDto();
-        repoVeryOld.setUpdatedAt(Instant.now().minus(400, ChronoUnit.DAYS).toString()); // > 365 days -> 0
+        repoVeryOld.setUpdatedAt(Instant.now().minus(800, ChronoUnit.DAYS).toString()); // daysAgo = 800 -> 0 * 0.4 = 0
         assertEquals(0, GitHubRepoScorer.calculateScore(repoVeryOld));
     }
 
     @Test
-    void calculateScore_Sorting_WorksAsExpected() {
-        GitHubRepoDto betterRepo = new GitHubRepoDto();
-        betterRepo.setStargazersCount(50);
-        betterRepo.setLanguage("Java");
-        betterRepo.setUpdatedAt(Instant.now().toString());
-
-        GitHubRepoDto worseRepo = new GitHubRepoDto();
-        worseRepo.setStargazersCount(2);
-        
-        int betterScore = GitHubRepoScorer.calculateScore(betterRepo);
-        int worseScore = GitHubRepoScorer.calculateScore(worseRepo);
-        
-        assertTrue(betterScore > worseScore);
+    void calculateScore_Mixed_CalculatesCorrectly() {
+        GitHubRepoDto repo = new GitHubRepoDto();
+        repo.setSize(500_000); // 1.0 -> 0.6
+        repo.setUpdatedAt(Instant.now().toString()); // 1.0 -> 0.4
+        // total = 1.0 * 1000 = 1000
+        assertEquals(1000, GitHubRepoScorer.calculateScore(repo));
     }
 }

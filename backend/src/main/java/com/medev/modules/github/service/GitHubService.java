@@ -124,7 +124,7 @@ public class GitHubService {
                             .bio(user != null ? user.getBio() : null)
                             .location(user != null ? user.getLocation() : null)
                             .publicRepos(user != null ? user.getPublicRepos() : 0)
-                            .repos(scoredRepos)
+                            .repos(top10Repos)
                             .languageStats(tuple.getT1())
                             .detectedTechnologies(tuple.getT2())
                             .organizations(tuple.getT3())

@@ -7,51 +7,32 @@ import java.time.temporal.ChronoUnit;
 
 public class GitHubRepoScorer {
 
-    /**
-     * Calculates a quality score for a GitHub repository.
-     * Higher score means the repository is more significant (e.g. more stars, recently updated, larger size).
-     */
+    private static final double WEIGHT_SIZE   = 0.6;
+    private static final double WEIGHT_RECENCY = 0.4;
+    private static final int    MAX_SIZE_KB   = 500_000; // нормализация по 500MB
+    private static final int    MAX_AGE_DAYS  = 730;     // 2 года = 0 баллов по recency
+
     public static int calculateScore(GitHubRepoDto repo) {
         if (repo == null) return 0;
-
-        int score = 0;
-
-        if (repo.getStargazersCount() != null) {
-            score += repo.getStargazersCount() * 10;
+        
+        if (repo.isFork() || repo.isArchived()) {
+            return 0;
         }
 
-        if (repo.getForksCount() != null) {
-            score += repo.getForksCount() * 5;
+        double sizeScore = 0;
+        if (repo.getSize() != null && repo.getSize() > 0) {
+            sizeScore = Math.min((double) repo.getSize() / MAX_SIZE_KB, 1.0);
         }
 
-        if (repo.getSize() != null) {
-            // size is in KB. 1 point for every 100KB. Cap at 50 points (5MB).
-            int sizeScore = Math.min(repo.getSize() / 100, 50);
-            score += sizeScore;
-        }
-
-        if (repo.getDescription() != null && !repo.getDescription().isBlank()) {
-            score += 5;
-        }
-
-        if (repo.getLanguage() != null && !repo.getLanguage().isBlank()) {
-            score += 5;
-        }
-
+        double recencyScore = 0;
         if (repo.getUpdatedAt() != null) {
             try {
-                Instant updatedAt = Instant.parse(repo.getUpdatedAt());
-                long daysAgo = ChronoUnit.DAYS.between(updatedAt, Instant.now());
-                if (daysAgo <= 90) { // 3 months
-                    score += 20;
-                } else if (daysAgo <= 365) { // 1 year
-                    score += 10;
-                }
-            } catch (Exception e) {
-                // Ignore parse errors
-            }
+                Instant updated = Instant.parse(repo.getUpdatedAt());
+                long daysAgo = ChronoUnit.DAYS.between(updated, Instant.now());
+                recencyScore = Math.max(0, 1.0 - (double) daysAgo / MAX_AGE_DAYS);
+            } catch (Exception ignored) {}
         }
 
-        return score;
+        return (int) ((sizeScore * WEIGHT_SIZE + recencyScore * WEIGHT_RECENCY) * 1000);
     }
 }

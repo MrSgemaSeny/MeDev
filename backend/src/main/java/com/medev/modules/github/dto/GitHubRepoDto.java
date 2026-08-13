@@ -24,4 +24,13 @@ public class GitHubRepoDto {
 
     @JsonProperty("updated_at")
     private String updatedAt;
+    
+    @JsonProperty("fork")
+    private Boolean fork;
+    
+    @JsonProperty("archived")
+    private Boolean archived;
+    
+    public boolean isFork() { return Boolean.TRUE.equals(fork); }
+    public boolean isArchived() { return Boolean.TRUE.equals(archived); }
 }
