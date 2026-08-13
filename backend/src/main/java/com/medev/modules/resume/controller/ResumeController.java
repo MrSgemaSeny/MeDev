@@ -31,4 +31,20 @@ public class ResumeController {
                 .header("Content-Disposition", disposition + "; filename=resume.pdf")
                 .body(pdf);
     }
+
+    @GetMapping(value = "/html/{template}", produces = "text/html;charset=UTF-8")
+    public ResponseEntity<String> generateHtml(@PathVariable String template, @RequestParam(defaultValue = "false") boolean preview) {
+        Long userId = SecurityUtils.getCurrentUserId();
+        
+        if (template.toLowerCase().contains("pro")) {
+            throw new com.medev.shared.exception.UnauthorizedException("PRO template requires PRO plan");
+        }
+        
+        String html = pdfGeneratorService.generateHtml(userId, template);
+
+        String disposition = preview ? "inline" : "attachment";
+        return ResponseEntity.ok()
+                .header("Content-Disposition", disposition + "; filename=resume.html")
+                .body(html);
+    }
 }

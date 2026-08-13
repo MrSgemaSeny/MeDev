@@ -1,130 +1,254 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8"/>
-    <title>Grok Monolith Style Resume</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${profile.fullName} + ' - Grok Resume'">Grok</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <style>
-        @page { size: A4; margin: 15mm; }
-        body { font-family: 'Courier New', Courier, monospace; background-color: #000000; color: #FFFFFF; margin: 0; font-size: 10px; line-height: 1.4; border: 2px solid #FFFFFF; padding: 15px; text-transform: uppercase; }
-        .header { border-bottom: 2px solid #FFFFFF; padding-bottom: 15px; margin-bottom: 20px; }
-        h1 { color: #FFFFFF; font-size: 32px; margin: 0 0 5px 0; font-weight: bold; letter-spacing: 3px; }
-        .contact { color: #A1A1AA; font-size: 10px; }
-        .contact span { margin-right: 15px; display: inline-block; }
-        a { color: #FFFFFF; text-decoration: underline; }
-        .section-box { border: 1px solid #FFFFFF; margin-bottom: 15px; padding: 10px; }
-        h2 { color: #000000; background-color: #FFFFFF; font-size: 12px; margin: -10px -10px 10px -10px; padding: 5px 10px; display: block; letter-spacing: 2px; }
-        .layout { width: 100%; border-collapse: collapse; margin-bottom: 5px; }
-        .layout td { vertical-align: top; padding: 0; }
-        .left { text-align: left; font-weight: bold; font-size: 11px; color: #FFFFFF; }
-        .right { text-align: right; font-size: 10px; color: #A1A1AA; }
-        .item { margin-bottom: 15px; border-bottom: 1px dashed #555555; padding-bottom: 10px; }
-        .item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .item-subheader { color: #A1A1AA; font-size: 10px; margin-bottom: 5px; }
-        .item-desc { font-size: 10px; color: #CCCCCC; text-transform: none; }
-        .tech-tag { display: inline-block; border: 1px solid #FFFFFF; padding: 2px 6px; margin-right: 4px; margin-top: 4px; font-size: 9px; color: #FFFFFF; }
-        .skills-table { width: 100%; border-collapse: collapse; }
-        .skills-table td { padding: 8px 0; vertical-align: top; border-bottom: 1px solid #333333; }
-        .skills-table tr:last-child td { border-bottom: none; }
-        .cat-col { width: 25%; color: #FFFFFF; font-weight: bold; font-size: 10px; border-right: 1px solid #333333; padding-right: 10px; }
-        .det-col { width: 75%; padding-left: 10px; }
-        .footer { margin-top: 20px; font-size: 9px; color: #555555; text-align: right; font-weight: bold; }
+        :root {
+            --bg-color: #000000;
+            --text-primary: #f4f4f5;
+            --text-secondary: #a1a1aa;
+            --border-color: #27272a;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        h1 {
+            font-size: 56px;
+            font-weight: 700;
+            letter-spacing: -2px;
+            margin-bottom: 24px;
+            color: #ffffff;
+        }
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .contact-pill {
+            background-color: #09090b;
+            border: 1px solid var(--border-color);
+            padding: 8px 20px;
+            border-radius: 9999px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .contact-pill a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .section {
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            margin-bottom: 24px;
+            padding: 40px;
+            background-color: #000000;
+        }
+        
+        h2.section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 32px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        h2.section-title::before {
+            content: '';
+            display: block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+        }
+        
+        .summary-text {
+            font-size: 18px;
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+        
+        .item-list {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 8px;
+        }
+        .item-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        .item-date {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-variant-numeric: tabular-nums;
+        }
+        .item-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+        .item-desc {
+            font-size: 15px;
+            color: var(--text-primary);
+        }
+        
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        .tag {
+            background-color: #09090b;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 6px 16px;
+            font-size: 13px;
+            border-radius: 9999px;
+            font-weight: 500;
+        }
+        
+        .skills-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 32px;
+        }
+        .skill-group-name {
+            font-size: 14px;
+            color: #ffffff;
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 30px 20px; }
+            h1 { font-size: 40px; }
+            .section { padding: 24px; border-radius: 20px; }
+            .item-header { flex-direction: column; align-items: flex-start; gap: 4px; }
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <h1 th:text="${profile.fullName}">Name</h1>
-        <div class="contact">
-            <span th:if="${profile.location}">LOC: <span th:text="${profile.location}"></span></span>
-            <span th:if="${profile.website}">WEB: <a th:href="${profile.website}" th:text="${profile.website}"></a></span>
-            <span th:if="${profile.githubUsername}">GIT: <span th:text="${profile.githubUsername}"></span></span>
-            <span th:if="${profile.linkedin}">LKD: <span th:text="${profile.linkedin}"></span></span>
-            <span th:if="${profile.telegram}">TLG: <span th:text="${profile.telegram}"></span></span>
+        <div class="contact-info">
+            <div class="contact-pill" th:if="${profile.location}" th:text="${profile.location}"></div>
+            <div class="contact-pill" th:if="${profile.website}"><a th:href="${profile.website}" th:text="${profile.website}" target="_blank"></a></div>
+            <div class="contact-pill" th:if="${profile.githubUsername}">X / <span th:text="${profile.githubUsername}"></span></div>
+            <div class="contact-pill" th:if="${profile.linkedin}">IN / <span th:text="${profile.linkedin}"></span></div>
         </div>
     </div>
 
     <div th:each="sectionName : ${profile.sectionOrder != null and !profile.sectionOrder.isEmpty() ? profile.sectionOrder : {'summary','experience','education','skills','languages','projects'}}">
         <div th:switch="${sectionName}">
             
-            <div class="section-box" th:case="'summary'" th:if="${profile.summary != null and !profile.summary.isEmpty()}">
-                <h2>> SYS.INIT / SUMMARY</h2>
-                <div class="item-desc" th:text="${profile.summary}"></div>
+            <div th:case="'summary'" th:if="${profile.summary != null and !profile.summary.isEmpty()}" class="section">
+                <h2 class="section-title">Summary</h2>
+                <div class="summary-text" th:text="${profile.summary}"></div>
             </div>
 
-            <div class="section-box" th:case="'experience'" th:if="${profile.experience != null and !profile.experience.isEmpty()}">
-                <h2>> PROC.EXEC / EXPERIENCE</h2>
-                <div class="item" th:each="exp : ${profile.experience}">
-                    <table class="layout">
-                        <tr>
-                            <td class="left" th:text="${exp.position}">Position</td>
-                            <td class="right" th:text="${exp.startDate + ' - ' + (exp.isCurrent ? 'Present' : exp.endDate)}">Date</td>
-                        </tr>
-                    </table>
-                    <div class="item-subheader" th:text="${exp.company}">Company</div>
-                    <div class="item-desc" th:text="${exp.description}">Description</div>
-                    <div th:if="${exp.techStack != null and !exp.techStack.isEmpty()}">
-                        <span class="tech-tag" th:text="${exp.techStack}"></span>
+            <div th:case="'experience'" th:if="${profile.experience != null and !profile.experience.isEmpty()}" class="section">
+                <h2 class="section-title">Experience</h2>
+                <div class="item-list">
+                    <div class="item" th:each="exp : ${profile.experience}">
+                        <div class="item-header">
+                            <div class="item-title" th:text="${exp.position}">Position</div>
+                            <div class="item-date" th:text="${exp.startDate + ' - ' + (exp.isCurrent ? 'Present' : exp.endDate)}">Date</div>
+                        </div>
+                        <div class="item-subtitle" th:text="${exp.company}">Company</div>
+                        <div class="item-desc" th:text="${exp.description}">Description</div>
+                        <div class="tags" th:if="${exp.techStack != null and !exp.techStack.isEmpty()}">
+                            <span class="tag" th:text="${exp.techStack}"></span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="section-box" th:case="'education'" th:if="${profile.education != null and !profile.education.isEmpty()}">
-                <h2>> DATA.LOAD / EDUCATION</h2>
-                <div class="item" th:each="edu : ${profile.education}">
-                    <table class="layout">
-                        <tr>
-                            <td class="left" th:text="${edu.institution}">Institution</td>
-                            <td class="right" th:text="${edu.startDate + ' - ' + (edu.isCurrent ? 'Present' : edu.endDate)}">Date</td>
-                        </tr>
-                    </table>
-                    <div class="item-subheader" th:text="${edu.degree} + (edu.field != null ? ' in ' + edu.field : '')">Degree</div>
-                </div>
-            </div>
-
-            <div class="section-box" th:case="'skills'" th:if="${groupedSkills != null and !groupedSkills.isEmpty()}">
-                <h2>> MOD.LOAD / TECH_STACK</h2>
-                <table class="skills-table">
-                    <tr th:each="entry : ${groupedSkills}">
-                        <td class="cat-col" th:text="${entry.key}"></td>
-                        <td class="det-col">
-                            <span class="tech-tag" th:each="skillName : ${entry.value}" th:text="${skillName}"></span>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-
-            <div class="section-box" th:case="'languages'" th:if="${languagesStr != null and !languagesStr.isEmpty()}">
-                <h2>> LANG.CFG / LANGUAGES</h2>
-                <table class="skills-table">
-                    <tr>
-                        <td class="cat-col">LANGUAGES</td>
-                        <td class="det-col" style="color: #FFFFFF;" th:text="${languagesStr}"></td>
-                    </tr>
-                </table>
-            </div>
-
-            <div class="section-box" th:case="'projects'" th:if="${profile.projects != null and !profile.projects.isEmpty()}">
-                <h2>> BIN.EXEC / PROJECTS</h2>
-                <div class="item" th:each="proj : ${profile.projects}" th:if="${proj.isVisible}">
-                    <table class="layout">
-                        <tr>
-                            <td class="left" th:text="${proj.name}">Project Name</td>
-                            <td class="right">
-                                <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}">[SRC]</a>
-                                <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}">[LIV]</a>
-                            </td>
-                        </tr>
-                    </table>
-                    <div class="item-desc" th:text="${proj.description}">Description</div>
-                    <div th:if="${proj.techStack != null and !proj.techStack.isEmpty()}">
-                        <span class="tech-tag" th:text="${proj.techStack}"></span>
+            <div th:case="'education'" th:if="${profile.education != null and !profile.education.isEmpty()}" class="section">
+                <h2 class="section-title">Education</h2>
+                <div class="item-list">
+                    <div class="item" th:each="edu : ${profile.education}">
+                        <div class="item-header">
+                            <div class="item-title" th:text="${edu.institution}">Institution</div>
+                            <div class="item-date" th:text="${edu.startDate + ' - ' + (edu.isCurrent ? 'Present' : edu.endDate)}">Date</div>
+                        </div>
+                        <div class="item-subtitle" th:text="${edu.degree} + (edu.field != null ? ' in ' + edu.field : '')">Degree</div>
                     </div>
                 </div>
             </div>
+
+            <div th:case="'skills'" th:if="${groupedSkills != null and !groupedSkills.isEmpty()}" class="section">
+                <h2 class="section-title">Capabilities</h2>
+                <div class="skills-grid">
+                    <div class="skill-group" th:each="entry : ${groupedSkills}">
+                        <div class="skill-group-name" th:text="${entry.key}"></div>
+                        <div class="tags" style="margin-top:0;">
+                            <span class="tag" th:each="skillName : ${entry.value}" th:text="${skillName}"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:case="'languages'" th:if="${languagesStr != null and !languagesStr.isEmpty()}" class="section">
+                <h2 class="section-title">Languages</h2>
+                <div style="font-size: 16px; color: var(--text-secondary);" th:text="${languagesStr}"></div>
+            </div>
+
+            <div th:case="'projects'" th:if="${profile.projects != null and !profile.projects.isEmpty()}" class="section">
+                <h2 class="section-title">Projects</h2>
+                <div class="item-list">
+                    <div class="item" th:each="proj : ${profile.projects}" th:if="${proj.isVisible}">
+                        <div class="item-header">
+                            <div class="item-title" th:text="${proj.name}">Project</div>
+                            <div class="item-date">
+                                <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" target="_blank" style="color:var(--text-secondary); text-decoration:none;">GitHub</a>
+                                <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" target="_blank" style="color:var(--text-secondary); text-decoration:none; margin-left:12px;">Live</a>
+                            </div>
+                        </div>
+                        <div class="item-desc" th:text="${proj.description}">Description</div>
+                        <div class="tags" th:if="${proj.techStack != null and !proj.techStack.isEmpty()}">
+                            <span class="tag" th:text="${proj.techStack}"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
         </div>
-    </div>
-    
-    <div class="footer">
-        EOF
     </div>
 </body>
 </html>
+
+

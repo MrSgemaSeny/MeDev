@@ -1,78 +1,95 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title th:text="${profile.fullName} + ' - Resume'">Apple Modern Resume</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${profile.fullName} + ' - Grok Resume'">Grok</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #ffffff;
-            --text-primary: #1d1d1f;
-            --text-secondary: #86868b;
-            --accent-blue: #0071e3;
-            --bg-tag: #f5f5f7;
-            --border-light: #e5e5ea;
+            --bg-color: #000000;
+            --text-primary: #f4f4f5;
+            --text-secondary: #a1a1aa;
+            --border-color: #27272a;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-primary);
-            line-height: 1.5;
+            line-height: 1.6;
             -webkit-font-smoothing: antialiased;
-            max-width: 1000px;
+            max-width: 860px;
             margin: 0 auto;
-            padding: 80px 40px;
+            padding: 60px 40px;
         }
-        .hero {
+        
+        .header {
             text-align: center;
-            margin-bottom: 80px;
+            margin-bottom: 60px;
         }
         h1 {
             font-size: 56px;
             font-weight: 700;
-            letter-spacing: -1.5px;
-            margin-bottom: 16px;
+            letter-spacing: -2px;
+            margin-bottom: 24px;
+            color: #ffffff;
         }
         .contact-info {
             display: flex;
             justify-content: center;
-            gap: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .contact-pill {
+            background-color: #09090b;
+            border: 1px solid var(--border-color);
+            padding: 8px 20px;
+            border-radius: 9999px;
+            font-size: 14px;
             color: var(--text-secondary);
-            font-size: 15px;
-            font-weight: 400;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        a {
-            color: var(--accent-blue);
+        .contact-pill a {
+            color: var(--text-primary);
             text-decoration: none;
-            transition: opacity 0.2s;
+            font-weight: 500;
         }
-        a:hover { opacity: 0.7; }
         
         .section {
-            display: grid;
-            grid-template-columns: 240px 1fr;
-            gap: 40px;
-            padding: 40px 0;
-            border-bottom: 1px solid var(--border-light);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            margin-bottom: 24px;
+            padding: 40px;
+            background-color: #000000;
         }
-        .section:last-child { border-bottom: none; }
         
         h2.section-title {
-            font-size: 18px;
-            color: var(--text-secondary);
-            font-weight: 500;
-            letter-spacing: -0.2px;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 32px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        h2.section-title::before {
+            content: '';
+            display: block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
         }
         
         .summary-text {
-            font-size: 21px;
-            line-height: 1.4;
-            font-weight: 400;
-            letter-spacing: -0.3px;
+            font-size: 18px;
+            color: var(--text-primary);
+            line-height: 1.7;
         }
         
         .item-list {
@@ -80,86 +97,78 @@
             flex-direction: column;
             gap: 24px;
         }
-        .item {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
         .item-header {
             display: flex;
             justify-content: space-between;
             align-items: baseline;
+            margin-bottom: 8px;
         }
         .item-title {
-            font-size: 21px;
+            font-size: 20px;
             font-weight: 600;
-            letter-spacing: -0.3px;
+            color: #ffffff;
         }
         .item-date {
             color: var(--text-secondary);
-            font-size: 15px;
+            font-size: 14px;
+            font-variant-numeric: tabular-nums;
         }
         .item-subtitle {
-            font-size: 17px;
+            font-size: 16px;
             color: var(--text-secondary);
-            font-weight: 500;
+            margin-bottom: 12px;
         }
         .item-desc {
             font-size: 15px;
             color: var(--text-primary);
-            margin-top: 8px;
         }
         
         .tags {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
-            margin-top: 12px;
+            margin-top: 16px;
         }
         .tag {
-            background-color: var(--bg-tag);
-            color: var(--text-primary);
-            padding: 6px 14px;
-            border-radius: 12px;
+            background-color: #09090b;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 6px 16px;
             font-size: 13px;
+            border-radius: 9999px;
             font-weight: 500;
         }
         
         .skills-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 24px;
-        }
-        .skill-group {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+            gap: 32px;
         }
         .skill-group-name {
-            font-size: 13px;
+            font-size: 14px;
+            color: #ffffff;
+            font-weight: 600;
+            margin-bottom: 16px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: var(--text-secondary);
-            font-weight: 600;
         }
         
         @media (max-width: 768px) {
-            .section { grid-template-columns: 1fr; gap: 20px; }
-            body { padding: 40px 20px; }
+            body { padding: 30px 20px; }
             h1 { font-size: 40px; }
-            .contact-info { flex-direction: column; align-items: center; gap: 8px; }
+            .section { padding: 24px; border-radius: 20px; }
+            .item-header { flex-direction: column; align-items: flex-start; gap: 4px; }
         }
     </style>
 </head>
 <body>
-    <div class="hero">
+    <div class="header">
         <h1 th:text="${profile.fullName}">Name</h1>
         <div class="contact-info">
-            <span th:if="${profile.location}" th:text="${profile.location}"></span>
-            <span th:if="${profile.website}"><a th:href="${profile.website}" th:text="${profile.website}" target="_blank"></a></span>
-            <span th:if="${profile.githubUsername}">github.com/<span th:text="${profile.githubUsername}"></span></span>
-            <span th:if="${profile.linkedin}">in/<span th:text="${profile.linkedin}"></span></span>
-            <span th:if="${profile.telegram}">tg/<span th:text="${profile.telegram}"></span></span>
+            <div class="contact-pill" th:if="${profile.location}" th:text="${profile.location}"></div>
+            <div class="contact-pill" th:if="${profile.website}"><a th:href="${profile.website}" th:text="${profile.website}" target="_blank"></a></div>
+            <div class="contact-pill" th:if="${profile.githubUsername}">X / <span th:text="${profile.githubUsername}"></span></div>
+            <div class="contact-pill" th:if="${profile.linkedin}">IN / <span th:text="${profile.linkedin}"></span></div>
         </div>
     </div>
 
@@ -167,7 +176,7 @@
         <div th:switch="${sectionName}">
             
             <div th:case="'summary'" th:if="${profile.summary != null and !profile.summary.isEmpty()}" class="section">
-                <h2 class="section-title">Profile</h2>
+                <h2 class="section-title">Summary</h2>
                 <div class="summary-text" th:text="${profile.summary}"></div>
             </div>
 
@@ -202,11 +211,11 @@
             </div>
 
             <div th:case="'skills'" th:if="${groupedSkills != null and !groupedSkills.isEmpty()}" class="section">
-                <h2 class="section-title">Skills</h2>
+                <h2 class="section-title">Capabilities</h2>
                 <div class="skills-grid">
                     <div class="skill-group" th:each="entry : ${groupedSkills}">
                         <div class="skill-group-name" th:text="${entry.key}"></div>
-                        <div class="tags">
+                        <div class="tags" style="margin-top:0;">
                             <span class="tag" th:each="skillName : ${entry.value}" th:text="${skillName}"></span>
                         </div>
                     </div>
@@ -215,7 +224,7 @@
 
             <div th:case="'languages'" th:if="${languagesStr != null and !languagesStr.isEmpty()}" class="section">
                 <h2 class="section-title">Languages</h2>
-                <div style="font-size: 17px; font-weight: 500;" th:text="${languagesStr}"></div>
+                <div style="font-size: 16px; color: var(--text-secondary);" th:text="${languagesStr}"></div>
             </div>
 
             <div th:case="'projects'" th:if="${profile.projects != null and !profile.projects.isEmpty()}" class="section">
@@ -225,9 +234,8 @@
                         <div class="item-header">
                             <div class="item-title" th:text="${proj.name}">Project</div>
                             <div class="item-date">
-                                <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" target="_blank">GitHub</a>
-                                <span th:if="${proj.githubUrl != null and proj.liveUrl != null}"> &middot; </span>
-                                <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" target="_blank">Live Demo</a>
+                                <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" target="_blank" style="color:var(--text-secondary); text-decoration:none;">GitHub</a>
+                                <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" target="_blank" style="color:var(--text-secondary); text-decoration:none; margin-left:12px;">Live</a>
                             </div>
                         </div>
                         <div class="item-desc" th:text="${proj.description}">Description</div>
@@ -242,5 +250,4 @@
     </div>
 </body>
 </html>
-
 

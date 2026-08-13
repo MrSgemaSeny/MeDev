@@ -60,32 +60,47 @@ export const ResumeBuilder = () => {
     }
   };
 
+  const handleDownloadHtml = async () => {
+    try {
+      const { data } = await api.get(`/resume/html/${selectedTemplate}`, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([data], { type: 'text/html' }));
+      const a = window.document.createElement('a');
+      a.href = url;
+      a.download = `resume-${selectedTemplate}.html`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error(e);
+      window.alert('HTML export failed.');
+    }
+  };
+
   const moveUp = (index: number) => { if (index > 0) reorderSections(index, index - 1); };
   const moveDown = (index: number) => { if (index < sections.length - 1) reorderSections(index, index + 1); };
 
-  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
-  const [pdfLoading, setPdfLoading] = useState(false);
+  const [htmlUrl, setHtmlUrl] = useState<string | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
 
   useEffect(() => {
     let active = true;
-    const loadPdf = async () => {
-      setPdfLoading(true);
+    const loadPreview = async () => {
+      setPreviewLoading(true);
       try {
-        const { data } = await api.get(`/resume/generate/${selectedTemplate}?preview=true`, { responseType: 'blob' });
+        const { data } = await api.get(`/resume/html/${selectedTemplate}?preview=true`, { responseType: 'blob' });
         if (active) {
-          const url = window.URL.createObjectURL(new Blob([data], { type: 'application/pdf' }));
-          setPdfUrl(url);
+          const url = window.URL.createObjectURL(new Blob([data], { type: 'text/html' }));
+          setHtmlUrl(url);
         }
       } catch (e) {
         console.error(e);
       } finally {
-        if (active) setPdfLoading(false);
+        if (active) setPreviewLoading(false);
       }
     };
-    loadPdf();
+    loadPreview();
     return () => {
       active = false;
-      if (pdfUrl) window.URL.revokeObjectURL(pdfUrl);
+      if (htmlUrl) window.URL.revokeObjectURL(htmlUrl);
     };
   }, [selectedTemplate]);
 
@@ -187,13 +202,22 @@ export const ResumeBuilder = () => {
             AI Analysis
           </button>
           
-          <button 
-            onClick={handleDownloadPdf}
-            className="w-full flex items-center justify-center gap-2 bg-[#238636] hover:bg-[#2ea043] border border-[rgba(240,246,252,0.1)] text-white py-2 px-4 rounded-md text-sm font-medium transition-colors shadow-sm"
-          >
-            <Download size={16} />
-            Export PDF
-          </button>
+          <div className="flex gap-2">
+            <button 
+              onClick={handleDownloadPdf}
+              className="flex-1 flex items-center justify-center gap-2 bg-[#238636] hover:bg-[#2ea043] border border-[rgba(240,246,252,0.1)] text-white py-2 px-3 rounded-md text-sm font-medium transition-colors shadow-sm"
+            >
+              <Download size={14} />
+              PDF
+            </button>
+            <button 
+              onClick={handleDownloadHtml}
+              className="flex-1 flex items-center justify-center gap-2 bg-[#1f6feb] hover:bg-[#388bfd] border border-[rgba(240,246,252,0.1)] text-white py-2 px-3 rounded-md text-sm font-medium transition-colors shadow-sm"
+            >
+              <FileText size={14} />
+              HTML
+            </button>
+          </div>
 
           <button 
             onClick={handleDownload}
@@ -216,22 +240,22 @@ export const ResumeBuilder = () => {
           </div>
         </div>
 
-        {/* PDF Container */}
-        <div className="flex-1 w-full max-w-[900px] mx-auto bg-[#0d1117] border border-[#30363d] rounded-xl shadow-2xl overflow-hidden flex flex-col">
-          {pdfLoading ? (
-            <div className="flex-1 flex items-center justify-center flex-col gap-4 text-[#8b949e]">
+        {/* Live Container */}
+        <div className="flex-1 w-full max-w-[900px] mx-auto bg-[#ffffff] border border-[#30363d] rounded-xl shadow-2xl overflow-hidden flex flex-col">
+          {previewLoading ? (
+            <div className="flex-1 flex items-center justify-center flex-col gap-4 text-[#8b949e] bg-[#0d1117]">
               <div className="w-8 h-8 border-2 border-[#30363d] border-t-[#238636] rounded-full animate-spin"></div>
-              <div className="text-sm">Generating flawless PDF...</div>
+              <div className="text-sm">Rendering HTML Template...</div>
             </div>
-          ) : pdfUrl ? (
+          ) : htmlUrl ? (
             <iframe 
-              src={pdfUrl + '#toolbar=0&navpanes=0&scrollbar=0'} 
+              src={htmlUrl} 
               className="w-full h-full border-0 bg-white" 
-              title="PDF Preview" 
+              title="HTML Preview" 
             />
           ) : (
-            <div className="flex-1 flex items-center justify-center text-[#8b949e] text-sm">
-              Failed to load PDF engine
+            <div className="flex-1 flex items-center justify-center text-[#8b949e] text-sm bg-[#0d1117]">
+              Failed to load preview
             </div>
           )}
         </div>
