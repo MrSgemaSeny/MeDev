@@ -103,8 +103,11 @@
     <div class="bento-container">
         
         <!-- Profile Header -->
-        <div class="bento-item card-profile">
-            <div>
+        <div class="bento-item card-profile" style="display: flex; gap: 24px; align-items: center;">
+            <div th:if="${profile.githubUsername != null}" style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; flex-shrink: 0;">
+                <img th:src="@{'https://github.com/' + ${profile.githubUsername} + '.png'}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;" />
+            </div>
+            <div style="flex-grow: 1;">
                 <h1 th:text="${profile.fullName}">Name</h1>
                 <div class="username" th:text="${profile.githubUsername != null ? '@' + profile.githubUsername : ''}"></div>
             </div>

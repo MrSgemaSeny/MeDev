@@ -262,7 +262,10 @@
         
         <!-- SIDEBAR -->
         <div class="sidebar">
-            <div class="avatar"></div>
+            <div class="avatar" style="display: flex; align-items: center; justify-content: center; overflow: hidden; background-color: var(--bg-tertiary);">
+                <img th:if="${profile.githubUsername != null}" th:src="@{'https://github.com/' + ${profile.githubUsername} + '.png'}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;" />
+                <span th:unless="${profile.githubUsername != null}" th:text="${profile.fullName != null and profile.fullName.length() > 0 ? profile.fullName.substring(0,1).toUpperCase() : 'U'}" style="font-size: 120px; color: var(--text-primary);"></span>
+            </div>
             
             <div class="names">
                 <h1 class="fullname" th:text="${profile.fullName}">Name</h1>
@@ -272,10 +275,10 @@
             <div class="btn-follow">Contact</div>
             
             <div class="contact-list">
-                <div th:if="${profile.location}">📍 <span th:text="${profile.location}"></span></div>
-                <div th:if="${profile.website}">🔗 <a th:href="${profile.website}" th:text="${profile.website}" target="_blank"></a></div>
-                <div th:if="${profile.linkedin}">💼 <span th:text="${profile.linkedin}"></span></div>
-                <div th:if="${profile.telegram}">✈️ <span th:text="${profile.telegram}"></span></div>
+                <div th:if="${profile.location}"><span style="color: var(--text-secondary); margin-right: 4px;">Loc:</span> <span th:text="${profile.location}"></span></div>
+                <div th:if="${profile.website}"><span style="color: var(--text-secondary); margin-right: 4px;">Web:</span> <a th:href="${profile.website}" th:text="${profile.website}" target="_blank"></a></div>
+                <div th:if="${profile.linkedin}"><span style="color: var(--text-secondary); margin-right: 4px;">In:</span> <span th:text="${profile.linkedin}"></span></div>
+                <div th:if="${profile.telegram}"><span style="color: var(--text-secondary); margin-right: 4px;">Tg:</span> <span th:text="${profile.telegram}"></span></div>
             </div>
             
             <div class="sidebar-section" th:if="${groupedSkills != null and !groupedSkills.isEmpty()}">
