@@ -3,6 +3,7 @@ import { UserProfileDropdown } from './UserProfileDropdown';
 import { useUpsellStore } from '../../entities/user/model/upsellStore';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
+import { toggleTheme } from '../../shared/lib/theme';
 
 export const AppHeader = () => {
   const { openUpsell } = useUpsellStore();
@@ -23,17 +24,8 @@ export const AppHeader = () => {
     return () => observer.disconnect();
   }, []);
 
-  const toggleTheme = () => {
-    const html = document.documentElement;
-    if (isDark) {
-      html.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-      setIsDark(false);
-    } else {
-      html.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-      setIsDark(true);
-    }
+  const handleToggleTheme = () => {
+    toggleTheme(setIsDark);
   };
 
   const toggleLanguage = () => {
@@ -68,7 +60,7 @@ export const AppHeader = () => {
       <div className="flex items-center gap-3 ml-auto">
         {/* Theme Toggle */}
         <button
-          onClick={toggleTheme}
+          onClick={handleToggleTheme}
           className="h-9 w-9 flex items-center justify-center rounded-full transition-colors hover:bg-black/5 dark:hover:bg-white/5"
           style={{ color: 'var(--color-text-secondary)' }}
           aria-label="Toggle Theme"

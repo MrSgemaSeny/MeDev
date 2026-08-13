@@ -8,6 +8,8 @@ interface UserProfileDropdownProps {
   variant?: 'sidebar' | 'header';
 }
 
+import { toggleTheme } from '../../shared/lib/theme';
+
 export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ variant = 'sidebar' }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -45,17 +47,8 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
 
   const toggleLanguage = (lang: string) => i18n.changeLanguage(lang);
 
-  const toggleTheme = () => {
-    const html = document.documentElement;
-    if (isDark) {
-      html.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-      setIsDark(false);
-    } else {
-      html.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-      setIsDark(true);
-    }
+  const handleToggleTheme = () => {
+    toggleTheme(setIsDark);
   };
 
   const formatterTime = new Intl.DateTimeFormat(i18n.language === 'ru' ? 'ru-RU' : 'en-US', {
@@ -118,7 +111,7 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
           <div className="py-2 flex flex-col">
             <div
               className="px-4 py-2.5 flex items-center justify-between hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
-              onClick={toggleTheme}
+              onClick={handleToggleTheme}
             >
               <div className="flex items-center gap-3 text-secondary">
                 {isDark ? <Moon size={18} /> : <Sun size={18} />}

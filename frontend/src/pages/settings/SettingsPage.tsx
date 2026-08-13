@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../entities/user/model/store';
-import { LogOut, User, Globe, Moon, ShieldAlert, Trash2 } from 'lucide-react';
+import { LogOut, User, Globe, Moon, Sun, ShieldAlert, Trash2 } from 'lucide-react';
+import { setTheme } from '../../shared/lib/theme';
 
 export const SettingsPage = () => {
   const { t, i18n } = useTranslation();
@@ -100,10 +101,7 @@ export const SettingsPage = () => {
               </div>
               <div className="flex bg-[var(--color-bg-secondary)] p-1 rounded-lg border border-default">
                 <button
-                  onClick={() => {
-                    document.documentElement.classList.remove('dark');
-                    localStorage.setItem('theme', 'light');
-                  }}
+                  onClick={() => setTheme(false)}
                   className={`px-4 py-1.5 flex items-center gap-2 rounded-md text-sm font-medium transition-all ${
                     !document.documentElement.classList.contains('dark')
                       ? 'bg-[var(--color-accent)] text-white shadow-sm'
@@ -114,10 +112,7 @@ export const SettingsPage = () => {
                   Light
                 </button>
                 <button
-                  onClick={() => {
-                    document.documentElement.classList.add('dark');
-                    localStorage.setItem('theme', 'dark');
-                  }}
+                  onClick={() => setTheme(true)}
                   className={`px-4 py-1.5 flex items-center gap-2 rounded-md text-sm font-medium transition-all ${
                     document.documentElement.classList.contains('dark')
                       ? 'bg-[var(--color-accent)] text-white shadow-sm'
