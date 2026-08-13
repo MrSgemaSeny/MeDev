@@ -112,11 +112,12 @@ public class ProfileService {
         if (parsed.getLinkedin() != null) profile.setLinkedin(parsed.getLinkedin());
         
         // Smart Merge guarantees the DTO has the FINAL state, so we overwrite collections
-        profile.getSkills().clear();
-        profile.getExperiences().clear();
-        profile.getEducations().clear();
-        profile.getLanguages().clear();
-        profile.getProjects().clear();
+        // ONLY if the parsed object explicitly provided items for that section
+        if (parsed.getSkills() != null && !parsed.getSkills().isEmpty()) profile.getSkills().clear();
+        if (parsed.getExperience() != null && !parsed.getExperience().isEmpty()) profile.getExperiences().clear();
+        if (parsed.getEducation() != null && !parsed.getEducation().isEmpty()) profile.getEducations().clear();
+        if (parsed.getLanguages() != null && !parsed.getLanguages().isEmpty()) profile.getLanguages().clear();
+        if (parsed.getProjects() != null && !parsed.getProjects().isEmpty()) profile.getProjects().clear();
         
         profileRepository.saveAndFlush(profile);
 
