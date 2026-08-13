@@ -1,6 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { LayoutDashboard, User, FileText, Info, Briefcase, GraduationCap, Code, Globe, Box, GitBranch, CreditCard, Settings, ListTodo, UploadCloud } from 'lucide-react';
-import { QuotaWidget } from '../../features/billing/components/QuotaWidget';
 
 const MAIN_NAV = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -66,13 +65,10 @@ export const AppSidebar = () => {
       </div>
 
       <div className="mt-auto px-2">
-        <div className="mb-4">
-          <QuotaWidget />
-        </div>
         <NavLink
           to="/billing"
           className={({ isActive }) =>
-            `flex items-center gap-2 py-1.5 px-3 rounded-md text-[13px] transition-colors select-none ${
+            `flex items-center gap-2 py-1.5 px-3 rounded-md text-[13px] transition-colors select-none mb-1 ${
               isActive ? 'text-primary surface-tertiary' : 'text-secondary hover:surface-tertiary hover:text-primary'
             }`
           }
@@ -80,13 +76,17 @@ export const AppSidebar = () => {
           <CreditCard size={15} />
           Billing
         </NavLink>
-        <div
-          className="flex items-center gap-2 py-[0.4rem] px-[0.625rem] rounded-md text-[13px] text-muted select-none opacity-50 cursor-default"
-          title="Скоро"
+        <NavLink
+          to="/settings"
+          className={({ isActive }) =>
+            `flex items-center gap-2 py-1.5 px-3 rounded-md text-[13px] transition-colors select-none ${
+              isActive ? 'text-primary surface-tertiary' : 'text-secondary hover:surface-tertiary hover:text-primary'
+            }`
+          }
         >
           <Settings size={15} />
           Settings
-        </div>
+        </NavLink>
       </div>
     </aside>
   );

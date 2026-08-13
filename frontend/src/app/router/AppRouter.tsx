@@ -18,6 +18,7 @@ const CancelPage = lazy(() => import('../../pages/billing/CancelPage').then(m =>
 const AdminDashboardPage = lazy(() => import('../../pages/admin/AdminDashboardPage').then(m => ({ default: m.AdminDashboardPage })));
 const AdminUsersPage = lazy(() => import('../../pages/admin/AdminUsersPage').then(m => ({ default: m.AdminUsersPage })));
 const AdminAuditPage = lazy(() => import('../../pages/admin/AdminAuditPage').then(m => ({ default: m.AdminAuditPage })));
+const SettingsPage = lazy(() => import('../../pages/settings/SettingsPage').then(m => ({ default: m.SettingsPage })));
 import { AdminGuard } from '../providers/AdminGuard';
 
 const PageLoader = () => (
@@ -94,6 +95,7 @@ const router = createBrowserRouter([
       { path: '/billing', element: <PricingPage /> },
       { path: '/billing/success', element: <SuccessPage /> },
       { path: '/billing/cancel', element: <CancelPage /> },
+      { path: '/settings', element: <SettingsPage /> },
       {
         path: '/admin',
         element: <AdminGuard />,
