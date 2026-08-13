@@ -84,7 +84,7 @@ export const PricingPage = () => {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-[100] flex flex-col animate-in fade-in duration-200" style={{ backgroundColor: 'var(--color-bg-primary)' }}>
+        <div className="fixed inset-0 z-[100] flex flex-col" style={{ backgroundColor: 'var(--color-bg-primary)' }}>
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b" style={{ borderColor: 'var(--color-border-default)' }}>
             <div className="text-xl font-semibold" style={{ color: 'var(--color-text-primary)' }}>Upgrade to PRO</div>
@@ -110,7 +110,7 @@ export const PricingPage = () => {
 
             <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* 1 Month */}
-              <Card className="p-8 border flex flex-col cursor-default transition-all duration-200 hover:-translate-y-1 hover:shadow-xl relative" style={{ borderColor: 'var(--color-border-default)', backgroundColor: 'var(--color-bg-inset)' }}>
+              <Card className="p-8 border flex flex-col relative" style={{ borderColor: 'var(--color-border-default)', backgroundColor: 'var(--color-bg-inset)' }}>
                 <div className="mb-8">
                   <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>1 месяц</h3>
                   <div className="flex items-end gap-1 mb-2">
@@ -137,7 +137,7 @@ export const PricingPage = () => {
               </Card>
 
               {/* 3 Months */}
-              <Card className="p-8 border flex flex-col cursor-default transition-all duration-200 hover:-translate-y-1 hover:shadow-xl relative" style={{ borderColor: 'var(--color-border-default)', backgroundColor: 'var(--color-bg-inset)' }}>
+              <Card className="p-8 border flex flex-col relative" style={{ borderColor: 'var(--color-border-default)', backgroundColor: 'var(--color-bg-inset)' }}>
                 <div className="absolute top-0 right-0 px-4 py-1.5 text-xs font-semibold rounded-bl-lg rounded-tr-md" style={{ backgroundColor: 'var(--color-bg-primary)', color: 'var(--color-text-primary)', borderBottom: '1px solid var(--color-border-default)', borderLeft: '1px solid var(--color-border-default)' }}>
                   Выгода 7%
                 </div>
@@ -166,7 +166,7 @@ export const PricingPage = () => {
               </Card>
 
               {/* 6 Months */}
-              <Card className="p-8 border-2 flex flex-col cursor-default transition-all duration-200 hover:-translate-y-1 hover:shadow-xl relative" style={{ borderColor: 'var(--color-text-primary)', backgroundColor: 'var(--color-bg-inset)' }}>
+              <Card className="p-8 border-2 flex flex-col relative" style={{ borderColor: 'var(--color-text-primary)', backgroundColor: 'var(--color-bg-inset)' }}>
                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 text-sm font-bold rounded-full shadow-md" style={{ backgroundColor: 'var(--color-text-primary)', color: 'var(--color-bg-primary)' }}>
                   Самый выгодный
                 </div>
