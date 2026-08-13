@@ -50,20 +50,26 @@ export const OnboardingWizard = () => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={() => {}} title="Welcome to MeDev!">
-      <div className="p-2 w-[500px] max-w-full">
-        <div className="mb-6 flex justify-between items-center text-sm font-medium text-secondary">
-          <span className={step === 1 ? 'text-primary' : ''}>1. Role</span>
-          <span className={step === 2 ? 'text-primary' : ''}>2. Stack</span>
-          <span className={step === 3 ? 'text-primary' : ''}>3. Experience</span>
+    <Modal isOpen={isOpen} onClose={handleSkip} title="Welcome to MeDev!">
+      <div className="p-4 w-[500px] max-w-full">
+        <div className="flex gap-2 mb-8">
+          {[1, 2, 3].map((s) => (
+            <div
+              key={s}
+              className="h-1.5 flex-1 rounded-full transition-colors duration-300"
+              style={{
+                backgroundColor: step >= s ? 'var(--color-accent)' : 'var(--color-border-default)'
+              }}
+            />
+          ))}
         </div>
 
         <form onSubmit={step === 3 ? handleSubmit : (e) => { e.preventDefault(); handleNext(); }}>
           {step === 1 && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
-              <div className="text-center mb-6">
-                <h3 className="text-lg font-bold text-primary mb-2">What is your primary role?</h3>
-                <p className="text-sm text-secondary">This will be used to tailor your profile and AI generation.</p>
+            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+              <div className="text-center">
+                <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>What is your primary role?</h3>
+                <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>This helps us tailor your profile and AI suggestions.</p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="role">Role</Label>
@@ -75,16 +81,17 @@ export const OnboardingWizard = () => {
                   placeholder="e.g. Senior Frontend Engineer, Full-Stack Developer"
                   required
                   autoFocus
+                  className="w-full"
                 />
               </div>
             </div>
           )}
 
           {step === 2 && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
-              <div className="text-center mb-6">
-                <h3 className="text-lg font-bold text-primary mb-2">What is your tech stack?</h3>
-                <p className="text-sm text-secondary">List the main technologies you work with.</p>
+            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+              <div className="text-center">
+                <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>What is your tech stack?</h3>
+                <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>List the main technologies you work with.</p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="stack">Tech Stack</Label>
@@ -97,16 +104,17 @@ export const OnboardingWizard = () => {
                   required
                   rows={3}
                   autoFocus
+                  className="w-full resize-none"
                 />
               </div>
             </div>
           )}
 
           {step === 3 && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
-              <div className="text-center mb-6">
-                <h3 className="text-lg font-bold text-primary mb-2">Recent Experience</h3>
-                <p className="text-sm text-secondary">Briefly describe your most recent role or project.</p>
+            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+              <div className="text-center">
+                <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>Recent Experience</h3>
+                <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Briefly describe your most recent role or project.</p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="recentExperience">Experience</Label>
@@ -119,12 +127,13 @@ export const OnboardingWizard = () => {
                   required
                   rows={4}
                   autoFocus
+                  className="w-full resize-none"
                 />
               </div>
             </div>
           )}
 
-          <div className="flex justify-between items-center mt-8">
+          <div className="flex justify-between items-center mt-10 pt-4 border-t" style={{ borderColor: 'var(--color-border-default)' }}>
             <Button
               type="button"
               variant="secondary"
