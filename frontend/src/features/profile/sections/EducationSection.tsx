@@ -71,8 +71,8 @@ const EducationForm: React.FC<EducationFormProps> = ({ initialData, onSave, onCa
     institution: initialData?.institution || '',
     degree: initialData?.degree || '',
     field: initialData?.field || '',
-    startDate: initialData?.startDate?.substring(0, 7) || '',
-    endDate: initialData?.endDate?.substring(0, 7) || '',
+    startDate: initialData?.startDate || '',
+    endDate: initialData?.endDate || '',
     isCurrent: initialData?.isCurrent || false,
     sortOrder: initialData?.sortOrder || 0,
   });
@@ -88,10 +88,7 @@ const EducationForm: React.FC<EducationFormProps> = ({ initialData, onSave, onCa
       return;
     }
     const payload = { ...formData };
-    if (payload.startDate && payload.startDate.length === 7) payload.startDate = `${payload.startDate}-01`;
-    if (payload.endDate && payload.endDate.length === 7) {
-      payload.endDate = `${payload.endDate}-01`;
-    } else if (!payload.endDate) {
+    if (!payload.endDate) {
       delete (payload as any).endDate;
     }
     onSave(payload); 
@@ -106,8 +103,8 @@ const EducationForm: React.FC<EducationFormProps> = ({ initialData, onSave, onCa
         </div>
         <div><Label htmlFor="field">Field of Study (Optional)</Label><Input id="field" name="field" value={formData.field} onChange={handleChange} /></div>
         <div className="grid grid-cols-2 gap-3">
-          <div><Label htmlFor="startDate">Start Date</Label><Input id="startDate" type="month" required name="startDate" value={formData.startDate} onChange={handleChange} /></div>
-          <div><Label htmlFor="endDate">End Date</Label><Input id="endDate" type="month" name="endDate" value={formData.endDate} onChange={handleChange} disabled={formData.isCurrent} /></div>
+          <div><Label htmlFor="startDate">Start Date</Label><Input id="startDate" type="date" required name="startDate" value={formData.startDate} onChange={handleChange} /></div>
+          <div><Label htmlFor="endDate">End Date</Label><Input id="endDate" type="date" name="endDate" value={formData.endDate} onChange={handleChange} disabled={formData.isCurrent} /></div>
         </div>
         <div className="flex items-center gap-2">
           <input type="checkbox" id="isCurrent" name="isCurrent" checked={formData.isCurrent} onChange={(e) => setFormData(p => ({ ...p, isCurrent: e.target.checked, endDate: e.target.checked ? '' : p.endDate }))} className="rounded border-default text-accent focus:ring-accent" />
