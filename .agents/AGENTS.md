@@ -38,13 +38,17 @@ Explain WHY, not just WHAT (Senior Tech Lead mentoring approach: architect think
 10. **FSD Compliance (MeDev)**: Frontend обязан строго следовать Feature-Sliced Design (app, pages, features, entities, shared).
 
 ## Current Technical Debt & Unfinished Phases (Sprint Backlog)
+- **[CRITICAL] Logic #1 (Billing)**: Проверять `subscriptionExpiresAt` в `SubscriptionService.assertPro()` (сейчас PRO выдается навсегда).
+- **[CRITICAL] Logic #2 (OAuth Cookie)**: Добавить `httpOnly` и `Secure` для `medev_link_jwt` куки в `OAuth2LoginSuccessHandler`.
+- **[CRITICAL] Logic #3 (PDF Parse)**: Добавить жесткую проверку MIME-type и magic bytes (`%PDF`) для `/parse-resume`.
 - **[CRITICAL] Security #1 (SSRF)**: Внедрить белый список хостов в `WebScraperService` (HH, LinkedIn) и запретить private IPs.
 - **[CRITICAL] Security #2 (Kaspi Webhook)**: Написать реальную HMAC верификацию `X-Kaspi-Signature` или закрыть эндпоинт.
 - **[CRITICAL] Security #4 (Actuator)**: Убрать `show-details: always` для анонимов в `application-prod.yml`.
-- **[CRITICAL] Security #5 (RateLimiter)**: Заменить `X-Forwarded-For` на `getRemoteAddr()` в `RateLimitFilter` или полностью удалить фильтр, если дублирует `AuthRateLimiter`.
+- **[CRITICAL] Security #5 (RateLimiter)**: Заменить `X-Forwarded-For` на `getRemoteAddr()` в `RateLimitFilter` или полностью удалить фильтр.
 - **[CRITICAL] Security #3 (AES)**: Переписать `EncryptionUtils` с ECB на AES/GCM с рандомным IV.
 - **[WARNING] Infra/Prod**: Настроить `VITE_API_URL` во фронтенде (Axios) и открыть `/v1/billing/webhook` для Stripe в `SecurityConfig`.
-- **[INFO] UX/Limits**: Добавить `@Size` на `jobDescription`, убрать refreshToken из JSON-ответа, настроить Secure флаг для cookies.
+- **[WARNING] OAuth Logic**: Добавить проверку зарезервированных username и генерацию суффикса при пустом результате в `CustomOAuth2UserService`.
+- **[INFO] UX/Limits**: Добавить `@Size` на `jobDescription`, убрать refreshToken из JSON, настроить Secure флаг, добавить batching на `reorder`.
 
 ## Behavior & Communication Rules
 - **Logical Troubleshooting (NO TUNNEL VISION)**: Think logically and broadly before diving deep. If an issue occurs, map out ALL possible horizontal paths/causes first. Do NOT fall into the trap of: 'problem -> guess path -> not here -> dig deeper in the same wrong place'. Verify the root cause across all potential points of failure before spending tokens on deep dives.
