@@ -146,15 +146,6 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
               </button>
             )}
 
-            <button 
-              onClick={() => { setIsOpen(false); window.location.href = '/billing'; }}
-              className="w-full px-4 py-2.5 flex items-center justify-between hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-left"
-            >
-              <div className="flex items-center gap-3 text-secondary">
-                <span className="text-[18px]">💳</span>
-                <span className="text-sm font-medium">Подписка и биллинг</span>
-              </div>
-            </button>
 
             <div className="h-px bg-border-muted my-1 mx-4" style={{ backgroundColor: 'var(--color-border-muted)' }} />
 

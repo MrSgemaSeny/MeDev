@@ -81,7 +81,16 @@ const EducationForm: React.FC<EducationFormProps> = ({ initialData, onSave, onCa
     const { name, value, type } = e.target;
     setFormData((prev) => ({ ...prev, [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value }));
   };
-  const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); onSave(formData); };
+  const handleSubmit = (e: React.FormEvent) => { 
+    e.preventDefault(); 
+    if (!formData.institution || !formData.degree || !formData.startDate) {
+      alert('Institution, degree and start date are required.');
+      return;
+    }
+    const payload = { ...formData };
+    if (!payload.endDate) delete (payload as any).endDate;
+    onSave(payload); 
+  };
 
   return (
     <Card className="p-4">

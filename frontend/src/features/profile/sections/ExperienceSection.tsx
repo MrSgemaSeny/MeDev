@@ -86,7 +86,16 @@ const ExperienceForm: React.FC<ExperienceFormProps> = ({ initialData, onSave, on
     setFormData((prev) => ({ ...prev, [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); onSave(formData); };
+  const handleSubmit = (e: React.FormEvent) => { 
+    e.preventDefault(); 
+    if (!formData.company || !formData.position || !formData.startDate) {
+      alert('Company, position and start date are required.');
+      return;
+    }
+    const payload = { ...formData };
+    if (!payload.endDate) delete (payload as any).endDate;
+    onSave(payload); 
+  };
 
   const handleGenerateDescription = async () => {
     setFormData((prev) => ({ ...prev, description: '' }));
