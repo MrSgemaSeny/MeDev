@@ -3,6 +3,8 @@ import { UserProfileDropdown } from './UserProfileDropdown';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { toggleTheme } from '../../shared/lib/theme';
+import { Link } from 'react-router-dom';
+import { Button } from '../../shared/ui/Button';
 
 export const AppHeader = () => {
   const { i18n } = useTranslation();
@@ -56,6 +58,13 @@ export const AppHeader = () => {
       </div>
 
       <div className="flex items-center gap-3 ml-auto">
+        {/* Upgrade Button */}
+        <Link to="/billing">
+          <Button variant="primary" className="h-9 px-4 text-sm font-semibold rounded-full bg-[#238636] hover:bg-[#2ea043] text-white border-none shadow-sm transition-all hover:scale-105 hidden sm:flex items-center gap-2">
+            🚀 Обновить до PRO
+          </Button>
+        </Link>
+
         {/* Theme Toggle */}
         <button
           onClick={handleToggleTheme}
