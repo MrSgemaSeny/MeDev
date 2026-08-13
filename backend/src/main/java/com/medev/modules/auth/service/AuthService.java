@@ -29,7 +29,8 @@ public class AuthService {
     private final ProfileService profileService;
 
     public static final java.util.List<String> RESERVED_USERNAMES = java.util.List.of(
-            "admin", "root", "system", "support", "billing", "me", "profile", "api", "auth"
+            "admin", "root", "system", "support", "billing", "me", "profile", "api", "auth",
+            "login", "medev", "register"
     );
 
     public AuthResponse register(RegisterRequest request) {

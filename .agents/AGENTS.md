@@ -38,9 +38,7 @@ Explain WHY, not just WHAT (Senior Tech Lead mentoring approach: architect think
 10. **FSD Compliance (MeDev)**: Frontend обязан строго следовать Feature-Sliced Design (app, pages, features, entities, shared).
 
 ## Current Technical Debt & Unfinished Phases (Sprint Backlog)
-- **[WARNING] Infra/Prod**: Настроить `VITE_API_URL` во фронтенде (Axios) и открыть `/v1/billing/webhook` для Stripe в `SecurityConfig`.
-- **[WARNING] OAuth Logic**: Добавить проверку зарезервированных username и генерацию суффикса при пустом результате в `CustomOAuth2UserService`.
-- **[INFO] UX/Limits**: Добавить `@Size` на `jobDescription`, убрать refreshToken из JSON, настроить Secure флаг, добавить batching на `reorder`.
+*Все CRITICAL, WARNING и INFO задачи из аудитов 1 и 2 закрыты (2026-08-13). Бэклог чист.*
 
 ## Behavior & Communication Rules
 - **Logical Troubleshooting (NO TUNNEL VISION)**: Think logically and broadly before diving deep. If an issue occurs, map out ALL possible horizontal paths/causes first. Do NOT fall into the trap of: 'problem -> guess path -> not here -> dig deeper in the same wrong place'. Verify the root cause across all potential points of failure before spending tokens on deep dives.
