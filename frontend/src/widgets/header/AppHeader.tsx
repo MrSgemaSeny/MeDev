@@ -66,37 +66,6 @@ export const AppHeader = () => {
       </div>
 
       <div className="flex items-center gap-3 ml-auto">
-        {/* Points Display */}
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-semibold text-sm transition-colors cursor-pointer hover:bg-black/5 dark:hover:bg-white/5" style={{ color: 'var(--color-text-primary)' }}>
-          <Zap size={16} className="text-yellow-500 fill-yellow-500" />
-          <span>200</span>
-        </div>
-
-        {/* Upgrade Button */}
-        <button
-          onClick={openUpsell}
-          className="flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-bold shadow-sm hover:opacity-90 transition-opacity"
-          style={{
-            background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
-            color: '#451a03',
-          }}
-        >
-          <Rocket size={16} />
-          Обновить
-        </button>
-
-        {/* Notifications */}
-        <button
-          className="relative h-9 w-9 flex items-center justify-center rounded-full transition-colors hover:bg-black/5 dark:hover:bg-white/5 ml-1"
-          style={{ color: 'var(--color-text-secondary)' }}
-          aria-label="Notifications"
-        >
-          <Bell size={18} />
-          <span className="absolute top-1.5 right-2 w-3.5 h-3.5 bg-red-500 text-white flex items-center justify-center text-[9px] font-bold rounded-full border-2" style={{ borderColor: 'var(--color-header-bg)' }}>
-            2
-          </span>
-        </button>
-
         {/* Theme Toggle */}
         <button
           onClick={toggleTheme}
