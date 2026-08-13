@@ -61,6 +61,10 @@ public class AiContextService {
         ProfileDto profile = profileService.getByUserId(userId);
 
         StringBuilder sb = new StringBuilder();
+        sb.append("=== SYSTEM INFO ===\n");
+        sb.append("Current Date: ").append(java.time.LocalDate.now().toString()).append("\n");
+        sb.append("Note to AI: Use the Current Date to correctly calculate the user's current status (e.g. if their graduation date is in the past, they have graduated). Do not hallucinate or use outdated status like 'current student' if the current date is past their graduation date.\n\n");
+
         sb.append("=== USER PROFILE ===\n");
         sb.append("Name: ").append(orEmpty(profile.getFullName())).append("\n");
         sb.append("Headline: ").append(orEmpty(profile.getHeadline())).append("\n");
