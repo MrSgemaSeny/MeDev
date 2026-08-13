@@ -163,7 +163,11 @@ public class ProfileService {
             int order = 0;
             for (com.medev.modules.ai.dto.AiLanguageDto l : parsed.getLanguages()) {
                 if (l.getName() != null && !l.getName().isBlank()) {
-                    Language lang = Language.builder().profile(profile).name(l.getName()).level(l.getProficiency()).sortOrder(order++).build();
+                    String level = l.getProficiency();
+                    if (level == null || level.isBlank()) {
+                        level = "Not specified";
+                    }
+                    Language lang = Language.builder().profile(profile).name(l.getName()).level(level).sortOrder(order++).build();
                     languageRepository.save(lang);
                 }
             }
