@@ -3,7 +3,7 @@ import { api } from '../../shared/api/axios';
 import { useProfile, useGenerateProfile } from '../../shared/api/hooks/useProfile';
 import { Button } from '../../shared/ui/Button';
 import { Card } from '../../shared/ui/Form';
-import { CheckCircle2, DownloadCloud, RefreshCw } from 'lucide-react';
+import { CheckCircle2, DownloadCloud, RefreshCw, Star } from 'lucide-react';
 import { useAuthStore } from '../../entities/user/model/store';
 
 export const GithubIcon = ({ className }: { className?: string }) => (
@@ -317,7 +317,7 @@ export const GithubImport = () => {
                             </p>
                           )}
                           <div className="flex gap-4 text-xs mt-2 font-medium" style={{ color: 'var(--color-text-secondary)' }}>
-                            <span className="flex items-center gap-1">★ {repo.stargazersCount}</span>
+                            <span className="flex items-center gap-1"><Star size={12} /> {repo.stargazersCount}</span>
                             <span className="flex items-center gap-1">⑂ {repo.forksCount}</span>
                           </div>
                         </div>

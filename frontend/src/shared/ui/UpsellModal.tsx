@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useUpsellStore } from '../../entities/user/model/upsellStore';
 import { Button } from './Button';
+import { Rocket } from 'lucide-react';
 
 export const UpsellModal = () => {
   const { isOpen, closeUpsell } = useUpsellStore();
@@ -10,7 +11,9 @@ export const UpsellModal = () => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
       <div className="bg-[#161b22] border border-[#30363d] rounded-lg max-w-sm w-full p-6 text-center shadow-2xl">
-        <div className="mb-4 text-3xl">🚀</div>
+        <div className="mb-4 flex justify-center text-[var(--color-accent)]">
+          <Rocket size={40} strokeWidth={1.5} />
+        </div>
         <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>
           You've reached your daily AI limit
         </h3>
