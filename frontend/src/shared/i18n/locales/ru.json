@@ -21,7 +21,11 @@
     "copyReadme": "Скопировать README",
     "copyReadmeDesc": "Скопируйте Markdown README для профиля на GitHub.",
     "smartSync": "Умная AI-Синхронизация",
-    "smartSyncDesc": "Объедините данные из PDF и GitHub для создания идеального профиля."
+    "smartSyncDesc": "Объедините данные из PDF и GitHub для создания идеального профиля.",
+    "aiRewriting": "AI полностью переписывает ваш профиль...",
+    "syncSuccess": "Профиль успешно синхронизирован!",
+    "syncError": "Не удалось синхронизировать профиль",
+    "merging": "Слияние PDF и GitHub..."
   },
   "auth": {
     "login": "Войти",

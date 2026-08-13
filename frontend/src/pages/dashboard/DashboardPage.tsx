@@ -187,7 +187,7 @@ export const DashboardPage = () => {
               onClick={async () => {
                 try {
                   const { toast } = await import('sonner');
-                  toast.loading('AI is rewriting your profile...', { id: 'ai-sync' });
+                  toast.loading(t('dashboard.aiRewriting', 'AI is rewriting your entire profile...'), { id: 'ai-sync' });
                   const { api } = await import('../../shared/api/axios');
                   await api.post('/ai/generate-profile');
                   
@@ -195,7 +195,7 @@ export const DashboardPage = () => {
                   window.location.reload();
                 } catch (e: any) {
                   const { toast } = await import('sonner');
-                  toast.error(e.response?.data?.message || 'Failed to sync profile', { id: 'ai-sync' });
+                  toast.error(e.response?.data?.message || t('dashboard.syncError', 'Failed to sync profile'), { id: 'ai-sync' });
                 }
               }}
               className="p-6 rounded-2xl border border-default surface-primary card-hover text-left flex flex-col items-start w-full cursor-pointer relative overflow-hidden"

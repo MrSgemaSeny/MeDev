@@ -21,7 +21,11 @@
     "copyReadme": "Copy README",
     "copyReadmeDesc": "Copy your Markdown README to paste into your GitHub profile.",
     "smartSync": "Smart AI Sync",
-    "smartSyncDesc": "Merge PDF data and GitHub to generate the perfect profile."
+    "smartSyncDesc": "Merge PDF data and GitHub to generate the perfect profile.",
+    "aiRewriting": "AI is rewriting your entire profile...",
+    "syncSuccess": "Profile synced successfully!",
+    "syncError": "Failed to sync profile",
+    "merging": "Merging PDF & GitHub..."
   },
   "auth": {
     "login": "Sign In",
