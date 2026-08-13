@@ -11,7 +11,9 @@ import java.util.Base64;
 @Component
 public class EncryptionUtils {
 
-    private static final String ALGORITHM = "AES";
+    private static final String ALGORITHM = "AES/GCM/NoPadding";
+    private static final int GCM_IV_LENGTH = 12;
+    private static final int GCM_TAG_LENGTH = 128;
     private static byte[] key;
 
     @Value("${encryption.secret}")
@@ -25,10 +27,18 @@ public class EncryptionUtils {
     public static String encrypt(String value) {
         if (value == null || key == null) return value;
         try {
-            SecretKeySpec secretKey = new SecretKeySpec(key, ALGORITHM);
+            byte[] iv = new byte[GCM_IV_LENGTH];
+            new java.security.SecureRandom().nextBytes(iv);
+            
+            javax.crypto.spec.GCMParameterSpec paramSpec = new javax.crypto.spec.GCMParameterSpec(GCM_TAG_LENGTH, iv);
             Cipher cipher = Cipher.getInstance(ALGORITHM);
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-            return Base64.getEncoder().encodeToString(cipher.doFinal(value.getBytes(StandardCharsets.UTF_8)));
+            cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(key, "AES"), paramSpec);
+            byte[] encrypted = cipher.doFinal(value.getBytes(StandardCharsets.UTF_8));
+            
+            byte[] combined = new byte[iv.length + encrypted.length];
+            System.arraycopy(iv, 0, combined, 0, iv.length);
+            System.arraycopy(encrypted, 0, combined, iv.length, encrypted.length);
+            return Base64.getEncoder().encodeToString(combined);
         } catch (Exception e) {
             throw new RuntimeException("Error while encrypting data", e);
         }
@@ -37,12 +47,29 @@ public class EncryptionUtils {
     public static String decrypt(String value) {
         if (value == null || key == null) return value;
         try {
-            SecretKeySpec secretKey = new SecretKeySpec(key, ALGORITHM);
+            byte[] combined = Base64.getDecoder().decode(value);
+            if (combined.length <= GCM_IV_LENGTH) {
+                return decryptLegacyEcb(value);
+            }
+            byte[] iv = java.util.Arrays.copyOfRange(combined, 0, GCM_IV_LENGTH);
+            byte[] ciphertext = java.util.Arrays.copyOfRange(combined, GCM_IV_LENGTH, combined.length);
+            
+            javax.crypto.spec.GCMParameterSpec paramSpec = new javax.crypto.spec.GCMParameterSpec(GCM_TAG_LENGTH, iv);
             Cipher cipher = Cipher.getInstance(ALGORITHM);
+            cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, "AES"), paramSpec);
+            return new String(cipher.doFinal(ciphertext), StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            return decryptLegacyEcb(value);
+        }
+    }
+
+    private static String decryptLegacyEcb(String value) {
+        try {
+            SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
+            Cipher cipher = Cipher.getInstance("AES");
             cipher.init(Cipher.DECRYPT_MODE, secretKey);
             return new String(cipher.doFinal(Base64.getDecoder().decode(value)), StandardCharsets.UTF_8);
-        } catch (Exception e) {
-            // Fallback for unencrypted existing tokens during migration
+        } catch (Exception ex) {
             return value;
         }
     }

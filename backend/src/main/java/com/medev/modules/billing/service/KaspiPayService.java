@@ -107,20 +107,34 @@ public class KaspiPayService {
         }
     }
 
-    /**
-     * Защита вебхука: имитация проверки HMAC-SHA256 подписи.
-     */
     private boolean verifySignature(Map<String, Object> payload, String signature) {
         if (signature == null || signature.isBlank()) {
             return false;
         }
-        // В реальном мире:
-        // String payloadStr = mapper.writeValueAsString(payload);
-        // String expectedHash = HmacUtils.hmacSha256Hex(secretKey, payloadStr);
-        // return expectedHash.equals(signature);
-        
-        // Для шаблона мы принимаем любую подпись, если она не пустая.
-        return true;
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            String payloadStr = mapper.writeValueAsString(payload);
+            
+            javax.crypto.Mac mac = javax.crypto.Mac.getInstance("HmacSHA256");
+            mac.init(new javax.crypto.spec.SecretKeySpec(secretKey.getBytes(java.nio.charset.StandardCharsets.UTF_8), "HmacSHA256"));
+            
+            byte[] hashBytes = mac.doFinal(payloadStr.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            
+            StringBuilder hexString = new StringBuilder(2 * hashBytes.length);
+            for (byte b : hashBytes) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+            String expected = hexString.toString();
+            
+            return java.security.MessageDigest.isEqual(expected.getBytes(java.nio.charset.StandardCharsets.UTF_8), signature.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            log.error("Kaspi signature verification error", e);
+            return false;
+        }
     }
 
     private void downgradeUser(String kaspiCustomer) {

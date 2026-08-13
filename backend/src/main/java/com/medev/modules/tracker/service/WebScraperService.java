@@ -9,10 +9,20 @@ import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.UnknownHostException;
+import java.util.Set;
 
 @Service
 @Slf4j
 public class WebScraperService {
+
+    private static final Set<String> ALLOWED_HOSTS = Set.of(
+            "hh.kz", "hh.ru", "linkedin.com", "www.linkedin.com",
+            "indeed.com", "www.indeed.com", "career.habr.com"
+    );
 
     public CreateJobApplicationRequest scrapeJobUrl(String url) {
         CreateJobApplicationRequest request = new CreateJobApplicationRequest();
@@ -21,6 +31,8 @@ public class WebScraperService {
         request.setAppliedDate(java.time.LocalDate.now());
 
         try {
+            validateUrl(url);
+
             Document doc = Jsoup.connect(url)
                     .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36")
                     .timeout(10000)
@@ -85,5 +97,27 @@ public class WebScraperService {
 
         Element descEl = doc.selectFirst(".show-more-less-html__markup");
         if (descEl != null) request.setJobDescription(descEl.text());
+    }
+
+    private void validateUrl(String url) {
+        try {
+            URI uri = new URI(url);
+            String scheme = uri.getScheme();
+            String host = uri.getHost();
+
+            if (!"https".equalsIgnoreCase(scheme)) {
+                throw new IllegalArgumentException("Only HTTPS URLs are allowed");
+            }
+            if (host == null || !ALLOWED_HOSTS.contains(host.toLowerCase())) {
+                throw new IllegalArgumentException("URL host is not allowed: " + host);
+            }
+            
+            InetAddress addr = InetAddress.getByName(host);
+            if (addr.isLoopbackAddress() || addr.isSiteLocalAddress() || addr.isLinkLocalAddress()) {
+                throw new IllegalArgumentException("Private/loopback addresses are not allowed");
+            }
+        } catch (URISyntaxException | UnknownHostException e) {
+            throw new IllegalArgumentException("Invalid URL format");
+        }
     }
 }
