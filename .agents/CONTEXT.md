@@ -29,6 +29,7 @@
   - **Roadmap Phase 6 (UX Polish)**: Replaced map loops with SortableList for drag-and-drop ordering in all profile sections (Experience, Education, Skills, Projects, Languages). Created centralized CRUD hooks in `useProfile.ts` for optimistic updates and toast notifications. Switched all forms to inline editing. Created a premium 3-step OnboardingWizard.
   - **Roadmap Phase 7 & 8 (Security & README Generator)**: Migrated refresh token to HttpOnly cookies. Encrypted GitHub Token in PostgreSQL via AES-256 (`StringCryptoConverter`). Implemented backend API and frontend Dashboard button for generating and copying a Markdown README of the profile.
   - **Full AI Profile Generation Flow**: Fixed local form state pollution in `AboutSection` on PDF import. Added global `Smart AI Sync` buttons to Dashboard and ProfileEditor to easily trigger full AI profile regeneration (merging PDF data and GitHub snapshot). Improved `full_profile_generator_v1.txt` prompt to safely fallback to current profile data when GitHub snapshot is empty.
+  - **Tech Debt Cleanup**: Verified that Axios Interceptor, Code Splitting, GlobalExceptionHandler, Rate Limiting (Bucket4j), and initial test suites are all fully implemented. Fixed Dashboard i18n missing translations.
 ## Next in Backlog
 - Frontend CI/CD / GitHub Pages deployment.
 - Expand test coverage (Vitest frontend, JUnit backend).

@@ -38,14 +38,9 @@ Explain WHY, not just WHAT (Senior Tech Lead mentoring approach: architect think
 10. **FSD Compliance (MeDev)**: Frontend обязан строго следовать Feature-Sliced Design (app, pages, features, entities, shared).
 
 ## Current Technical Debt & Unfinished Phases (Sprint Backlog)
-- **[CRITICAL] Тесты**: Текущее покрытие 0%. Внедрить JUnit 5/Mockito на бэке, Vitest/Playwright на фронте.
-- **[CRITICAL] CI/CD**: Настроить GitHub Actions пайплайн (сборка, тесты, блокировка пуша при падении).
-- **[CRITICAL] Frontend Performance**: Внедрить Code Splitting (`React.lazy`) и Axios interceptor для автоматического refresh token флоу.
 - **[WARNING] GroqClient Reliability**: Добавить таймауты (30s/60s), ретраи с backoff и JSON-валидацию ответов AI с graceful degradation.
-- **[WARNING] GlobalExceptionHandler**: Добавить обработку `@Valid`, битого JSON и MaxUploadSizeExceeded.
-- **[WARNING] Rate Limiting**: Внедрить Bucket4j на auth и AI эндпоинты для защиты от спама.
 - **[INFO] Infra**: Подготовить `fly.toml` и Dockerfile для деплоя бэкенда.
-- **[INFO] i18n**: Перевести весь UI на react-i18next (пока переведен только ResumeBuilder).
+- **[INFO] i18n**: Продолжить перевод остального UI на react-i18next (переведены ResumeBuilder и Dashboard).
 
 ## Behavior & Communication Rules
 - **Logical Troubleshooting (NO TUNNEL VISION)**: Think logically and broadly before diving deep. If an issue occurs, map out ALL possible horizontal paths/causes first. Do NOT fall into the trap of: 'problem -> guess path -> not here -> dig deeper in the same wrong place'. Verify the root cause across all potential points of failure before spending tokens on deep dives.
