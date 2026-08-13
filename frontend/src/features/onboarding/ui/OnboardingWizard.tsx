@@ -54,7 +54,7 @@ export const OnboardingWizard = () => {
 
   return (
     <Modal isOpen={isOpen} onClose={handleSkip} title="Welcome to MeDev!">
-      <div className="w-[500px] max-w-full flex flex-col pt-2 pb-2">
+      <div className="w-[500px] max-w-full mx-auto flex flex-col pt-2 pb-2">
         <div className="flex gap-2 mb-10 px-2">
           {[1, 2, 3].map((s) => (
             <div
