@@ -21,4 +21,10 @@ public class AiGenerateService {
         String userMessage = String.format("Language: %s\nProject: %s\nContext:\n%s", language, projectName, context);
         return llmProvider.structuredCompletion(systemPrompt, userMessage);
     }
+
+    public String generateLinkedinProfile(String context, String language) {
+        String systemPrompt = promptLoader.load("linkedin_generator_v1");
+        String userMessage = String.format("Language: %s\nContext:\n%s", language, context);
+        return llmProvider.structuredCompletion(systemPrompt, userMessage);
+    }
 }

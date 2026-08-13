@@ -11,7 +11,15 @@
   },
   "dashboard": {
     "title": "Панель управления",
-    "logout": "Выйти"
+    "logout": "Выйти",
+    "loading": "Загрузка панели...",
+    "quickActions": "Быстрые действия",
+    "exportJson": "Экспорт JSON",
+    "exportJsonDesc": "Скачайте полный профиль в формате JSON.",
+    "copyLinkedin": "Скопировать для LinkedIn",
+    "copyLinkedinDesc": "Сгенерировать раздел 'О себе' для LinkedIn с помощью AI.",
+    "copyReadme": "Скопировать README",
+    "copyReadmeDesc": "Скопируйте Markdown README для профиля на GitHub."
   },
   "auth": {
     "login": "Войти",

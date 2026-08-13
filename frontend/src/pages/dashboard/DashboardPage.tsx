@@ -2,14 +2,16 @@ import { useProfile } from '../../shared/api/hooks/useProfile';
 import { useAuthStore } from '../../entities/user/model/store';
 import { Link } from 'react-router-dom';
 import { GitBranch, Link as LinkIcon, Send, Globe, Briefcase, GraduationCap, FolderGit2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export const DashboardPage = () => {
   const { data: profile, isLoading } = useProfile();
   const username = useAuthStore((state) => state.username);
   const plan = useAuthStore((state) => state.plan);
+  const { t } = useTranslation();
 
   if (isLoading) {
-    return <div className="p-8 text-secondary">Loading dashboard...</div>;
+    return <div className="p-8 text-secondary">{t('dashboard.loading', 'Loading dashboard...')}</div>;
   }
 
   const getProfileCompleteness = () => {
@@ -143,8 +145,42 @@ export const DashboardPage = () => {
               <div className="w-10 h-10 rounded-lg surface-tertiary flex items-center justify-center mb-4">
                 <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
               </div>
-              <h3 className="font-bold mb-1.5 text-primary">Copy README</h3>
-              <p className="text-sm text-secondary leading-relaxed">Copy your Markdown README to paste into your GitHub profile.</p>
+              <h3 className="font-bold mb-1.5 text-primary">{t('dashboard.copyReadme', 'Copy README')}</h3>
+              <p className="text-sm text-secondary leading-relaxed">{t('dashboard.copyReadmeDesc', 'Copy your Markdown README to paste into your GitHub profile.')}</p>
+            </button>
+
+            <a
+              href="http://localhost:8080/api/v1/profile/export/json"
+              download="medev_profile.json"
+              className="p-6 rounded-2xl border border-default surface-primary card-hover text-left flex flex-col items-start w-full cursor-pointer"
+            >
+              <div className="w-10 h-10 rounded-lg surface-tertiary flex items-center justify-center mb-4">
+                <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+              </div>
+              <h3 className="font-bold mb-1.5 text-primary">{t('dashboard.exportJson', 'Export JSON')}</h3>
+              <p className="text-sm text-secondary leading-relaxed">{t('dashboard.exportJsonDesc', 'Download your full profile data in raw JSON format.')}</p>
+            </a>
+
+            <button
+              onClick={async () => {
+                try {
+                  const { api } = await import('../../shared/api/axios');
+                  const { toast } = await import('sonner');
+                  const res = await api.get('/ai/export/linkedin');
+                  await navigator.clipboard.writeText(res.data);
+                  toast.success('LinkedIn About section copied!');
+                } catch (e) {
+                  const { toast } = await import('sonner');
+                  toast.error('Failed to generate LinkedIn section');
+                }
+              }}
+              className="p-6 rounded-2xl border border-default surface-primary card-hover text-left flex flex-col items-start w-full cursor-pointer"
+            >
+              <div className="w-10 h-10 rounded-lg surface-tertiary flex items-center justify-center mb-4">
+                <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+              </div>
+              <h3 className="font-bold mb-1.5 text-primary">{t('dashboard.copyLinkedin', 'Copy for LinkedIn')}</h3>
+              <p className="text-sm text-secondary leading-relaxed">{t('dashboard.copyLinkedinDesc', 'Generate a tailored About section for LinkedIn via AI.')}</p>
             </button>
           </div>
         </div>

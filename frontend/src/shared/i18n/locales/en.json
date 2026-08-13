@@ -11,7 +11,15 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "logout": "Logout"
+    "logout": "Logout",
+    "loading": "Loading dashboard...",
+    "quickActions": "Quick Actions",
+    "exportJson": "Export JSON",
+    "exportJsonDesc": "Download your full profile data in raw JSON format.",
+    "copyLinkedin": "Copy for LinkedIn",
+    "copyLinkedinDesc": "Generate a tailored About section for LinkedIn via AI.",
+    "copyReadme": "Copy README",
+    "copyReadmeDesc": "Copy your Markdown README to paste into your GitHub profile."
   },
   "auth": {
     "login": "Sign In",

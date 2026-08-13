@@ -36,6 +36,15 @@ public class ProfileController {
         return ResponseEntity.ok(readmeContent);
     }
 
+    @GetMapping(value = "/export/json", produces = "application/json;charset=UTF-8")
+    public ResponseEntity<ProfileDto> exportProfileJson() {
+        Long userId = SecurityUtils.getCurrentUserId();
+        ProfileDto profile = profileService.getByUserId(userId);
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=\"medev_profile.json\"")
+                .body(profile);
+    }
+
     @PutMapping
     public ResponseEntity<ProfileDto> updateProfile(@Valid @RequestBody UpdateProfileRequest request) {
         Long userId = SecurityUtils.getCurrentUserId();

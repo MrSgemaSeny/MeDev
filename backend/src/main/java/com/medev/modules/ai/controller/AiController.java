@@ -136,6 +136,19 @@ public class AiController {
     }
 
     /**
+     * Экспорт LinkedIn About секции.
+     */
+    @GetMapping(value = "/export/linkedin", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> exportLinkedinProfile(@RequestParam(defaultValue = "en") String language) {
+        Long userId = SecurityUtils.getCurrentUserId();
+        aiRateLimiter.checkAndConsume(userId);
+
+        String context = aiContextService.buildUserContextBlock(userId);
+        String result = aiGenerateService.generateLinkedinProfile(context, language);
+        return ResponseEntity.ok(result);
+    }
+
+    /**
      * AI Onboarding Wizard
      * Генерирует и сохраняет профиль пользователя (Bio, Headline, Skills, Experience)
      */
