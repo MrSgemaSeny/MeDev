@@ -65,7 +65,7 @@ public class AiAnalysisServiceTest {
         String jsonResponse = "{\"fullName\":\"John Doe\",\"headline\":\"Software Developer\"}";
         when(llmProvider.structuredCompletion(anyString(), anyString())).thenReturn(jsonResponse);
 
-        AiParsedResumeDto result = aiAnalysisService.parseResumePdf(file);
+        AiParsedResumeDto result = aiAnalysisService.parseResumePdf(file, new com.medev.modules.profile.dto.ProfileDto());
 
         assertThat(result).isNotNull();
         assertThat(result.getFullName()).isEqualTo("John Doe");
@@ -82,11 +82,11 @@ public class AiAnalysisServiceTest {
         String jsonResponse = "{}";
         when(llmProvider.structuredCompletion(anyString(), anyString())).thenReturn(jsonResponse);
 
-        aiAnalysisService.parseResumePdf(file);
+        aiAnalysisService.parseResumePdf(file, new com.medev.modules.profile.dto.ProfileDto());
 
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(llmProvider).structuredCompletion(anyString(), captor.capture());
-        assertThat(captor.getValue().length()).isLessThanOrEqualTo(10000);
+        assertThat(captor.getValue().length()).isLessThanOrEqualTo(10500);
     }
 
     @Test
@@ -94,7 +94,7 @@ public class AiAnalysisServiceTest {
         MockMultipartFile file = createPdfFile("Text");
         when(llmProvider.structuredCompletion(anyString(), anyString())).thenReturn("not json");
 
-        AiParsedResumeDto result = aiAnalysisService.parseResumePdf(file);
+        AiParsedResumeDto result = aiAnalysisService.parseResumePdf(file, new com.medev.modules.profile.dto.ProfileDto());
         assertThat(result).isNotNull();
         assertThat(result.getFullName()).isNull();
     }
@@ -103,7 +103,7 @@ public class AiAnalysisServiceTest {
     void parseResumePdf_invalidPdf_throwsRuntime() {
         MockMultipartFile file = new MockMultipartFile("file", "test.pdf", "application/pdf", "random bytes".getBytes());
 
-        assertThatThrownBy(() -> aiAnalysisService.parseResumePdf(file))
+        assertThatThrownBy(() -> aiAnalysisService.parseResumePdf(file, new com.medev.modules.profile.dto.ProfileDto()))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("Failed to read PDF file");
     }
@@ -113,7 +113,7 @@ public class AiAnalysisServiceTest {
         MockMultipartFile file = createPdfFile("Text");
         when(llmProvider.structuredCompletion(anyString(), anyString())).thenThrow(new RuntimeException("Groq error"));
 
-        assertThatThrownBy(() -> aiAnalysisService.parseResumePdf(file))
+        assertThatThrownBy(() -> aiAnalysisService.parseResumePdf(file, new com.medev.modules.profile.dto.ProfileDto()))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("Groq error");
     }

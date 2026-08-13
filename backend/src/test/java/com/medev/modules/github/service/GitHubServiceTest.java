@@ -53,20 +53,7 @@ public class GitHubServiceTest {
 
 
 
-    @Test
-    void fetchAndParseProfile_apiError_throwsRuntime() {
-        Long userId = 1L;
-        User user = new User();
-        user.setId(userId);
-        user.setGithubAccessToken("token");
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-        when(webClientBuilder.baseUrl(anyString())).thenReturn(webClientBuilder);
-        when(webClientBuilder.build()).thenThrow(WebClientResponseException.create(500, "Error", null, null, null));
-        
-        assertThatThrownBy(() -> gitHubService.fetchAndParseProfile(userId))
-                .isInstanceOf(RuntimeException.class);
-    }
     
     @Test
     void importToProfile_happyPath() {

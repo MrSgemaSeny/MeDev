@@ -70,4 +70,37 @@ public class AiAnalysisService {
             throw new RuntimeException("Failed to read PDF file", e);
         }
     }
+
+    public AiParsedResumeDto generateFullProfile(Long userId, String githubSnapshotJson, com.medev.modules.profile.dto.ProfileDto currentProfile) {
+        String systemPrompt = promptLoader.load("full_profile_generator_v1");
+        String currentProfileJson = "{}";
+        try {
+            currentProfileJson = objectMapper.writeValueAsString(currentProfile);
+        } catch (Exception e) {
+            log.warn("Failed to serialize current profile", e);
+        }
+
+        String finalPrompt = "CURRENT PROFILE JSON (CONTAINS ONBOARDING DATA):\n" + currentProfileJson + "\n\n" +
+                             "GITHUB SNAPSHOT JSON:\n" + (githubSnapshotJson != null ? githubSnapshotJson : "{}");
+
+        String jsonResponse = llmProvider.structuredCompletion(systemPrompt, finalPrompt);
+        
+        try {
+            if (jsonResponse.startsWith("```json")) {
+                jsonResponse = jsonResponse.substring(7);
+            }
+            if (jsonResponse.startsWith("```")) {
+                jsonResponse = jsonResponse.substring(3);
+            }
+            if (jsonResponse.endsWith("```")) {
+                jsonResponse = jsonResponse.substring(0, jsonResponse.length() - 3);
+            }
+            jsonResponse = jsonResponse.trim();
+            
+            return objectMapper.readValue(jsonResponse, AiParsedResumeDto.class);
+        } catch (Exception e) {
+            log.error("Failed to parse Groq response: {}", jsonResponse, e);
+            return new AiParsedResumeDto(); // Graceful degradation
+        }
+    }
 }

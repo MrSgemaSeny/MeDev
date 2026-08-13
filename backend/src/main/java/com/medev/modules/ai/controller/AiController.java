@@ -35,6 +35,7 @@ public class AiController {
     private final AiRateLimiter       aiRateLimiter;
     private final ProfileService      profileService;
     private final EvaluationService   evaluationService;
+    private final com.medev.modules.github.repository.GithubSnapshotRepository snapshotRepository;
 
     // ─────────────────────────────────────────────────
     // QUOTA
@@ -145,6 +146,24 @@ public class AiController {
 
         com.medev.modules.ai.dto.AiOnboardingResponse response = aiOnboardingService.generateAndSaveProfile(userId, request);
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Генерация полного профиля на основе GitHub Snapshot.
+     */
+    @PostMapping(value = "/generate-profile", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ProfileDto> generateFullProfile() {
+        Long userId = SecurityUtils.getCurrentUserId();
+        aiRateLimiter.checkAndConsume(userId);
+
+        String snapshotJson = snapshotRepository.findFirstByIdUserIdOrderByIdFetchedAtDesc(userId)
+                .map(com.medev.modules.github.entity.GithubSnapshot::getRawJson)
+                .orElse("{}");
+
+        ProfileDto currentProfile = profileService.getByUserId(userId);
+        AiParsedResumeDto parsed = aiAnalysisService.generateFullProfile(userId, snapshotJson, currentProfile);
+        ProfileDto updatedProfile = profileService.importParsedResume(userId, parsed);
+        return ResponseEntity.ok(updatedProfile);
     }
 
     // ─────────────────────────────────────────────────

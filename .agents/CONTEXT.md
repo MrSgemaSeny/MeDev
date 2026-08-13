@@ -9,6 +9,7 @@
   - Validated and verified full implementation of Phase 2 - Production-Ready AI & Frontend Integration (Token Accounting with AiUsage, Human Feedback with AiEvaluation, Frontend Synchronous hooks for "Generate with AI", Golden Dataset tests).
   - Validated and verified full implementation of Phase 4 - Monetization & Scale (Frontend Stripe Checkout integration, Quota Dashboard Widget, Soft Upsell Modal on 429 errors).
   - Implemented AI Resume Parsing via PDF upload (`useParseResume`) with backend-driven **Smart Merge**, intelligently combining existing GitHub profile data with PDF text to avoid data loss and hallucinations.
+  - Implemented Phase 1 & 2: GitHub Source of Truth and AI Full Profile Generation. Added `GithubSnapshot` tracking, parallel fetching of repo languages, README tech stack parsing, and `/api/v1/ai/generate-profile` endpoint for full profile generation based on GitHub data.
   - Added AI Feedback Panel ("Analyze Resume") into the ResumeBuilder.
   - Enforced AI feature access restrictions based on Plan (Free/Pro) in `AiController`.
   - Configured `SecurityConfig` for strict CORS origins (configured via `application.yml`).

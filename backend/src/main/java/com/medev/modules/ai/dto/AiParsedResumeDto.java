@@ -17,6 +17,9 @@ public class AiParsedResumeDto {
     private String telegram;
     private String linkedin;
 
+    private List<String> detectedTechnologies;
+    private List<String> githubOrganizations;
+
     private List<AiSkillDto> skills;
     private List<AiLanguageDto> languages;
     private List<AiExperienceDto> experience;

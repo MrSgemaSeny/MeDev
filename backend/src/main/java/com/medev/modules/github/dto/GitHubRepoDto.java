@@ -19,4 +19,9 @@ public class GitHubRepoDto {
     
     @JsonProperty("forks_count")
     private Integer forksCount;
+
+    private Integer size;
+
+    @JsonProperty("updated_at")
+    private String updatedAt;
 }

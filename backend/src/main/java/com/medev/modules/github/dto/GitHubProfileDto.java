@@ -16,4 +16,6 @@ public class GitHubProfileDto {
     private Integer publicRepos;
     private List<GitHubRepoDto> repos;
     private Map<String, Integer> languageStats;
+    private List<String> organizations;
+    private List<String> detectedTechnologies;
 }
