@@ -106,9 +106,17 @@ export const AboutSection = () => {
 
       {/* Avatar row */}
       <div className="flex items-center gap-4 mb-6">
-        <div className="w-12 h-12 rounded-full flex items-center justify-center text-[16px] font-medium shrink-0" style={{ backgroundColor: 'var(--color-bg-tertiary)', color: 'var(--color-text-primary)', border: '1px solid var(--color-border-default)' }}>
-          {username ? username.charAt(0).toUpperCase() : 'U'}
-        </div>
+        {profile?.githubUsername ? (
+          <img 
+            src={`https://github.com/${profile.githubUsername}.png`} 
+            alt="Avatar" 
+            className="w-12 h-12 rounded-full border border-default object-cover shrink-0" 
+          />
+        ) : (
+          <div className="w-12 h-12 rounded-full flex items-center justify-center text-[16px] font-medium shrink-0" style={{ backgroundColor: 'var(--color-bg-tertiary)', color: 'var(--color-text-primary)', border: '1px solid var(--color-border-default)' }}>
+            {username ? username.charAt(0).toUpperCase() : 'U'}
+          </div>
+        )}
         <div className="flex flex-col">
           <strong className="text-[14px] text-primary font-medium">{formData.fullName || username}</strong>
           <p className="text-[12px] text-secondary mt-0.5">{formData.headline || 'No headline set'}</p>

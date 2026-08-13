@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { LogOut, Bell, Globe, Mail, Moon, Sun, Shield } from 'lucide-react';
 import { useAuthStore } from '../../entities/user/model/store';
 import { useTranslation } from 'react-i18next';
+import { useProfile } from '../../shared/api/hooks/useProfile';
 // import removed
 
 interface UserProfileDropdownProps {
@@ -17,6 +18,9 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
   const role = (useAuthStore as any)((s: any) => s.role);
   const logout = useAuthStore((s) => s.logout);
   const { i18n } = useTranslation();
+  const { data: profile } = useProfile();
+  
+  const avatarUrl = profile?.githubUsername ? `https://github.com/${profile.githubUsername}.png` : `https://github.com/${username}.png`;
 
   const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -71,14 +75,10 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
         style={isHeader ? ({ '--tw-ring-color': 'var(--color-border-default)' } as React.CSSProperties) : undefined}
       >
         {isHeader ? (
-          <div className="w-full h-full flex items-center justify-center text-[var(--color-text-primary)] text-xs font-bold" style={{ backgroundColor: 'var(--color-bg-tertiary)', border: '1px solid var(--color-border-default)' }}>
-            {username.charAt(0).toUpperCase()}
-          </div>
+          <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
         ) : (
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 shrink-0 rounded-full flex items-center justify-center text-[var(--color-text-primary)] text-xs font-bold shadow-sm" style={{ backgroundColor: 'var(--color-bg-tertiary)', border: '1px solid var(--color-border-default)' }}>
-              {username.charAt(0).toUpperCase()}
-            </div>
+            <img src={avatarUrl} alt="Avatar" className="w-7 h-7 shrink-0 rounded-full object-cover shadow-sm border border-default" style={{ backgroundColor: 'var(--color-bg-tertiary)' }} />
             <div className="flex flex-col items-start leading-tight">
               <span className="text-[13px] font-medium text-primary">{username}</span>
               <span className="text-[10px] text-muted">{formatterTime.format(currentTime)}</span>
@@ -100,9 +100,7 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
           }}
         >
           <div className="px-4 py-3 border-b border-muted flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center text-[var(--color-text-primary)] text-lg font-bold shrink-0" style={{ backgroundColor: 'var(--color-bg-tertiary)', border: '1px solid var(--color-border-default)' }}>
-              {username.charAt(0).toUpperCase()}
-            </div>
+            <img src={avatarUrl} alt="Avatar" className="w-10 h-10 rounded-full object-cover border border-default shrink-0" style={{ backgroundColor: 'var(--color-bg-tertiary)' }} />
             <div className="flex flex-col overflow-hidden">
               <span className="font-semibold text-[15px] truncate text-primary">{username}</span>
             </div>
