@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import java.util.List;
+import com.fasterxml.jackson.databind.JsonNode;
 
 @Data
 public class AiOnboardingResponse {
@@ -37,7 +38,19 @@ public class AiOnboardingResponse {
         private String company;
         @NotBlank
         private String position;
-        @NotBlank
-        private String description;
+        @NotNull
+        private JsonNode description;
+
+        public String getParsedDescription() {
+            if (description == null) return "";
+            if (description.isArray()) {
+                List<String> list = new java.util.ArrayList<>();
+                for (JsonNode node : description) {
+                    list.add("- " + node.asText());
+                }
+                return String.join("\n", list);
+            }
+            return description.asText();
+        }
     }
 }

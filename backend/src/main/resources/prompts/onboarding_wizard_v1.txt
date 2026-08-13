@@ -15,7 +15,7 @@ You MUST respond ONLY with a valid JSON object matching this exact structure, wi
     {
       "company": "Company Name (Extract or infer, use 'Recent Company' if not specified)",
       "position": "Job Title",
-      "description": "2-3 bullet points summarizing their responsibilities and achievements."
+      "description": "A SINGLE STRING containing 2-3 bullet points summarizing their responsibilities (e.g. '- Point 1\\n- Point 2'). DO NOT return an array here."
     }
   ]
 }

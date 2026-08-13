@@ -86,7 +86,7 @@ public class AiOnboardingService extends AbstractAiStructuredService {
                         .profile(profile)
                         .company(exp.getCompany())
                         .position(exp.getPosition())
-                        .description(exp.getDescription())
+                        .description(exp.getParsedDescription())
                         .startDate(null)
                         .endDate(null)
                         .build();
