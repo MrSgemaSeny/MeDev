@@ -7,6 +7,7 @@ import lombok.Data;
 @Builder
 public class AuthResponse {
     private String accessToken;
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private String refreshToken;
     private String username;
     private String plan;

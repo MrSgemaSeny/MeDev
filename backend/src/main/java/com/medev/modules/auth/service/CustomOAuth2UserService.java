@@ -101,6 +101,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         } else {
             user = userRepository.findByEmail(finalEmail).orElseGet(() -> {
                 String uname = finalUsername;
+                if (uname == null || uname.isBlank()) {
+                    uname = "user_" + UUID.randomUUID().toString().substring(0, 8);
+                }
+                
+                if (com.medev.modules.auth.service.AuthService.RESERVED_USERNAMES.contains(uname)) {
+                    uname = uname + "_" + UUID.randomUUID().toString().substring(0, 4);
+                }
+
                 if (userRepository.existsByUsername(uname)) {
                     uname = uname + "_" + UUID.randomUUID().toString().substring(0, 4);
                 }

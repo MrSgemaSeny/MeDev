@@ -43,6 +43,8 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/v1/auth/**",
                     "/v1/portfolio/**",    // публичные страницы
+                    "/v1/billing/webhook",
+                    "/v1/billing/webhook/kaspi",
                     "/actuator/health",
                     "/oauth2/**",
                     "/login/oauth2/**",

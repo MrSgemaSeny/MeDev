@@ -28,8 +28,8 @@ public class AuthService {
     private final RedisTemplate<String, String> redisTemplate;
     private final ProfileService profileService;
 
-    private static final java.util.List<String> RESERVED_USERNAMES = java.util.List.of(
-            "admin", "api", "login", "medev", "support", "billing", "auth", "register"
+    public static final java.util.List<String> RESERVED_USERNAMES = java.util.List.of(
+            "admin", "root", "system", "support", "billing", "me", "profile", "api", "auth"
     );
 
     public AuthResponse register(RegisterRequest request) {

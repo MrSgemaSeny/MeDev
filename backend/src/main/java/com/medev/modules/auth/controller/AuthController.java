@@ -66,6 +66,8 @@ public class AuthController {
                 .httpOnly(true)
                 .path("/api/v1/auth/refresh")
                 .maxAge(0)
+                .sameSite("Lax")
+                .secure(true)
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         return ResponseEntity.noContent().build();
@@ -78,6 +80,7 @@ public class AuthController {
                 .path("/api/v1/auth/refresh")
                 .maxAge(30 * 24 * 60 * 60) // 30 days
                 .sameSite("Lax")
+                .secure(true)
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
