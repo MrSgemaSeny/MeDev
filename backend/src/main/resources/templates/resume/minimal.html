@@ -114,7 +114,7 @@
                             <span th:text="${proj.name}">Project Name</span>
                             <span>
                                 <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}">GitHub</a>
-                                <span th:if="${proj.githubUrl && proj.liveUrl}"> | </span>
+                                <span th:if="${proj.githubUrl != null and !proj.githubUrl.isEmpty() and proj.liveUrl != null and !proj.liveUrl.isEmpty()}"> | </span>
                                 <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}">Live</a>
                             </span>
                         </div>
