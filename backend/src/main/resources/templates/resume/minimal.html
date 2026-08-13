@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
@@ -44,18 +44,18 @@
         <span th:if="${profile.telegram}"> | <span th:text="${profile.telegram}"></span></span>
     </div>
 
-    <div th:each="sectionName : ${profile.sectionOrder != null && !profile.sectionOrder.isEmpty() ? profile.sectionOrder : {'summary','experience','education','skills','languages','projects'}}">
+    <div th:each="sectionName : ${profile.sectionOrder != null and !profile.sectionOrder.isEmpty() ? profile.sectionOrder : {'summary','experience','education','skills','languages','projects'}}">
         
         <div th:switch="${sectionName}">
             
             <!-- SUMMARY -->
-            <div th:case="'summary'" th:if="${profile.summary != null && !profile.summary.isEmpty()}">
+            <div th:case="'summary'" th:if="${profile.summary != null and !profile.summary.isEmpty()}">
                 <h2>Summary</h2>
                 <div class="section-content" th:text="${profile.summary}"></div>
             </div>
 
             <!-- EXPERIENCE -->
-            <div th:case="'experience'" th:if="${profile.experience != null && !profile.experience.isEmpty()}">
+            <div th:case="'experience'" th:if="${profile.experience != null and !profile.experience.isEmpty()}">
                 <h2>Experience</h2>
                 <div class="section-content">
                     <div class="item" th:each="exp : ${profile.experience}">
@@ -71,7 +71,7 @@
             </div>
 
             <!-- EDUCATION -->
-            <div th:case="'education'" th:if="${profile.education != null && !profile.education.isEmpty()}">
+            <div th:case="'education'" th:if="${profile.education != null and !profile.education.isEmpty()}">
                 <h2>Education</h2>
                 <div class="section-content">
                     <div class="item" th:each="edu : ${profile.education}">
@@ -85,7 +85,7 @@
             </div>
 
             <!-- SKILLS -->
-            <div th:case="'skills'" th:if="${profile.skills != null && !profile.skills.isEmpty()}">
+            <div th:case="'skills'" th:if="${profile.skills != null and !profile.skills.isEmpty()}">
                 <h2>Skills</h2>
                 <div class="section-content skills-list">
                     <div th:each="skill : ${profile.skills}">
@@ -96,7 +96,7 @@
             </div>
 
             <!-- LANGUAGES -->
-            <div th:case="'languages'" th:if="${profile.languages != null && !profile.languages.isEmpty()}">
+            <div th:case="'languages'" th:if="${profile.languages != null and !profile.languages.isEmpty()}">
                 <h2>Languages</h2>
                 <div class="section-content skills-list">
                     <div th:each="lang : ${profile.languages}">
@@ -106,7 +106,7 @@
             </div>
 
             <!-- PROJECTS -->
-            <div th:case="'projects'" th:if="${profile.projects != null && !profile.projects.isEmpty()}">
+            <div th:case="'projects'" th:if="${profile.projects != null and !profile.projects.isEmpty()}">
                 <h2>Projects</h2>
                 <div class="section-content">
                     <div class="item" th:each="proj : ${profile.projects}" th:if="${proj.isVisible}">
