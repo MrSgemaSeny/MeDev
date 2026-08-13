@@ -61,6 +61,11 @@ public class ProfileService {
                 .orElseThrow(() -> new NotFoundException("Profile not found"));
     }
 
+    private Profile getProfileEntityForUpdate(Long userId) {
+        return profileRepository.findByUserIdForUpdate(userId)
+                .orElseThrow(() -> new NotFoundException("Profile not found"));
+    }
+
     @Transactional(readOnly = true)
     public ProfileDto getByUserId(Long userId) {
         Profile profile = getProfileEntityByUserId(userId);
@@ -95,7 +100,7 @@ public class ProfileService {
 
     @Transactional
     public ProfileDto importParsedResume(Long userId, AiParsedResumeDto parsed) {
-        Profile profile = getProfileEntityByUserId(userId);
+        Profile profile = getProfileEntityForUpdate(userId);
         
         if (parsed.getFullName() != null) profile.setFullName(parsed.getFullName());
         if (parsed.getHeadline() != null) profile.setHeadline(parsed.getHeadline());

@@ -94,9 +94,9 @@ public class AiAnalysisServiceTest {
         MockMultipartFile file = createPdfFile("Text");
         when(llmProvider.structuredCompletion(anyString(), anyString())).thenReturn("not json");
 
-        AiParsedResumeDto result = aiAnalysisService.parseResumePdf(file, new com.medev.modules.profile.dto.ProfileDto());
-        assertThat(result).isNotNull();
-        assertThat(result.getFullName()).isNull();
+        assertThatThrownBy(() -> aiAnalysisService.parseResumePdf(file, new com.medev.modules.profile.dto.ProfileDto()))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("AI generation failed or returned invalid format");
     }
 
     @Test
