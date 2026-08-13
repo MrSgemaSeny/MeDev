@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useProfile, useUpdateProfile, useParseResume } from '../../../shared/api/hooks/useProfile';
 import { useGenerateSummary } from '../../ai/hooks/useAiGenerate';
-import { Upload, Camera, Sparkles, Check } from 'lucide-react';
+import { Upload, Sparkles, Check } from 'lucide-react';
 import { useAuthStore } from '../../../entities/user/model/store';
 
 export const AboutSection = () => {
@@ -112,10 +112,6 @@ export const AboutSection = () => {
         <div className="flex flex-col">
           <strong className="text-[14px] text-primary font-medium">{formData.fullName || username}</strong>
           <p className="text-[12px] text-secondary mt-0.5">{formData.headline || 'No headline set'}</p>
-          <button type="button" className="text-[12px] mt-1 inline-flex items-center gap-1 bg-transparent border-none p-0 hover:underline cursor-pointer" style={{ color: 'var(--color-text-secondary)' }}>
-            <Camera size={13} />
-            Upload photo
-          </button>
         </div>
       </div>
 
