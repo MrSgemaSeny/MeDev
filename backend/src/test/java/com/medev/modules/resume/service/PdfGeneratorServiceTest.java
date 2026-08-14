@@ -87,6 +87,7 @@ public class PdfGeneratorServiceTest {
 
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         when(valueOperations.get(anyString())).thenReturn(50);
+        when(userRepository.findById(userId)).thenReturn(java.util.Optional.empty());
 
         assertThatThrownBy(() -> pdfGeneratorService.generatePdf(userId, templateName, false, false))
                 .isInstanceOf(RuntimeException.class)
