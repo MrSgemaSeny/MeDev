@@ -95,8 +95,9 @@ public class PdfGeneratorService {
             ITextRenderer renderer = new ITextRenderer();
             
             try {
-                renderer.getFontResolver().addFont(regularFontPath, "Identity-H", true);
-                renderer.getFontResolver().addFont(boldFontPath, "Identity-H", true);
+                for (String fontPath : registeredFontPaths) {
+                    renderer.getFontResolver().addFont(fontPath, "Identity-H", true);
+                }
             } catch (Exception fontEx) {
                 throw new RuntimeException("PDF font loading failed", fontEx);
             }

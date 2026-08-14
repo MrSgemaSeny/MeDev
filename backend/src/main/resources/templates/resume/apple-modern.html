@@ -4,22 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title th:text="${profile.fullName} + ' - Apple Resume'">Apple Modern</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
-    <style>
-        :root {
-            --bg-color: #ffffff;
-            --text-primary: #1d1d1f;
-            --text-secondary: #86868b;
-            --accent-blue: #0066cc;
-            --border-light: #d2d2d7;
-        }
+        /* Removed CSS variables as they are not supported by Flying Saucer CSS 2.1 */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Inter', -apple-system, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-primary);
+            background-color: #ffffff;
+            color: #1d1d1f;
             line-height: 1.5;
             padding: 50px 40px;
         }
@@ -42,10 +32,10 @@
         }
         .hero-meta {
             font-size: 15px;
-            color: var(--text-secondary);
+            color: #86868b;
         }
         .hero-meta span { margin: 0 8px; }
-        .hero-meta a { color: var(--accent-blue); text-decoration: none; }
+        .hero-meta a { color: #0066cc; text-decoration: none; }
         
         /* Sections */
         .spec-section {
@@ -53,7 +43,7 @@
             display: table;
             margin-bottom: 40px;
             padding-bottom: 40px;
-            border-bottom: 1px solid var(--border-light);
+            border-bottom: 1px solid #d2d2d7;
         }
         .spec-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         
@@ -71,25 +61,25 @@
         }
         
         /* Summary */
-        .summary-text { font-size: 18px; line-height: 1.6; color: var(--text-secondary); }
+        .summary-text { font-size: 18px; line-height: 1.6; color: #86868b; }
         
         /* Items */
-        .item { margin-bottom: 24px; }
+        .item { margin-bottom: 24px; page-break-inside: avoid; }
         .item:last-child { margin-bottom: 0; }
         
         .item-header { width: 100%; display: table; margin-bottom: 4px; }
         .item-title { display: table-cell; font-size: 18px; font-weight: 600; text-align: left; }
-        .item-date { display: table-cell; font-size: 14px; color: var(--text-secondary); text-align: right; }
+        .item-date { display: table-cell; font-size: 14px; color: #86868b; text-align: right; }
         
-        .item-subtitle { font-size: 16px; font-weight: 500; margin-bottom: 8px; color: var(--text-primary); }
-        .item-desc { font-size: 15px; color: var(--text-secondary); margin-bottom: 12px; }
+        .item-subtitle { font-size: 16px; font-weight: 500; margin-bottom: 8px; color: #1d1d1f; }
+        .item-desc { font-size: 15px; color: #86868b; margin-bottom: 12px; }
         
         /* Tags / Skills */
         .spec-tags { margin-top: 8px; }
         .spec-tag {
             display: inline-block;
             background: #f5f5f7;
-            color: var(--text-primary);
+            color: #1d1d1f;
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 13px;
@@ -100,8 +90,8 @@
         
         /* Two col for skills */
         .two-col { width: 100%; }
-        .col-half { display: inline-block; width: 48%; vertical-align: top; margin-bottom: 20px; }
-        .skill-title { font-size: 14px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 10px; }
+        .col-half { display: inline-block; width: 48%; vertical-align: top; margin-bottom: 20px; page-break-inside: avoid; }
+        .skill-title { font-size: 14px; font-weight: 600; color: #86868b; text-transform: uppercase; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -115,7 +105,7 @@
             <div class="hero-meta">
                 <span th:if="${profile.location}" th:text="${profile.location}"></span>
                 <span th:if="${profile.website}"><a th:href="${profile.website}" th:text="${profile.website}" target="_blank"></a></span>
-                <span th:if="${profile.githubUsername}">GH: <a th:href="'https://github.com/' + ${profile.githubUsername}" th:text="${profile.githubUsername}" style="color:var(--text-secondary);"></a></span>
+                <span th:if="${profile.githubUsername}">GH: <a th:href="'https://github.com/' + ${profile.githubUsername}" th:text="${profile.githubUsername}" style="color:#86868b;"></a></span>
                 <span th:if="${profile.linkedin}">IN: <span th:text="${profile.linkedin}"></span></span>
             </div>
         </div>
@@ -182,13 +172,13 @@
                 <div class="spec-section" th:case="'projects'" th:if="${profile.projects != null and !profile.projects.isEmpty()}">
                     <div class="section-label">Projects</div>
                     <div class="section-content">
-                        <div class="item" th:each="proj : ${profile.projects}" th:if="${proj.isVisible}">
+                        <div class="item" th:each="proj, stat : ${profile.projects}" th:if="${proj.isVisible and stat.index < 3}">
                             <div class="item-header">
                                 <div class="item-title" th:text="${proj.name}"></div>
                                 <div class="item-date">
-                                    <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" target="_blank" style="color:var(--accent-blue); text-decoration:none;">GitHub</a>
+                                    <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" target="_blank" style="color:#0066cc; text-decoration:none;">GitHub</a>
                                     <span th:if="${proj.githubUrl != null and proj.liveUrl != null}"> &middot; </span>
-                                    <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" target="_blank" style="color:var(--accent-blue); text-decoration:none;">Live Demo</a>
+                                    <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" target="_blank" style="color:#0066cc; text-decoration:none;">Live Demo</a>
                                 </div>
                             </div>
                             <div class="item-desc" th:text="${proj.description}"></div>
