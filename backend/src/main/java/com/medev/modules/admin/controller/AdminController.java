@@ -1,6 +1,7 @@
 package com.medev.modules.admin.controller;
 
 import com.medev.modules.admin.dto.AdminDashboardDto;
+import com.medev.modules.admin.dto.AdminUserDto;
 import com.medev.modules.admin.service.AdminService;
 import com.medev.modules.audit.entity.AuditLog;
 import com.medev.modules.auth.entity.User;
@@ -9,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.medev.shared.security.SecurityUtils;
+import com.medev.shared.exception.ForbiddenException;
 
 @RestController
 @RequestMapping("/v1/admin")
@@ -18,7 +21,7 @@ public class AdminController {
     private final AdminService adminService;
 
     @GetMapping("/users")
-    public ResponseEntity<Page<User>> getUsers(
+    public ResponseEntity<Page<AdminUserDto>> getUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         return ResponseEntity.ok(adminService.getAllUsers(PageRequest.of(page, size)));
@@ -36,6 +39,9 @@ public class AdminController {
     public ResponseEntity<Void> changeUserRole(
             @PathVariable Long userId,
             @RequestParam User.Role role) {
+        if (userId.equals(SecurityUtils.getCurrentUserId())) {
+            throw new ForbiddenException("You cannot change your own role");
+        }
         adminService.updateUserRole(userId, role);
         return ResponseEntity.ok().build();
     }

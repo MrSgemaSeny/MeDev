@@ -3,31 +3,14 @@ package com.medev.modules.ai.service;
 import com.medev.modules.auth.entity.User;
 import com.medev.modules.auth.repository.UserRepository;
 import com.medev.shared.exception.TooManyRequestsException;
-import io.github.bucket4j.Bandwidth;
-import io.github.bucket4j.Bucket;
-import io.github.bucket4j.Refill;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.time.LocalDate;
 
-/**
- * Rate limiting по userId с учётом плана (FREE / PRO).
- *
- * FREE: 10 AI-запросов в сутки
- * PRO:  100 AI-запросов в сутки
- *
- * Почему не по IP:
- * - IP легко обходится через VPN
- * - Один IP может быть у офиса/университета (много пользователей)
- * - Нам важно ограничить стоимость на пользователя, а не на IP
- *
- * Хранение в памяти — достаточно для MVP (single instance).
- * При масштабировании заменить на Redis + Bucket4j RedisProxyManager.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -37,21 +20,18 @@ public class AiRateLimiter {
     private static final int PRO_DAILY_LIMIT  = 100;
 
     private final UserRepository userRepository;
+    private final RedisTemplate<String, Object> redisTemplate;
 
-    // userId → bucket
-    private final Map<Long, Bucket> buckets = new ConcurrentHashMap<>();
-
-    /**
-     * Проверяет лимит и списывает 1 токен.
-     * Бросает TooManyRequestsException если лимит исчерпан.
-     *
-     * @param userId текущий пользователь
-     */
     public void checkAndConsume(Long userId) {
-        Bucket bucket = buckets.computeIfAbsent(userId, this::createBucket);
+        int limit = getUserDailyLimit(userId);
+        String key = getRedisKey(userId);
+        
+        Long current = redisTemplate.opsForValue().increment(key);
+        if (current != null && current == 1L) {
+            redisTemplate.expire(key, Duration.ofDays(1));
+        }
 
-        if (!bucket.tryConsume(1)) {
-            int limit = getUserDailyLimit(userId);
+        if (current != null && current > limit) {
             log.warn("[AiRateLimiter] User {} exceeded daily AI limit ({})", userId, limit);
             throw new TooManyRequestsException(
                     "Вы достигли дневного лимита AI-запросов (" + limit + "). " +
@@ -60,42 +40,37 @@ public class AiRateLimiter {
         }
 
         log.debug("[AiRateLimiter] User {} consumed 1 token, remaining: {}",
-                userId, bucket.getAvailableTokens());
+                userId, limit - current);
     }
 
-    /**
-     * Сколько запросов осталось у пользователя сегодня.
-     */
     public long getRemainingRequests(Long userId) {
-        Bucket bucket = buckets.computeIfAbsent(userId, this::createBucket);
-        return bucket.getAvailableTokens();
+        int limit = getUserDailyLimit(userId);
+        String key = getRedisKey(userId);
+        Integer current = (Integer) redisTemplate.opsForValue().get(key);
+        if (current == null) return limit;
+        return Math.max(0, limit - current);
     }
 
-    /**
-     * Сколько запросов доступно пользователю в день.
-     */
     public int getDailyLimit(Long userId) {
         return getUserDailyLimit(userId);
     }
 
-    // ─────────────────────────────────────────────────
-    // PRIVATE
-    // ─────────────────────────────────────────────────
-
-    private Bucket createBucket(Long userId) {
-        int limit = getUserDailyLimit(userId);
-        // Refill.intervally — обновляется раз в сутки пакетом, не по чуть-чуть
-        Bandwidth bandwidth = Bandwidth.classic(limit, Refill.intervally(limit, Duration.ofDays(1)));
-        return Bucket.builder().addLimit(bandwidth).build();
+    private String getRedisKey(Long userId) {
+        return "ai_limit:" + userId + ":" + LocalDate.now();
     }
 
     private int getUserDailyLimit(Long userId) {
-        return userRepository.findById(userId)
-                .map(User::getPlan)
-                .map(plan -> switch (plan) {
-                    case PRO -> PRO_DAILY_LIMIT;
-                    default  -> FREE_DAILY_LIMIT;
-                })
-                .orElse(FREE_DAILY_LIMIT);
+        String planKey = "user_plan:" + userId;
+        String planStr = (String) redisTemplate.opsForValue().get(planKey);
+        
+        if (planStr == null) {
+            User.Plan plan = userRepository.findById(userId)
+                    .map(User::getPlan)
+                    .orElse(User.Plan.FREE);
+            planStr = plan.name();
+            redisTemplate.opsForValue().set(planKey, planStr, Duration.ofMinutes(15));
+        }
+        
+        return "PRO".equals(planStr) ? PRO_DAILY_LIMIT : FREE_DAILY_LIMIT;
     }
 }

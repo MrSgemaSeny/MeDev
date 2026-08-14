@@ -20,6 +20,13 @@ public class WebScraperService {
             "indeed.com", "www.indeed.com", "career.habr.com"
     );
 
+    public WebScraperService() {
+        // Enforce DNS caching to prevent Time-Of-Check to Time-Of-Use (TOCTOU) DNS rebinding attacks.
+        // By caching the DNS resolution for 30 seconds, the subsequent Jsoup.connect() will use the
+        // exactly same IP address that we validated in validateUrl().
+        java.security.Security.setProperty("networkaddress.cache.ttl", "30");
+    }
+
     /**
      * Extracts text content from a given URL.
      * @param url The URL of the job posting or article.
@@ -57,8 +64,9 @@ public class WebScraperService {
                 throw new IllegalArgumentException("URL host is not allowed: " + host);
             }
             
+            // The JVM will cache this resolution due to networkaddress.cache.ttl = 30
             InetAddress addr = InetAddress.getByName(host);
-            if (addr.isLoopbackAddress() || addr.isSiteLocalAddress() || addr.isLinkLocalAddress()) {
+            if (addr.isLoopbackAddress() || addr.isSiteLocalAddress() || addr.isAnyLocalAddress() || addr.isLinkLocalAddress()) {
                 throw new IllegalArgumentException("Private/loopback addresses are not allowed");
             }
         } catch (URISyntaxException | UnknownHostException e) {

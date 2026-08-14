@@ -49,10 +49,14 @@ public class BillingController {
 
     @PostMapping("/webhook/kaspi")
     public ResponseEntity<Void> handleKaspiWebhook(
-            @RequestBody Map<String, Object> payload,
+            @RequestBody byte[] rawPayload,
             @RequestHeader(value = "X-Kaspi-Signature", required = false) String sigHeader) {
         
-        // Temporarily closed due to missing HMAC verification (Tech Debt Security #2)
-        return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN).build();
+        try {
+            kaspiPayService.handleWebhook(rawPayload, sigHeader);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN).build();
+        }
     }
 }

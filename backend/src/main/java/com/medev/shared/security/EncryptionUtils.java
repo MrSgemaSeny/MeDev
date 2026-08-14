@@ -25,7 +25,8 @@ public class EncryptionUtils {
     }
 
     public static String encrypt(String value) {
-        if (value == null || key == null) return value;
+        if (value == null) return null;
+        if (key == null) throw new IllegalStateException("Encryption key not initialized");
         try {
             byte[] iv = new byte[GCM_IV_LENGTH];
             new java.security.SecureRandom().nextBytes(iv);
@@ -45,11 +46,12 @@ public class EncryptionUtils {
     }
 
     public static String decrypt(String value) {
-        if (value == null || key == null) return value;
+        if (value == null) return null;
+        if (key == null) throw new IllegalStateException("Encryption key not initialized");
         try {
             byte[] combined = Base64.getDecoder().decode(value);
             if (combined.length <= GCM_IV_LENGTH) {
-                return decryptLegacyEcb(value);
+                throw new RuntimeException("Encrypted data is too short");
             }
             byte[] iv = java.util.Arrays.copyOfRange(combined, 0, GCM_IV_LENGTH);
             byte[] ciphertext = java.util.Arrays.copyOfRange(combined, GCM_IV_LENGTH, combined.length);
@@ -59,18 +61,7 @@ public class EncryptionUtils {
             cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, "AES"), paramSpec);
             return new String(cipher.doFinal(ciphertext), StandardCharsets.UTF_8);
         } catch (Exception e) {
-            return decryptLegacyEcb(value);
-        }
-    }
-
-    private static String decryptLegacyEcb(String value) {
-        try {
-            SecretKeySpec secretKey = new SecretKeySpec(key, "AES");
-            Cipher cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.DECRYPT_MODE, secretKey);
-            return new String(cipher.doFinal(Base64.getDecoder().decode(value)), StandardCharsets.UTF_8);
-        } catch (Exception ex) {
-            return value;
+            throw new RuntimeException("Error while decrypting data", e);
         }
     }
 }

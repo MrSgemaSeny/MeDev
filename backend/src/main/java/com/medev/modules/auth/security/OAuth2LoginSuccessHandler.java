@@ -58,12 +58,14 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         
         String action = (String) oAuth2User.getAttributes().get("_action");
         if ("LINK_ACCOUNT".equals(action)) {
-            jakarta.servlet.http.Cookie linkCookie = new jakarta.servlet.http.Cookie("medev_link_jwt", "");
-            linkCookie.setPath("/");
-            linkCookie.setMaxAge(0);
-            linkCookie.setHttpOnly(true);
-            linkCookie.setSecure(true);
-            response.addCookie(linkCookie);
+            org.springframework.http.ResponseCookie clearCookie = org.springframework.http.ResponseCookie.from("medev_link_jwt", "")
+                    .httpOnly(true)
+                    .secure(true)
+                    .path("/")
+                    .maxAge(0)
+                    .sameSite("Lax")
+                    .build();
+            response.addHeader(org.springframework.http.HttpHeaders.SET_COOKIE, clearCookie.toString());
             
             frontendUrl = frontendOrigin + "/profile/edit?github_linked=true&code=" + oauth2Code;
         }

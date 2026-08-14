@@ -57,6 +57,23 @@ public class AuthController {
         return ResponseEntity.ok(res);
     }
 
+    @GetMapping("/oauth2/link/{provider}")
+    public void linkOauth2(@PathVariable String provider, @RequestParam(value = "token", required = false) String token, HttpServletResponse response) throws java.io.IOException {
+        if (token == null || token.isBlank()) {
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), "Missing token");
+            return;
+        }
+        ResponseCookie linkCookie = ResponseCookie.from("medev_link_jwt", token)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(300) // 5 minutes
+                .sameSite("Lax")
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, linkCookie.toString());
+        response.sendRedirect("/api/oauth2/authorization/" + provider);
+    }
+
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@RequestHeader(value = "Authorization", required = false) String token, HttpServletResponse response) {
         if (token != null && !token.isBlank()) {

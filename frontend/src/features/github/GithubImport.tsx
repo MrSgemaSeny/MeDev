@@ -107,10 +107,11 @@ export const GithubImport = () => {
     const baseUrl = apiUrl.replace('/api/v1', '');
     
     if (accessToken) {
-        document.cookie = `medev_link_jwt=${accessToken}; path=/; max-age=60`;
+        // Send token to backend via query param to set secure HttpOnly cookie and redirect
+        window.location.href = `${baseUrl}/api/v1/auth/oauth2/link/github?token=${accessToken}`;
+    } else {
+        window.location.href = `${baseUrl}/api/oauth2/authorization/github`;
     }
-    
-    window.location.href = `${baseUrl}/api/oauth2/authorization/github`;
   };
 
   return (

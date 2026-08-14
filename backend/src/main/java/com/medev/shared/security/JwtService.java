@@ -38,6 +38,8 @@ public class JwtService {
     private String buildToken(User user, String deviceId, long exp, String type) {
         return Jwts.builder()
                 .subject(user.getEmail())
+                .issuer("MeDev")
+                .audience().add("MeDev-Clients").and()
                 .claim("userId", user.getId())
                 .claim("deviceId", deviceId)
                 .claim("role", user.getRole().name())
@@ -80,6 +82,8 @@ public class JwtService {
     private Claims getClaims(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())
+                .requireIssuer("MeDev")
+                .requireAudience("MeDev-Clients")
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();

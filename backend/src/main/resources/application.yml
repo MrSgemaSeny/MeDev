@@ -26,11 +26,12 @@ spring:
 
 server:
   port: 8080
+  forward-headers-strategy: framework
   servlet:
     context-path: /api
 
 jwt:
-  expiration: 86400000            # 24 часа
+  expiration: 900000              # 15 минут
   refresh-expiration: 2592000000  # 30 дней
 
 encryption:

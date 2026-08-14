@@ -62,16 +62,22 @@ public class KaspiPayService {
      * Реальное API Kaspi (Shop или Pay) присылает уведомления на зарегистрированный webhook URL.
      */
     @Transactional
-    public void handleWebhook(Map<String, Object> payload, String signature) {
+    public void handleWebhook(byte[] rawPayload, String signature) {
         // Шаг 1: Валидация подписи (Security!)
-        if (!verifySignature(payload, signature)) {
+        if (!verifySignature(rawPayload, signature)) {
             log.error("Kaspi webhook signature verification failed!");
             throw new IllegalArgumentException("Invalid Kaspi signature");
         }
 
         // Шаг 2: Извлечение данных из JSON
-        // Формат зависит от конкретного Kaspi API, например:
-        // { "orderId": "1", "status": "COMPLETED", "kaspiCustomer": "K-123456" }
+        Map<String, Object> payload;
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            payload = mapper.readValue(rawPayload, new com.fasterxml.jackson.core.type.TypeReference<Map<String, Object>>() {});
+        } catch (Exception e) {
+            log.error("Failed to parse Kaspi payload", e);
+            throw new IllegalArgumentException("Invalid JSON payload");
+        }
         
         String status = (String) payload.getOrDefault("status", "UNKNOWN");
         String orderIdStr = (String) payload.get("orderId");
@@ -107,18 +113,15 @@ public class KaspiPayService {
         }
     }
 
-    private boolean verifySignature(Map<String, Object> payload, String signature) {
+    private boolean verifySignature(byte[] rawPayload, String signature) {
         if (signature == null || signature.isBlank()) {
             return false;
         }
         try {
-            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
-            String payloadStr = mapper.writeValueAsString(payload);
-            
             javax.crypto.Mac mac = javax.crypto.Mac.getInstance("HmacSHA256");
             mac.init(new javax.crypto.spec.SecretKeySpec(secretKey.getBytes(java.nio.charset.StandardCharsets.UTF_8), "HmacSHA256"));
             
-            byte[] hashBytes = mac.doFinal(payloadStr.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            byte[] hashBytes = mac.doFinal(rawPayload);
             
             StringBuilder hexString = new StringBuilder(2 * hashBytes.length);
             for (byte b : hashBytes) {

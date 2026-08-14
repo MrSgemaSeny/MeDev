@@ -1,6 +1,7 @@
 package com.medev.modules.admin.service;
 
 import com.medev.modules.admin.dto.AdminDashboardDto;
+import com.medev.modules.admin.dto.AdminUserDto;
 import com.medev.modules.audit.entity.AuditLog;
 import com.medev.modules.audit.repository.AuditLogRepository;
 import com.medev.modules.auth.entity.User;
@@ -19,8 +20,8 @@ public class AdminService {
     private final AuditLogRepository auditLogRepository;
 
     @Transactional(readOnly = true)
-    public Page<User> getAllUsers(Pageable pageable) {
-        return userRepository.findAll(pageable);
+    public Page<AdminUserDto> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable).map(AdminUserDto::fromEntity);
     }
 
     @Transactional
