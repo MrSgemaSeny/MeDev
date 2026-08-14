@@ -262,7 +262,10 @@
         
         <!-- SIDEBAR -->
         <div class="sidebar">
-            <div class="avatar"></div>
+            <div class="avatar" style="overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                <img th:if="${profile.githubUsername != null}" th:src="${avatarBase64 ?: 'https://github.com/' + profile.githubUsername + '.png'}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;" />
+                <span th:unless="${profile.githubUsername != null}" th:text="${profile.fullName != null and profile.fullName.length() gt 0 ? profile.fullName.substring(0,1).toUpperCase() : 'U'}" style="font-size: 120px; color: var(--text-primary);"></span>
+            </div>
             
             <div class="names">
                 <h1 class="fullname" th:text="${profile.fullName}">Name</h1>

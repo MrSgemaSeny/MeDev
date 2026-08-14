@@ -24,7 +24,7 @@ public class ReadmeGeneratorService {
         templateResolver.setTemplateMode(TemplateMode.TEXT);
         templateResolver.setCharacterEncoding("UTF-8");
 
-        textTemplateEngine = new TemplateEngine();
+        textTemplateEngine = new org.thymeleaf.spring6.SpringTemplateEngine();
         textTemplateEngine.setTemplateResolver(templateResolver);
     }
 

@@ -19,9 +19,9 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-primary);
+            font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background-color: #0d1117;
+            color: #c9d1d9;
             line-height: 1.5;
             padding: 40px;
         }
@@ -43,7 +43,7 @@
             width: 288px;
             height: 288px;
             border-radius: 50%;
-            border: 1px solid var(--border-color);
+            border: 1px solid #30363d;
             background-color: #161b22;
             overflow: hidden;
             margin-bottom: 16px;
@@ -61,29 +61,18 @@
             font-size: 24px;
             font-weight: 600;
             line-height: 1.25;
-            color: var(--text-primary);
+            color: #c9d1d9;
         }
         .username {
             font-size: 20px;
-            color: var(--text-secondary);
+            color: #8b949e;
             font-weight: 300;
             line-height: 24px;
         }
         .bio {
+            font-family: Roboto, sans-serif;
             font-size: 16px;
-            color: var(--text-primary);
-            margin-bottom: 16px;
-        }
-        .btn-follow {
-            width: 100%;
-            background-color: #21262d;
-            border: 1px solid rgba(240, 246, 252, 0.1);
-            color: var(--text-primary);
-            padding: 8px 16px;
-            font-size: 14px;
-            font-weight: 500;
-            border-radius: 6px;
-            text-align: center;
+            color: #c9d1d9;
             margin-bottom: 16px;
         }
         .contact-list {
@@ -91,11 +80,11 @@
             margin-bottom: 24px;
         }
         .contact-item { margin-bottom: 6px; }
-        .contact-item a { color: var(--text-primary); text-decoration: none; }
-        .contact-item a:hover { color: var(--accent-blue); text-decoration: underline; }
+        .contact-item a { color: #c9d1d9; text-decoration: none; }
+        .contact-item a:hover { color: #58a6ff; text-decoration: underline; }
         
         .sidebar-section {
-            border-top: 1px solid var(--border-color);
+            border-top: 1px solid #30363d;
             padding-top: 16px;
             margin-top: 16px;
         }
@@ -103,21 +92,21 @@
             font-size: 16px;
             font-weight: 600;
             margin-bottom: 16px;
-            color: var(--text-primary);
+            color: #c9d1d9;
         }
         
         /* Tags in sidebar */
         .skills-group { margin-bottom: 12px; }
         .skills-group-title {
             font-size: 12px;
-            color: var(--text-secondary);
+            color: #8b949e;
             margin-bottom: 8px;
             font-weight: 600;
         }
         .tag {
             display: inline-block;
-            background-color: var(--tag-bg);
-            color: var(--accent-blue);
+            background-color: rgba(56, 139, 253, 0.1);
+            color: #58a6ff;
             padding: 2px 10px;
             font-size: 12px;
             font-weight: 500;
@@ -136,76 +125,67 @@
             font-size: 16px;
             font-weight: 400;
             margin-bottom: 16px;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid #30363d;
             padding-bottom: 8px;
         }
         
         /* Pinned Projects */
-        .projects-wrapper { width: 100%; margin-bottom: 32px; }
+        .projects-wrapper { width: 100%; overflow: hidden; margin-bottom: 32px; }
         .pinned-card {
-            display: inline-block;
-            width: 48%;
-            border: 1px solid var(--border-color);
+            float: left;
+            width: 45%;
+            border: 1px solid #30363d;
             border-radius: 6px;
-            padding: 16px;
-            background-color: var(--bg-color);
-            vertical-align: top;
+            padding: 12px;
+            background-color: #0d1117;
             margin-bottom: 16px;
-            margin-right: 1%;
-            box-sizing: border-box;
+            margin-right: 2%;
+            page-break-inside: avoid;
         }
         .repo-title {
             font-size: 14px;
             font-weight: 600;
-            color: var(--accent-blue);
+            color: #58a6ff;
             margin-bottom: 8px;
         }
         .repo-title a { color: inherit; text-decoration: none; }
         .repo-desc {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-bottom: 16px;
-            min-height: 36px;
+            display: none; /* Hidden in PDF */
         }
         .repo-meta {
             font-size: 12px;
-            color: var(--text-secondary);
+            color: #8b949e;
         }
         .lang-dot {
             display: inline-block;
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background-color: var(--accent-green);
+            background-color: #238636;
             margin-right: 4px;
             vertical-align: middle;
         }
         
         /* Timeline items */
-        .timeline-container { margin-bottom: 32px; }
-        .timeline-item {
-            position: relative;
-            padding-left: 24px;
-            margin-bottom: 24px;
-            border-left: 2px solid var(--border-color);
-        }
+        .timeline-container { margin-bottom: 32px; width: 100%; border-collapse: collapse; page-break-inside: avoid; }
+        .timeline-icon-td { width: 24px; vertical-align: top; }
+        .timeline-content-td { border-left: 2px solid #30363d; padding-left: 16px; padding-bottom: 24px; vertical-align: top; }
+        
         .timeline-icon {
-            position: absolute;
-            top: 0;
-            left: -8px;
             width: 14px;
             height: 14px;
             border-radius: 50%;
             background-color: #388bfd;
-            border: 2px solid var(--bg-color);
+            border: 2px solid #0d1117;
+            margin-top: 4px;
+            margin-left: 4px;
         }
         
         .timeline-content {
-            border: 1px solid var(--border-color);
+            border: 1px solid #30363d;
             border-radius: 6px;
-            background-color: var(--bg-color);
+            background-color: #0d1117;
             padding: 16px;
-            margin-top: -6px; /* align with icon */
         }
         .timeline-header {
             width: 100%;
@@ -216,22 +196,22 @@
             display: table-cell;
             font-size: 16px;
             font-weight: 600;
-            color: var(--text-primary);
+            color: #c9d1d9;
         }
         .timeline-date {
             display: table-cell;
             text-align: right;
             font-size: 12px;
-            color: var(--text-secondary);
+            color: #8b949e;
         }
         .timeline-subtitle {
             font-size: 14px;
-            color: var(--text-secondary);
+            color: #8b949e;
             margin-bottom: 12px;
         }
         .timeline-desc {
             font-size: 14px;
-            color: var(--text-primary);
+            color: #c9d1d9;
         }
     </style>
 </head>
@@ -241,10 +221,10 @@
         <!-- SIDEBAR -->
         <div class="sidebar">
             <div class="avatar" th:if="${profile.githubUsername != null}">
-                <img th:src="" alt="Avatar" />
+                <img th:src="${avatarBase64 ?: 'https://github.com/' + profile.githubUsername + '.png'}" alt="Avatar" />
             </div>
             <div class="avatar" th:unless="${profile.githubUsername != null}">
-                <span th:text="${profile.fullName != null and profile.fullName.length() gt 0 ? profile.fullName.substring(0,1).toUpperCase() : 'U'}" style="font-size: 120px; color: var(--text-primary);"></span>
+                <span th:text="${profile.fullName != null and profile.fullName.length() gt 0 ? profile.fullName.substring(0,1).toUpperCase() : 'U'}" style="font-size: 120px; color: #c9d1d9;"></span>
             </div>
             
             <div class="names">
@@ -252,13 +232,11 @@
                 <div class="username" th:text="${profile.githubUsername != null ? profile.githubUsername : profile.fullName.toLowerCase().replace(' ', '')}">username</div>
             </div>
             
-            <div class="btn-follow">Contact</div>
-            
             <div class="contact-list">
-                <div class="contact-item" th:if="${profile.location}"><span style="color: var(--text-secondary); margin-right: 4px;">Loc:</span> <span th:text="${profile.location}"></span></div>
-                <div class="contact-item" th:if="${profile.website}"><span style="color: var(--text-secondary); margin-right: 4px;">Web:</span> <a th:href="${profile.website}" th:text="${profile.website}" target="_blank"></a></div>
-                <div class="contact-item" th:if="${profile.linkedin}"><span style="color: var(--text-secondary); margin-right: 4px;">In:</span> <span th:text="${profile.linkedin}"></span></div>
-                <div class="contact-item" th:if="${profile.telegram}"><span style="color: var(--text-secondary); margin-right: 4px;">Tg:</span> <span th:text="${profile.telegram}"></span></div>
+                <div class="contact-item" th:if="${profile.location != null and !profile.location.isBlank()}"><span style="color: #8b949e; margin-right: 4px;">Loc:</span> <span th:text="${profile.location}"></span></div>
+                <div class="contact-item" th:if="${profile.website != null and !profile.website.isBlank()}"><span style="color: #8b949e; margin-right: 4px;">Web:</span> <a th:href="${profile.website}" th:text="${profile.website}" target="_blank"></a></div>
+                <div class="contact-item" th:if="${profile.linkedin != null and !profile.linkedin.isBlank()}"><span style="color: #8b949e; margin-right: 4px;">In:</span> <span th:text="${profile.linkedin}"></span></div>
+                <div class="contact-item" th:if="${profile.telegram != null and !profile.telegram.isBlank()}"><span style="color: #8b949e; margin-right: 4px;">Tg:</span> <span th:text="${profile.telegram}"></span></div>
             </div>
             
             <div class="sidebar-section" th:if="${groupedSkills != null and !groupedSkills.isEmpty()}">
@@ -273,7 +251,7 @@
             
             <div class="sidebar-section" th:if="${languagesStr != null and !languagesStr.isEmpty()}">
                 <h3 class="side-title">Languages</h3>
-                <div style="font-size: 14px; color: var(--text-primary);" th:text="${languagesStr}"></div>
+                <div style="font-size: 14px; color: #c9d1d9;" th:text="${languagesStr}"></div>
             </div>
         </div>
         
@@ -296,7 +274,7 @@
                         <div class="projects-wrapper">
                             <div class="pinned-card" th:each="proj : ${profile.projects}" th:if="${proj.isVisible}">
                                 <div class="repo-title">
-                                    <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="var(--text-secondary)" style="vertical-align: middle; margin-right: 4px;"><path fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"></path></svg>
+                                    <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="#8b949e" style="vertical-align: middle; margin-right: 4px;"><path fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"></path></svg>
                                     <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" th:text="${proj.name}" target="_blank"></a>
                                     <span th:unless="${proj.githubUrl}" th:text="${proj.name}"></span>
                                 </div>
@@ -312,36 +290,44 @@
                     <!-- EXPERIENCE -->
                     <div th:case="'experience'" th:if="${profile.experience != null and !profile.experience.isEmpty()}">
                         <h2 class="section-header">Experience</h2>
-                        <div class="timeline-container">
-                            <div class="timeline-item" th:each="exp : ${profile.experience}">
-                                <div class="timeline-icon"></div>
-                                <div class="timeline-content">
-                                    <div class="timeline-header">
-                                        <div class="timeline-title" th:text="${exp.position}"></div>
-                                        <div class="timeline-date" th:text="${exp.startDate + ' - ' + (exp.isCurrent ? 'Present' : exp.endDate)}"></div>
+                        <table class="timeline-container">
+                            <tr th:each="exp : ${profile.experience}">
+                                <td class="timeline-icon-td">
+                                    <div class="timeline-icon"></div>
+                                </td>
+                                <td class="timeline-content-td">
+                                    <div class="timeline-content">
+                                        <div class="timeline-header">
+                                            <div class="timeline-title" th:text="${exp.position}"></div>
+                                            <div class="timeline-date" th:text="${exp.startDate + ' - ' + (exp.isCurrent ? 'Present' : exp.endDate)}"></div>
+                                        </div>
+                                        <div class="timeline-subtitle" th:text="${exp.company}"></div>
+                                        <div class="timeline-desc" th:text="${exp.description}"></div>
                                     </div>
-                                    <div class="timeline-subtitle" th:text="${exp.company}"></div>
-                                    <div class="timeline-desc" th:text="${exp.description}"></div>
-                                </div>
-                            </div>
-                        </div>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
 
                     <!-- EDUCATION -->
                     <div th:case="'education'" th:if="${profile.education != null and !profile.education.isEmpty()}">
                         <h2 class="section-header">Education</h2>
-                        <div class="timeline-container">
-                            <div class="timeline-item" th:each="edu : ${profile.education}">
-                                <div class="timeline-icon" style="background-color: var(--text-secondary);"></div>
-                                <div class="timeline-content">
-                                    <div class="timeline-header">
-                                        <div class="timeline-title" th:text="${edu.institution}"></div>
-                                        <div class="timeline-date" th:text="${edu.startDate + ' - ' + (edu.isCurrent ? 'Present' : edu.endDate)}"></div>
+                        <table class="timeline-container">
+                            <tr th:each="edu : ${profile.education}">
+                                <td class="timeline-icon-td">
+                                    <div class="timeline-icon" style="background-color: #8b949e;"></div>
+                                </td>
+                                <td class="timeline-content-td">
+                                    <div class="timeline-content">
+                                        <div class="timeline-header">
+                                            <div class="timeline-title" th:text="${edu.institution}"></div>
+                                            <div class="timeline-date" th:text="${edu.startDate + ' - ' + (edu.isCurrent ? 'Present' : edu.endDate)}"></div>
+                                        </div>
+                                        <div class="timeline-subtitle" th:text="${edu.degree} + (edu.field != null ? ' in ' + edu.field : '')"></div>
                                     </div>
-                                    <div class="timeline-subtitle" th:text="${edu.degree} + (edu.field != null ? ' in ' + edu.field : '')"></div>
-                                </div>
-                            </div>
-                        </div>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
 
                 </th:block>

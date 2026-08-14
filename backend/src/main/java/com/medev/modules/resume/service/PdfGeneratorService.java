@@ -23,6 +23,31 @@ public class PdfGeneratorService {
     private final RedisTemplate<String, Object> redisTemplate;
 
     private static final int FREE_DAILY_LIMIT = 50;
+    
+    private String regularFontPath;
+    private String boldFontPath;
+
+    @jakarta.annotation.PostConstruct
+    public void initFonts() {
+        try {
+            java.nio.file.Path tempRegular = java.nio.file.Files.createTempFile("Roboto-Regular", ".ttf");
+            tempRegular.toFile().deleteOnExit();
+            java.nio.file.Path tempBold = java.nio.file.Files.createTempFile("Roboto-Bold", ".ttf");
+            tempBold.toFile().deleteOnExit();
+            
+            try (java.io.InputStream inReg = new org.springframework.core.io.ClassPathResource("fonts/Roboto-Regular.ttf").getInputStream()) {
+                java.nio.file.Files.copy(inReg, tempRegular, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            }
+            try (java.io.InputStream inBold = new org.springframework.core.io.ClassPathResource("fonts/Roboto-Bold.ttf").getInputStream()) {
+                java.nio.file.Files.copy(inBold, tempBold, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            }
+            
+            regularFontPath = tempRegular.toAbsolutePath().toString();
+            boldFontPath = tempBold.toAbsolutePath().toString();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to extract PDF fonts from classpath", e);
+        }
+    }
 
     public byte[] generatePdf(Long userId, String templateName) {
         checkGenerationLimit(userId);
@@ -57,6 +82,14 @@ public class PdfGeneratorService {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             ITextRenderer renderer = new ITextRenderer();
+            
+            try {
+                renderer.getFontResolver().addFont(regularFontPath, "Identity-H", true);
+                renderer.getFontResolver().addFont(boldFontPath, "Identity-H", true);
+            } catch (Exception fontEx) {
+                throw new RuntimeException("PDF font loading failed", fontEx);
+            }
+
             renderer.setDocumentFromString(html);
             renderer.layout();
             renderer.createPDF(out);
