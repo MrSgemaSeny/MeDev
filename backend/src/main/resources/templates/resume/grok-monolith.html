@@ -11,25 +11,29 @@
             font-family: 'Space Grotesk', Roboto, system-ui, -apple-system, sans-serif;
             background-color: #09090b;
             color: #f4f4f5;
-            line-height: 1.6;
-            padding: 40px;
-            font-size: 14px;
+            line-height: 1.5;
+            padding: 20px;
+            font-size: 12px;
         }
         .bento-container {
-            max-width: 900px;
+            max-width: 100%;
             margin: 0 auto;
             width: 100%;
+        }
+        .bento-container::after {
+            content: "";
+            display: table;
+            clear: both;
         }
         .bento-card {
             background-color: #000000;
             border: 1px solid #27272a;
             page-break-inside: avoid;
-            border-radius: 16px;
-            padding: 32px;
-            margin-bottom: 24px;
-            display: inline-block;
-            vertical-align: top;
-            font-size: 14px; /* reset font-size */
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            float: left;
+            font-size: 12px;
         }
         
         /* Grid Spans using percentages */
@@ -115,19 +119,7 @@
             margin-bottom: 8px;
         }
         
-        /* Projects Grid inside card */
-        .project-card {
-            border: 1px solid #27272a;
-            border-radius: 12px;
-            padding: 20px;
-            background: #09090b;
-            margin-bottom: 16px;
-            page-break-inside: avoid;
-            display: inline-block;
-            vertical-align: top;
-            width: 49%;
-        }
-        .project-card:nth-child(odd) { margin-right: 1.5%; }
+        /* Projects Grid removed in favor of feed-item */
         
         .skill-group { margin-bottom: 16px; page-break-inside: avoid; }
         .skill-group-title { font-size: 13px; font-weight: 600; color: #f4f4f5; margin-bottom: 8px; }
@@ -227,19 +219,17 @@
 
                 <div class="bento-card card-projects" th:case="'projects'" th:if="${profile.projects != null and !profile.projects.isEmpty()}">
                     <h2 class="card-title">Projects</h2>
-                    <div style="width: 100%;">
-                        <div class="project-card" th:each="proj, stat : ${profile.projects}" th:if="${proj.isVisible}">
-                            <div class="feed-header" style="margin-bottom: 4px;">
-                                <div class="feed-title" th:text="${proj.name}"></div>
-                                <div class="feed-date">
-                                    <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" style="color:#a1a1aa; text-decoration:none; margin-left:8px;">GitHub</a>
-                                    <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" style="color:#a1a1aa; text-decoration:none; margin-left:8px;">Live</a>
-                                </div>
+                    <div class="feed-item" th:each="proj : ${profile.projects}" th:if="${proj.isVisible}">
+                        <div class="feed-header">
+                            <div class="feed-title" th:text="${proj.name}"></div>
+                            <div class="feed-date">
+                                <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" style="color:#a1a1aa; text-decoration:none; margin-left:12px;">Git</a>
+                                <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" style="color:#a1a1aa; text-decoration:none; margin-left:12px;">Live</a>
                             </div>
-                            <div class="text-body" style="margin-bottom: 12px;" th:text="${proj.description}"></div>
-                            <div class="tags" style="margin-top:0;" th:if="${proj.techStack != null and !proj.techStack.isEmpty()}">
-                                <span class="tag" th:text="${proj.techStack}"></span>
-                            </div>
+                        </div>
+                        <div class="text-body" th:text="${proj.description}"></div>
+                        <div class="tags" th:if="${proj.techStack != null and !proj.techStack.isEmpty()}">
+                            <span class="tag" th:text="${proj.techStack}"></span>
                         </div>
                     </div>
                 </div>
