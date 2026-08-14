@@ -6,7 +6,10 @@ import org.springframework.context.annotation.Configuration;
 
 import java.net.ServerSocket;
 
+import org.springframework.context.annotation.Profile;
+
 @Configuration
+@Profile("!test")
 public class ServerPortCustomizer implements WebServerFactoryCustomizer<ConfigurableServletWebServerFactory> {
 
     @Override
