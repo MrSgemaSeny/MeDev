@@ -107,10 +107,11 @@ export function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-medium mb-1" style={{ color: 'var(--color-text-secondary)' }}>
+            <label htmlFor="email" className="block text-xs font-medium mb-1" style={{ color: 'var(--color-text-secondary)' }}>
               Email
             </label>
             <Input
+              id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -119,10 +120,11 @@ export function LoginPage() {
             />
           </div>
           <div>
-            <label className="block text-xs font-medium mb-1" style={{ color: 'var(--color-text-secondary)' }}>
+            <label htmlFor="password" className="block text-xs font-medium mb-1" style={{ color: 'var(--color-text-secondary)' }}>
               Password
             </label>
             <Input
+              id="password"
               type="password"
               autoComplete="current-password"
               value={password}
