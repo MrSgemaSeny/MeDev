@@ -24,6 +24,7 @@
             color: #c9d1d9;
             line-height: 1.5;
             padding: 40px;
+            font-size: 13px;
         }
         .container {
             max-width: 1216px;
@@ -35,20 +36,20 @@
         /* Left Sidebar */
         .sidebar {
             display: table-cell;
-            width: 320px;
-            padding-right: 32px;
+            width: 220px;
+            padding-right: 24px;
             vertical-align: top;
         }
         .avatar {
-            width: 288px;
-            height: 288px;
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
             border: 1px solid #30363d;
             background-color: #161b22;
             overflow: hidden;
-            margin-bottom: 16px;
+            margin: 0 auto 16px auto;
             text-align: center;
-            line-height: 288px;
+            line-height: 140px;
         }
         .avatar img {
             width: 100%;
@@ -58,25 +59,25 @@
         }
         .names { margin-bottom: 16px; }
         .fullname {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 600;
             line-height: 1.25;
             color: #c9d1d9;
         }
         .username {
-            font-size: 20px;
+            font-size: 16px;
             color: #8b949e;
             font-weight: 300;
             line-height: 24px;
         }
         .bio {
             font-family: Roboto, sans-serif;
-            font-size: 16px;
+            font-size: 13px;
             color: #c9d1d9;
             margin-bottom: 16px;
         }
         .contact-list {
-            font-size: 14px;
+            font-size: 13px;
             margin-bottom: 24px;
         }
         .contact-item { margin-bottom: 6px; }
@@ -122,35 +123,37 @@
             padding-left: 32px;
         }
         .section-header {
-            font-size: 16px;
-            font-weight: 400;
+            font-size: 18px;
+            font-weight: 600;
             margin-bottom: 16px;
             border-bottom: 1px solid #30363d;
             padding-bottom: 8px;
         }
         
         /* Pinned Projects */
-        .projects-wrapper { width: 100%; overflow: hidden; margin-bottom: 32px; }
+        .projects-wrapper { width: 100%; margin-bottom: 32px; }
         .pinned-card {
-            float: left;
-            width: 45%;
+            display: block;
+            width: 100%;
             border: 1px solid #30363d;
             border-radius: 6px;
-            padding: 12px;
+            padding: 16px;
             background-color: #0d1117;
             margin-bottom: 16px;
-            margin-right: 2%;
             page-break-inside: avoid;
         }
         .repo-title {
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 600;
             color: #58a6ff;
             margin-bottom: 8px;
         }
         .repo-title a { color: inherit; text-decoration: none; }
         .repo-desc {
-            display: none; /* Hidden in PDF */
+            display: block;
+            font-size: 13px;
+            color: #8b949e;
+            margin-bottom: 12px;
         }
         .repo-meta {
             font-size: 12px;
@@ -168,24 +171,22 @@
         
         /* Timeline items */
         .timeline-container { margin-bottom: 32px; width: 100%; border-collapse: collapse; page-break-inside: avoid; }
-        .timeline-icon-td { width: 24px; vertical-align: top; }
-        .timeline-content-td { border-left: 2px solid #30363d; padding-left: 16px; padding-bottom: 24px; vertical-align: top; }
+        .timeline-icon-td { width: 16px; vertical-align: top; text-align: right; }
+        .timeline-content-td { border-left: 1px solid #30363d; padding-left: 16px; padding-bottom: 24px; vertical-align: top; }
         
         .timeline-icon {
-            width: 14px;
-            height: 14px;
+            display: inline-block;
+            width: 9px;
+            height: 9px;
             border-radius: 50%;
             background-color: #388bfd;
             border: 2px solid #0d1117;
-            margin-top: 4px;
-            margin-left: 4px;
+            margin-top: 5px;
+            margin-right: -6.5px; /* Aligns center of dot precisely over the 1px border */
         }
         
         .timeline-content {
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            background-color: #0d1117;
-            padding: 16px;
+            padding: 0 0 16px 0;
         }
         .timeline-header {
             width: 100%;
@@ -224,7 +225,7 @@
                 <img th:src="${avatarBase64 ?: 'https://github.com/' + profile.githubUsername + '.png'}" alt="Avatar" />
             </div>
             <div class="avatar" th:unless="${profile.githubUsername != null}">
-                <span th:text="${profile.fullName != null and profile.fullName.length() gt 0 ? profile.fullName.substring(0,1).toUpperCase() : 'U'}" style="font-size: 120px; color: #c9d1d9;"></span>
+                <span th:text="${profile.fullName != null and profile.fullName.length() gt 0 ? profile.fullName.substring(0,1).toUpperCase() : 'U'}" style="font-size: 60px; color: #c9d1d9;"></span>
             </div>
             
             <div class="names">
@@ -272,7 +273,7 @@
                     <div th:case="'projects'" th:if="${profile.projects != null and !profile.projects.isEmpty()}">
                         <h2 class="section-header">Pinned Projects</h2>
                         <div class="projects-wrapper">
-                            <div class="pinned-card" th:each="proj : ${profile.projects}" th:if="${proj.isVisible}">
+                            <div class="pinned-card" th:each="proj, stat : ${profile.projects}" th:if="${proj.isVisible and stat.index < 3}">
                                 <div class="repo-title">
                                     <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="#8b949e" style="vertical-align: middle; margin-right: 4px;"><path fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"></path></svg>
                                     <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" th:text="${proj.name}" target="_blank"></a>
