@@ -23,7 +23,7 @@ public class ResumeController {
             throw new com.medev.shared.exception.UnauthorizedException("PRO template requires PRO plan");
         }
         
-        byte[] pdf = pdfGeneratorService.generatePdf(userId, template);
+        byte[] pdf = pdfGeneratorService.generatePdf(userId, template, preview);
 
         String disposition = preview ? "inline" : "attachment";
         return ResponseEntity.ok()
@@ -40,7 +40,7 @@ public class ResumeController {
             throw new com.medev.shared.exception.UnauthorizedException("PRO template requires PRO plan");
         }
         
-        String html = pdfGeneratorService.generateHtml(userId, template);
+        String html = pdfGeneratorService.generateHtml(userId, template, preview);
 
         String disposition = preview ? "inline" : "attachment";
         return ResponseEntity.ok()

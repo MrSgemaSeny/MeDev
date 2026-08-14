@@ -60,8 +60,10 @@ public class PdfGeneratorService {
         }
     }
 
-    public byte[] generatePdf(Long userId, String templateName) {
-        checkGenerationLimit(userId);
+    public byte[] generatePdf(Long userId, String templateName, boolean isPreview) {
+        if (!isPreview) {
+            checkGenerationLimit(userId);
+        }
 
         ProfileDto profile = profileService.getByUserId(userId);
 
@@ -107,7 +109,9 @@ public class PdfGeneratorService {
             renderer.createPDF(out);
             renderer.finishPDF();
 
-            incrementGenerationCount(userId);
+            if (!isPreview) {
+                incrementGenerationCount(userId);
+            }
 
             return out.toByteArray();
         } catch (Exception e) {
@@ -115,8 +119,10 @@ public class PdfGeneratorService {
         }
     }
 
-    public String generateHtml(Long userId, String templateName) {
-        checkGenerationLimit(userId);
+    public String generateHtml(Long userId, String templateName, boolean isPreview) {
+        if (!isPreview) {
+            checkGenerationLimit(userId);
+        }
 
         ProfileDto profile = profileService.getByUserId(userId);
 
@@ -144,7 +150,9 @@ public class PdfGeneratorService {
             context.setVariable("languagesStr", languagesStr);
         }
         String html = templateEngine.process("resume-html/" + templateName, context);
-        incrementGenerationCount(userId);
+        if (!isPreview) {
+            incrementGenerationCount(userId);
+        }
         return html;
     }
 

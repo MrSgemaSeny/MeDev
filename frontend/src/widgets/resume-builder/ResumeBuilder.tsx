@@ -83,12 +83,16 @@ export const ResumeBuilder = () => {
 
   useEffect(() => {
     let active = true;
+    let urlToRevoke: string | null = null;
+    let timeoutId: NodeJS.Timeout;
+
     const loadPreview = async () => {
       setPreviewLoading(true);
       try {
         const { data } = await api.get(`/resume/html/${selectedTemplate}?preview=true`, { responseType: 'blob' });
         if (active) {
           const url = window.URL.createObjectURL(new Blob([data], { type: 'text/html' }));
+          urlToRevoke = url;
           setHtmlUrl(url);
         }
       } catch (e) {
@@ -97,10 +101,18 @@ export const ResumeBuilder = () => {
         if (active) setPreviewLoading(false);
       }
     };
-    loadPreview();
+
+    // Debounce the preview fetch to avoid spamming the backend
+    timeoutId = setTimeout(() => {
+      loadPreview();
+    }, 300);
+
     return () => {
       active = false;
-      if (htmlUrl) window.URL.revokeObjectURL(htmlUrl);
+      clearTimeout(timeoutId);
+      if (urlToRevoke) {
+        window.URL.revokeObjectURL(urlToRevoke);
+      }
     };
   }, [selectedTemplate]);
 
