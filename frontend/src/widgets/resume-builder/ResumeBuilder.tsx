@@ -54,9 +54,13 @@ export const ResumeBuilder = () => {
       a.download = 'resume.pdf';
       a.click();
       window.URL.revokeObjectURL(url);
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      window.alert('PDF export failed.');
+      if (e.response && e.response.status === 429) {
+        window.alert('Достигнут дневной лимит генерации резюме. Пожалуйста, обновитесь до PRO.');
+      } else {
+        window.alert('PDF export failed.');
+      }
     }
   };
 
@@ -69,9 +73,13 @@ export const ResumeBuilder = () => {
       a.download = `resume-${selectedTemplate}.html`;
       a.click();
       window.URL.revokeObjectURL(url);
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      window.alert('HTML export failed.');
+      if (e.response && e.response.status === 429) {
+        window.alert('Достигнут дневной лимит генерации резюме. Пожалуйста, обновитесь до PRO.');
+      } else {
+        window.alert('HTML export failed.');
+      }
     }
   };
 

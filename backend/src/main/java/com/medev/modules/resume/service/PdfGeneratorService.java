@@ -21,6 +21,7 @@ public class PdfGeneratorService {
     private final TemplateEngine templateEngine;
     private final ProfileService profileService;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final com.medev.modules.auth.repository.UserRepository userRepository;
 
     private static final int FREE_DAILY_LIMIT = 50;
     
@@ -160,6 +161,10 @@ public class PdfGeneratorService {
         String key = "resume:gen:" + userId + ":" + LocalDate.now();
         Integer count = (Integer) redisTemplate.opsForValue().get(key);
         if (count != null && count >= FREE_DAILY_LIMIT) {
+            com.medev.modules.auth.entity.User user = userRepository.findById(userId).orElse(null);
+            if (user != null && user.getPlan() == com.medev.modules.auth.entity.User.Plan.PRO) {
+                return; // PRO users have no strict daily limit
+            }
             throw new TooManyRequestsException("Daily generation limit reached. Upgrade to Pro.");
         }
     }
