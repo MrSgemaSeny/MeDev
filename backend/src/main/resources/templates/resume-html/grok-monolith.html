@@ -87,8 +87,9 @@
         .feed-subtitle { font-size: 15px; color: var(--text-secondary); margin-bottom: 8px; }
         
         /* Grid Layouts inside cards */
-        .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
-        .project-card { border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; background: var(--bg-body); }
+        .projects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .project-card { border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; background: var(--bg-body); display: flex; flex-direction: column; }
+        .project-card .tags { margin-top: auto; }
         .project-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
         .project-links a { color: var(--text-secondary); font-size: 14px; margin-left: 8px; }
         

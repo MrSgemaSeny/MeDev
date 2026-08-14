@@ -193,14 +193,12 @@
                         <h2 class="section-title"><span>04.</span> SKILLS</h2>
                     </div>
                     <div class="content-col">
-                        <div style="width: 100%;">
-                            <div class="poster-card" th:each="entry : ${groupedSkills}">
-                                <div class="pc-title">
-                                    <div class="pc-name" style="color: #fff;" th:text="${entry.key}"></div>
-                                </div>
-                                <div class="hero-tags" style="margin-top:0;">
-                                    <span class="hero-tag" style="background:#333; color:#fff;" th:each="skillName : ${entry.value}" th:text="${skillName}"></span>
-                                </div>
+                        <div class="entry" th:each="entry : ${groupedSkills}">
+                            <div class="entry-header">
+                                <div class="entry-title" th:text="${entry.key}"></div>
+                            </div>
+                            <div class="hero-tags" style="margin-top:4px;">
+                                <span class="hero-tag" th:each="skillName : ${entry.value}" th:text="${skillName}"></span>
                             </div>
                         </div>
                     </div>
@@ -211,19 +209,17 @@
                         <h2 class="section-title"><span>05.</span> BUILDS</h2>
                     </div>
                     <div class="content-col">
-                        <div style="width: 100%;">
-                            <div class="poster-card" th:each="proj, stat : ${profile.projects}" th:if="${proj.isVisible and stat.index < 3}">
-                                <div class="pc-title">
-                                    <div class="pc-name" th:text="${proj.name}"></div>
-                                    <div class="pc-links">
-                                        <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" target="_blank">GIT</a>
-                                        <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" target="_blank">LIVE</a>
-                                    </div>
+                        <div class="entry" th:each="proj, stat : ${profile.projects}" th:if="${proj.isVisible and stat.index < 3}">
+                            <div class="entry-header">
+                                <div class="entry-title" th:text="${proj.name}"></div>
+                                <div class="entry-date">
+                                    <a style="color:#ffa31a;text-decoration:none;margin-left:12px;font-size:14px;" th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" target="_blank">GIT</a>
+                                    <a style="color:#ffa31a;text-decoration:none;margin-left:12px;font-size:14px;" th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" target="_blank">LIVE</a>
                                 </div>
-                                <div class="entry-desc" th:text="${proj.description}"></div>
-                                <div class="hero-tags" th:if="${proj.techStack != null and !proj.techStack.isEmpty()}">
-                                    <span class="hero-tag" th:text="${proj.techStack}"></span>
-                                </div>
+                            </div>
+                            <div class="entry-desc" th:text="${proj.description}"></div>
+                            <div class="hero-tags" th:if="${proj.techStack != null and !proj.techStack.isEmpty()}">
+                                <span class="hero-tag" th:text="${proj.techStack}"></span>
                             </div>
                         </div>
                     </div>
