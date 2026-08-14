@@ -221,32 +221,34 @@
                     <h2 class="card-title">Projects</h2>
                     <div style="display: table; width: 100%; table-layout: fixed;">
                         <!-- Left Column (First Half) -->
-                        <div style="display: table-cell; width: 49%; vertical-align: top; padding-right: 2%;">
-                            <div style="border: 1px solid #27272a; border-radius: 12px; padding: 24px; background: #09090b; margin-bottom: 24px; page-break-inside: avoid;" th:each="proj, stat : ${profile.projects}" th:if="${proj.isVisible and stat.index < (profile.projects.size() + 1) / 2}">
+                        <div style="display: table-cell; width: 48%; vertical-align: top;">
+                            <div style="border: 1px solid #27272a; border-radius: 12px; padding: 16px; background: #09090b; margin-bottom: 20px; page-break-inside: avoid;" th:each="proj, stat : ${profile.projects}" th:if="${proj.isVisible and stat.index < (profile.projects.size() + 1) / 2}">
                                 <div class="feed-header" style="margin-bottom: 12px;">
-                                    <div class="feed-title" style="font-size: 18px; font-weight: 700;" th:text="${proj.name}"></div>
+                                    <div class="feed-title" style="font-size: 16px; font-weight: 700;" th:text="${proj.name}"></div>
                                     <div class="feed-date" style="text-align: right;">
-                                        <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" style="color:#a1a1aa; text-decoration:none; margin-left:12px; font-size: 14px;">Git</a>
-                                        <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" style="color:#a1a1aa; text-decoration:none; margin-left:12px; font-size: 14px;">Live</a>
+                                        <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" style="color:#a1a1aa; text-decoration:none; margin-left:12px; font-size: 13px;">Git</a>
+                                        <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" style="color:#a1a1aa; text-decoration:none; margin-left:12px; font-size: 13px;">Live</a>
                                     </div>
                                 </div>
-                                <div class="text-body" style="font-size: 15px; line-height: 1.6; margin-bottom: 16px;" th:text="${proj.description}"></div>
+                                <div class="text-body" style="font-size: 14px; line-height: 1.6; margin-bottom: 16px;" th:text="${proj.description}"></div>
                                 <div class="tags" style="margin-top:0;" th:if="${proj.techStack != null and !proj.techStack.isEmpty()}">
                                     <span class="tag" style="padding: 4px 10px; border-radius: 16px; font-size: 12px; font-weight: 500;" th:text="${proj.techStack}"></span>
                                 </div>
                             </div>
                         </div>
+                        <!-- Spacer Column -->
+                        <div style="display: table-cell; width: 4%;"></div>
                         <!-- Right Column (Second Half) -->
-                        <div style="display: table-cell; width: 49%; vertical-align: top;">
-                            <div style="border: 1px solid #27272a; border-radius: 12px; padding: 24px; background: #09090b; margin-bottom: 24px; page-break-inside: avoid;" th:each="proj, stat : ${profile.projects}" th:if="${proj.isVisible and stat.index >= (profile.projects.size() + 1) / 2}">
+                        <div style="display: table-cell; width: 48%; vertical-align: top;">
+                            <div style="border: 1px solid #27272a; border-radius: 12px; padding: 16px; background: #09090b; margin-bottom: 20px; page-break-inside: avoid;" th:each="proj, stat : ${profile.projects}" th:if="${proj.isVisible and stat.index >= (profile.projects.size() + 1) / 2}">
                                 <div class="feed-header" style="margin-bottom: 12px;">
-                                    <div class="feed-title" style="font-size: 18px; font-weight: 700;" th:text="${proj.name}"></div>
+                                    <div class="feed-title" style="font-size: 16px; font-weight: 700;" th:text="${proj.name}"></div>
                                     <div class="feed-date" style="text-align: right;">
-                                        <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" style="color:#a1a1aa; text-decoration:none; margin-left:12px; font-size: 14px;">Git</a>
-                                        <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" style="color:#a1a1aa; text-decoration:none; margin-left:12px; font-size: 14px;">Live</a>
+                                        <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" style="color:#a1a1aa; text-decoration:none; margin-left:12px; font-size: 13px;">Git</a>
+                                        <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" style="color:#a1a1aa; text-decoration:none; margin-left:12px; font-size: 13px;">Live</a>
                                     </div>
                                 </div>
-                                <div class="text-body" style="font-size: 15px; line-height: 1.6; margin-bottom: 16px;" th:text="${proj.description}"></div>
+                                <div class="text-body" style="font-size: 14px; line-height: 1.6; margin-bottom: 16px;" th:text="${proj.description}"></div>
                                 <div class="tags" style="margin-top:0;" th:if="${proj.techStack != null and !proj.techStack.isEmpty()}">
                                     <span class="tag" style="padding: 4px 10px; border-radius: 16px; font-size: 12px; font-weight: 500;" th:text="${proj.techStack}"></span>
                                 </div>

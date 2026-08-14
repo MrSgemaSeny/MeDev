@@ -194,35 +194,35 @@
 
                 <div class="bento-item card-projects" th:case="'projects'" th:if="${profile.projects != null and !profile.projects.isEmpty()}">
                     <h2 class="card-title">Projects</h2>
-                    <div style="display: flex; gap: 24px; align-items: flex-start;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                         <!-- Left Column (First Half) -->
-                        <div style="flex: 1; display: flex; flex-direction: column; gap: 24px;">
-                            <div class="project-card" style="border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; background: var(--bg-body);" th:each="proj, stat : ${profile.projects}" th:if="${proj.isVisible and stat.index < (profile.projects.size() + 1) / 2}">
+                        <div style="width: 48%; display: flex; flex-direction: column; gap: 20px;">
+                            <div class="project-card" style="border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; background: var(--bg-body);" th:each="proj, stat : ${profile.projects}" th:if="${proj.isVisible and stat.index < (profile.projects.size() + 1) / 2}">
                                 <div class="project-header" style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                                    <div class="feed-title" style="font-size: 18px; font-weight: 700;" th:text="${proj.name}"></div>
+                                    <div class="feed-title" style="font-size: 16px; font-weight: 700;" th:text="${proj.name}"></div>
                                     <div class="project-links">
-                                        <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" target="_blank" style="color: var(--text-secondary); font-size: 14px; margin-left: 12px; text-decoration: none;">Git</a>
-                                        <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" target="_blank" style="color: var(--text-secondary); font-size: 14px; margin-left: 12px; text-decoration: none;">Live</a>
+                                        <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" target="_blank" style="color: var(--text-secondary); font-size: 13px; margin-left: 12px; text-decoration: none;">Git</a>
+                                        <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" target="_blank" style="color: var(--text-secondary); font-size: 13px; margin-left: 12px; text-decoration: none;">Live</a>
                                     </div>
                                 </div>
-                                <div class="text-body" style="font-size: 15px; line-height: 1.6; margin-bottom: 16px;" th:text="${proj.description}"></div>
-                                <div class="tags" style="display: flex; flex-wrap: wrap; gap: 8px;" th:if="${proj.techStack != null and !proj.techStack.isEmpty()}">
+                                <div class="text-body" style="font-size: 14px; line-height: 1.6; margin-bottom: 16px;" th:text="${proj.description}"></div>
+                                <div class="tags" style="display: flex; flex-wrap: wrap; gap: 6px;" th:if="${proj.techStack != null and !proj.techStack.isEmpty()}">
                                     <span class="tag" style="background: var(--tag-bg); padding: 4px 10px; border-radius: 16px; font-size: 12px; font-weight: 500;" th:text="${proj.techStack}"></span>
                                 </div>
                             </div>
                         </div>
                         <!-- Right Column (Second Half) -->
-                        <div style="flex: 1; display: flex; flex-direction: column; gap: 24px;">
-                            <div class="project-card" style="border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; background: var(--bg-body);" th:each="proj, stat : ${profile.projects}" th:if="${proj.isVisible and stat.index >= (profile.projects.size() + 1) / 2}">
+                        <div style="width: 48%; display: flex; flex-direction: column; gap: 20px;">
+                            <div class="project-card" style="border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; background: var(--bg-body);" th:each="proj, stat : ${profile.projects}" th:if="${proj.isVisible and stat.index >= (profile.projects.size() + 1) / 2}">
                                 <div class="project-header" style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                                    <div class="feed-title" style="font-size: 18px; font-weight: 700;" th:text="${proj.name}"></div>
+                                    <div class="feed-title" style="font-size: 16px; font-weight: 700;" th:text="${proj.name}"></div>
                                     <div class="project-links">
-                                        <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" target="_blank" style="color: var(--text-secondary); font-size: 14px; margin-left: 12px; text-decoration: none;">Git</a>
-                                        <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" target="_blank" style="color: var(--text-secondary); font-size: 14px; margin-left: 12px; text-decoration: none;">Live</a>
+                                        <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" target="_blank" style="color: var(--text-secondary); font-size: 13px; margin-left: 12px; text-decoration: none;">Git</a>
+                                        <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" target="_blank" style="color: var(--text-secondary); font-size: 13px; margin-left: 12px; text-decoration: none;">Live</a>
                                     </div>
                                 </div>
-                                <div class="text-body" style="font-size: 15px; line-height: 1.6; margin-bottom: 16px;" th:text="${proj.description}"></div>
-                                <div class="tags" style="display: flex; flex-wrap: wrap; gap: 8px;" th:if="${proj.techStack != null and !proj.techStack.isEmpty()}">
+                                <div class="text-body" style="font-size: 14px; line-height: 1.6; margin-bottom: 16px;" th:text="${proj.description}"></div>
+                                <div class="tags" style="display: flex; flex-wrap: wrap; gap: 6px;" th:if="${proj.techStack != null and !proj.techStack.isEmpty()}">
                                     <span class="tag" style="background: var(--tag-bg); padding: 4px 10px; border-radius: 16px; font-size: 12px; font-weight: 500;" th:text="${proj.techStack}"></span>
                                 </div>
                             </div>
