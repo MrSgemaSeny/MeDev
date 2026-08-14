@@ -53,7 +53,7 @@ public class PdfGeneratorServiceTest {
         when(profileService.getByUserId(userId)).thenReturn(new ProfileDto());
         when(templateEngine.process(eq("resume/" + templateName), any(Context.class))).thenReturn(validHtml);
 
-        byte[] result = pdfGeneratorService.generatePdf(userId, templateName);
+        byte[] result = pdfGeneratorService.generatePdf(userId, templateName, false, false);
 
         assertThat(result).isNotEmpty();
         verify(valueOperations).increment(anyString());
@@ -73,7 +73,7 @@ public class PdfGeneratorServiceTest {
         when(profileService.getByUserId(userId)).thenReturn(new ProfileDto());
         when(templateEngine.process(eq("resume/" + templateName), any(Context.class))).thenReturn(validHtml);
 
-        byte[] result = pdfGeneratorService.generatePdf(userId, templateName);
+        byte[] result = pdfGeneratorService.generatePdf(userId, templateName, false, false);
 
         assertThat(result).isNotEmpty();
         verify(valueOperations).increment(anyString());
@@ -88,7 +88,7 @@ public class PdfGeneratorServiceTest {
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         when(valueOperations.get(anyString())).thenReturn(50);
 
-        assertThatThrownBy(() -> pdfGeneratorService.generatePdf(userId, templateName))
+        assertThatThrownBy(() -> pdfGeneratorService.generatePdf(userId, templateName, false, false))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("Daily generation limit reached");
     }
@@ -104,7 +104,7 @@ public class PdfGeneratorServiceTest {
         when(profileService.getByUserId(userId)).thenReturn(new ProfileDto());
         when(templateEngine.process(eq("resume/" + templateName), any(Context.class))).thenReturn(invalidHtml);
 
-        assertThatThrownBy(() -> pdfGeneratorService.generatePdf(userId, templateName))
+        assertThatThrownBy(() -> pdfGeneratorService.generatePdf(userId, templateName, false, false))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("PDF generation failed");
     }
