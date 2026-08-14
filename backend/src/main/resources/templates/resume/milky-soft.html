@@ -16,27 +16,24 @@
             padding: 40px;
         }
         
-        /* Table Layout for PDF compatibility */
+        /* Single Column Layout for PDF (Matches narrow Live Preview) */
+        @page { size: A4; margin: 0; background-color: #fdfcf9; }
         .magazine-wrapper {
             width: 100%;
             max-width: 1100px;
             margin: 0 auto;
-            display: table;
-            table-layout: fixed;
         }
         
         .sidebar {
-            display: table-cell;
-            width: 250px;
-            vertical-align: top;
-            padding-right: 40px;
-            border-right: 1px solid #d1d0c8;
+            position: relative;
+            width: 100%;
+            border-bottom: 1px solid #d1d0c8;
+            padding-bottom: 30px;
+            margin-bottom: 40px;
         }
         
         .content-stream {
-            display: table-cell;
-            vertical-align: top;
-            padding-left: 50px;
+            width: 100%;
         }
         
         /* Typography */
