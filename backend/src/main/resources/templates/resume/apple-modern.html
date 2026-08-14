@@ -146,7 +146,7 @@
                                 <div class="item-title" th:text="${edu.institution}"></div>
                                 <div class="item-date" th:text="${edu.startDate + ' - ' + (edu.isCurrent ? 'Present' : edu.endDate)}"></div>
                             </div>
-                            <div class="item-subtitle" th:text="${edu.degree} + (edu.fieldOfStudy != null ? ' in ' + edu.fieldOfStudy : '')"></div>
+                            <div class="item-subtitle" th:text="${edu.field != null and !edu.field.isEmpty() ? edu.degree + ' in ' + edu.field : edu.degree}"></div>
                         </div>
                     </div>
                 </div>
