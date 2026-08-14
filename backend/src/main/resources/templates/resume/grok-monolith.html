@@ -19,8 +19,6 @@
             max-width: 900px;
             margin: 0 auto;
             width: 100%;
-            /* Fix inline-block whitespace issue */
-            font-size: 0; 
         }
         .bento-card {
             background-color: #000000;
@@ -40,14 +38,14 @@
         */
         .card-profile { width: 100%; }
         
-        .card-contact { width: 32%; margin-right: 2%; }
-        .card-summary { width: 66%; }
+        .card-contact { width: 31%; margin-right: 2%; }
+        .card-summary { width: 65%; }
         
-        .card-experience { width: 66%; margin-right: 2%; }
-        .card-education { width: 32%; }
+        .card-experience { width: 65%; margin-right: 2%; }
+        .card-education { width: 31%; }
         
-        .card-skills { width: 49%; margin-right: 2%; }
-        .card-languages { width: 49%; }
+        .card-skills { width: 48%; margin-right: 2%; }
+        .card-languages { width: 48%; }
         
         .card-projects { width: 100%; }
 
@@ -229,7 +227,7 @@
 
                 <div class="bento-card card-projects" th:case="'projects'" th:if="${profile.projects != null and !profile.projects.isEmpty()}">
                     <h2 class="card-title">Projects</h2>
-                    <div style="width: 100%; font-size: 0;">
+                    <div style="width: 100%;">
                         <div class="project-card" th:each="proj, stat : ${profile.projects}" th:if="${proj.isVisible}">
                             <div class="feed-header" style="margin-bottom: 4px;">
                                 <div class="feed-title" th:text="${proj.name}"></div>
