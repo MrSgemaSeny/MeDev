@@ -11,9 +11,9 @@
             font-family: 'Roboto', 'Inter', sans-serif;
             background-color: #09090b;
             color: #f4f4f5;
-            line-height: 1.5;
-            padding: 20px;
-            font-size: 12px;
+            line-height: 1.4;
+            padding: 24px;
+            font-size: 11px;
         }
         .bento-container {
             max-width: 100%;
@@ -29,11 +29,11 @@
             background-color: #000000;
             border: 1px solid #27272a;
             page-break-inside: avoid;
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 20px;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
             float: left;
-            font-size: 12px;
+            font-size: 11px;
         }
         
         /* Grid Spans using percentages */
@@ -55,74 +55,84 @@
 
         /* Profile Header inside card */
         .profile-table { width: 100%; display: table; }
-        .profile-avatar { display: table-cell; width: 80px; vertical-align: middle; padding-right: 24px; }
+        .profile-avatar { display: table-cell; width: 60px; vertical-align: middle; padding-right: 16px; }
         .profile-info { display: table-cell; vertical-align: middle; }
         .profile-meta { display: table-cell; vertical-align: middle; text-align: right; color: #a1a1aa; }
         
-        h1.name { font-size: 36px; font-weight: 700; letter-spacing: -1px; margin-bottom: 4px; }
-        .username { color: #a1a1aa; font-size: 16px; }
+        h1.name { font-size: 28px; font-weight: 700; letter-spacing: -1px; margin-bottom: 2px; }
+        .username { color: #a1a1aa; font-size: 12px; }
         
         h2.card-title {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
             color: #a1a1aa;
-            margin-bottom: 24px;
-            padding-bottom: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
             border-bottom: 1px solid #27272a;
         }
         
         /* Typography */
-        .text-body { font-size: 14px; color: #f4f4f5; }
-        .text-dim { color: #a1a1aa; font-size: 13px; }
+        .text-body { font-size: 11px; color: #f4f4f5; line-height: 1.4; }
+        .text-dim { color: #a1a1aa; font-size: 10px; }
         
         /* Connect List */
         .contact-row {
             width: 100%;
             display: table;
             border-bottom: 1px solid #27272a;
-            padding-bottom: 8px;
-            margin-bottom: 8px;
+            padding-bottom: 6px;
+            margin-bottom: 6px;
         }
         .contact-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .contact-row-left { display: table-cell; color: #a1a1aa; font-size: 13px; }
-        .contact-row-right { display: table-cell; text-align: right; font-size: 13px; }
+        .contact-row-left { display: table-cell; color: #a1a1aa; font-size: 11px; }
+        .contact-row-right { display: table-cell; text-align: right; font-size: 11px; }
         .contact-row-right a { color: #f4f4f5; text-decoration: none; }
         
         /* Feed / Timelines */
         .feed-item {
-            margin-bottom: 24px;
-            padding-bottom: 24px;
-            border-bottom: 1px solid #27272a;
+            margin-bottom: 12px;
+            padding-left: 12px;
+            border-left: 2px solid #27272a;
+            position: relative;
             page-break-inside: avoid;
         }
-        .feed-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
-        
-        .feed-header { width: 100%; display: table; margin-bottom: 6px; }
-        .feed-title { display: table-cell; font-size: 16px; font-weight: 600; text-align: left; }
-        .feed-date { display: table-cell; font-size: 13px; color: #a1a1aa; text-align: right; }
-        .feed-subtitle { font-size: 14px; color: #a1a1aa; margin-bottom: 12px; }
+        .feed-item::before {
+            content: '';
+            position: absolute;
+            left: -5px;
+            top: 4px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #27272a;
+        }
+        .feed-item:last-child { margin-bottom: 0; }
+        .feed-header { display: table; width: 100%; margin-bottom: 2px; }
+        .feed-title { display: table-cell; font-size: 12px; font-weight: 600; text-align: left; }
+        .feed-date { display: table-cell; font-size: 10px; color: #a1a1aa; text-align: right; }
+        .feed-subtitle { font-size: 11px; color: #a1a1aa; margin-bottom: 4px; }
         
         /* Tags */
-        .tags { margin-top: 12px; }
+        .tags { margin-top: 8px; }
         .tag {
             display: inline-block;
             background: #09090b;
             border: 1px solid #27272a;
-            padding: 4px 12px;
+            padding: 2px 8px;
             border-radius: 100px;
-            font-size: 12px;
+            font-size: 10px;
             font-weight: 500;
             color: #a1a1aa;
-            margin-right: 8px;
-            margin-bottom: 8px;
+            margin-right: 4px;
+            margin-bottom: 4px;
         }
         
         /* Projects Grid removed in favor of feed-item */
         
-        .skill-group { margin-bottom: 16px; page-break-inside: avoid; }
-        .skill-group-title { font-size: 13px; font-weight: 600; color: #f4f4f5; margin-bottom: 8px; }
+        .skill-group { margin-bottom: 12px; page-break-inside: avoid; }
+        .skill-group-title { font-size: 11px; font-weight: 600; color: #f4f4f5; margin-bottom: 6px; }
     </style>
 </head>
 <body>
@@ -197,7 +207,7 @@
                         <div class="feed-header">
                             <div class="feed-title" th:text="${edu.institution}"></div>
                         </div>
-                        <div class="feed-subtitle" th:text="${edu.degree} + (edu.field != null ? ' in ' + edu.field : '')"></div>
+                        <div class="feed-subtitle" th:text="${edu.degree} + (edu.fieldOfStudy != null ? ' in ' + edu.fieldOfStudy : '')"></div>
                         <div class="feed-date" style="text-align: left; margin-top: 4px;" th:text="${edu.startDate + ' - ' + (edu.isCurrent ? 'Present' : edu.endDate)}"></div>
                     </div>
                 </div>
@@ -222,17 +232,17 @@
                     <div style="display: table; width: 100%; table-layout: fixed;">
                         <!-- Left Column (First Half) -->
                         <div style="display: table-cell; width: 48%; vertical-align: top;">
-                            <div style="border: 1px solid #27272a; border-radius: 12px; padding: 16px; background: #09090b; margin-bottom: 20px; page-break-inside: avoid;" th:each="proj, stat : ${profile.projects}" th:if="${proj.isVisible and stat.index < (profile.projects.size() + 1) / 2}">
-                                <div class="feed-header" style="margin-bottom: 12px;">
-                                    <div class="feed-title" style="font-size: 16px; font-weight: 700;" th:text="${proj.name}"></div>
+                            <div style="border: 1px solid #27272a; border-radius: 12px; padding: 16px; background: #09090b; margin-bottom: 16px; page-break-inside: avoid;" th:each="proj, stat : ${profile.projects}" th:if="${proj.isVisible and stat.index < (profile.projects.size() + 1) / 2}">
+                                <div class="feed-header" style="margin-bottom: 10px;">
+                                    <div class="feed-title" style="font-size: 15px; font-weight: 700;" th:text="${proj.name}"></div>
                                     <div class="feed-date" style="text-align: right;">
-                                        <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" style="color:#a1a1aa; text-decoration:none; margin-left:12px; font-size: 13px;">Git</a>
-                                        <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" style="color:#a1a1aa; text-decoration:none; margin-left:12px; font-size: 13px;">Live</a>
+                                        <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" style="color:#a1a1aa; text-decoration:none; margin-left:12px; font-size: 12px;">Git</a>
+                                        <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" style="color:#a1a1aa; text-decoration:none; margin-left:12px; font-size: 12px;">Live</a>
                                     </div>
                                 </div>
-                                <div class="text-body" style="font-size: 14px; line-height: 1.6; margin-bottom: 16px;" th:text="${proj.description}"></div>
+                                <div class="text-body" style="font-size: 13px; margin-bottom: 12px;" th:text="${proj.description}"></div>
                                 <div class="tags" style="margin-top:0;" th:if="${proj.techStack != null and !proj.techStack.isEmpty()}">
-                                    <span class="tag" style="padding: 4px 10px; border-radius: 16px; font-size: 12px; font-weight: 500;" th:text="${proj.techStack}"></span>
+                                    <span class="tag" style="padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 500;" th:text="${proj.techStack}"></span>
                                 </div>
                             </div>
                         </div>
@@ -240,17 +250,17 @@
                         <div style="display: table-cell; width: 4%;"></div>
                         <!-- Right Column (Second Half) -->
                         <div style="display: table-cell; width: 48%; vertical-align: top;">
-                            <div style="border: 1px solid #27272a; border-radius: 12px; padding: 16px; background: #09090b; margin-bottom: 20px; page-break-inside: avoid;" th:each="proj, stat : ${profile.projects}" th:if="${proj.isVisible and stat.index >= (profile.projects.size() + 1) / 2}">
-                                <div class="feed-header" style="margin-bottom: 12px;">
-                                    <div class="feed-title" style="font-size: 16px; font-weight: 700;" th:text="${proj.name}"></div>
+                            <div style="border: 1px solid #27272a; border-radius: 12px; padding: 16px; background: #09090b; margin-bottom: 16px; page-break-inside: avoid;" th:each="proj, stat : ${profile.projects}" th:if="${proj.isVisible and stat.index >= (profile.projects.size() + 1) / 2}">
+                                <div class="feed-header" style="margin-bottom: 10px;">
+                                    <div class="feed-title" style="font-size: 15px; font-weight: 700;" th:text="${proj.name}"></div>
                                     <div class="feed-date" style="text-align: right;">
-                                        <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" style="color:#a1a1aa; text-decoration:none; margin-left:12px; font-size: 13px;">Git</a>
-                                        <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" style="color:#a1a1aa; text-decoration:none; margin-left:12px; font-size: 13px;">Live</a>
+                                        <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" style="color:#a1a1aa; text-decoration:none; margin-left:12px; font-size: 12px;">Git</a>
+                                        <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" style="color:#a1a1aa; text-decoration:none; margin-left:12px; font-size: 12px;">Live</a>
                                     </div>
                                 </div>
-                                <div class="text-body" style="font-size: 14px; line-height: 1.6; margin-bottom: 16px;" th:text="${proj.description}"></div>
+                                <div class="text-body" style="font-size: 13px; margin-bottom: 12px;" th:text="${proj.description}"></div>
                                 <div class="tags" style="margin-top:0;" th:if="${proj.techStack != null and !proj.techStack.isEmpty()}">
-                                    <span class="tag" style="padding: 4px 10px; border-radius: 16px; font-size: 12px; font-weight: 500;" th:text="${proj.techStack}"></span>
+                                    <span class="tag" style="padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 500;" th:text="${proj.techStack}"></span>
                                 </div>
                             </div>
                         </div>

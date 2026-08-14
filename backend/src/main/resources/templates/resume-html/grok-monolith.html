@@ -169,7 +169,7 @@
                             <div class="feed-header">
                                 <div class="feed-title" th:text="${edu.institution}"></div>
                             </div>
-                            <div class="feed-subtitle" th:text="${edu.degree} + (edu.field != null ? ' in ' + edu.field : '')"></div>
+                            <div class="feed-subtitle" th:text="${edu.degree} + (edu.fieldOfStudy != null ? ' in ' + edu.fieldOfStudy : '')"></div>
                             <div class="feed-date text-dim" th:text="${edu.startDate + ' - ' + (edu.isCurrent ? 'Present' : edu.endDate)}"></div>
                         </div>
                     </div>
