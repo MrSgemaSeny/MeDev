@@ -140,34 +140,31 @@ export const ResumeBuilder = () => {
           
           {/* Layout Mode */}
           <section className="flex items-center justify-between mb-4">
-            <h2 className="text-xs font-bold text-[#8b949e] uppercase tracking-wider">PDF Layout Mode</h2>
-            <div className="flex items-center gap-3 bg-[#0d1117] border border-[#30363d] rounded-md p-2">
-              <Files 
-                size={16} 
-                className={`cursor-pointer transition-colors ${!isSinglePageMode ? 'text-white' : 'text-[#8b949e] hover:text-[#c9d1d9]'}`}
-                onClick={() => setSinglePageMode(false)}
+            <div className="flex flex-col">
+              <h2 className="text-xs font-bold text-[#8b949e] uppercase tracking-wider mb-1">PDF Layout Mode</h2>
+              <span className="text-[10px] text-[#8b949e]">Toggle compact view</span>
+            </div>
+            <button
+              onClick={() => setSinglePageMode(!isSinglePageMode)}
+              className="relative flex items-center w-[72px] h-8 p-1 rounded-full bg-[#238636] cursor-pointer shadow-inner focus:outline-none transition-all duration-300 border border-[#2ea043]"
+            >
+              {/* Sliding Thumb (White) */}
+              <span
+                className={`absolute left-1 w-[32px] h-6 rounded-full bg-white shadow-md transition-transform duration-300 cubic-bezier(0.4, 0, 0.2, 1) ${
+                  isSinglePageMode ? 'translate-x-[30px]' : 'translate-x-0'
+                }`}
               />
               
-              <button
-                onClick={() => setSinglePageMode(!isSinglePageMode)}
-                className={`relative inline-flex h-5 w-10 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  isSinglePageMode ? 'bg-[#238636]' : 'bg-[#30363d]'
-                }`}
-                title="Toggle PDF Layout"
-              >
-                <span
-                  className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
-                    isSinglePageMode ? 'translate-x-5' : 'translate-x-0'
-                  }`}
-                />
-              </button>
-
-              <File 
-                size={16} 
-                className={`cursor-pointer transition-colors ${isSinglePageMode ? 'text-white' : 'text-[#8b949e] hover:text-[#c9d1d9]'}`}
-                onClick={() => setSinglePageMode(true)}
-              />
-            </div>
+              {/* Left Icon (Multi-Page) */}
+              <span className="relative z-10 flex flex-1 justify-center items-center h-full pointer-events-none">
+                <Files size={14} className={`transition-colors duration-300 ${!isSinglePageMode ? 'text-[#238636]' : 'text-white'}`} strokeWidth={2.5} />
+              </span>
+              
+              {/* Right Icon (1 Page) */}
+              <span className="relative z-10 flex flex-1 justify-center items-center h-full pointer-events-none">
+                <File size={14} className={`transition-colors duration-300 ${isSinglePageMode ? 'text-[#238636]' : 'text-white'}`} strokeWidth={2.5} />
+              </span>
+            </button>
           </section>
 
           {/* Templates Section */}
