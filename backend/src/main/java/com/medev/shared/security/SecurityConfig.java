@@ -51,7 +51,7 @@ public class SecurityConfig {
                     "/error"               // Tomcat error page
                 ).permitAll()
                 // Только ADMIN
-                .requestMatchers("/v1/admin/**").hasRole("ADMIN")
+                .requestMatchers("/v1/admin/**", "/actuator/**").hasRole("ADMIN")
                 // Всё остальное — авторизованные пользователи
                 .anyRequest().authenticated()
             )

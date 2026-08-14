@@ -2,6 +2,7 @@ package com.medev.modules.resume.service;
 
 import com.medev.modules.profile.dto.ProfileDto;
 import com.medev.modules.profile.service.ProfileService;
+import com.medev.modules.auth.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,6 +37,9 @@ public class PdfGeneratorServiceTest {
 
     @Mock
     private ValueOperations<String, Object> valueOperations;
+
+    @Mock
+    private UserRepository userRepository;
 
     @InjectMocks
     private PdfGeneratorService pdfGeneratorService;
