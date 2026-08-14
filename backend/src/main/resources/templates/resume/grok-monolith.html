@@ -4,22 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title th:text="${profile.fullName} + ' - Grok Dashboard'">Grok</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
-    <style>
-        :root {
-            --bg-body: #09090b;
-            --bg-card: #000000;
-            --text-primary: #f4f4f5;
-            --text-secondary: #a1a1aa;
-            --border-color: #27272a;
-        }
+        /* Removed CSS variables as they are not supported by Flying Saucer CSS 2.1 */
+        @page { margin: 0; background-color: #09090b; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-primary);
+            background-color: #09090b;
+            color: #f4f4f5;
             line-height: 1.6;
             padding: 40px;
         }
@@ -28,8 +19,9 @@
             margin: 0 auto;
         }
         .bento-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
+            background-color: #000000;
+            border: 1px solid #27272a;
+            page-break-inside: avoid;
             border-radius: 16px;
             padding: 32px;
             margin-bottom: 24px;
@@ -39,50 +31,51 @@
         .profile-table { width: 100%; display: table; }
         .profile-avatar { display: table-cell; width: 80px; vertical-align: middle; padding-right: 24px; }
         .profile-info { display: table-cell; vertical-align: middle; }
-        .profile-meta { display: table-cell; vertical-align: middle; text-align: right; color: var(--text-secondary); }
+        .profile-meta { display: table-cell; vertical-align: middle; text-align: right; color: #a1a1aa; }
         
         h1.name { font-size: 36px; font-weight: 700; letter-spacing: -1px; margin-bottom: 4px; }
-        .username { color: var(--text-secondary); font-size: 16px; }
+        .username { color: #a1a1aa; font-size: 16px; }
         
         h2.card-title {
             font-size: 14px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            color: var(--text-secondary);
+            color: #a1a1aa;
             margin-bottom: 24px;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid #27272a;
             padding-bottom: 12px;
         }
         
         /* Typography */
-        .text-body { font-size: 15px; color: var(--text-primary); }
-        .text-dim { color: var(--text-secondary); font-size: 14px; }
+        .text-body { font-size: 15px; color: #f4f4f5; }
+        .text-dim { color: #a1a1aa; font-size: 14px; }
         
         /* Feed / Timelines */
         .feed-item {
             margin-bottom: 24px;
             padding-bottom: 24px;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid #27272a;
+            page-break-inside: avoid;
         }
         .feed-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
         
         .feed-header { width: 100%; display: table; margin-bottom: 6px; }
         .feed-title { display: table-cell; font-size: 18px; font-weight: 600; text-align: left; }
-        .feed-date { display: table-cell; font-size: 13px; font-variant-numeric: tabular-nums; color: var(--text-secondary); text-align: right; }
-        .feed-subtitle { font-size: 15px; color: var(--text-secondary); margin-bottom: 12px; }
+        .feed-date { display: table-cell; font-size: 13px; font-variant-numeric: tabular-nums; color: #a1a1aa; text-align: right; }
+        .feed-subtitle { font-size: 15px; color: #a1a1aa; margin-bottom: 12px; }
         
         /* Tags */
         .tags { margin-top: 12px; }
         .tag {
             display: inline-block;
-            background: var(--bg-body);
-            border: 1px solid var(--border-color);
+            background: #09090b;
+            border: 1px solid #27272a;
             padding: 4px 12px;
             border-radius: 100px;
             font-size: 12px;
             font-weight: 500;
-            color: var(--text-secondary);
+            color: #a1a1aa;
             margin-right: 8px;
             margin-bottom: 8px;
         }
@@ -94,14 +87,15 @@
             width: 48%;
             vertical-align: top;
             margin-bottom: 16px;
+            page-break-inside: avoid;
         }
         
         /* Contact table */
         .contact-table { width: 100%; display: table; }
         .contact-cell { display: table-cell; vertical-align: top; width: 25%; }
-        .contact-label { font-size: 12px; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 4px; }
+        .contact-label { font-size: 12px; color: #a1a1aa; text-transform: uppercase; margin-bottom: 4px; }
         .contact-value { font-size: 14px; }
-        .contact-value a { color: var(--text-primary); text-decoration: none; }
+        .contact-value a { color: #f4f4f5; text-decoration: none; }
     </style>
 </head>
 <body>
@@ -124,7 +118,7 @@
                 </div>
             </div>
             
-            <div class="contact-table" style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border-color);" th:if="${profile.website != null or profile.linkedin != null or profile.telegram != null}">
+            <div class="contact-table" style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #27272a;" th:if="${profile.website != null or profile.linkedin != null or profile.telegram != null}">
                 <div class="contact-cell" th:if="${profile.website}">
                     <div class="contact-label">Website</div>
                     <div class="contact-value"><a th:href="${profile.website}" th:text="${profile.website}"></a></div>
@@ -199,12 +193,12 @@
                 <div class="bento-card" th:case="'projects'" th:if="${profile.projects != null and !profile.projects.isEmpty()}">
                     <h2 class="card-title">Projects</h2>
                     <div class="two-col-container">
-                        <div class="col-half" th:each="proj : ${profile.projects}" th:if="${proj.isVisible}" style="padding-right: 20px;">
+                        <div class="col-half" th:each="proj, stat : ${profile.projects}" th:if="${proj.isVisible and stat.index < 3}" style="padding-right: 20px;">
                             <div class="feed-title" style="margin-bottom: 4px;" th:text="${proj.name}"></div>
                             <div class="text-dim" style="margin-bottom: 8px;">
-                                <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" target="_blank" style="color:var(--text-secondary); text-decoration:none;">GitHub</a>
+                                <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" target="_blank" style="color:#a1a1aa; text-decoration:none;">GitHub</a>
                                 <span th:if="${proj.githubUrl != null and proj.liveUrl != null}"> &middot; </span>
-                                <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" target="_blank" style="color:var(--text-secondary); text-decoration:none;">Live</a>
+                                <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" target="_blank" style="color:#a1a1aa; text-decoration:none;">Live</a>
                             </div>
                             <div class="text-body" style="font-size: 14px; margin-bottom: 12px;" th:text="${proj.description}"></div>
                             <div class="tags" style="margin-top:0;" th:if="${proj.techStack != null and !proj.techStack.isEmpty()}">
