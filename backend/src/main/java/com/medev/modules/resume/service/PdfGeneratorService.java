@@ -152,7 +152,7 @@ public class PdfGeneratorService {
                     .collect(java.util.stream.Collectors.joining(", "));
             context.setVariable("languagesStr", languagesStr);
         }
-        String html = templateEngine.process("resume-html/" + templateName, context);
+        String html = templateEngine.process("resume/" + templateName, context);
         if (!isPreview) {
             incrementGenerationCount(userId);
         }

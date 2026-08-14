@@ -43,7 +43,7 @@ public class ResumeTemplateIntegrationTest {
             String pdfHtml = templateEngine.process("resume/" + tmpl, context);
             assertThat(pdfHtml).isNotBlank();
             
-            String webHtml = templateEngine.process("resume-html/" + tmpl, context);
+            String webHtml = templateEngine.process("resume/" + tmpl, context);
             assertThat(webHtml).isNotBlank();
         }
     }
