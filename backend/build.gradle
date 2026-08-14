@@ -68,9 +68,8 @@ dependencies {
     implementation 'io.github.resilience4j:resilience4j-reactor:2.2.0'
 
     // AI & Vector DB
-    implementation 'org.springframework.ai:spring-ai-pgvector-store-spring-boot-starter'
-
-
+    implementation 'org.springframework.ai:spring-ai-core'
+    
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.springframework.boot:spring-boot-testcontainers'
