@@ -4,22 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title th:text="${profile.fullName} + ' - Editorial Resume'">Editorial</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet" />
-    <style>
-        :root {
-            --bg-color: #fdfcf9;
-            --text-primary: #1a1a1a;
-            --text-secondary: #4a4a4a;
-            --accent: #1e4d3f;
-            --border-color: #d1d0c8;
-        }
+        /* Removed CSS variables as they are not supported by Flying Saucer CSS 2.1 */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Lora', Georgia, serif;
-            background-color: var(--bg-color);
-            color: var(--text-primary);
+            background-color: #fdfcf9;
+            color: #1a1a1a;
             line-height: 1.6;
             margin: 0;
             padding: 40px;
@@ -39,7 +29,7 @@
             width: 250px;
             vertical-align: top;
             padding-right: 40px;
-            border-right: 1px solid var(--border-color);
+            border-right: 1px solid #d1d0c8;
         }
         
         .content-stream {
@@ -55,12 +45,12 @@
             font-weight: 700;
             line-height: 1.1;
             margin-bottom: 20px;
-            color: var(--text-primary);
+            color: #1a1a1a;
         }
         
         .byline {
             font-size: 14px;
-            color: var(--accent);
+            color: #1e4d3f;
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: 600;
@@ -73,7 +63,7 @@
             font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            color: var(--text-secondary);
+            color: #4a4a4a;
             display: block;
             margin-bottom: 2px;
             font-family: sans-serif;
@@ -81,10 +71,10 @@
         }
         .contact-value, .contact-value a {
             font-size: 14px;
-            color: var(--text-primary);
+            color: #1a1a1a;
             text-decoration: none;
         }
-        .contact-value a:hover { color: var(--accent); text-decoration: underline; }
+        .contact-value a:hover { color: #1e4d3f; text-decoration: underline; }
         
         /* Main Sections */
         .section-wrapper { margin-bottom: 40px; }
@@ -93,8 +83,8 @@
             font-family: 'Playfair Display', serif;
             font-size: 22px;
             font-weight: 700;
-            color: var(--accent);
-            border-bottom: 1px solid var(--border-color);
+            color: #1e4d3f;
+            border-bottom: 1px solid #d1d0c8;
             padding-bottom: 8px;
             margin-bottom: 20px;
             text-transform: capitalize;
@@ -105,14 +95,14 @@
             font-size: 18px;
             line-height: 1.7;
             font-style: italic;
-            color: var(--text-primary);
-            border-left: 3px solid var(--accent);
+            color: #1a1a1a;
+            border-left: 3px solid #1e4d3f;
             padding-left: 20px;
             margin: 0 0 40px 0;
         }
         
         /* Experience / Education Entries */
-        .exp-entry { margin-bottom: 24px; }
+        .exp-entry { margin-bottom: 24px; page-break-inside: avoid; }
         .exp-entry:last-child { margin-bottom: 0; }
         
         .exp-header {
@@ -129,40 +119,41 @@
         .exp-date {
             display: table-cell;
             font-size: 14px;
-            color: var(--text-secondary);
+            color: #4a4a4a;
             font-style: italic;
             text-align: right;
         }
         .exp-company {
             font-size: 15px;
-            color: var(--accent);
+            color: #1e4d3f;
             font-weight: 600;
             margin-bottom: 8px;
         }
         .exp-desc {
             font-size: 14px;
-            color: var(--text-secondary);
+            color: #4a4a4a;
             margin-bottom: 8px;
         }
         .exp-tech {
             font-size: 12px;
             font-family: sans-serif;
-            color: var(--text-secondary);
+            color: #4a4a4a;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         /* Skills */
-        .skills-prose { font-size: 14px; line-height: 1.8; color: var(--text-secondary); }
-        .skill-cat { font-weight: 600; color: var(--text-primary); margin-right: 6px; }
+        .skills-prose { font-size: 14px; line-height: 1.8; color: #4a4a4a; }
+        .skill-cat { font-weight: 600; color: #1a1a1a; margin-right: 6px; }
         .skill-items { font-variant: small-caps; letter-spacing: 0.5px; font-size: 15px; }
-        .skill-row { margin-bottom: 10px; }
+        .skill-row { margin-bottom: 10px; page-break-inside: avoid; }
 
         /* Projects */
         .proj-item {
             margin-bottom: 20px;
             padding-bottom: 20px;
-            border-bottom: 1px dotted var(--border-color);
+            border-bottom: 1px dotted #d1d0c8;
+            page-break-inside: avoid;
         }
         .proj-item:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
         
@@ -173,12 +164,12 @@
             font-size: 11px;
             font-family: sans-serif;
             text-transform: uppercase;
-            color: var(--accent);
+            color: #1e4d3f;
             text-decoration: none;
             margin-left: 10px;
             font-weight: 600;
         }
-        .proj-desc { font-size: 14px; color: var(--text-secondary); margin-bottom: 8px; }
+        .proj-desc { font-size: 14px; color: #4a4a4a; margin-bottom: 8px; }
     </style>
 </head>
 <body>
@@ -263,7 +254,7 @@
 
                     <div class="section-wrapper" th:case="'projects'" th:if="${profile.projects != null and !profile.projects.isEmpty()}">
                         <h2 class="section-header">Selected Works</h2>
-                        <div class="proj-item" th:each="proj : ${profile.projects}" th:if="${proj.isVisible}">
+                        <div class="proj-item" th:each="proj, stat : ${profile.projects}" th:if="${proj.isVisible and stat.index < 3}">
                             <div class="proj-header">
                                 <div class="proj-name" th:text="${proj.name}"></div>
                                 <div class="proj-links">
