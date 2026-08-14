@@ -24,28 +24,39 @@ public class PdfGeneratorService {
 
     private static final int FREE_DAILY_LIMIT = 50;
     
-    private String regularFontPath;
-    private String boldFontPath;
+    private java.util.List<String> registeredFontPaths = new java.util.ArrayList<>();
 
     @jakarta.annotation.PostConstruct
     public void initFonts() {
-        try {
-            java.nio.file.Path tempRegular = java.nio.file.Files.createTempFile("Roboto-Regular", ".ttf");
-            tempRegular.toFile().deleteOnExit();
-            java.nio.file.Path tempBold = java.nio.file.Files.createTempFile("Roboto-Bold", ".ttf");
-            tempBold.toFile().deleteOnExit();
-            
-            try (java.io.InputStream inReg = new org.springframework.core.io.ClassPathResource("fonts/Roboto-Regular.ttf").getInputStream()) {
-                java.nio.file.Files.copy(inReg, tempRegular, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+        String[] fontFiles = {
+            "Roboto-Regular.ttf", "Roboto-Bold.ttf",
+            "Inter-Regular.ttf", "Inter-Medium.ttf", "Inter-SemiBold.ttf", "Inter-Bold.ttf", "Inter-ExtraBold.ttf",
+            "SpaceGrotesk-Regular.ttf", "SpaceGrotesk-Medium.ttf", "SpaceGrotesk-SemiBold.ttf", "SpaceGrotesk-Bold.ttf",
+            "Lora-Regular.ttf", "Lora-Italic.ttf", "Lora-SemiBold.ttf",
+            "PlayfairDisplay-SemiBold.ttf", "PlayfairDisplay-Bold.ttf",
+            "Anton-Regular.ttf"
+        };
+
+        for (String fontFile : fontFiles) {
+            try {
+                org.springframework.core.io.Resource resource = new org.springframework.core.io.ClassPathResource("fonts/" + fontFile);
+                if (!resource.exists()) {
+                    System.err.println("WARN: Font " + fontFile + " not found in classpath. Skipping.");
+                    continue;
+                }
+                
+                String prefix = fontFile.substring(0, fontFile.lastIndexOf('.'));
+                java.nio.file.Path tempFile = java.nio.file.Files.createTempFile(prefix, ".ttf");
+                tempFile.toFile().deleteOnExit();
+                
+                try (java.io.InputStream in = resource.getInputStream()) {
+                    java.nio.file.Files.copy(in, tempFile, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                }
+                
+                registeredFontPaths.add(tempFile.toAbsolutePath().toString());
+            } catch (Exception e) {
+                System.err.println("ERROR: Failed to extract font " + fontFile + ": " + e.getMessage());
             }
-            try (java.io.InputStream inBold = new org.springframework.core.io.ClassPathResource("fonts/Roboto-Bold.ttf").getInputStream()) {
-                java.nio.file.Files.copy(inBold, tempBold, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-            }
-            
-            regularFontPath = tempRegular.toAbsolutePath().toString();
-            boldFontPath = tempBold.toAbsolutePath().toString();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to extract PDF fonts from classpath", e);
         }
     }
 
