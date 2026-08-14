@@ -1,17 +1,9 @@
 {
-  "inject-brains-protocol": {
-    "PreInvocation": [
+  "enforce-commits-and-journal": {
+    "Stop": [
       {
         "type": "command",
-        "command": "powershell.exe -ExecutionPolicy Bypass -NoProfile -File scripts/pre-invocation.ps1"
-      }
-    ]
-  },
-  "check-uncommitted-changes": {
-    "PostInvocation": [
-      {
-        "type": "command",
-        "command": "powershell.exe -ExecutionPolicy Bypass -NoProfile -File scripts/git-reminder.ps1"
+        "command": "powershell.exe -ExecutionPolicy Bypass -File .agents/hooks/stop-check-commits.ps1"
       }
     ]
   }

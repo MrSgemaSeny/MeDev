@@ -241,7 +241,7 @@
         <!-- SIDEBAR -->
         <div class="sidebar">
             <div class="avatar" th:if="${profile.githubUsername != null}">
-                <img th:src="@{'https://github.com/' + ${profile.githubUsername} + '.png'}" alt="Avatar" />
+                <img th:src="" alt="Avatar" />
             </div>
             <div class="avatar" th:unless="${profile.githubUsername != null}">
                 <span th:text="${profile.fullName != null and profile.fullName.length() gt 0 ? profile.fullName.substring(0,1).toUpperCase() : 'U'}" style="font-size: 120px; color: var(--text-primary);"></span>

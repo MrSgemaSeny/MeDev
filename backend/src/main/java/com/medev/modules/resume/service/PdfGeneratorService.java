@@ -42,6 +42,10 @@ public class PdfGeneratorService {
             context.setVariable("groupedSkills", groupedSkills);
         }
 
+        if (profile.getGithubUsername() != null && !profile.getGithubUsername().isBlank()) {
+            context.setVariable("avatarBase64", fetchAvatarBase64(profile.getGithubUsername()));
+        }
+
         if (profile.getLanguages() != null) {
             String languagesStr = profile.getLanguages().stream()
                     .map(l -> l.getName() + (l.getLevel() != null && !l.getLevel().isBlank() && !l.getLevel().equalsIgnoreCase("not specified") ? " (" + l.getLevel() + ")" : ""))
@@ -84,6 +88,10 @@ public class PdfGeneratorService {
             context.setVariable("groupedSkills", groupedSkills);
         }
 
+        if (profile.getGithubUsername() != null && !profile.getGithubUsername().isBlank()) {
+            context.setVariable("avatarBase64", fetchAvatarBase64(profile.getGithubUsername()));
+        }
+
         if (profile.getLanguages() != null) {
             String languagesStr = profile.getLanguages().stream()
                     .map(l -> l.getName() + (l.getLevel() != null && !l.getLevel().isBlank() && !l.getLevel().equalsIgnoreCase("not specified") ? " (" + l.getLevel() + ")" : ""))
@@ -107,5 +115,39 @@ public class PdfGeneratorService {
         String key = "resume:gen:" + userId + ":" + LocalDate.now();
         redisTemplate.opsForValue().increment(key);
         redisTemplate.expire(key, Duration.ofDays(1));
+    }
+
+    private String fetchAvatarBase64(String githubUsername) {
+        try {
+            java.net.URL url = new java.net.URL("https://github.com/" + githubUsername + ".png");
+            java.net.HttpURLConnection connection = (java.net.HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("User-Agent", "Mozilla/5.0");
+            connection.setConnectTimeout(3000);
+            connection.setReadTimeout(3000);
+            connection.setInstanceFollowRedirects(true);
+            
+            int status = connection.getResponseCode();
+            if (status == java.net.HttpURLConnection.HTTP_MOVED_TEMP
+                || status == java.net.HttpURLConnection.HTTP_MOVED_PERM
+                || status == java.net.HttpURLConnection.HTTP_SEE_OTHER) {
+                String newUrl = connection.getHeaderField("Location");
+                connection = (java.net.HttpURLConnection) new java.net.URL(newUrl).openConnection();
+                connection.setRequestProperty("User-Agent", "Mozilla/5.0");
+            }
+            if (connection.getResponseCode() != 200) return null;
+
+            try (java.io.InputStream in = connection.getInputStream();
+                 ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+                byte[] buffer = new byte[4096];
+                int n;
+                while ((n = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, n);
+                }
+                return "data:image/png;base64," + java.util.Base64.getEncoder().encodeToString(out.toByteArray());
+            }
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
