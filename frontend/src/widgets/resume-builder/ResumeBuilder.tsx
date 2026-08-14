@@ -141,23 +141,33 @@ export const ResumeBuilder = () => {
           {/* Layout Mode */}
           <section>
             <h2 className="text-xs font-bold text-[#8b949e] uppercase tracking-wider mb-4">PDF Layout Mode</h2>
-            <div className="flex bg-[#0d1117] border border-[#30363d] rounded-md p-1">
-              <button
+            <div className="flex items-center justify-center gap-4 bg-[#0d1117] border border-[#30363d] rounded-md p-3">
+              <span 
                 onClick={() => setSinglePageMode(false)}
-                className={`flex-1 text-xs py-1.5 rounded-sm transition-colors ${
-                  !isSinglePageMode ? 'bg-[#1f6feb] text-white' : 'text-[#8b949e] hover:text-[#c9d1d9]'
-                }`}
+                className={`text-xs font-medium cursor-pointer transition-colors ${!isSinglePageMode ? 'text-white' : 'text-[#8b949e] hover:text-[#c9d1d9]'}`}
               >
                 Multi-Page
-              </button>
+              </span>
+              
               <button
-                onClick={() => setSinglePageMode(true)}
-                className={`flex-1 text-xs py-1.5 rounded-sm transition-colors ${
-                  isSinglePageMode ? 'bg-[#1f6feb] text-white' : 'text-[#8b949e] hover:text-[#c9d1d9]'
+                onClick={() => setSinglePageMode(!isSinglePageMode)}
+                className={`relative inline-flex h-5 w-10 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  isSinglePageMode ? 'bg-[#238636]' : 'bg-[#30363d]'
                 }`}
               >
-                1 Page (Compact)
+                <span
+                  className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                    isSinglePageMode ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
               </button>
+
+              <span 
+                onClick={() => setSinglePageMode(true)}
+                className={`text-xs font-medium cursor-pointer transition-colors ${isSinglePageMode ? 'text-white' : 'text-[#8b949e] hover:text-[#c9d1d9]'}`}
+              >
+                1 Page
+              </span>
             </div>
           </section>
 
