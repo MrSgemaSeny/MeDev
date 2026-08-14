@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useResumeEditorStore } from '../../entities/resume/model/resumeEditorStore';
 import { api } from '../../shared/api/axios';
 import { useAiChatStore } from '../../features/ai-assistant/model/store';
-import { Bot, Download, ArrowUp, ArrowDown, FileText } from 'lucide-react';
+import { Bot, Download, ArrowUp, ArrowDown, FileText, Files, File } from 'lucide-react';
 
 const TEMPLATES = [
   { id: 'github', name: 'GitHub', desc: 'Dev Standard', accent: '#238636' },
@@ -139,35 +139,23 @@ export const ResumeBuilder = () => {
         <div className="flex-1 overflow-y-auto p-5 space-y-8">
           
           {/* Layout Mode */}
-          <section>
-            <h2 className="text-xs font-bold text-[#8b949e] uppercase tracking-wider mb-4">PDF Layout Mode</h2>
-            <div className="flex items-center justify-center gap-4 bg-[#0d1117] border border-[#30363d] rounded-md p-3">
-              <span 
+          <section className="flex items-center justify-between mb-2">
+            <h2 className="text-xs font-bold text-[#8b949e] uppercase tracking-wider">PDF Layout Mode</h2>
+            <div className="flex items-center gap-1 bg-[#0d1117] border border-[#30363d] rounded-md p-1">
+              <button 
                 onClick={() => setSinglePageMode(false)}
-                className={`text-xs font-medium cursor-pointer transition-colors ${!isSinglePageMode ? 'text-white' : 'text-[#8b949e] hover:text-[#c9d1d9]'}`}
+                className={`p-1.5 rounded-sm transition-colors ${!isSinglePageMode ? 'bg-[#1f6feb] text-white' : 'text-[#8b949e] hover:text-[#c9d1d9]'}`}
+                title="Multi-Page Layout"
               >
-                Multi-Page
-              </span>
-              
-              <button
-                onClick={() => setSinglePageMode(!isSinglePageMode)}
-                className={`relative inline-flex h-5 w-10 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  isSinglePageMode ? 'bg-[#238636]' : 'bg-[#30363d]'
-                }`}
-              >
-                <span
-                  className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
-                    isSinglePageMode ? 'translate-x-5' : 'translate-x-0'
-                  }`}
-                />
+                <Files size={14} />
               </button>
-
-              <span 
+              <button 
                 onClick={() => setSinglePageMode(true)}
-                className={`text-xs font-medium cursor-pointer transition-colors ${isSinglePageMode ? 'text-white' : 'text-[#8b949e] hover:text-[#c9d1d9]'}`}
+                className={`p-1.5 rounded-sm transition-colors ${isSinglePageMode ? 'bg-[#1f6feb] text-white' : 'text-[#8b949e] hover:text-[#c9d1d9]'}`}
+                title="1 Page (Compact) Layout"
               >
-                1 Page
-              </span>
+                <File size={14} />
+              </button>
             </div>
           </section>
 
