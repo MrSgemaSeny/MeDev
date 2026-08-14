@@ -139,23 +139,36 @@ export const ResumeBuilder = () => {
         <div className="flex-1 overflow-y-auto p-5 space-y-8">
           
           {/* Layout Mode */}
-          <section className="flex items-center justify-between mb-2">
+          <section className="flex items-center justify-between mb-4">
             <h2 className="text-xs font-bold text-[#8b949e] uppercase tracking-wider">PDF Layout Mode</h2>
-            <div className="flex items-center gap-1 bg-[#0d1117] border border-[#30363d] rounded-md p-1">
-              <button 
+            <div className="flex items-center gap-3 bg-[#0d1117] border border-[#30363d] rounded-md p-2">
+              <Files 
+                size={16} 
+                className={`cursor-pointer transition-colors ${!isSinglePageMode ? 'text-white' : 'text-[#8b949e] hover:text-[#c9d1d9]'}`}
                 onClick={() => setSinglePageMode(false)}
-                className={`p-1.5 rounded-sm transition-colors ${!isSinglePageMode ? 'bg-[#1f6feb] text-white' : 'text-[#8b949e] hover:text-[#c9d1d9]'}`}
                 title="Multi-Page Layout"
+              />
+              
+              <button
+                onClick={() => setSinglePageMode(!isSinglePageMode)}
+                className={`relative inline-flex h-5 w-10 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  isSinglePageMode ? 'bg-[#238636]' : 'bg-[#30363d]'
+                }`}
+                title="Toggle PDF Layout"
               >
-                <Files size={14} />
+                <span
+                  className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                    isSinglePageMode ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
               </button>
-              <button 
+
+              <File 
+                size={16} 
+                className={`cursor-pointer transition-colors ${isSinglePageMode ? 'text-white' : 'text-[#8b949e] hover:text-[#c9d1d9]'}`}
                 onClick={() => setSinglePageMode(true)}
-                className={`p-1.5 rounded-sm transition-colors ${isSinglePageMode ? 'bg-[#1f6feb] text-white' : 'text-[#8b949e] hover:text-[#c9d1d9]'}`}
                 title="1 Page (Compact) Layout"
-              >
-                <File size={14} />
-              </button>
+              />
             </div>
           </section>
 
