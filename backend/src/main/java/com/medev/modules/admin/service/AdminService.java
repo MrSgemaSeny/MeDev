@@ -48,7 +48,7 @@ public class AdminService {
     @Transactional(readOnly = true)
     public AdminDashboardDto getDashboardStats() {
         long totalUsers = userRepository.count();
-        long proUsers = 0; // Для этого нужен кастомный запрос в UserRepository, пока заглушка
+        long proUsers = userRepository.countByPlan(User.Plan.PRO);
         long auditCount = auditLogRepository.count();
 
         return AdminDashboardDto.builder()
