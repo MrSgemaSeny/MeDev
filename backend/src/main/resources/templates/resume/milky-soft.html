@@ -6,201 +6,185 @@
     <title th:text="${profile.fullName} + ' - Editorial Resume'">Editorial</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&amp;family=Playfair+Display:wght@700&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet" />
     <style>
         :root {
             --bg-color: #fdfcf9;
             --text-primary: #1a1a1a;
-            --text-secondary: #555555;
-            --accent: #2c5e50;
-            --border-color: #e0ded8;
+            --text-secondary: #4a4a4a;
+            --accent: #1e4d3f;
+            --border-color: #d1d0c8;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: 'Lora', serif;
+            font-family: 'Lora', Georgia, serif;
             background-color: var(--bg-color);
             color: var(--text-primary);
-            line-height: 1.7;
-            padding: 0;
+            line-height: 1.6;
             margin: 0;
-        }
-        .magazine-wrapper {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 60px 40px;
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            gap: 60px;
+            padding: 40px;
         }
         
-        /* Sticky Sidebar */
-        .sidebar {
-            position: sticky;
-            top: 60px;
-            height: max-content;
-            border-right: 1px solid var(--border-color);
-            padding-right: 40px;
+        /* Table Layout for PDF compatibility */
+        .magazine-wrapper {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            display: table;
+            table-layout: fixed;
         }
+        
+        .sidebar {
+            display: table-cell;
+            width: 250px;
+            vertical-align: top;
+            padding-right: 40px;
+            border-right: 1px solid var(--border-color);
+        }
+        
+        .content-stream {
+            display: table-cell;
+            vertical-align: top;
+            padding-left: 50px;
+        }
+        
+        /* Typography */
         h1.name {
             font-family: 'Playfair Display', serif;
-            font-size: 42px;
+            font-size: 38px;
+            font-weight: 700;
             line-height: 1.1;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             color: var(--text-primary);
         }
+        
         .byline {
-            font-size: 15px;
+            font-size: 14px;
             color: var(--accent);
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: 600;
-            margin-bottom: 32px;
+            margin-bottom: 30px;
         }
-        .contact-group {
-            margin-bottom: 16px;
-        }
+        
+        /* Contact Info */
+        .contact-group { margin-bottom: 16px; }
         .contact-label {
-            font-size: 11px;
+            font-size: 10px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             color: var(--text-secondary);
             display: block;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
+            font-family: sans-serif;
+            font-weight: 600;
         }
         .contact-value, .contact-value a {
-            font-size: 15px;
+            font-size: 14px;
             color: var(--text-primary);
             text-decoration: none;
-            transition: color 0.2s;
         }
-        .contact-value a:hover { color: var(--accent); }
+        .contact-value a:hover { color: var(--accent); text-decoration: underline; }
         
-        /* Main Content */
-        .content-stream {
-            display: flex;
-            flex-direction: column;
-            gap: 60px;
-        }
+        /* Main Sections */
+        .section-wrapper { margin-bottom: 40px; }
         
         h2.section-header {
             font-family: 'Playfair Display', serif;
-            font-size: 24px;
+            font-size: 22px;
+            font-weight: 700;
             color: var(--accent);
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 12px;
-            margin-bottom: 24px;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+            text-transform: capitalize;
         }
         
-        /* Summary Pull-Quote */
+        /* Summary */
         .pull-quote {
-            font-size: 22px;
-            line-height: 1.6;
+            font-size: 18px;
+            line-height: 1.7;
             font-style: italic;
             color: var(--text-primary);
-            border-left: 4px solid var(--accent);
-            padding-left: 24px;
-            margin: 0 0 20px 0;
+            border-left: 3px solid var(--accent);
+            padding-left: 20px;
+            margin: 0 0 40px 0;
         }
         
-        /* Experience Flow (No Cards) */
-        .exp-entry {
-            margin-bottom: 40px;
-            position: relative;
-        }
+        /* Experience / Education Entries */
+        .exp-entry { margin-bottom: 24px; }
         .exp-entry:last-child { margin-bottom: 0; }
+        
         .exp-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
+            width: 100%;
+            display: table;
             margin-bottom: 4px;
         }
         .exp-title {
-            font-size: 20px;
+            display: table-cell;
+            font-size: 18px;
             font-weight: 600;
+            text-align: left;
         }
         .exp-date {
+            display: table-cell;
             font-size: 14px;
             color: var(--text-secondary);
             font-style: italic;
+            text-align: right;
         }
         .exp-company {
-            font-size: 16px;
+            font-size: 15px;
             color: var(--accent);
-            margin-bottom: 12px;
             font-weight: 600;
+            margin-bottom: 8px;
         }
         .exp-desc {
-            font-size: 15px;
+            font-size: 14px;
             color: var(--text-secondary);
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
         .exp-tech {
-            font-size: 13px;
+            font-size: 12px;
             font-family: sans-serif;
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        /* Skills Small Caps */
-        .skills-prose {
-            font-size: 15px;
-            line-height: 1.8;
-            color: var(--text-secondary);
-        }
-        .skill-cat {
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-right: 8px;
-        }
-        .skill-items {
-            font-variant: small-caps;
-            letter-spacing: 0.5px;
-            font-size: 16px;
-        }
+        /* Skills */
+        .skills-prose { font-size: 14px; line-height: 1.8; color: var(--text-secondary); }
+        .skill-cat { font-weight: 600; color: var(--text-primary); margin-right: 6px; }
+        .skill-items { font-variant: small-caps; letter-spacing: 0.5px; font-size: 15px; }
+        .skill-row { margin-bottom: 10px; }
 
-        /* Projects Grid */
-        .proj-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 32px;
-        }
+        /* Projects */
         .proj-item {
-            border-top: 2px solid var(--border-color);
-            padding-top: 16px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px dotted var(--border-color);
         }
-        .proj-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 8px;
-        }
-        .proj-name {
-            font-size: 18px;
-            font-weight: 600;
-        }
+        .proj-item:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+        
+        .proj-header { width: 100%; display: table; margin-bottom: 6px; }
+        .proj-name { display: table-cell; font-size: 17px; font-weight: 600; text-align: left; }
+        .proj-links { display: table-cell; text-align: right; }
         .proj-links a {
-            font-size: 13px;
+            font-size: 11px;
             font-family: sans-serif;
             text-transform: uppercase;
             color: var(--accent);
             text-decoration: none;
-            margin-left: 12px;
+            margin-left: 10px;
+            font-weight: 600;
         }
-        .proj-desc { font-size: 14px; color: var(--text-secondary); }
-
-        @media (max-width: 900px) {
-            .magazine-wrapper { grid-template-columns: 1fr; gap: 40px; }
-            .sidebar { position: relative; top: 0; border-right: none; border-bottom: 1px solid var(--border-color); padding-right: 0; padding-bottom: 30px; }
-            .proj-grid { grid-template-columns: 1fr; }
-        }
+        .proj-desc { font-size: 14px; color: var(--text-secondary); margin-bottom: 8px; }
     </style>
 </head>
 <body>
     <div class="magazine-wrapper">
-        
         <!-- Sidebar -->
-        <aside class="sidebar">
+        <div class="sidebar">
             <div th:if="${profile.githubUsername != null}" style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; margin-bottom: 24px;">
                 <img th:src="@{'https://github.com/' + ${profile.githubUsername} + '.png'}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;" />
             </div>
@@ -223,10 +207,10 @@
                 <span class="contact-label">Telegram</span>
                 <span class="contact-value" th:text="${profile.telegram}"></span>
             </div>
-        </aside>
+        </div>
 
         <!-- Right Content Stream -->
-        <main class="content-stream">
+        <div class="content-stream">
             <th:block th:each="sectionName : ${profile.sectionOrder != null and !profile.sectionOrder.isEmpty() ? profile.sectionOrder : {'summary','experience','education','skills','languages','projects'}}">
                 <th:block th:switch="${sectionName}">
                     
@@ -234,7 +218,7 @@
                         <blockquote class="pull-quote" th:text="${profile.summary}"></blockquote>
                     </div>
 
-                    <section th:case="'experience'" th:if="${profile.experience != null and !profile.experience.isEmpty()}">
+                    <div class="section-wrapper" th:case="'experience'" th:if="${profile.experience != null and !profile.experience.isEmpty()}">
                         <h2 class="section-header">Professional Experience</h2>
                         <div class="exp-entry" th:each="exp : ${profile.experience}">
                             <div class="exp-header">
@@ -245,9 +229,9 @@
                             <div class="exp-desc" th:text="${exp.description}"></div>
                             <div class="exp-tech" th:if="${exp.techStack != null and !exp.techStack.isEmpty()}" th:text="${'Tech: ' + exp.techStack}"></div>
                         </div>
-                    </section>
+                    </div>
 
-                    <section th:case="'education'" th:if="${profile.education != null and !profile.education.isEmpty()}">
+                    <div class="section-wrapper" th:case="'education'" th:if="${profile.education != null and !profile.education.isEmpty()}">
                         <h2 class="section-header">Education</h2>
                         <div class="exp-entry" th:each="edu : ${profile.education}">
                             <div class="exp-header">
@@ -256,12 +240,12 @@
                             </div>
                             <div class="exp-desc" th:text="${edu.degree} + (edu.field != null ? ' in ' + edu.field : '')"></div>
                         </div>
-                    </section>
+                    </div>
 
-                    <section th:case="'skills'" th:if="${groupedSkills != null and !groupedSkills.isEmpty()}">
-                        <h2 class="section-header">Capabilities & Tools</h2>
+                    <div class="section-wrapper" th:case="'skills'" th:if="${groupedSkills != null and !groupedSkills.isEmpty()}">
+                        <h2 class="section-header">Capabilities &amp; Tools</h2>
                         <div class="skills-prose">
-                            <div style="margin-bottom: 12px;" th:each="entry : ${groupedSkills}">
+                            <div class="skill-row" th:each="entry : ${groupedSkills}">
                                 <span class="skill-cat" th:text="${entry.key + ':'}"></span>
                                 <span class="skill-items">
                                     <th:block th:each="skillName, iterStat : ${entry.value}">
@@ -270,34 +254,31 @@
                                 </span>
                             </div>
                         </div>
-                    </section>
+                    </div>
 
-                    <section th:case="'languages'" th:if="${languagesStr != null and !languagesStr.isEmpty()}">
+                    <div class="section-wrapper" th:case="'languages'" th:if="${languagesStr != null and !languagesStr.isEmpty()}">
                         <h2 class="section-header">Languages</h2>
                         <div class="skills-prose" th:text="${languagesStr}"></div>
-                    </section>
+                    </div>
 
-                    <section th:case="'projects'" th:if="${profile.projects != null and !profile.projects.isEmpty()}">
+                    <div class="section-wrapper" th:case="'projects'" th:if="${profile.projects != null and !profile.projects.isEmpty()}">
                         <h2 class="section-header">Selected Works</h2>
-                        <div class="proj-grid">
-                            <div class="proj-item" th:each="proj : ${profile.projects}" th:if="${proj.isVisible}">
-                                <div class="proj-header">
-                                    <div class="proj-name" th:text="${proj.name}"></div>
-                                    <div class="proj-links">
-                                        <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" target="_blank">GH</a>
-                                        <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" target="_blank">LIVE</a>
-                                    </div>
+                        <div class="proj-item" th:each="proj : ${profile.projects}" th:if="${proj.isVisible}">
+                            <div class="proj-header">
+                                <div class="proj-name" th:text="${proj.name}"></div>
+                                <div class="proj-links">
+                                    <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" target="_blank">GH</a>
+                                    <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" target="_blank">LIVE</a>
                                 </div>
-                                <div class="proj-desc" th:text="${proj.description}"></div>
-                                <div class="exp-tech" style="margin-top: 8px;" th:if="${proj.techStack != null and !proj.techStack.isEmpty()}" th:text="${proj.techStack}"></div>
                             </div>
+                            <div class="proj-desc" th:text="${proj.description}"></div>
+                            <div class="exp-tech" th:if="${proj.techStack != null and !proj.techStack.isEmpty()}" th:text="${proj.techStack}"></div>
                         </div>
-                    </section>
+                    </div>
 
                 </th:block>
             </th:block>
-        </main>
+        </div>
     </div>
 </body>
 </html>
-
