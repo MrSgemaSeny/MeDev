@@ -41,8 +41,9 @@
             font-size: 16px;
             font-weight: 600;
             color: #888888;
+            text-align: center;
         }
-        .hero-contact span { margin: 0 12px; }
+        .hero-contact span { display: inline-block; margin: 0 12px 12px 12px; }
         .hero-contact a { color: #ffffff; text-decoration: none; }
         .hero-contact a:hover { color: #ffa31a; }
         
@@ -146,13 +147,11 @@
         <th:block th:each="sectionName : ${profile.sectionOrder != null and !profile.sectionOrder.isEmpty() ? profile.sectionOrder : {'summary','experience','education','skills','projects'}}">
             <th:block th:switch="${sectionName}">
                 
-                <div class="section-block" th:case="'summary'" th:if="${profile.summary != null and !profile.summary.isEmpty()}">
-                    <div class="title-col">
-                        <h2 class="section-title"><span>01.</span> PROFILE</h2>
-                    </div>
-                    <div class="content-col">
-                        <div class="summary-txt" th:text="${profile.summary}"></div>
-                    </div>
+                <div th:case="'summary'" th:if="${profile.summary != null and !profile.summary.isEmpty()}" style="margin-bottom: 60px; background: #111; border: 1px solid #333; border-left: 6px solid #ffa31a; padding: 32px; page-break-inside: avoid;">
+                    <h2 style="font-family: 'Anton', Roboto, sans-serif; font-size: 28px; color: #fff; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px;">
+                        <span style="color: #ffa31a;">01.</span> PROFILE
+                    </h2>
+                    <div style="font-size: 18px; font-weight: 400; line-height: 1.6; color: #ddd;" th:text="${profile.summary}"></div>
                 </div>
                 <div class="section-block" th:case="'experience'" th:if="${profile.experience != null and !profile.experience.isEmpty()}">
                     <div class="title-col">
