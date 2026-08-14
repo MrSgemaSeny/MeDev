@@ -138,6 +138,29 @@ export const ResumeBuilder = () => {
 
         <div className="flex-1 overflow-y-auto p-5 space-y-8">
           
+          {/* Layout Mode */}
+          <section>
+            <h2 className="text-xs font-bold text-[#8b949e] uppercase tracking-wider mb-4">PDF Layout Mode</h2>
+            <div className="flex bg-[#0d1117] border border-[#30363d] rounded-md p-1">
+              <button
+                onClick={() => setSinglePageMode(false)}
+                className={`flex-1 text-xs py-1.5 rounded-sm transition-colors ${
+                  !isSinglePageMode ? 'bg-[#1f6feb] text-white' : 'text-[#8b949e] hover:text-[#c9d1d9]'
+                }`}
+              >
+                Multi-Page
+              </button>
+              <button
+                onClick={() => setSinglePageMode(true)}
+                className={`flex-1 text-xs py-1.5 rounded-sm transition-colors ${
+                  isSinglePageMode ? 'bg-[#1f6feb] text-white' : 'text-[#8b949e] hover:text-[#c9d1d9]'
+                }`}
+              >
+                1 Page (Compact)
+              </button>
+            </div>
+          </section>
+
           {/* Templates Section */}
           <section>
             <h2 className="text-xs font-bold text-[#8b949e] uppercase tracking-wider mb-4">Templates</h2>
@@ -169,28 +192,7 @@ export const ResumeBuilder = () => {
             </div>
           </section>
 
-          {/* Layout Mode */}
-          <section>
-            <h2 className="text-xs font-bold text-[#8b949e] uppercase tracking-wider mb-4">PDF Layout Mode</h2>
-            <div className="flex bg-[#0d1117] border border-[#30363d] rounded-md p-1">
-              <button
-                onClick={() => setSinglePageMode(true)}
-                className={`flex-1 text-xs py-1.5 rounded-sm transition-colors ${
-                  isSinglePageMode ? 'bg-[#1f6feb] text-white' : 'text-[#8b949e] hover:text-[#c9d1d9]'
-                }`}
-              >
-                1 Page (Compact)
-              </button>
-              <button
-                onClick={() => setSinglePageMode(false)}
-                className={`flex-1 text-xs py-1.5 rounded-sm transition-colors ${
-                  !isSinglePageMode ? 'bg-[#1f6feb] text-white' : 'text-[#8b949e] hover:text-[#c9d1d9]'
-                }`}
-              >
-                Multi-Page
-              </button>
-            </div>
-          </section>
+
 
           {/* Sections Management */}
           <section>
