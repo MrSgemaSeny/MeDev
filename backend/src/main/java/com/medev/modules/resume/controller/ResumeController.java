@@ -15,7 +15,7 @@ public class ResumeController {
     private final PdfGeneratorService pdfGeneratorService;
 
     @GetMapping("/generate/{template}")
-    public ResponseEntity<byte[]> generate(@PathVariable String template, @RequestParam(defaultValue = "false") boolean preview) {
+    public ResponseEntity<byte[]> generate(@PathVariable String template, @RequestParam(defaultValue = "false") boolean preview, @RequestParam(defaultValue = "true") boolean singlePage) {
         Long userId = SecurityUtils.getCurrentUserId();
         
         // Ensure user is PRO if they request pro templates
@@ -23,7 +23,7 @@ public class ResumeController {
             throw new com.medev.shared.exception.UnauthorizedException("PRO template requires PRO plan");
         }
         
-        byte[] pdf = pdfGeneratorService.generatePdf(userId, template, preview);
+        byte[] pdf = pdfGeneratorService.generatePdf(userId, template, preview, singlePage);
 
         String disposition = preview ? "inline" : "attachment";
         return ResponseEntity.ok()
@@ -33,14 +33,14 @@ public class ResumeController {
     }
 
     @GetMapping(value = "/html/{template}", produces = "text/html;charset=UTF-8")
-    public ResponseEntity<String> generateHtml(@PathVariable String template, @RequestParam(defaultValue = "false") boolean preview) {
+    public ResponseEntity<String> generateHtml(@PathVariable String template, @RequestParam(defaultValue = "false") boolean preview, @RequestParam(defaultValue = "true") boolean singlePage) {
         Long userId = SecurityUtils.getCurrentUserId();
         
         if (template.toLowerCase().contains("pro")) {
             throw new com.medev.shared.exception.UnauthorizedException("PRO template requires PRO plan");
         }
         
-        String html = pdfGeneratorService.generateHtml(userId, template, preview);
+        String html = pdfGeneratorService.generateHtml(userId, template, preview, singlePage);
 
         String disposition = preview ? "inline" : "attachment";
         return ResponseEntity.ok()

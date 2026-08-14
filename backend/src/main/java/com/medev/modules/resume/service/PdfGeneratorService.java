@@ -61,7 +61,7 @@ public class PdfGeneratorService {
         }
     }
 
-    public byte[] generatePdf(Long userId, String templateName, boolean isPreview) {
+    public byte[] generatePdf(Long userId, String templateName, boolean isPreview, boolean singlePage) {
         if (!isPreview) {
             checkGenerationLimit(userId);
         }
@@ -71,6 +71,7 @@ public class PdfGeneratorService {
         Context context = new Context();
         context.setVariable("profile", profile);
         context.setVariable("generatedAt", LocalDate.now());
+        context.setVariable("singlePage", singlePage);
         
         if (profile.getSkills() != null) {
             java.util.Map<String, java.util.List<String>> groupedSkills = profile.getSkills().stream()
@@ -120,7 +121,7 @@ public class PdfGeneratorService {
         }
     }
 
-    public String generateHtml(Long userId, String templateName, boolean isPreview) {
+    public String generateHtml(Long userId, String templateName, boolean isPreview, boolean singlePage) {
         if (!isPreview) {
             checkGenerationLimit(userId);
         }
@@ -130,6 +131,7 @@ public class PdfGeneratorService {
         Context context = new Context();
         context.setVariable("profile", profile);
         context.setVariable("generatedAt", LocalDate.now());
+        context.setVariable("singlePage", singlePage);
         
         if (profile.getSkills() != null) {
             java.util.Map<String, java.util.List<String>> groupedSkills = profile.getSkills().stream()

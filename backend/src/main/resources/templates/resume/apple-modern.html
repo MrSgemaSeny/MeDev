@@ -93,13 +93,31 @@
         .two-col { width: 100%; }
         .col-half { display: inline-block; width: 48%; vertical-align: top; margin-bottom: 20px; page-break-inside: avoid; }
         .skill-title { font-size: 14px; font-weight: 600; color: #86868b; text-transform: uppercase; margin-bottom: 10px; }
+        
+        /* Single Page Overrides */
+        body.single-page { padding: 20px 24px; line-height: 1.4; }
+        .single-page .hero { margin-bottom: 24px; }
+        .single-page .hero-avatar { width: 64px !important; height: 64px !important; margin-bottom: 10px !important; }
+        .single-page .hero h1 { font-size: 28px; margin-bottom: 4px; }
+        .single-page .hero-meta { font-size: 11px; }
+        .single-page .spec-section { margin-bottom: 16px; padding-bottom: 16px; page-break-inside: auto; }
+        .single-page .section-label { width: 140px; font-size: 13px; }
+        .single-page .summary-text { font-size: 11.5px; }
+        .single-page .item { margin-bottom: 12px; }
+        .single-page .item-title { font-size: 13px; }
+        .single-page .item-date { font-size: 10px; }
+        .single-page .item-subtitle { font-size: 11.5px; margin-bottom: 4px; }
+        .single-page .item-desc { font-size: 11px; margin-bottom: 6px; }
+        .single-page .spec-tag { padding: 2px 8px; font-size: 9.5px; margin-right: 4px; margin-bottom: 4px; }
+        .single-page .col-half { margin-bottom: 10px; }
+        .single-page .skill-title { font-size: 11px; margin-bottom: 6px; }
     </style>
 </head>
-<body>
+<body th:classappend="${singlePage != null and singlePage} ? 'single-page' : 'multi-page'">
     <div class="container">
         
         <div class="hero">
-            <div th:if="${profile.githubUsername != null}" style="width: 96px; height: 96px; border-radius: 50%; overflow: hidden; margin: 0 auto 20px auto;">
+            <div class="hero-avatar" th:if="${profile.githubUsername != null}" style="width: 96px; height: 96px; border-radius: 50%; overflow: hidden; margin: 0 auto 20px auto;">
                 <img th:src="${avatarBase64 ?: 'https://github.com/' + profile.githubUsername + '.png'}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;" />
             </div>
             <h1 th:text="${profile.fullName}">Name</h1>

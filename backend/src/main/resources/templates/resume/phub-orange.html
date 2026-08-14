@@ -121,12 +121,32 @@
         .pc-name { display: table-cell; }
         .pc-links { display: table-cell; text-align: right; }
         .pc-links a { color: #ffa31a; font-size: 14px; font-family: 'Inter', Roboto, sans-serif; text-decoration: none; margin-left: 12px; }
+        
+        /* Single Page Overrides */
+        body.single-page { padding: 24px; }
+        .single-page .hero-section { padding: 20px 0; margin-bottom: 24px; }
+        .single-page .hero-avatar { width: 72px !important; height: 72px !important; margin-bottom: 12px !important; }
+        .single-page .hero-name { font-size: 40px; margin-bottom: 12px; }
+        .single-page .hero-contact { font-size: 11px; }
+        .single-page .hero-contact span { margin: 0 8px 8px 8px; }
+        .single-page .section-block { margin-bottom: 24px; page-break-inside: auto; }
+        .single-page .section-title { font-size: 20px; margin-bottom: 16px; padding-bottom: 4px; }
+        .single-page .summary-txt { font-size: 13px; padding-left: 12px; }
+        .single-page .entry { margin-bottom: 16px; }
+        .single-page .entry-title { font-size: 15px; }
+        .single-page .entry-date { font-size: 11px; }
+        .single-page .entry-subtitle { font-size: 13px; margin-bottom: 4px; }
+        .single-page .entry-desc { font-size: 11.5px; margin-bottom: 6px; }
+        .single-page .hero-tag { font-size: 10px; padding: 2px 8px; margin-right: 4px; margin-bottom: 4px; }
+        .single-page .poster-card { padding: 12px; margin-bottom: 12px; }
+        .single-page .pc-title { font-size: 16px; margin-bottom: 8px; }
+        .single-page .pc-links a { font-size: 10.5px; margin-left: 8px; }
     </style>
 </head>
-<body>
+<body th:classappend="${singlePage != null and singlePage} ? 'single-page' : 'multi-page'">
     <div class="container">
         <header class="hero-section">
-            <div th:if="${profile.githubUsername != null}" style="width: 120px; height: 120px; border-radius: 50%; overflow: hidden; margin: 0 auto 24px auto; border: 2px solid #ffa31a;">
+            <div class="hero-avatar" th:if="${profile.githubUsername != null}" style="width: 120px; height: 120px; border-radius: 50%; overflow: hidden; margin: 0 auto 24px auto; border: 2px solid #ffa31a;">
                 <img th:src="${avatarBase64 ?: 'https://github.com/' + profile.githubUsername + '.png'}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; vertical-align: middle;" />
             </div>
             <div class="hero-name">

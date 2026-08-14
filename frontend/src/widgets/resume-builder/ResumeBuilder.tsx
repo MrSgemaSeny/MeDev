@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useResumeEditorStore } from '../../entities/resume/model/resumeEditorStore';
 import { api } from '../../shared/api/axios';
 import { useAiChatStore } from '../../features/ai-assistant/model/store';
@@ -13,7 +13,7 @@ const TEMPLATES = [
 ];
 
 export const ResumeBuilder = () => {
-  const { sections, selectedTemplate, setTemplate, toggleSection, reorderSections } = useResumeEditorStore();
+  const { sections, selectedTemplate, isSinglePageMode, setTemplate, setSinglePageMode, toggleSection, reorderSections } = useResumeEditorStore();
   const { toggleChat, isOpen } = useAiChatStore();
 
   const handleAiAnalysis = () => {
@@ -47,7 +47,7 @@ export const ResumeBuilder = () => {
 
   const handleDownloadPdf = async () => {
     try {
-      const { data } = await api.get(`/resume/generate/${selectedTemplate}`, { responseType: 'blob' });
+      const { data } = await api.get(`/resume/generate/${selectedTemplate}?singlePage=${isSinglePageMode}`, { responseType: 'blob' });
       const url = window.URL.createObjectURL(new Blob([data], { type: 'application/pdf' }));
       const a = window.document.createElement('a');
       a.href = url;
@@ -66,7 +66,7 @@ export const ResumeBuilder = () => {
 
   const handleDownloadHtml = async () => {
     try {
-      const { data } = await api.get(`/resume/html/${selectedTemplate}`, { responseType: 'blob' });
+      const { data } = await api.get(`/resume/html/${selectedTemplate}?singlePage=${isSinglePageMode}`, { responseType: 'blob' });
       const url = window.URL.createObjectURL(new Blob([data], { type: 'text/html' }));
       const a = window.document.createElement('a');
       a.href = url;
@@ -92,12 +92,12 @@ export const ResumeBuilder = () => {
   useEffect(() => {
     let active = true;
     let urlToRevoke: string | null = null;
-    let timeoutId: NodeJS.Timeout;
+    let timeoutId: ReturnType<typeof setTimeout>;
 
     const loadPreview = async () => {
       setPreviewLoading(true);
       try {
-        const { data } = await api.get(`/resume/html/${selectedTemplate}?preview=true`, { responseType: 'blob' });
+        const { data } = await api.get(`/resume/html/${selectedTemplate}?preview=true&singlePage=${isSinglePageMode}`, { responseType: 'blob' });
         if (active) {
           const url = window.URL.createObjectURL(new Blob([data], { type: 'text/html' }));
           urlToRevoke = url;
@@ -122,7 +122,7 @@ export const ResumeBuilder = () => {
         window.URL.revokeObjectURL(urlToRevoke);
       }
     };
-  }, [selectedTemplate]);
+  }, [selectedTemplate, isSinglePageMode]);
 
   return (
     <div className="flex h-full bg-[#010409] text-[#c9d1d9] overflow-hidden font-sans">
@@ -169,6 +169,29 @@ export const ResumeBuilder = () => {
             </div>
           </section>
 
+          {/* Layout Mode */}
+          <section>
+            <h2 className="text-xs font-bold text-[#8b949e] uppercase tracking-wider mb-4">PDF Layout Mode</h2>
+            <div className="flex bg-[#0d1117] border border-[#30363d] rounded-md p-1">
+              <button
+                onClick={() => setSinglePageMode(true)}
+                className={`flex-1 text-xs py-1.5 rounded-sm transition-colors ${
+                  isSinglePageMode ? 'bg-[#1f6feb] text-white' : 'text-[#8b949e] hover:text-[#c9d1d9]'
+                }`}
+              >
+                1 Page (Compact)
+              </button>
+              <button
+                onClick={() => setSinglePageMode(false)}
+                className={`flex-1 text-xs py-1.5 rounded-sm transition-colors ${
+                  !isSinglePageMode ? 'bg-[#1f6feb] text-white' : 'text-[#8b949e] hover:text-[#c9d1d9]'
+                }`}
+              >
+                Multi-Page
+              </button>
+            </div>
+          </section>
+
           {/* Sections Management */}
           <section>
             <h2 className="text-xs font-bold text-[#8b949e] uppercase tracking-wider mb-4">Sections Content</h2>
@@ -209,7 +232,6 @@ export const ResumeBuilder = () => {
               ))}
             </div>
           </section>
-
         </div>
 
         {/* Footer Actions */}

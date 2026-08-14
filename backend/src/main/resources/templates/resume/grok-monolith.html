@@ -15,6 +15,32 @@
             padding: 16px;
             font-size: 10.5px;
         }
+        
+        /* Multi-Page Overrides */
+        body.multi-page { padding: 24px; font-size: 11px; line-height: 1.4; }
+        .multi-page .bento-card { padding: 16px; margin-bottom: 12px; font-size: 11px; }
+        .multi-page .card-projects { page-break-inside: avoid; }
+        .multi-page h2.card-title { font-size: 12px; margin-bottom: 16px; padding-bottom: 8px; }
+        .multi-page .text-body { font-size: 11px; }
+        .multi-page .text-dim { font-size: 10px; }
+        .multi-page .contact-row { padding-bottom: 6px; margin-bottom: 6px; }
+        .multi-page .contact-row-left, .multi-page .contact-row-right { font-size: 11px; }
+        .multi-page .feed-item { margin-bottom: 12px; }
+        .multi-page .feed-item::before { left: -5px; width: 8px; height: 8px; }
+        .multi-page .feed-title { font-size: 12px; }
+        .multi-page .feed-date { font-size: 10px; }
+        .multi-page .feed-subtitle { font-size: 11px; }
+        .multi-page .tags { margin-top: 8px; }
+        .multi-page .tag { padding: 2px 8px; font-size: 10px; margin-right: 4px; margin-bottom: 4px; }
+        .multi-page .skill-group { margin-bottom: 12px; }
+        .multi-page .skill-group-title { font-size: 11px; margin-bottom: 6px; }
+        .multi-page .project-card { padding: 16px; margin-bottom: 16px; }
+        .multi-page .project-header { margin-bottom: 10px; }
+        .multi-page .project-title { font-size: 15px; }
+        .multi-page .project-link { margin-left: 12px; font-size: 12px; }
+        .multi-page .project-desc { font-size: 13px; margin-bottom: 12px; }
+        .multi-page .project-tag { padding: 4px 8px; font-size: 11px; }
+        
         .bento-container {
             max-width: 100%;
             margin: 0 auto;
@@ -133,9 +159,18 @@
         /* Skills Group */
         .skill-group { margin-bottom: 8px; page-break-inside: avoid; }
         .skill-group-title { font-size: 10.5px; font-weight: 600; color: #f4f4f5; margin-bottom: 4px; }
+
+        /* Project Cards */
+        .project-card { border: 1px solid #27272a; border-radius: 8px; padding: 10px; background: #09090b; margin-bottom: 10px; page-break-inside: avoid; }
+        .project-header { display: table; width: 100%; margin-bottom: 6px; }
+        .project-title { display: table-cell; font-size: 11.5px; font-weight: 700; }
+        .project-meta { display: table-cell; text-align: right; }
+        .project-link { color: #a1a1aa; text-decoration: none; margin-left: 8px; font-size: 10px; }
+        .project-desc { font-size: 10.5px; margin-bottom: 8px; color: #f4f4f5; line-height: 1.4; }
+        .project-tag { display: inline-block; background: #09090b; border: 1px solid #27272a; padding: 2px 6px; border-radius: 12px; font-size: 9px; font-weight: 500; color: #a1a1aa; margin-right: 3px; margin-bottom: 3px; }
     </style>
 </head>
-<body>
+<body th:classappend="${singlePage != null and !singlePage} ? 'multi-page' : 'single-page'">
     <div class="bento-container">
         
         <!-- Profile Header -->
@@ -232,17 +267,17 @@
                     <div style="display: table; width: 100%; table-layout: fixed;">
                         <!-- Left Column (First Half) -->
                         <div style="display: table-cell; width: 48%; vertical-align: top;">
-                            <div style="border: 1px solid #27272a; border-radius: 8px; padding: 10px; background: #09090b; margin-bottom: 10px; page-break-inside: avoid;" th:each="proj, stat : ${profile.projects}" th:if="${proj.isVisible and stat.index < (profile.projects.size() + 1) / 2}">
-                                <div class="feed-header" style="margin-bottom: 6px;">
-                                    <div class="feed-title" style="font-size: 11.5px; font-weight: 700;" th:text="${proj.name}"></div>
-                                    <div class="feed-date" style="text-align: right;">
-                                        <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" style="color:#a1a1aa; text-decoration:none; margin-left:8px; font-size: 10px;">Git</a>
-                                        <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" style="color:#a1a1aa; text-decoration:none; margin-left:8px; font-size: 10px;">Live</a>
+                            <div class="project-card" th:each="proj, stat : ${profile.projects}" th:if="${proj.isVisible and stat.index < (profile.projects.size() + 1) / 2}">
+                                <div class="project-header">
+                                    <div class="project-title" th:text="${proj.name}"></div>
+                                    <div class="project-meta">
+                                        <a class="project-link" th:if="${proj.githubUrl}" th:href="${proj.githubUrl}">Git</a>
+                                        <a class="project-link" th:if="${proj.liveUrl}" th:href="${proj.liveUrl}">Live</a>
                                     </div>
                                 </div>
-                                <div class="text-body" style="font-size: 10.5px; margin-bottom: 8px;" th:text="${proj.description}"></div>
+                                <div class="project-desc" th:text="${proj.description}"></div>
                                 <div class="tags" style="margin-top:0;" th:if="${proj.techStack != null and !proj.techStack.isEmpty()}">
-                                    <span class="tag" style="padding: 2px 6px; border-radius: 12px; font-size: 9px; font-weight: 500;" th:text="${proj.techStack}"></span>
+                                    <span class="project-tag" th:text="${proj.techStack}"></span>
                                 </div>
                             </div>
                         </div>
@@ -250,17 +285,17 @@
                         <div style="display: table-cell; width: 4%;"></div>
                         <!-- Right Column (Second Half) -->
                         <div style="display: table-cell; width: 48%; vertical-align: top;">
-                            <div style="border: 1px solid #27272a; border-radius: 8px; padding: 10px; background: #09090b; margin-bottom: 10px; page-break-inside: avoid;" th:each="proj, stat : ${profile.projects}" th:if="${proj.isVisible and stat.index >= (profile.projects.size() + 1) / 2}">
-                                <div class="feed-header" style="margin-bottom: 6px;">
-                                    <div class="feed-title" style="font-size: 11.5px; font-weight: 700;" th:text="${proj.name}"></div>
-                                    <div class="feed-date" style="text-align: right;">
-                                        <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" style="color:#a1a1aa; text-decoration:none; margin-left:8px; font-size: 10px;">Git</a>
-                                        <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" style="color:#a1a1aa; text-decoration:none; margin-left:8px; font-size: 10px;">Live</a>
+                            <div class="project-card" th:each="proj, stat : ${profile.projects}" th:if="${proj.isVisible and stat.index >= (profile.projects.size() + 1) / 2}">
+                                <div class="project-header">
+                                    <div class="project-title" th:text="${proj.name}"></div>
+                                    <div class="project-meta">
+                                        <a class="project-link" th:if="${proj.githubUrl}" th:href="${proj.githubUrl}">Git</a>
+                                        <a class="project-link" th:if="${proj.liveUrl}" th:href="${proj.liveUrl}">Live</a>
                                     </div>
                                 </div>
-                                <div class="text-body" style="font-size: 10.5px; margin-bottom: 8px;" th:text="${proj.description}"></div>
+                                <div class="project-desc" th:text="${proj.description}"></div>
                                 <div class="tags" style="margin-top:0;" th:if="${proj.techStack != null and !proj.techStack.isEmpty()}">
-                                    <span class="tag" style="padding: 2px 6px; border-radius: 12px; font-size: 9px; font-weight: 500;" th:text="${proj.techStack}"></span>
+                                    <span class="project-tag" th:text="${proj.techStack}"></span>
                                 </div>
                             </div>
                         </div>

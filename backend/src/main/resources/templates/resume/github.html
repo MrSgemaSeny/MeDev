@@ -219,9 +219,37 @@
             font-size: 14px;
             color: #c9d1d9;
         }
+        
+        /* Single Page Overrides */
+        body.single-page { padding: 20px; font-size: 11px; }
+        .single-page .avatar { width: 80px; height: 80px; margin-bottom: 12px; line-height: 80px; }
+        .single-page .fullname { font-size: 18px; }
+        .single-page .username { font-size: 13px; line-height: 18px; }
+        .single-page .bio { font-size: 11px; margin-bottom: 12px; }
+        .single-page .contact-list { font-size: 11px; margin-bottom: 16px; }
+        .single-page .contact-item { margin-bottom: 4px; }
+        .single-page .sidebar-section { padding-top: 12px; margin-top: 12px; }
+        .single-page h3.side-title { font-size: 13px; margin-bottom: 12px; }
+        .single-page .skills-group-title { font-size: 10px; margin-bottom: 4px; }
+        .single-page .tag { padding: 1px 6px; font-size: 9px; margin-right: 4px; margin-bottom: 4px; }
+        .single-page .section-header { font-size: 14px; margin-bottom: 12px; padding-bottom: 6px; }
+        .single-page .projects-wrapper { margin-bottom: 16px; }
+        .single-page .pinned-card { padding: 12px; margin-bottom: 12px; }
+        .single-page .repo-title { font-size: 13px; margin-bottom: 6px; }
+        .single-page .repo-desc { font-size: 11px; margin-bottom: 8px; }
+        .single-page .repo-meta { font-size: 10px; }
+        .single-page .timeline-container { margin-bottom: 16px; }
+        .single-page .timeline-content-td { padding-bottom: 16px; padding-left: 12px; }
+        .single-page .timeline-content { padding-bottom: 12px; }
+        .single-page .timeline-title { font-size: 13px; }
+        .single-page .timeline-date { font-size: 10.5px; }
+        .single-page .timeline-subtitle { font-size: 11.5px; margin-bottom: 6px; }
+        .single-page .timeline-desc { font-size: 11px; }
+        .single-page .sidebar { width: 180px; padding-right: 16px; }
+        .single-page .main-content { padding-left: 16px; }
     </style>
 </head>
-<body>
+<body th:classappend="${singlePage != null and singlePage} ? 'single-page' : 'multi-page'">
     <div class="container">
         
         <!-- SIDEBAR -->

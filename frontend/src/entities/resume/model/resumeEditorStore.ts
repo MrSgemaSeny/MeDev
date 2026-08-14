@@ -18,10 +18,12 @@ export interface Section {
 interface ResumeEditorStore {
   sections: Section[];
   selectedTemplate: string;
+  isSinglePageMode: boolean;
   setSections: (sections: Section[]) => void;
   toggleSection: (id: string) => void;
   reorderSections: (from: number, to: number) => void;
   setTemplate: (template: string) => void;
+  setSinglePageMode: (mode: boolean) => void;
 }
 
 const DEFAULT_SECTIONS: Section[] = [
@@ -37,6 +39,8 @@ export const useResumeEditorStore = create<ResumeEditorStore>((set) => ({
   sections: DEFAULT_SECTIONS,
   selectedTemplate: 'github',
 
+  isSinglePageMode: true,
+  
   setSections: (sections) => set({ sections }),
 
   toggleSection: (id) => set((state) => ({
@@ -53,4 +57,5 @@ export const useResumeEditorStore = create<ResumeEditorStore>((set) => ({
   }),
 
   setTemplate: (selectedTemplate) => set({ selectedTemplate }),
+  setSinglePageMode: (isSinglePageMode) => set({ isSinglePageMode }),
 }));

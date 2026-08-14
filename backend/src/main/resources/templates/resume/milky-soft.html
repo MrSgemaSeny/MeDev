@@ -168,9 +168,36 @@
             font-weight: 600;
         }
         .proj-desc { font-size: 14px; color: #4a4a4a; margin-bottom: 8px; }
+
+        /* Grid layout for skills */
+        .skills-grid { width: 100%; display: table; }
+        .skill-column { display: table-cell; width: 50%; vertical-align: top; padding-right: 20px; page-break-inside: avoid; }
+        .skill-list { font-size: 14px; color: #4a4a4a; line-height: 1.6; }
+        
+        /* Single Page Overrides */
+        body.single-page { padding: 24px; line-height: 1.4; }
+        .single-page h1.name { font-size: 26px; margin-bottom: 8px; }
+        .single-page .byline { font-size: 11px; margin-bottom: 16px; }
+        .single-page .sidebar { padding-bottom: 16px; margin-bottom: 20px; }
+        .single-page .contact-group { margin-bottom: 8px; display: inline-block; margin-right: 24px; }
+        .single-page .contact-label { font-size: 9px; }
+        .single-page .contact-value, .single-page .contact-value a { font-size: 11px; }
+        .single-page h2.section-header { font-size: 16px; margin-bottom: 12px; padding-bottom: 4px; }
+        .single-page .section-wrapper { margin-bottom: 20px; page-break-inside: auto; }
+        .single-page .pull-quote { font-size: 13px; padding-left: 12px; margin: 0 0 16px 0; }
+        .single-page .exp-entry { margin-bottom: 12px; }
+        .single-page .exp-title { font-size: 14px; }
+        .single-page .exp-date { font-size: 11px; }
+        .single-page .exp-company { font-size: 12px; margin-bottom: 4px; }
+        .single-page .exp-desc { font-size: 11.5px; margin-bottom: 6px; }
+        .single-page .exp-tech { font-size: 10px; }
+        .single-page .skill-list { font-size: 11.5px; }
+        .single-page .proj-entry { margin-bottom: 12px; }
+        .single-page .proj-title { font-size: 14px; }
+        .single-page .proj-desc { font-size: 11.5px; margin-bottom: 4px; }
     </style>
 </head>
-<body>
+<body th:classappend="${singlePage != null and singlePage} ? 'single-page' : 'multi-page'">
     <div class="magazine-wrapper">
         <!-- Sidebar -->
         <div class="sidebar">
