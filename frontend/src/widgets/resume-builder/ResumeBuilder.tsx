@@ -146,7 +146,6 @@ export const ResumeBuilder = () => {
                 size={16} 
                 className={`cursor-pointer transition-colors ${!isSinglePageMode ? 'text-white' : 'text-[#8b949e] hover:text-[#c9d1d9]'}`}
                 onClick={() => setSinglePageMode(false)}
-                title="Multi-Page Layout"
               />
               
               <button
@@ -167,7 +166,6 @@ export const ResumeBuilder = () => {
                 size={16} 
                 className={`cursor-pointer transition-colors ${isSinglePageMode ? 'text-white' : 'text-[#8b949e] hover:text-[#c9d1d9]'}`}
                 onClick={() => setSinglePageMode(true)}
-                title="1 Page (Compact) Layout"
               />
             </div>
           </section>
