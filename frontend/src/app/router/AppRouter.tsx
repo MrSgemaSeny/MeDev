@@ -19,6 +19,8 @@ const AdminDashboardPage = lazy(() => import('../../pages/admin/AdminDashboardPa
 const AdminUsersPage = lazy(() => import('../../pages/admin/AdminUsersPage').then(m => ({ default: m.AdminUsersPage })));
 const AdminAuditPage = lazy(() => import('../../pages/admin/AdminAuditPage').then(m => ({ default: m.AdminAuditPage })));
 const SettingsPage = lazy(() => import('../../pages/settings/SettingsPage').then(m => ({ default: m.SettingsPage })));
+const PrivacyPolicy = lazy(() => import('../../pages/legal/PrivacyPolicy').then(m => ({ default: m.PrivacyPolicy })));
+const TermsOfService = lazy(() => import('../../pages/legal/TermsOfService').then(m => ({ default: m.TermsOfService })));
 import { AdminGuard } from '../providers/AdminGuard';
 
 const PageLoader = () => (
@@ -109,7 +111,11 @@ const router = createBrowserRouter([
   },
   {
     element: <PublicLayout />,
-    children: [{ path: '/portfolio/:username', element: <PortfolioPage /> }],
+    children: [
+      { path: '/portfolio/:username', element: <PortfolioPage /> },
+      { path: '/privacy', element: <PrivacyPolicy /> },
+      { path: '/terms', element: <TermsOfService /> },
+    ],
   },
 ], { basename: import.meta.env.BASE_URL });
 

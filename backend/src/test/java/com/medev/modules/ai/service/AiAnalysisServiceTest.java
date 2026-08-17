@@ -38,7 +38,8 @@ public class AiAnalysisServiceTest {
 
     @BeforeEach
     void setUp() {
-        aiAnalysisService = new AiAnalysisService(llmProvider, promptLoader, objectMapper);
+        PiiMasker piiMasker = new PiiMasker();
+        aiAnalysisService = new AiAnalysisService(llmProvider, promptLoader, objectMapper, piiMasker);
         org.mockito.Mockito.lenient().when(promptLoader.load(anyString())).thenReturn("test prompt");
     }
 
@@ -104,8 +105,8 @@ public class AiAnalysisServiceTest {
         MockMultipartFile file = new MockMultipartFile("file", "test.pdf", "application/pdf", "random bytes".getBytes());
 
         assertThatThrownBy(() -> aiAnalysisService.parseResumePdf(file, new com.medev.modules.profile.dto.ProfileDto()))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("Failed to read PDF file");
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Invalid PDF magic bytes");
     }
 
     @Test
