@@ -7,6 +7,7 @@ spring:
     redis:
       host: localhost
       port: 6379
+      password: ${SPRING_DATA_REDIS_PASSWORD:medev_redis_pass_123}
   security:
     oauth2:
       client:

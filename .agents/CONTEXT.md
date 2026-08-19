@@ -2,6 +2,7 @@
 
 ## Status
 - **Project Stage**: Production-Ready MVP
+- **Developer Level**: Middle / Strong Middle (based on comprehensive audit of MeDev and JF-1C architectures)
 - **Latest Work**:
   - Validated and verified full implementation of Sprint 1 (Bucket4j Rate Limiting, GlobalExceptionHandler, File upload limits, Config Validation, Axios Refresh Interceptor, Code Splitting).
   - Validated and verified full implementation of Sprint 2 (ProfileService decomposition, MapStruct, GroqClient resilience).
@@ -37,7 +38,10 @@
   - **Comprehensive Test Coverage (Phase 1-4)**: Implemented full backend integration testing suite via `AbstractIntegrationTest` with Testcontainers (PostgreSQL, Redis), safely bypassing security config conflicts. Implemented comprehensive frontend testing using `vitest` + `@testing-library/react` covering all `Zustand` stores and complex React components with accessibility fixes (added `id`/`htmlFor` to inputs). Fully resolved Spring `contextLoads()` tech debt. Project is fully covered by tests and all backlog items related to testing are cleared.
   - **PDF vs HTML Layout Synchronization**: Resolved layout discrepancies caused by Flying Saucer CSS engine limitations in the `resume/` templates. Rewrote `grok-monolith` PDF template with CSS 2.1 compatible `inline-block` masonry grid to match the HTML version. Converted `milky-soft` PDF template to a single-column layout mirroring the frontend Live Preview. Addressed a severe `Font size too small` crash in Flying Saucer by removing CSS `font-size:0` hacks. Acknowledged text rotation limitations (`transform`) in `phub-orange` PDF.
   - **PDF Perfect Rendering & Cyrillic Fixes**: Identified and fixed a critical bug where Flying Saucer silently failed to render Cyrillic text due to missing glyphs in Google Fonts static `Inter` and `Space Grotesk` files. Switched PDF engine primary font to `Roboto` to guarantee universal Cyrillic rendering. Globally fixed `edu.field` string literal bug by replacing it with `edu.fieldOfStudy` across all 10 templates. Aggressively compressed CSS margins, paddings, and font-sizes in `resume/grok-monolith.html` (including rebuilding the Experience section as a proper timeline using `::before` dots and `border-left`) to guarantee the entire dashboard fits beautifully on a single A4 page.
+  - **Security Hardening (Rate Limiting & Key Rotation)**: Replaced in-memory Bucket4j rate limiters with a clean, distributed Spring Data Redis implementation (`AuthRateLimiter` and `RateLimitFilter`). Expanded limits to cover `/v1/auth/register` and all `/v1/ai/**` endpoints. Implemented AES-GCM encryption key rotation (Primary/Secondary) via `application.yml` and added a prod-environment check to strictly forbid default static keys. Secured `/actuator/**` behind `ADMIN` role.
+  - **Comprehensive Security & Compliance (Sprint 5)**: Fixed severe PII/Prompt Injection vulnerabilities by wrapping PDF text in `<user_resume>` and redacting emails/phones before sending to Groq API. Hardened OAuth2 `STATELESS` flow by implementing `CookieOAuth2AuthorizationRequestRepository` to prevent JSESSIONID leaks. Hardened `AiAnalysisService` with `%PDF` magic bytes validation. Added frontend `PrivacyPolicy` and `TermsOfService` pages to comply with GDPR/RK Laws. Fixed empty Google OAuth username bug.
 ## Next in Backlog
+- Admin Entity Exposure Audit (Audit Admin-related DTOs for security/exposure).
 - Frontend CI/CD / GitHub Pages deployment.
 - Wire AuditService into auth/billing flows (login, register, plan change events).
 - Add pagination controls to AdminUsersPage and AdminAuditPage.

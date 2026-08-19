@@ -1,8 +1,6 @@
 package com.medev.config;
 
-import io.github.bucket4j.Bandwidth;
-import io.github.bucket4j.Bucket;
-import io.github.bucket4j.Refill;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -13,25 +11,22 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class RateLimitFilter extends OncePerRequestFilter {
 
-    private final Map<String, Bucket> loginBuckets = new ConcurrentHashMap<>();
-    private final Map<String, Bucket> aiBuckets = new ConcurrentHashMap<>();
+    private final RedisTemplate<String, Object> redisTemplate;
 
-    // 5 запросов в минуту для логина (защита от брутфорса)
-    private Bucket createLoginBucket() {
-        Bandwidth limit = Bandwidth.classic(5, Refill.intervally(5, Duration.ofMinutes(1)));
-        return Bucket.builder().addLimit(limit).build();
+    public RateLimitFilter(RedisTemplate<String, Object> redisTemplate) {
+        this.redisTemplate = redisTemplate;
     }
 
-    // 10 запросов в час для AI парсинга резюме (ограничение расходов)
-    private Bucket createAiBucket() {
-        Bandwidth limit = Bandwidth.classic(10, Refill.intervally(10, Duration.ofHours(1)));
-        return Bucket.builder().addLimit(limit).build();
+    private boolean isAllowed(String key, int limit, Duration window) {
+        Long count = redisTemplate.opsForValue().increment(key);
+        if (count != null && count == 1) {
+            redisTemplate.expire(key, window);
+        }
+        return count == null || count <= limit;
     }
 
     @Override
@@ -41,15 +36,14 @@ public class RateLimitFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         String ip = getClientIpAddress(request);
 
-        if (path.contains("/v1/auth/login")) {
-            Bucket bucket = loginBuckets.computeIfAbsent(ip, k -> createLoginBucket());
-            if (!bucket.tryConsume(1)) {
+        if (path.contains("/v1/auth/login") || path.contains("/v1/auth/register")) {
+            if (!isAllowed("rate:filter:auth:" + ip, 5, Duration.ofMinutes(1))) {
                 sendError(response);
                 return;
             }
-        } else if (path.contains("/v1/ai/parse-resume")) {
-            Bucket bucket = aiBuckets.computeIfAbsent(ip, k -> createAiBucket());
-            if (!bucket.tryConsume(1)) {
+        } else if (path.startsWith("/api/v1/ai/") || path.contains("/v1/ai/")) {
+            // 10 requests per hour for AI parsing or operations
+            if (!isAllowed("rate:filter:ai:" + ip, 10, Duration.ofHours(1))) {
                 sendError(response);
                 return;
             }
@@ -60,15 +54,16 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
     private void sendError(HttpServletResponse response) throws IOException {
         response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
-        response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().write("{\"error\": \"Слишком много запросов. Попробуйте позже.\"}");
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write("{\"error\":\"Too many requests. Please try again later.\"}");
     }
 
     private String getClientIpAddress(HttpServletRequest request) {
-        String xfHeader = request.getHeader("X-Forwarded-For");
-        if (xfHeader == null || xfHeader.isEmpty() || "unknown".equalsIgnoreCase(xfHeader)) {
-            return request.getRemoteAddr();
+        String xForwardedFor = request.getHeader("X-Forwarded-For");
+        if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
+            return xForwardedFor.split(",")[0].trim();
         }
-        return xfHeader.split(",")[0].trim();
+        return request.getRemoteAddr();
     }
 }

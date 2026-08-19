@@ -5,7 +5,9 @@ import com.medev.modules.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
-
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 public class SubscriptionService {
@@ -27,8 +29,25 @@ public class SubscriptionService {
             throw new AccessDeniedException("This feature requires a PRO subscription.");
         }
         
-        if (user.getSubscriptionExpiresAt() != null && user.getSubscriptionExpiresAt().isBefore(java.time.LocalDateTime.now())) {
+        if (user.getSubscriptionExpiresAt() != null && user.getSubscriptionExpiresAt().isBefore(LocalDateTime.now())) {
+            user.setPlan(User.Plan.FREE);
+            userRepository.save(user);
             throw new AccessDeniedException("Your PRO subscription has expired.");
         }
+    }
+
+    /**
+     * Batch job to downgrade expired subscriptions.
+     * Runs every hour.
+     */
+    @Scheduled(cron = "0 0 * * * *")
+    @Transactional
+    public void downgradeExpiredSubscriptions() {
+        // Fetch all PRO users with expired subscriptions and downgrade them
+        userRepository.findByPlanAndSubscriptionExpiresAtBefore(User.Plan.PRO, LocalDateTime.now())
+                .forEach(user -> {
+                    user.setPlan(User.Plan.FREE);
+                    userRepository.save(user);
+                });
     }
 }

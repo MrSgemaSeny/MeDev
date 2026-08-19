@@ -11,4 +11,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByUsername(String username);
     Optional<User> findByStripeCustomerId(String stripeCustomerId);
     Optional<User> findByKaspiCustomerId(String kaspiCustomerId);
+    long countByPlan(User.Plan plan);
+    java.util.List<User> findByPlanAndSubscriptionExpiresAtBefore(User.Plan plan, java.time.LocalDateTime dateTime);
 }

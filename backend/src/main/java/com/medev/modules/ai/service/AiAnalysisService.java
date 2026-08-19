@@ -21,6 +21,7 @@ public class AiAnalysisService {
     private final LlmProvider llmProvider;
     private final PromptLoader promptLoader;
     private final ObjectMapper objectMapper;
+    private final PiiMasker piiMasker;
 
     public AiParsedResumeDto parseResumePdf(MultipartFile file, com.medev.modules.profile.dto.ProfileDto currentProfile) {
         String pdfText = extractTextFromPdf(file);
@@ -38,8 +39,10 @@ public class AiAnalysisService {
             log.warn("Failed to serialize current profile", e);
         }
 
+        String maskedPdfText = piiMasker.mask(pdfText);
+
         String finalPrompt = "CURRENT PROFILE JSON (FROM GITHUB/DB):\n" + currentProfileJson + "\n\n" +
-                             "PDF RESUME TEXT:\n" + pdfText;
+                             "<user_resume>\n" + maskedPdfText + "\n</user_resume>";
 
         String jsonResponse = llmProvider.structuredCompletion(systemPrompt, finalPrompt);
         
@@ -63,9 +66,20 @@ public class AiAnalysisService {
     }
 
     private String extractTextFromPdf(MultipartFile file) {
-        try (PDDocument document = Loader.loadPDF(file.getBytes())) {
-            PDFTextStripper stripper = new PDFTextStripper();
-            return stripper.getText(document);
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.equals("application/pdf")) {
+            throw new IllegalArgumentException("Only PDF files are allowed");
+        }
+        
+        try {
+            byte[] fileBytes = file.getBytes();
+            if (fileBytes.length < 4 || fileBytes[0] != '%' || fileBytes[1] != 'P' || fileBytes[2] != 'D' || fileBytes[3] != 'F') {
+                throw new IllegalArgumentException("Invalid PDF magic bytes");
+            }
+            try (PDDocument document = Loader.loadPDF(fileBytes)) {
+                PDFTextStripper stripper = new PDFTextStripper();
+                return stripper.getText(document);
+            }
         } catch (IOException e) {
             throw new RuntimeException("Failed to read PDF file", e);
         }

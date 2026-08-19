@@ -117,6 +117,10 @@ public class KaspiPayService {
         if (signature == null || signature.isBlank()) {
             return false;
         }
+        if (secretKey == null || secretKey.isBlank() || secretKey.equals("changeme") || secretKey.equals("test")) {
+            log.error("Kaspi secret key is not configured for production!");
+            return false;
+        }
         try {
             javax.crypto.Mac mac = javax.crypto.Mac.getInstance("HmacSHA256");
             mac.init(new javax.crypto.spec.SecretKeySpec(secretKey.getBytes(java.nio.charset.StandardCharsets.UTF_8), "HmacSHA256"));

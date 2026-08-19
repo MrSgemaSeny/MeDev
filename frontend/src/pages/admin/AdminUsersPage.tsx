@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api } from '../../shared/api/axios';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface User {
   id: number;
@@ -9,12 +10,22 @@ interface User {
   plan: string;
 }
 
+interface PageResponse {
+  content: User[];
+  totalPages: number;
+  totalElements: number;
+  number: number;
+}
+
 export const AdminUsersPage = () => {
-  const [users, setUsers] = useState<User[]>([]);
+  const [data, setData] = useState<PageResponse | null>(null);
+  const [page, setPage] = useState(0);
 
   useEffect(() => {
-    api.get('/admin/users').then((res) => setUsers(res.data.content));
-  }, []);
+    api.get(`/admin/users?page=${page}&size=20`).then((res) => setData(res.data));
+  }, [page]);
+
+  const users = data?.content || [];
 
   return (
     <div className="max-w-6xl mx-auto py-8 px-4">
@@ -41,6 +52,32 @@ export const AdminUsersPage = () => {
           </tbody>
         </table>
       </div>
+      
+      {/* Pagination Controls */}
+      {data && data.totalPages > 1 && (
+        <div className="flex items-center justify-between mt-6 bg-[#0d1117] border border-[#30363d] p-4 rounded-lg">
+          <span className="text-sm text-[#8b949e]">
+            Showing page <span className="font-semibold text-white">{data.number + 1}</span> of <span className="font-semibold text-white">{data.totalPages}</span>
+            {' '} ({data.totalElements} total users)
+          </span>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setPage((p) => Math.max(0, p - 1))}
+              disabled={page === 0}
+              className="p-2 bg-[#21262d] border border-[#30363d] rounded-md hover:bg-[#30363d] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronLeft size={16} className="text-white" />
+            </button>
+            <button
+              onClick={() => setPage((p) => Math.min(data.totalPages - 1, p + 1))}
+              disabled={page >= data.totalPages - 1}
+              className="p-2 bg-[#21262d] border border-[#30363d] rounded-md hover:bg-[#30363d] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronRight size={16} className="text-white" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

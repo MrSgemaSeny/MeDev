@@ -29,6 +29,7 @@ public class SecurityConfig {
     private final JwtFilter jwtFilter;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final com.medev.modules.auth.security.CookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -51,11 +52,12 @@ public class SecurityConfig {
                     "/error"               // Tomcat error page
                 ).permitAll()
                 // Только ADMIN
-                .requestMatchers("/v1/admin/**").hasRole("ADMIN")
+                .requestMatchers("/v1/admin/**", "/actuator/**").hasRole("ADMIN")
                 // Всё остальное — авторизованные пользователи
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth2 -> oauth2
+                .authorizationEndpoint(a -> a.authorizationRequestRepository(cookieAuthorizationRequestRepository))
                 .userInfoEndpoint(userInfo -> userInfo
                     .userService(customOAuth2UserService)
                 )

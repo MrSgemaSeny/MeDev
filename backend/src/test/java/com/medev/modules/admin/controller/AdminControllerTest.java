@@ -39,6 +39,12 @@ class AdminControllerTest {
     @MockBean
     private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
+    @MockBean
+    private com.medev.modules.auth.security.CookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository;
+
+    @MockBean
+    private org.springframework.data.redis.core.RedisTemplate<String, Object> redisTemplate;
+
     @Test
     @WithMockUser(roles = "ADMIN")
     void getDashboardStats_WithAdminRole_ShouldReturnOk() throws Exception {

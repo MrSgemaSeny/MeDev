@@ -2,6 +2,7 @@ package com.medev.modules.resume.service;
 
 import com.medev.modules.profile.dto.ProfileDto;
 import com.medev.modules.profile.service.ProfileService;
+import com.medev.modules.auth.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -37,6 +38,9 @@ public class PdfGeneratorServiceTest {
     @Mock
     private ValueOperations<String, Object> valueOperations;
 
+    @Mock
+    private UserRepository userRepository;
+
     @InjectMocks
     private PdfGeneratorService pdfGeneratorService;
 
@@ -53,7 +57,7 @@ public class PdfGeneratorServiceTest {
         when(profileService.getByUserId(userId)).thenReturn(new ProfileDto());
         when(templateEngine.process(eq("resume/" + templateName), any(Context.class))).thenReturn(validHtml);
 
-        byte[] result = pdfGeneratorService.generatePdf(userId, templateName);
+        byte[] result = pdfGeneratorService.generatePdf(userId, templateName, false, false);
 
         assertThat(result).isNotEmpty();
         verify(valueOperations).increment(anyString());
@@ -73,7 +77,7 @@ public class PdfGeneratorServiceTest {
         when(profileService.getByUserId(userId)).thenReturn(new ProfileDto());
         when(templateEngine.process(eq("resume/" + templateName), any(Context.class))).thenReturn(validHtml);
 
-        byte[] result = pdfGeneratorService.generatePdf(userId, templateName);
+        byte[] result = pdfGeneratorService.generatePdf(userId, templateName, false, false);
 
         assertThat(result).isNotEmpty();
         verify(valueOperations).increment(anyString());
@@ -87,8 +91,9 @@ public class PdfGeneratorServiceTest {
 
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         when(valueOperations.get(anyString())).thenReturn(50);
+        when(userRepository.findById(userId)).thenReturn(java.util.Optional.empty());
 
-        assertThatThrownBy(() -> pdfGeneratorService.generatePdf(userId, templateName))
+        assertThatThrownBy(() -> pdfGeneratorService.generatePdf(userId, templateName, false, false))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("Daily generation limit reached");
     }
@@ -104,7 +109,7 @@ public class PdfGeneratorServiceTest {
         when(profileService.getByUserId(userId)).thenReturn(new ProfileDto());
         when(templateEngine.process(eq("resume/" + templateName), any(Context.class))).thenReturn(invalidHtml);
 
-        assertThatThrownBy(() -> pdfGeneratorService.generatePdf(userId, templateName))
+        assertThatThrownBy(() -> pdfGeneratorService.generatePdf(userId, templateName, false, false))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("PDF generation failed");
     }
