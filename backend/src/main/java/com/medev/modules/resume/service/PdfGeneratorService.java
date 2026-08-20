@@ -62,7 +62,7 @@ public class PdfGeneratorService {
     }
 
     private static final java.util.Set<String> VALID_TEMPLATES = java.util.Set.of(
-            "apple-modern", "github", "grok-monolith", "milky-soft", "phub-orange"
+            "apple-modern", "github", "grok-monolith", "milky-soft", "phub-orange", "clean"
     );
 
     private String resolveTemplateName(String templateName) {

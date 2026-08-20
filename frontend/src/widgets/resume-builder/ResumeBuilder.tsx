@@ -5,6 +5,7 @@ import { useAiChatStore } from '../../features/ai-assistant/model/store';
 import { Bot, Download, ArrowUp, ArrowDown, FileText, Files, File } from 'lucide-react';
 
 const TEMPLATES = [
+  { id: 'clean', name: 'Clean ATS', desc: 'Recruiter Classic', accent: '#1a1a1a' },
   { id: 'github', name: 'GitHub', desc: 'Dev Standard', accent: '#238636' },
   { id: 'milky-soft', name: 'Milky Soft', desc: 'Warm Indie', accent: '#d4b7a1' },
   { id: 'apple-modern', name: 'Apple', desc: 'Minimalist', accent: '#0071e3' },
