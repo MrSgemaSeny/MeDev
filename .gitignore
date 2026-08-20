@@ -40,8 +40,8 @@ frontend/*.tsbuildinfo
 .github/
 plan/
 journal/
-Epics/
 AI_AGENT_INSTRUCTION.md
 AUDIT_PROJECT_REVIEW.md
+
 
 
