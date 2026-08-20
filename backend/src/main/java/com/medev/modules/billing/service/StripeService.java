@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class StripeService {
 
     private final UserRepository userRepository;
+    private final org.springframework.data.redis.core.RedisTemplate<String, Object> redisTemplate;
 
     @Value("${stripe.pro-price-id}")
     private String proPriceId;
@@ -31,7 +32,7 @@ public class StripeService {
     @Value("${app.frontend-url:http://localhost:5173}")
     private String frontendUrl;
 
-    @Value("${stripe.api-key}")
+    @Value("${stripe.secret-key:sk_test_12345}")
     private String stripeApiKey;
 
     public String createCheckoutSession(Long userId) {
@@ -81,6 +82,16 @@ public class StripeService {
         } catch (Exception e) {
             log.error("Failed to parse Stripe webhook", e);
             throw new IllegalArgumentException("Invalid payload");
+        }
+
+        String eventId = event.getId();
+        String idempotencyKey = "stripe:webhook:" + eventId;
+        
+        // Idempotency check with Redis (grace period: 24h)
+        Boolean isNew = redisTemplate.opsForValue().setIfAbsent(idempotencyKey, "PROCESSED", java.time.Duration.ofHours(24));
+        if (Boolean.FALSE.equals(isNew)) {
+            log.info("Stripe webhook event {} already processed, skipping", eventId);
+            return;
         }
 
         if ("checkout.session.completed".equals(event.getType())) {

@@ -43,6 +43,7 @@ public class JwtService {
                 .claim("userId", user.getId())
                 .claim("deviceId", deviceId)
                 .claim("role", user.getRole().name())
+                .claim("plan", user.getPlan().name())
                 .claim("type", type)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + exp))

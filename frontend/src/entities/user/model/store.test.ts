@@ -28,22 +28,20 @@ describe('Auth Store', () => {
     expect(state.plan).toBeNull();
   });
 
-  it('setTokens должен сохранять accessToken в state, а refreshToken в localStorage', () => {
-    useAuthStore.getState().setTokens('access123', 'refresh456');
+  it('setTokens должен сохранять accessToken в state', () => {
+    useAuthStore.getState().setTokens('access123');
     const state = useAuthStore.getState();
     
     expect(state.accessToken).toBe('access123');
-    expect(localStorage.getItem('refreshToken')).toBe('refresh456');
   });
 
   it('setAuth должен обновлять всё', () => {
-    useAuthStore.getState().setAuth('access123', 'refresh456', 'testuser', 'PRO');
+    useAuthStore.getState().setAuth('access123', undefined, 'testuser', 'PRO');
     const state = useAuthStore.getState();
     
     expect(state.accessToken).toBe('access123');
     expect(state.username).toBe('testuser');
     expect(state.plan).toBe('PRO');
-    expect(localStorage.getItem('refreshToken')).toBe('refresh456');
   });
 
   it('logout должен очищать состояние и localStorage', async () => {

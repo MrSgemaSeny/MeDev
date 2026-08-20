@@ -7,6 +7,7 @@ import { useAuthStore } from '../../entities/user/model/store';
 
 // Mock API
 vi.mock('../../shared/api/axios', () => ({
+  BASE_URL: 'http://localhost:8080/api/v1',
   api: {
     post: vi.fn(),
   }

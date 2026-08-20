@@ -196,7 +196,7 @@
                                 <div class="item-title" th:text="${proj.name}"></div>
                                 <div class="item-date">
                                     <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" target="_blank" style="color:#0066cc; text-decoration:none;">GitHub</a>
-                                    <span th:if="${proj.githubUrl != null and proj.liveUrl != null}"> &middot; </span>
+                                    <span th:if="${proj.githubUrl != null and proj.liveUrl != null}"> &#183; </span>
                                     <a th:if="${proj.liveUrl}" th:href="${proj.liveUrl}" target="_blank" style="color:#0066cc; text-decoration:none;">Live Demo</a>
                                 </div>
                             </div>

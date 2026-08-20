@@ -1,5 +1,47 @@
-redis/
+# Environment variables & secrets
 .env
+.env.*
+!.env.example
 **/.env
 backend/.env
 frontend/.env
+
+# Local data & services
+redis/
+data/
+
+# IDE & Editor files
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.project
+.classpath
+.settings/
+
+# Backend build & artifacts
+backend/.gradle/
+backend/build/
+backend/out/
+backend/bin/
+backend/*.b64
+backend/*.log
+*.b64
+
+# Frontend build & dependencies
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/*.tsbuildinfo
+
+# Internal, Agents & Planning
+.agents/
+plan/
+journal/
+AI_AGENT_INSTRUCTION.md
+AUDIT_PROJECT_REVIEW.md
+
+
+
+

@@ -33,7 +33,7 @@ public class Profile {
     private String githubUsername;
     
     @Column(columnDefinition = "TEXT")
-    @Convert(converter = com.medev.shared.security.StringCryptoConverter.class)
+    @Convert(converter = com.medev.shared.security.EncryptedStringConverter.class)
     private String githubToken;
     
     private String telegram;

@@ -36,7 +36,7 @@ public class GroqClientTest {
         when(webClientBuilder.defaultHeader(anyString(), anyString())).thenReturn(webClientBuilder);
         when(webClientBuilder.build()).thenReturn(webClient);
         
-        groqClient = new GroqClient(webClientBuilder, objectMapper, tokenAccountingService, "test-key", "http://test");
+        groqClient = new GroqClient(webClientBuilder, objectMapper, tokenAccountingService, "test-key", "http://test", "openai/gpt-oss-20b");
     }
 
     @Test

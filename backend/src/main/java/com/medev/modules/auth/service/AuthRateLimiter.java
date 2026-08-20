@@ -21,7 +21,6 @@ public class AuthRateLimiter {
     public void checkAndConsume(String clientIp) {
         String key = "rate:auth:" + clientIp;
         Long count = redisTemplate.opsForValue().increment(key);
-        
         if (count != null && count == 1) {
             redisTemplate.expire(key, Duration.ofMinutes(1));
         }

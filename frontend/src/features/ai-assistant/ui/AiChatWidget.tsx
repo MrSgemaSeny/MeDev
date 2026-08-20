@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
-import { Bot, Send, X, MessageSquare, Loader2 } from 'lucide-react';
+import { Bot, Send, X, Loader2 } from 'lucide-react';
 import { useAiChatStore } from '../model/store';
 import { useAuthStore } from '../../../entities/user/model/store';
+import { BASE_URL } from '../../../shared/api/axios';
 
 export const AiChatWidget = () => {
   const { isOpen, messages, isLoading, pendingPrompt, toggleChat, addMessage, updateLastMessage, setLoading, clearChat, clearPendingPrompt } = useAiChatStore();
@@ -45,7 +46,7 @@ export const AiChatWidget = () => {
     try {
       const historyToSend = messages.slice(-10).map(m => ({ role: m.role, content: m.content }));
       
-      let response = await fetch('http://localhost:8080/api/v1/ai/chat/stream', {
+      let response = await fetch(`${BASE_URL}/ai/chat/stream`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -59,7 +60,7 @@ export const AiChatWidget = () => {
           const { api } = await import('../../../shared/api/axios');
           await api.get('/ai/quota'); // this will trigger the axios interceptor to refresh the token
           const newToken = useAuthStore.getState().accessToken;
-          response = await fetch('http://localhost:8080/api/v1/ai/chat/stream', {
+          response = await fetch(`${BASE_URL}/ai/chat/stream`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -116,47 +117,63 @@ export const AiChatWidget = () => {
     return (
       <button
         onClick={toggleChat}
-        className="fixed bottom-6 right-6 p-4 rounded-full shadow-lg transition-transform hover:scale-105 surface-secondary border-default text-primary flex items-center justify-center"
+        className="fixed bottom-6 right-6 p-3.5 rounded-full shadow-2xl transition-all duration-200 hover:scale-105 bg-[#238636] hover:bg-[#2ea043] text-white border border-[#30363d] flex items-center justify-center z-50 group"
+        aria-label="Open AI Assistant"
       >
-        <MessageSquare size={24} />
+        <Bot size={22} className="group-hover:rotate-12 transition-transform duration-200" />
       </button>
     );
   }
 
+  const QUICK_PROMPTS = [
+    { label: "Анализ резюме", text: "Проанализируй моё резюме: насколько оно привлекательно для работодателей? Чего не хватает?" },
+    { label: "Оценка GitHub", text: "Проанализируй мой стек и репозитории: как лучше презентовать этот опыт в резюме?" },
+    { label: "Подготовка к интервью", text: "Задай мне 3 сложных технических вопроса по моему основному стеку для тренировки." }
+  ];
+
   return (
-    <div className="fixed bottom-6 right-6 w-[480px] h-[650px] flex flex-col surface rounded-xl shadow-2xl border-default overflow-hidden z-50">
+    <div className="fixed bottom-6 right-6 w-[440px] h-[580px] max-h-[85vh] flex flex-col bg-[#161b22] rounded-2xl shadow-2xl border border-[#30363d] overflow-hidden z-50 animate-in fade-in slide-in-from-bottom-4 duration-200">
       {/* Header */}
-      <div className="surface-secondary border-b border-default p-4 flex items-center justify-between">
+      <div className="bg-[#0d1117] border-b border-[#30363d] px-4 py-3 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg" style={{ backgroundColor: 'var(--color-bg-tertiary)' }}>
-            <Bot size={20} className="text-primary" />
+          <div className="w-8 h-8 rounded-lg bg-[#238636]/20 border border-[#238636]/40 flex items-center justify-center text-[#238636]">
+            <Bot size={18} />
           </div>
           <div>
-            <h3 className="font-semibold text-sm">MeDev Assistant</h3>
-            <p className="text-xs text-muted">Powered by Groq</p>
+            <div className="flex items-center gap-2">
+              <h3 className="font-semibold text-sm text-[#e6edf3]">MeDev Assistant</h3>
+              <span className="w-2 h-2 rounded-full bg-[#238636] animate-pulse" />
+            </div>
+            <p className="text-[11px] text-[#7d8590]">Llama 3.3 70B · SSE Stream</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           {messages.length > 0 && (
-            <button onClick={clearChat} className="text-xs text-muted hover:text-primary transition-colors">
+            <button 
+              onClick={clearChat} 
+              className="text-[11px] px-2 py-1 rounded text-[#7d8590] hover:text-[#e6edf3] hover:bg-[#21262d] transition-colors"
+            >
               Clear
             </button>
           )}
-          <button onClick={toggleChat} className="p-1 hover:bg-gray-800 rounded transition-colors text-muted hover:text-primary">
-            <X size={20} />
+          <button 
+            onClick={toggleChat} 
+            className="p-1.5 rounded-lg text-[#7d8590] hover:text-[#e6edf3] hover:bg-[#21262d] transition-colors"
+          >
+            <X size={18} />
           </button>
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 surface-inset">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3.5 bg-[#0d1117]/60">
         {messages.map((msg) => (
           <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div 
-              className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed border ${
+              className={`max-w-[88%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
                 msg.role === 'user' 
-                  ? 'surface-tertiary border-muted text-primary rounded-br-none' 
-                  : 'surface-secondary border-default text-primary rounded-bl-none'
+                  ? 'bg-[#1f6feb]/20 border border-[#388bfd]/30 text-white rounded-br-sm' 
+                  : 'bg-[#161b22] border border-[#30363d] text-[#e6edf3] rounded-bl-sm shadow-sm'
               }`}
               style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
             >
@@ -166,19 +183,36 @@ export const AiChatWidget = () => {
         ))}
         {isLoading && messages.length > 0 && messages[messages.length - 1].content === '' && (
           <div className="flex justify-start">
-            <div className="surface-secondary border-default rounded-2xl rounded-bl-none px-4 py-3">
-              <Loader2 size={16} className="animate-spin text-muted" />
+            <div className="bg-[#161b22] border border-[#30363d] rounded-2xl rounded-bl-sm px-4 py-2.5 flex items-center gap-2 text-xs text-[#7d8590]">
+              <Loader2 size={14} className="animate-spin text-[#238636]" />
+              <span>Генерирую ответ...</span>
             </div>
           </div>
         )}
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Quick Prompts Suggestions */}
+      {messages.length <= 2 && (
+        <div className="px-3 py-2 bg-[#0d1117]/80 border-t border-[#21262d] flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+          {QUICK_PROMPTS.map((qp, idx) => (
+            <button
+              key={idx}
+              disabled={isLoading}
+              onClick={() => handleSend(qp.text)}
+              className="text-[11px] px-2.5 py-1 rounded-full bg-[#161b22] hover:bg-[#21262d] text-[#7d8590] hover:text-[#e6edf3] border border-[#30363d] whitespace-nowrap transition-colors"
+            >
+              {qp.label}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Input */}
-      <div className="p-4 surface border-t border-default">
+      <div className="p-3 bg-[#0d1117] border-t border-[#30363d]">
         <form 
           onSubmit={(e) => { e.preventDefault(); handleSend(); }}
-          className="flex items-end gap-2"
+          className="relative flex items-end bg-[#161b22] border border-[#30363d] rounded-xl p-1.5 focus-within:border-[#238636] focus-within:ring-1 focus-within:ring-[#238636] transition-all"
         >
           <textarea
             value={input}
@@ -189,16 +223,16 @@ export const AiChatWidget = () => {
                 handleSend();
               }
             }}
-            placeholder="Спроси о чём-нибудь..."
-            className="w-full bg-transparent border border-default rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-text-secondary)] resize-none max-h-32 min-h-[40px]"
+            placeholder="Спроси о резюме или подготовке к интервью..."
+            className="w-full bg-transparent px-3 py-1.5 text-sm text-[#e6edf3] placeholder-[#7d8590] focus:outline-none resize-none max-h-28 min-h-[38px] leading-relaxed"
             rows={1}
           />
           <button 
             type="submit" 
             disabled={!input.trim() || isLoading}
-            className="p-2.5 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors shrink-0 surface-tertiary border border-default hover:bg-[var(--color-bg-secondary)] text-primary"
+            className="p-2 rounded-lg bg-[#238636] hover:bg-[#2ea043] text-white disabled:opacity-30 disabled:hover:bg-[#238636] transition-all shrink-0 ml-1"
           >
-            <Send size={18} />
+            <Send size={15} />
           </button>
         </form>
       </div>

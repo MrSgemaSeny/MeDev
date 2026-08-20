@@ -61,7 +61,30 @@ public class PdfGeneratorService {
         }
     }
 
+    private static final java.util.Set<String> VALID_TEMPLATES = java.util.Set.of(
+            "apple-modern", "github", "grok-monolith", "milky-soft", "phub-orange", "clean"
+    );
+
+    private String resolveTemplateName(String templateName) {
+        if (templateName == null || templateName.isBlank()) {
+            return "github";
+        }
+        String normalized = templateName.toLowerCase().trim();
+        if (VALID_TEMPLATES.contains(normalized)) {
+            return normalized;
+        }
+        return switch (normalized) {
+            case "classic" -> "github";
+            case "modern", "pro-modern" -> "apple-modern";
+            case "minimal" -> "milky-soft";
+            case "tech", "executive", "pro-elegant" -> "grok-monolith";
+            case "creative" -> "phub-orange";
+            default -> throw new IllegalArgumentException("Invalid template name: " + templateName);
+        };
+    }
+
     public byte[] generatePdf(Long userId, String templateName, boolean isPreview, boolean singlePage) {
+        String resolvedTemplate = resolveTemplateName(templateName);
         if (!isPreview) {
             checkGenerationLimit(userId);
         }
@@ -92,7 +115,12 @@ public class PdfGeneratorService {
                     .collect(java.util.stream.Collectors.joining(", "));
             context.setVariable("languagesStr", languagesStr);
         }
-        String html = templateEngine.process("resume/" + templateName, context);
+        String html = templateEngine.process("resume/" + resolvedTemplate, context);
+
+        org.jsoup.nodes.Document jsoupDoc = org.jsoup.Jsoup.parse(html, "UTF-8");
+        jsoupDoc.outputSettings().syntax(org.jsoup.nodes.Document.OutputSettings.Syntax.xml);
+        jsoupDoc.outputSettings().escapeMode(org.jsoup.nodes.Entities.EscapeMode.xhtml);
+        String safeXml = jsoupDoc.html();
 
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -106,7 +134,7 @@ public class PdfGeneratorService {
                 throw new RuntimeException("PDF font loading failed", fontEx);
             }
 
-            renderer.setDocumentFromString(html);
+            renderer.setDocumentFromString(safeXml);
             renderer.layout();
             renderer.createPDF(out);
             renderer.finishPDF();
@@ -122,6 +150,7 @@ public class PdfGeneratorService {
     }
 
     public String generateHtml(Long userId, String templateName, boolean isPreview, boolean singlePage) {
+        String resolvedTemplate = resolveTemplateName(templateName);
         if (!isPreview) {
             checkGenerationLimit(userId);
         }
@@ -152,7 +181,7 @@ public class PdfGeneratorService {
                     .collect(java.util.stream.Collectors.joining(", "));
             context.setVariable("languagesStr", languagesStr);
         }
-        String html = templateEngine.process("resume/" + templateName, context);
+        String html = templateEngine.process("resume/" + resolvedTemplate, context);
         if (!isPreview) {
             incrementGenerationCount(userId);
         }

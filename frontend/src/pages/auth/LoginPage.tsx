@@ -1,13 +1,12 @@
 import { Link } from 'react-router-dom';
 import { Button } from '../../shared/ui/Button';
 import { Input } from '../../shared/ui/Input';
-import { api } from '../../shared/api/axios';
+import { api, BASE_URL } from '../../shared/api/axios';
 import { useAuthStore } from '../../entities/user/model/store';
 import { useState } from 'react';
 
 export function LoginPage() {
-  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1';
-  const baseUrl = apiUrl.replace('/api/v1', '');
+  const baseUrl = BASE_URL.replace(/\/api\/v1\/?$/, '');
   const githubUrl = `${baseUrl}/api/oauth2/authorization/github`;
   const googleUrl = `${baseUrl}/api/oauth2/authorization/google`;
 
@@ -23,7 +22,7 @@ export function LoginPage() {
     setLoading(true);
     try {
       const { data } = await api.post('/auth/login', { email, password });
-      setAuth(data.accessToken, data.refreshToken, data.username, data.plan);
+      setAuth(data.accessToken, data.refreshToken, data.username, data.plan, data.role);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Login failed. Check credentials.');
     } finally {

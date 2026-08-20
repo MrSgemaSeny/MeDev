@@ -16,22 +16,30 @@
             --tag-bg: rgba(56, 139, 253, 0.1);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-            background-color: #0d1117;
-            color: #c9d1d9;
-            line-height: 1.5;
-            padding: 40px;
-            font-size: 13px;
-        }
+        
         @page {
             size: A4;
-            margin: 0;
+            margin: 15mm;
             background-color: #0d1117;
         }
+        
+        /* Browser Preview styling: Fixed dark A4 Sheet centered */
+        body {
+            font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background-color: #010409;
+            color: #c9d1d9;
+            line-height: 1.5;
+            padding: 30px 15px;
+            font-size: 13px;
+        }
         .container {
-            max-width: 1216px;
+            max-width: 794px; /* Standard A4 width */
             margin: 0 auto;
+            background-color: #0d1117;
+            padding: 36px 40px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
+            border: 1px solid #30363d;
+            border-radius: 6px;
             display: table;
             width: 100%;
         }
@@ -44,15 +52,15 @@
             vertical-align: top;
         }
         .avatar {
-            width: 140px;
-            height: 140px;
+            width: 130px;
+            height: 130px;
             border-radius: 50%;
             border: 1px solid #30363d;
             background-color: #161b22;
             overflow: hidden;
             margin: 0 auto 16px auto;
             text-align: center;
-            line-height: 140px;
+            line-height: 130px;
         }
         .avatar img {
             width: 100%;
@@ -68,10 +76,10 @@
             color: #c9d1d9;
         }
         .username {
-            font-size: 16px;
+            font-size: 15px;
             color: #8b949e;
             font-weight: 300;
-            line-height: 24px;
+            line-height: 22px;
         }
         .bio {
             font-family: Roboto, sans-serif;
@@ -81,7 +89,7 @@
         }
         .contact-list {
             font-size: 13px;
-            margin-bottom: 24px;
+            margin-bottom: 22px;
         }
         .contact-item { margin-bottom: 6px; }
         .contact-item a { color: #c9d1d9; text-decoration: none; }
@@ -89,13 +97,14 @@
         
         .sidebar-section {
             border-top: 1px solid #30363d;
-            padding-top: 16px;
-            margin-top: 16px;
+            padding-top: 14px;
+            margin-top: 14px;
+            page-break-inside: avoid;
         }
         h3.side-title {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             color: #c9d1d9;
         }
         
@@ -104,68 +113,70 @@
         .skills-group-title {
             font-size: 12px;
             color: #8b949e;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 600;
         }
         .tag {
             display: inline-block;
-            background-color: rgba(56, 139, 253, 0.1);
+            background-color: #111d2e;
             color: #58a6ff;
-            padding: 2px 10px;
-            font-size: 12px;
+            padding: 2px 8px;
+            font-size: 11px;
             font-weight: 500;
-            border-radius: 20px;
-            margin-right: 6px;
-            margin-bottom: 6px;
+            border-radius: 16px;
+            margin-right: 4px;
+            margin-bottom: 4px;
         }
         
         /* Main Content */
         .main-content {
             display: table-cell;
             vertical-align: top;
-            padding-left: 32px;
+            padding-left: 28px;
         }
         .section-header {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 600;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             border-bottom: 1px solid #30363d;
-            padding-bottom: 8px;
+            padding-bottom: 6px;
+            page-break-after: avoid;
         }
         
         /* Pinned Projects */
-        .projects-wrapper { width: 100%; margin-bottom: 32px; }
+        .projects-wrapper { width: 100%; margin-bottom: 24px; }
         .pinned-card {
             display: block;
             width: 100%;
             border: 1px solid #30363d;
             border-radius: 6px;
-            padding: 16px;
+            padding: 14px 16px;
             background-color: #0d1117;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             page-break-inside: avoid;
         }
         .repo-title {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             color: #58a6ff;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
         .repo-title a { color: inherit; text-decoration: none; }
         .repo-desc {
             display: block;
-            font-size: 13px;
+            font-size: 12.5px;
             color: #8b949e;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
+            line-height: 1.4;
         }
         .repo-meta {
-            font-size: 12px;
+            font-size: 11.5px;
             color: #8b949e;
         }
         .lang-dot {
             display: inline-block;
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             background-color: #238636;
             margin-right: 4px;
@@ -173,9 +184,9 @@
         }
         
         /* Timeline items */
-        .timeline-container { margin-bottom: 32px; width: 100%; border-collapse: collapse; page-break-inside: avoid; }
+        .timeline-container { margin-bottom: 24px; width: 100%; border-spacing: 0; border-collapse: separate; page-break-inside: avoid; }
         .timeline-icon-td { width: 16px; vertical-align: top; text-align: right; }
-        .timeline-content-td { border-left: 1px solid #30363d; padding-left: 16px; padding-bottom: 24px; vertical-align: top; }
+        .timeline-content-td { border-left: 1px solid #30363d; padding-left: 14px; padding-bottom: 18px; vertical-align: top; }
         
         .timeline-icon {
             display: inline-block;
@@ -184,67 +195,95 @@
             border-radius: 50%;
             background-color: #388bfd;
             border: 2px solid #0d1117;
-            margin-top: 5px;
-            margin-right: -6.5px; /* Aligns center of dot precisely over the 1px border */
+            margin-top: 4px;
+            margin-right: -5.5px;
         }
         
         .timeline-content {
-            padding: 0 0 16px 0;
+            padding: 0 0 6px 0;
         }
         .timeline-header {
             width: 100%;
             display: table;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
         .timeline-title {
             display: table-cell;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             color: #c9d1d9;
         }
         .timeline-date {
             display: table-cell;
             text-align: right;
-            font-size: 12px;
+            font-size: 11.5px;
             color: #8b949e;
         }
         .timeline-subtitle {
-            font-size: 14px;
+            font-size: 13px;
             color: #8b949e;
-            margin-bottom: 12px;
+            margin-bottom: 6px;
         }
         .timeline-desc {
-            font-size: 14px;
+            font-size: 12.5px;
             color: #c9d1d9;
+            line-height: 1.45;
         }
-        
-        /* Single Page Overrides */
-        body.single-page { padding: 20px; font-size: 11px; }
-        .single-page .avatar { width: 80px; height: 80px; margin-bottom: 12px; line-height: 80px; }
+
+        /* ==========================================================================
+           Single-page Mode: Proportional scaling for 1-page fit
+           ========================================================================== */
+        body.single-page {
+            padding: 20px 15px;
+            font-size: 11px;
+            line-height: 1.35;
+        }
+        .single-page .container {
+            padding: 24px 28px;
+        }
+        .single-page .sidebar { width: 185px; padding-right: 14px; }
+        .single-page .avatar { width: 85px; height: 85px; line-height: 85px; margin-bottom: 10px; }
         .single-page .fullname { font-size: 18px; }
-        .single-page .username { font-size: 13px; line-height: 18px; }
-        .single-page .bio { font-size: 11px; margin-bottom: 12px; }
-        .single-page .contact-list { font-size: 11px; margin-bottom: 16px; }
-        .single-page .contact-item { margin-bottom: 4px; }
-        .single-page .sidebar-section { padding-top: 12px; margin-top: 12px; }
-        .single-page h3.side-title { font-size: 13px; margin-bottom: 12px; }
-        .single-page .skills-group-title { font-size: 10px; margin-bottom: 4px; }
-        .single-page .tag { padding: 1px 6px; font-size: 9px; margin-right: 4px; margin-bottom: 4px; }
-        .single-page .section-header { font-size: 14px; margin-bottom: 12px; padding-bottom: 6px; }
-        .single-page .projects-wrapper { margin-bottom: 16px; }
-        .single-page .pinned-card { padding: 12px; margin-bottom: 12px; }
-        .single-page .repo-title { font-size: 13px; margin-bottom: 6px; }
-        .single-page .repo-desc { font-size: 11px; margin-bottom: 8px; }
-        .single-page .repo-meta { font-size: 10px; }
-        .single-page .timeline-container { margin-bottom: 16px; }
-        .single-page .timeline-content-td { padding-bottom: 16px; padding-left: 12px; }
-        .single-page .timeline-content { padding-bottom: 12px; }
-        .single-page .timeline-title { font-size: 13px; }
-        .single-page .timeline-date { font-size: 10.5px; }
-        .single-page .timeline-subtitle { font-size: 11.5px; margin-bottom: 6px; }
-        .single-page .timeline-desc { font-size: 11px; }
-        .single-page .sidebar { width: 180px; padding-right: 16px; }
+        .single-page .username { font-size: 13px; line-height: 16px; }
+        .single-page .bio { font-size: 11px; margin-bottom: 10px; }
+        .single-page .contact-list { font-size: 11px; margin-bottom: 14px; }
+        .single-page .contact-item { margin-bottom: 3px; }
+        .single-page .sidebar-section { padding-top: 10px; margin-top: 10px; }
+        .single-page h3.side-title { font-size: 13px; margin-bottom: 8px; }
+        .single-page .skills-group { margin-bottom: 8px; }
+        .single-page .skills-group-title { font-size: 10.5px; margin-bottom: 4px; }
+        .single-page .tag { padding: 1.5px 6px; font-size: 9.5px; border-radius: 12px; }
         .single-page .main-content { padding-left: 16px; }
+        .single-page .section-header { font-size: 14px; margin-bottom: 10px; padding-bottom: 4px; }
+        .single-page .projects-wrapper { margin-bottom: 14px; }
+        .single-page .pinned-card { padding: 8px 10px; margin-bottom: 8px; }
+        .single-page .repo-title { font-size: 13px; margin-bottom: 4px; }
+        .single-page .repo-desc { font-size: 10.5px; line-height: 1.3; margin-bottom: 4px; }
+        .single-page .repo-meta { font-size: 10px; }
+        .single-page .timeline-container { margin-bottom: 14px; }
+        .single-page .timeline-content-td { padding-left: 10px; padding-bottom: 10px; }
+        .single-page .timeline-title { font-size: 12.5px; }
+        .single-page .timeline-date { font-size: 10px; }
+        .single-page .timeline-subtitle { font-size: 11px; margin-bottom: 3px; }
+        .single-page .timeline-desc { font-size: 10.5px; line-height: 1.3; }
+
+        /* ==========================================================================
+           Print and PDF Engine overrides (Flying Saucer)
+           ========================================================================== */
+        @media print {
+            body, body.single-page {
+                background-color: #0d1117 !important;
+                padding: 0 !important;
+            }
+            .container, .single-page .container {
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+                border-radius: 0 !important;
+            }
+        }
     </style>
 </head>
 <body th:classappend="${singlePage != null and singlePage} ? 'single-page' : 'multi-page'">
@@ -256,7 +295,7 @@
                 <img th:src="${avatarBase64 ?: 'https://github.com/' + profile.githubUsername + '.png'}" alt="Avatar" />
             </div>
             <div class="avatar" th:unless="${profile.githubUsername != null}">
-                <span th:text="${profile.fullName != null and profile.fullName.length() gt 0 ? profile.fullName.substring(0,1).toUpperCase() : 'U'}" style="font-size: 60px; color: #c9d1d9;"></span>
+                <span th:text="${profile.fullName != null and profile.fullName.length() gt 0 ? profile.fullName.substring(0,1).toUpperCase() : 'U'}" style="font-size: 50px; color: #c9d1d9;"></span>
             </div>
             
             <div class="names">
@@ -283,7 +322,7 @@
             
             <div class="sidebar-section" th:if="${languagesStr != null and !languagesStr.isEmpty()}">
                 <h3 class="side-title">Languages</h3>
-                <div style="font-size: 14px; color: #c9d1d9;" th:text="${languagesStr}"></div>
+                <div style="font-size: 12px; color: #c9d1d9;" th:text="${languagesStr}"></div>
             </div>
         </div>
         
@@ -295,7 +334,7 @@
                     
                     <!-- SUMMARY -->
                     <div th:case="'summary'" th:if="${profile.summary != null and !profile.summary.isEmpty()}">
-                        <div class="timeline-content" style="margin-bottom:32px;">
+                        <div class="timeline-content" style="margin-bottom:24px;">
                             <div th:text="${profile.summary}"></div>
                         </div>
                     </div>
@@ -306,13 +345,12 @@
                         <div class="projects-wrapper">
                             <div class="pinned-card" th:each="proj, stat : ${profile.projects}" th:if="${proj.isVisible and stat.index < 3}">
                                 <div class="repo-title">
-                                    <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="#8b949e" style="vertical-align: middle; margin-right: 4px;"><path fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"></path></svg>
                                     <a th:if="${proj.githubUrl}" th:href="${proj.githubUrl}" th:text="${proj.name}" target="_blank"></a>
                                     <span th:unless="${proj.githubUrl}" th:text="${proj.name}"></span>
                                 </div>
                                 <div class="repo-desc" th:text="${proj.description}"></div>
                                 <div class="repo-meta" th:if="${proj.techStack != null and !proj.techStack.isEmpty()}">
-                                    <span class="lang-dot"></span>
+                                    <span class="lang-dot" style="font-size: 0;">&nbsp;</span>
                                     <span th:text="${proj.techStack}"></span>
                                 </div>
                             </div>

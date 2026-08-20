@@ -71,9 +71,9 @@ class ProfileControllerTest extends AbstractIntegrationTest {
 
     @Test
     void getReadme_returnsMarkdown() throws Exception {
-        com.medev.modules.profile.entity.Profile profileEntity = com.medev.modules.profile.entity.Profile.builder().id(1L).build();
-        when(profileService.getProfileEntityByUserId(1L)).thenReturn(profileEntity);
-        when(readmeGeneratorService.generateReadme(profileEntity)).thenReturn("# Hello");
+        ProfileDto dto = ProfileDto.builder().id(1L).fullName("John Doe").build();
+        when(profileService.getByUserId(1L)).thenReturn(dto);
+        when(readmeGeneratorService.generateReadme(eq(dto), anyString())).thenReturn("# Hello");
 
         mockMvc.perform(get("/v1/profile/readme"))
                 .andExpect(status().isOk())

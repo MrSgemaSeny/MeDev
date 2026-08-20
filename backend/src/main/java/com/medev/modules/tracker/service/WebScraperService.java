@@ -15,9 +15,17 @@ import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.util.Set;
 
+import com.medev.shared.security.SecurityUtils;
+import com.medev.shared.exception.TooManyRequestsException;
+import org.springframework.data.redis.core.RedisTemplate;
+import lombok.RequiredArgsConstructor;
+
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class WebScraperService {
+
+    private final RedisTemplate<String, Object> redisTemplate;
 
     private static final Set<String> ALLOWED_HOSTS = Set.of(
             "hh.kz", "hh.ru", "linkedin.com", "www.linkedin.com",
@@ -25,6 +33,18 @@ public class WebScraperService {
     );
 
     public CreateJobApplicationRequest scrapeJobUrl(String url) {
+        Long userId = SecurityUtils.getCurrentUserId();
+        if (userId != null) {
+            String key = "rate:scrape:" + userId;
+            Long count = redisTemplate.opsForValue().increment(key);
+            if (count != null && count == 1L) {
+                redisTemplate.expire(key, java.time.Duration.ofMinutes(1));
+            }
+            if (count != null && count > 10) {
+                throw new TooManyRequestsException("Слишком много запросов на парсинг. Пожалуйста, подождите.");
+            }
+        }
+
         CreateJobApplicationRequest request = new CreateJobApplicationRequest();
         request.setJobUrl(url);
         request.setStatus(ApplicationStatus.WISHLIST);

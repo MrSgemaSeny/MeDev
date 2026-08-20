@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${profile.fullName} + ' - Resume'">Resume</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        @page { 
+            size: A4; 
+            margin: 0.4in 0.5in; 
+        }
+        
+        /* Browser Preview styling: Fixed A4 Sheet centered with margins and subtle shadow */
+        body {
+            font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: #e5e7eb;
+            color: #1a1a1a;
+            line-height: 1.5;
+            font-size: 10pt;
+            padding: 30px 15px;
+        }
+        .container { 
+            max-width: 794px; /* Exact A4 width */
+            margin: 0 auto; 
+            background: #ffffff;
+            padding: 40px 48px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+        }
+        
+        /* Header */
+        .header { margin-bottom: 14pt; border-bottom: 2pt solid #1a1a1a; padding-bottom: 8pt; }
+        .name { font-size: 18pt; font-weight: 700; letter-spacing: -0.4pt; text-transform: uppercase; color: #1a1a1a; }
+        .meta { font-size: 9pt; color: #444444; margin-top: 4pt; line-height: 1.4; }
+        .meta a { color: #1a1a1a; text-decoration: none; font-weight: 500; }
+        
+        /* Sections */
+        .section { margin-bottom: 12pt; page-break-inside: avoid; }
+        .section-title { 
+            font-size: 10.5pt; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            letter-spacing: 0.8pt; 
+            margin-bottom: 6pt; 
+            border-bottom: 1pt solid #cccccc; 
+            padding-bottom: 2pt; 
+            color: #1a1a1a;
+        }
+        
+        /* Jobs */
+        .job { margin-bottom: 8pt; page-break-inside: avoid; }
+        .job-table { width: 100%; margin-bottom: 2pt; }
+        .job-left { text-align: left; vertical-align: top; }
+        .job-right { text-align: right; vertical-align: top; font-size: 9pt; color: #555555; width: 140pt; }
+        .job-title { font-weight: 700; font-size: 10.5pt; color: #1a1a1a; }
+        .job-company { font-weight: 600; color: #333333; margin-left: 3pt; }
+        .job-desc { font-size: 9.5pt; color: #333333; line-height: 1.45; margin-top: 2pt; margin-bottom: 3pt; }
+        .job-tech { font-size: 8.5pt; color: #555555; }
+        
+        /* Education */
+        .edu { margin-bottom: 6pt; page-break-inside: avoid; }
+        .edu-table { width: 100%; }
+        .edu-left { text-align: left; vertical-align: top; font-size: 10pt; }
+        .edu-right { text-align: right; vertical-align: top; font-size: 9pt; color: #555555; width: 140pt; }
+        .edu-degree { font-weight: 700; color: #1a1a1a; }
+        .edu-school { color: #444444; }
+        
+        /* Skills 4-Column Table */
+        .skills-table { width: 100%; border-collapse: collapse; margin-bottom: 6pt; }
+        .skills-td { width: 25%; vertical-align: top; padding-right: 8pt; font-size: 9.5pt; }
+        .skills-td:last-child { padding-right: 0; }
+        .skill-cat { font-weight: 700; margin-bottom: 2pt; color: #1a1a1a; font-size: 9.5pt; text-transform: uppercase; letter-spacing: 0.3pt; }
+        .skill-list { color: #444444; line-height: 1.4; font-size: 9pt; }
+        
+        /* Projects 2x2 Table */
+        .projects-table { width: 100%; border-collapse: separate; border-spacing: 6pt; margin-left: -6pt; margin-right: -6pt; }
+        .project-td { width: 50%; vertical-align: top; border: 0.75pt solid #dddddd; padding: 7pt; border-radius: 3pt; background: #fafafa; }
+        .project-name { font-weight: 700; font-size: 9.5pt; margin-bottom: 2pt; color: #1a1a1a; }
+        .project-name a { color: #1a1a1a; text-decoration: none; }
+        .project-desc { font-size: 8.5pt; color: #444444; line-height: 1.4; margin-bottom: 3pt; }
+        .project-tech { font-size: 8pt; color: #666666; }
+        
+        .languages-text { font-size: 9.5pt; color: #333333; line-height: 1.4; }
+
+        /* ==========================================================================
+           Single-page Mode: Proportional, clean scaling to fit 1 A4 page beautifully
+           ========================================================================== */
+        body.single-page {
+            font-size: 9pt;
+            line-height: 1.35;
+            padding: 20px 15px;
+        }
+        .single-page .container {
+            padding: 28px 36px;
+        }
+        .single-page .header { margin-bottom: 8pt; padding-bottom: 5pt; border-bottom-width: 1.5pt; }
+        .single-page .name { font-size: 15pt; }
+        .single-page .meta { font-size: 8.5pt; margin-top: 2pt; }
+        .single-page .section { margin-bottom: 7pt; }
+        .single-page .section-title { font-size: 9.5pt; margin-bottom: 4pt; padding-bottom: 1.5pt; }
+        .single-page .job { margin-bottom: 5pt; }
+        .single-page .job-title { font-size: 9.5pt; }
+        .single-page .job-right { font-size: 8pt; width: 120pt; }
+        .single-page .job-desc { font-size: 8.5pt; line-height: 1.35; margin-top: 1pt; margin-bottom: 2pt; }
+        .single-page .job-tech { font-size: 7.5pt; }
+        .single-page .edu { margin-bottom: 4pt; }
+        .single-page .edu-left { font-size: 9pt; }
+        .single-page .edu-right { font-size: 8pt; width: 120pt; }
+        .single-page .skills-table { margin-bottom: 3pt; }
+        .single-page .skills-td { font-size: 8.5pt; padding-right: 6pt; }
+        .single-page .skill-cat { font-size: 8.5pt; margin-bottom: 1pt; }
+        .single-page .skill-list { font-size: 8pt; line-height: 1.3; }
+        .single-page .projects-table { border-spacing: 4pt; margin-left: -4pt; margin-right: -4pt; }
+        .single-page .project-td { padding: 5pt; }
+        .single-page .project-name { font-size: 8.5pt; margin-bottom: 1pt; }
+        .single-page .project-desc { font-size: 7.5pt; line-height: 1.3; margin-bottom: 2pt; }
+        .single-page .project-tech { font-size: 7pt; }
+        .single-page .languages-text { font-size: 8.5pt; line-height: 1.3; }
+
+        /* ==========================================================================
+           Print and PDF Engine overrides (Flying Saucer)
+           ========================================================================== */
+        @media print {
+            body, body.single-page {
+                background-color: #ffffff !important;
+                padding: 0 !important;
+            }
+            .container, .single-page .container {
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+                border-radius: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body th:classappend="${singlePage != null and singlePage} ? 'single-page' : 'multi-page'">
+    <div class="container">
+        
+        <!-- Header -->
+        <div class="header">
+            <div class="name" th:text="${profile.fullName}">Murat Orynbasar</div>
+            <div class="meta">
+                <span th:if="${profile.location}" th:text="${profile.location}">Almaty, Kazakhstan</span>
+                <span th:if="${profile.location != null and (profile.website != null or profile.githubUsername != null)}"> | </span>
+                <span th:if="${profile.website}">
+                    <a th:href="${profile.website}" th:text="${profile.website}" target="_blank">Portfolio</a>
+                </span>
+                <span th:if="${profile.website != null and profile.githubUsername != null}"> | </span>
+                <span th:if="${profile.githubUsername}">
+                    <a th:href="'https://github.com/' + ${profile.githubUsername}" th:text="'github.com/' + ${profile.githubUsername}" target="_blank">github.com/user</a>
+                </span>
+                <span th:if="${profile.githubUsername != null and profile.linkedin != null}"> | </span>
+                <span th:if="${profile.linkedin}">
+                    <a th:href="${profile.linkedin}" th:text="${profile.linkedin}" target="_blank">LinkedIn</a>
+                </span>
+                <span th:if="${profile.telegram != null}"> | TG: <span th:text="${profile.telegram}"></span></span>
+            </div>
+        </div>
+
+        <!-- Dynamic Sections based on sectionOrder: Header -> Experience -> Education -> Skills -> Projects -->
+        <th:block th:each="sectionName : ${profile.sectionOrder != null and !profile.sectionOrder.isEmpty() ? profile.sectionOrder : {'experience','education','skills','languages','projects'}}">
+            <th:block th:switch="${sectionName}">
+
+                <!-- Experience Section -->
+                <div class="section" th:case="'experience'" th:if="${profile.experience != null and !profile.experience.isEmpty()}">
+                    <div class="section-title">Experience</div>
+                    <div class="job" th:each="exp : ${profile.experience}">
+                        <table class="job-table" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td class="job-left">
+                                    <span class="job-title" th:text="${exp.position}">Software Engineer</span>
+                                    <span class="job-company" th:text="'— ' + ${exp.company}">— Company</span>
+                                </td>
+                                <td class="job-right" th:text="${exp.startDate + ' – ' + (exp.isCurrent ? 'Present' : exp.endDate)}">Jun 2026 – Present</td>
+                            </tr>
+                        </table>
+                        <div class="job-desc" th:text="${exp.description}">Job description and impact.</div>
+                        <div class="job-tech" th:if="${exp.techStack != null and !exp.techStack.isEmpty()}" th:text="'Stack: ' + ${exp.techStack}">Stack: Java, Spring</div>
+                    </div>
+                </div>
+
+                <!-- Education Section -->
+                <div class="section" th:case="'education'" th:if="${profile.education != null and !profile.education.isEmpty()}">
+                    <div class="section-title">Education</div>
+                    <div class="edu" th:each="edu : ${profile.education}">
+                        <table class="edu-table" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td class="edu-left">
+                                    <span class="edu-degree" th:text="${edu.field != null and !edu.field.isEmpty() ? edu.degree + ' in ' + edu.field : edu.degree}">Bachelor of Science</span>
+                                    <span class="edu-school" th:text="'— ' + ${edu.institution}">— University</span>
+                                </td>
+                                <td class="edu-right" th:text="${edu.startDate + ' – ' + (edu.isCurrent ? 'Present' : edu.endDate)}">2022 – 2026</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Core Skills Section (4 Columns Table) -->
+                <div class="section" th:case="'skills'" th:if="${groupedSkills != null and !groupedSkills.isEmpty()}">
+                    <div class="section-title">Core Skills</div>
+                    <table class="skills-table" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td class="skills-td" th:each="entry : ${groupedSkills}">
+                                <div class="skill-cat" th:text="${entry.key}">Backend</div>
+                                <div class="skill-list" th:text="${#strings.listJoin(entry.value, ', ')}">Java, Spring Boot, PostgreSQL</div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <!-- Languages Section -->
+                <div class="section" th:case="'languages'" th:if="${languagesStr != null and !languagesStr.isEmpty()}">
+                    <div class="section-title">Languages</div>
+                    <div class="languages-text" th:text="${languagesStr}">English (Fluent), Russian (Native)</div>
+                </div>
+
+                <!-- Projects Section (2x2 Grid) -->
+                <div class="section" th:case="'projects'" th:if="${profile.projects != null and !profile.projects.isEmpty()}">
+                    <div class="section-title">Featured Projects</div>
+                    <table class="projects-table" cellpadding="0" cellspacing="0">
+                        <tr th:each="i : ${#numbers.sequence(0, (profile.projects.size() > 4 ? 3 : profile.projects.size() - 1), 2)}">
+                            <td class="project-td" th:if="${i < profile.projects.size()}">
+                                <div class="project-name">
+                                    <a th:if="${profile.projects[i].githubUrl}" th:href="${profile.projects[i].githubUrl}" th:text="${profile.projects[i].name}" target="_blank">Project Name</a>
+                                    <span th:unless="${profile.projects[i].githubUrl}" th:text="${profile.projects[i].name}">Project Name</span>
+                                </div>
+                                <div class="project-desc" th:text="${profile.projects[i].description}">Project description.</div>
+                                <div class="project-tech" th:if="${profile.projects[i].techStack != null and !profile.projects[i].techStack.isEmpty()}" th:text="${profile.projects[i].techStack}">Tech Stack</div>
+                            </td>
+                            <td class="project-td" th:if="${i + 1 < profile.projects.size()}">
+                                <div class="project-name">
+                                    <a th:if="${profile.projects[i + 1].githubUrl}" th:href="${profile.projects[i + 1].githubUrl}" th:text="${profile.projects[i + 1].name}" target="_blank">Project Name</a>
+                                    <span th:unless="${profile.projects[i + 1].githubUrl}" th:text="${profile.projects[i + 1].name}">Project Name</span>
+                                </div>
+                                <div class="project-desc" th:text="${profile.projects[i + 1].description}">Project description.</div>
+                                <div class="project-tech" th:if="${profile.projects[i + 1].techStack != null and !profile.projects[i + 1].techStack.isEmpty()}" th:text="${profile.projects[i + 1].techStack}">Tech Stack</div>
+                            </td>
+                            <td class="project-td" th:if="${i + 1 >= profile.projects.size()}" style="border: none; background: transparent;"></td>
+                        </tr>
+                    </table>
+                </div>
+
+            </th:block>
+        </th:block>
+
+    </div>
+</body>
+</html>

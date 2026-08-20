@@ -32,25 +32,27 @@ import java.util.Map;
 @Service
 public class GroqClient implements LlmProvider {
 
-    private static final String STREAM_MODEL    = "llama-3.1-70b-versatile";
-    private static final String STRUCTURED_MODEL = "llama-3.1-70b-versatile"; // стабильный JSON mode
-    private static final int    MAX_TOKENS       = 2048;
+    private static final int MAX_TOKENS = 2048;
 
     private final WebClient webClient;
     private final ObjectMapper objectMapper;
     private final CircuitBreaker circuitBreaker;
     private final TokenAccountingService tokenAccountingService;
+    private final String model;
 
     public GroqClient(
-            WebClient.Builder webClientBuilder,
-            ObjectMapper objectMapper,
+            org.springframework.web.reactive.function.client.WebClient.Builder webClientBuilder,
+            com.fasterxml.jackson.databind.ObjectMapper objectMapper,
             TokenAccountingService tokenAccountingService,
-            @Value("${groq.api-key}") String apiKey,
-            @Value("${groq.api-url}") String apiUrl
+            @org.springframework.beans.factory.annotation.Value("${groq.api-key:}") String apiKey,
+            @org.springframework.beans.factory.annotation.Value("${groq.api-url:https://api.groq.com/openai/v1/chat/completions}") String apiUrl,
+            @org.springframework.beans.factory.annotation.Value("${groq.model:openai/gpt-oss-20b}") String model
     ) {
         if (apiKey == null || apiKey.isBlank()) {
             log.warn("[GroqClient] GROQ_API_KEY is not configured — AI features will fail at runtime");
         }
+
+        this.model = (model == null || model.isBlank()) ? "openai/gpt-oss-20b" : model;
 
         HttpClient httpClient = HttpClient.create()
                 .resolver(DefaultAddressResolverGroup.INSTANCE);
@@ -89,7 +91,7 @@ public class GroqClient implements LlmProvider {
     @Override
     public Flux<String> streamCompletion(List<Map<String, String>> messages) {
         Map<String, Object> body = Map.of(
-                "model", STREAM_MODEL,
+                "model", this.model,
                 "messages", messages,
                 "temperature", 0.7,
                 "max_tokens", MAX_TOKENS,
@@ -127,7 +129,7 @@ public class GroqClient implements LlmProvider {
         final Long userId = currentUserId;
 
         Map<String, Object> body = Map.of(
-                "model", STRUCTURED_MODEL,
+                "model", this.model,
                 "messages", List.of(
                         Map.of("role", "system", "content", systemPrompt),
                         Map.of("role", "user",   "content", userMessage)
@@ -231,7 +233,7 @@ public class GroqClient implements LlmProvider {
                 int promptTokens = usage.has("prompt_tokens") ? usage.get("prompt_tokens").asInt() : 0;
                 int completionTokens = usage.has("completion_tokens") ? usage.get("completion_tokens").asInt() : 0;
                 int totalTokens = usage.has("total_tokens") ? usage.get("total_tokens").asInt() : 0;
-                tokenAccountingService.recordUsageAsync(userId, STRUCTURED_MODEL, promptTokens, completionTokens, totalTokens, endpoint);
+                tokenAccountingService.recordUsageAsync(userId, this.model, promptTokens, completionTokens, totalTokens, endpoint);
             }
 
             return response

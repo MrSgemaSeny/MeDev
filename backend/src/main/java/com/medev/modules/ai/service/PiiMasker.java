@@ -9,11 +9,13 @@ public class PiiMasker {
         if (text == null) return null;
         
         return text
-            // Phone numbers
-            .replaceAll("\\+?[0-9][\\s\\-]?\\(?[0-9]{3}\\)?[\\s\\-]?[0-9]{3}[\\s\\-]?[0-9]{2}[\\s\\-]?[0-9]{2}", "[PHONE]")
             // Emails
-            .replaceAll("[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}", "[EMAIL]")
-            // Basic full names (2-3 words capitalized)
-            .replaceAll("\\b[A-ZА-Я][a-zа-я]+ [A-ZА-Я][a-zа-я]+(?: [A-ZА-Я][a-zа-я]+)?\\b", "[NAME]");
+            .replaceAll("(?i)\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}\\b", "[EMAIL]")
+            // SSN & 12-digit national IDs (IIN/BIN)
+            .replaceAll("\\b\\d{3}-\\d{2}-\\d{4}\\b|\\b\\d{12}\\b", "[ID_NUMBER]")
+            // International phone numbers (covers Kazakh, Russian, US, EU formats)
+            .replaceAll("(\\+?\\d{1,3}[-.\\s]?)?\\(?\\d{3}\\)?[-.\\s]?\\d{3}[-.\\s]?\\d{2,4}[-.\\s]?\\d{2,4}", "[PHONE]")
+            // Names with apostrophes and hyphens (e.g. O'Connor, Jean-Luc)
+            .replaceAll("\\b[A-ZА-Я][a-zа-яA-ZА-Я'’\\-]+ [A-ZА-Я][a-zа-яA-ZА-Я'’\\-]+(?: [A-ZА-Я][a-zа-яA-ZА-Я'’\\-]+)?\\b", "[NAME]");
     }
 }

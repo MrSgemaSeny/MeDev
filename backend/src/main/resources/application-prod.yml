@@ -28,6 +28,13 @@ kaspi:
   secret-key: ${KASPI_SECRET_KEY}
   pro-price-amount: 15000
 
+encryption:
+  secret: ${ENCRYPTION_SECRET}
+  secret-old: ${ENCRYPTION_SECRET_OLD:}
+
+groq:
+  api-key: ${GROQ_API_KEY}
+
 management:
   endpoints:
     web:

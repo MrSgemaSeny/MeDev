@@ -34,7 +34,7 @@ public class CookieOAuth2AuthorizationRequestRepository implements Authorization
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setMaxAge(COOKIE_EXPIRE_SECONDS);
-        // cookie.setSecure(true); // Should be true in production
+        cookie.setSecure(request.isSecure() || "https".equalsIgnoreCase(request.getHeader("X-Forwarded-Proto")));
         response.addCookie(cookie);
     }
 

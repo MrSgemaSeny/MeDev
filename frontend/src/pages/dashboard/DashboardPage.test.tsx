@@ -33,7 +33,7 @@ describe('DashboardPage', () => {
       </QueryClientProvider>
     );
 
-    expect(screen.getByText('Loading dashboard...')).toBeTruthy();
+    expect(document.querySelector('.animate-pulse')).toBeTruthy();
   });
 
   it('renders dynamic profile data (no mock data)', () => {

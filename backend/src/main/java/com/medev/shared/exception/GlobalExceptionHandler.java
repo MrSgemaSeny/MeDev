@@ -61,6 +61,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Некорректный формат данных в запросе"));
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
+    }
+
+    @ExceptionHandler(org.springframework.web.server.ResponseStatusException.class)
+    public ResponseEntity<Map<String, String>> handleResponseStatus(org.springframework.web.server.ResponseStatusException e) {
+        return ResponseEntity.status(e.getStatusCode()).body(Map.of("error", e.getReason() != null ? e.getReason() : e.getMessage()));
+    }
+
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<Map<String, String>> handleIllegalState(IllegalStateException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));

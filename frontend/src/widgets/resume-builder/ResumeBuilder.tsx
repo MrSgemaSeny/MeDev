@@ -5,6 +5,7 @@ import { useAiChatStore } from '../../features/ai-assistant/model/store';
 import { Bot, Download, ArrowUp, ArrowDown, FileText, Files, File } from 'lucide-react';
 
 const TEMPLATES = [
+  { id: 'clean', name: 'Clean ATS', desc: 'Recruiter Classic', accent: '#1a1a1a' },
   { id: 'github', name: 'GitHub', desc: 'Dev Standard', accent: '#238636' },
   { id: 'milky-soft', name: 'Milky Soft', desc: 'Warm Indie', accent: '#d4b7a1' },
   { id: 'apple-modern', name: 'Apple', desc: 'Minimalist', accent: '#0071e3' },
@@ -14,21 +15,10 @@ const TEMPLATES = [
 
 export const ResumeBuilder = () => {
   const { sections, selectedTemplate, isSinglePageMode, setTemplate, setSinglePageMode, toggleSection, reorderSections } = useResumeEditorStore();
-  const { toggleChat, isOpen } = useAiChatStore();
+  const { openWithPrompt } = useAiChatStore();
 
   const handleAiAnalysis = () => {
-    if (!isOpen) toggleChat();
-    setTimeout(() => {
-      const chatWidget = document.querySelector('textarea[placeholder="Спроси о чём-нибудь..."]') as HTMLTextAreaElement;
-      if (chatWidget) {
-        const form = chatWidget.closest('form');
-        if (form) {
-          chatWidget.value = "Проанализируй моё резюме: насколько оно привлекательно для работодателей? Чего не хватает?";
-          chatWidget.dispatchEvent(new Event('input', { bubbles: true }));
-          form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
-        }
-      }
-    }, 300);
+    openWithPrompt("Проанализируй моё резюме: насколько оно привлекательно для работодателей? Чего не хватает?");
   };
 
   const handleDownload = async () => {

@@ -35,6 +35,12 @@ class StripeServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private org.springframework.data.redis.core.RedisTemplate<String, Object> redisTemplate;
+    
+    @Mock
+    private org.springframework.data.redis.core.ValueOperations<String, Object> valueOperations;
+
     @InjectMocks
     private StripeService stripeService;
 
@@ -43,6 +49,9 @@ class StripeServiceTest {
 
     @BeforeEach
     void setUp() {
+        lenient().when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+        lenient().when(valueOperations.setIfAbsent(anyString(), anyString(), any())).thenReturn(true);
+
         ReflectionTestUtils.setField(stripeService, "proPriceId", "price_test");
         ReflectionTestUtils.setField(stripeService, "webhookSecret", "whsec_test");
         ReflectionTestUtils.setField(stripeService, "frontendUrl", "http://localhost");

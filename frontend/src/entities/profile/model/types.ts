@@ -61,7 +61,11 @@ export interface ProjectDto {
   name: string;
   description?: string;
   githubUrl?: string;
+  liveUrl?: string;
+  stars?: number;
   techStack?: string;
+  isFeatured?: boolean;
+  isVisible?: boolean;
   sortOrder: number;
 }
 

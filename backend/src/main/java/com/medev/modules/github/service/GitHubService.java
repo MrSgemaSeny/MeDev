@@ -153,7 +153,7 @@ public class GitHubService {
     }
 
     public String fetchUserPublicRepos(String username) {
-        if (username == null || username.isEmpty()) return "";
+        if (username == null || username.isBlank() || !username.matches("^[a-zA-Z0-9_-]+$")) return "";
 
         String cacheKey = "github:public_repos:" + username;
         Object cached = redisTemplate.opsForValue().get(cacheKey);
@@ -207,8 +207,36 @@ public class GitHubService {
 
         if (github.getLanguageStats() != null) {
             github.getLanguageStats().forEach((lang, count) ->
-                    profileService.addSkillIfNotExists(userId, lang, "Backend")
+                    profileService.addSkillIfNotExists(userId, lang, "Language")
             );
+        }
+        
+        if (github.getDetectedTechnologies() != null) {
+            github.getDetectedTechnologies().forEach(tech -> 
+                    profileService.addSkillIfNotExists(userId, tech, "Technology")
+            );
+        }
+        
+        if (github.getOrganizations() != null && !github.getOrganizations().isEmpty()) {
+            profileService.importOrganizationsAsExperience(userId, github.getOrganizations());
+        }
+        
+        if (github.getRepos() != null) {
+            java.util.Map<String, java.time.LocalDate> oldestLangDate = new java.util.HashMap<>();
+            for (GitHubRepoDto repo : github.getRepos()) {
+                if (repo.getLanguage() != null && repo.getCreatedAt() != null) {
+                    try {
+                        java.time.LocalDate repoDate = java.time.OffsetDateTime.parse(repo.getCreatedAt()).toLocalDate();
+                        java.time.LocalDate currentOldest = oldestLangDate.get(repo.getLanguage());
+                        if (currentOldest == null || repoDate.isBefore(currentOldest)) {
+                            oldestLangDate.put(repo.getLanguage(), repoDate);
+                        }
+                    } catch (Exception e) {}
+                }
+            }
+            oldestLangDate.forEach((lang, date) -> {
+                profileService.importLanguageExperience(userId, lang, date);
+            });
         }
     }
 }

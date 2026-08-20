@@ -1,6 +1,6 @@
 package com.medev.modules.profile.service;
 
-import com.medev.modules.profile.entity.Profile;
+import com.medev.modules.profile.dto.ProfileDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,7 +30,7 @@ class ReadmeGeneratorServiceTest {
         ReflectionTestUtils.setField(readmeGeneratorService, "textTemplateEngine", textTemplateEngine);
         when(textTemplateEngine.process(anyString(), any(Context.class))).thenReturn("Mocked README content");
 
-        Profile profile = Profile.builder()
+        ProfileDto profile = ProfileDto.builder()
                 .fullName("John Doe")
                 .headline("Software Engineer")
                 .summary("A great developer")
@@ -44,11 +44,23 @@ class ReadmeGeneratorServiceTest {
     }
 
     @Test
+    void generateReadme_withTemplates() {
+        ReflectionTestUtils.setField(readmeGeneratorService, "textTemplateEngine", textTemplateEngine);
+        when(textTemplateEngine.process(anyString(), any(Context.class))).thenReturn("Template content");
+
+        ProfileDto profile = ProfileDto.builder().fullName("John").build();
+
+        assertThat(readmeGeneratorService.generateReadme(profile, "minimal")).isEqualTo("Template content");
+        assertThat(readmeGeneratorService.generateReadme(profile, "creative")).isEqualTo("Template content");
+        assertThat(readmeGeneratorService.generateReadme(profile, "full")).isEqualTo("Template content");
+    }
+
+    @Test
     void generateReadme_withNullFields_doesNotThrow() {
         ReflectionTestUtils.setField(readmeGeneratorService, "textTemplateEngine", textTemplateEngine);
         when(textTemplateEngine.process(anyString(), any(Context.class))).thenReturn("Mocked");
 
-        Profile profile = Profile.builder().build();
+        ProfileDto profile = ProfileDto.builder().build();
 
         assertThatCode(() -> readmeGeneratorService.generateReadme(profile))
                 .doesNotThrowAnyException();

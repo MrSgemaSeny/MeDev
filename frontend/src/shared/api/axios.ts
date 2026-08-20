@@ -3,7 +3,7 @@ import { useAuthStore } from '../../entities/user/model/store';
 
 // Для простоты, пока бэкенд на локалхосте.
 // В проде baseURL будет заменен на относительный путь или из env
-const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080/api/v1';
+export const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080/api/v1';
 
 export const api = axios.create({
   baseURL: BASE_URL,
