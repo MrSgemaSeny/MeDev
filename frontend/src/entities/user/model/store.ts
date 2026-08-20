@@ -7,8 +7,8 @@ interface AuthState {
   username: string | null;
   plan: string | null;
   role: string | null;
-  setAuth: (accessToken: string, refreshToken: string, username: string, plan: string, role?: string) => void;
-  setTokens: (accessToken: string, refreshToken: string) => void;
+  setAuth: (accessToken: string, refreshToken?: string, username?: string, plan?: string, role?: string) => void;
+  setTokens: (accessToken: string, refreshToken?: string) => void;
   setPlan: (plan: string) => void;
   logout: () => void;
 }
