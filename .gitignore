@@ -37,11 +37,11 @@ frontend/*.tsbuildinfo
 
 # Internal, Agents & Planning
 .agents/
-.github/
 plan/
 journal/
 AI_AGENT_INSTRUCTION.md
 AUDIT_PROJECT_REVIEW.md
+
 
 
 
