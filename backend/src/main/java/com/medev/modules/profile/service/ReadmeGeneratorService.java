@@ -29,8 +29,18 @@ public class ReadmeGeneratorService {
     }
 
     public String generateReadme(Profile profile) {
+        return generateReadme(profile, "full");
+    }
+
+    public String generateReadme(Profile profile, String template) {
         Context context = new Context();
         context.setVariable("profile", profile);
-        return textTemplateEngine.process("readme", context);
+        String templateName = switch (template != null ? template.toLowerCase().trim() : "") {
+            case "minimal" -> "readme-minimal";
+            case "creative" -> "readme-creative";
+            case "classic" -> "readme";
+            default -> "readme-full";
+        };
+        return textTemplateEngine.process(templateName, context);
     }
 }

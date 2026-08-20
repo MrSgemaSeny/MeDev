@@ -44,6 +44,18 @@ class ReadmeGeneratorServiceTest {
     }
 
     @Test
+    void generateReadme_withTemplates() {
+        ReflectionTestUtils.setField(readmeGeneratorService, "textTemplateEngine", textTemplateEngine);
+        when(textTemplateEngine.process(anyString(), any(Context.class))).thenReturn("Template content");
+
+        Profile profile = Profile.builder().fullName("John").build();
+
+        assertThat(readmeGeneratorService.generateReadme(profile, "minimal")).isEqualTo("Template content");
+        assertThat(readmeGeneratorService.generateReadme(profile, "creative")).isEqualTo("Template content");
+        assertThat(readmeGeneratorService.generateReadme(profile, "full")).isEqualTo("Template content");
+    }
+
+    @Test
     void generateReadme_withNullFields_doesNotThrow() {
         ReflectionTestUtils.setField(readmeGeneratorService, "textTemplateEngine", textTemplateEngine);
         when(textTemplateEngine.process(anyString(), any(Context.class))).thenReturn("Mocked");

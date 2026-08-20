@@ -29,11 +29,16 @@ public class ProfileController {
     }
 
     @GetMapping(value = "/readme", produces = "text/markdown;charset=UTF-8")
-    public ResponseEntity<String> getReadme() {
+    public ResponseEntity<String> getReadme(@RequestParam(defaultValue = "full") String template) {
         Long userId = SecurityUtils.getCurrentUserId();
         com.medev.modules.profile.entity.Profile profile = profileService.getProfileEntityByUserId(userId);
-        String readmeContent = readmeGeneratorService.generateReadme(profile);
+        String readmeContent = readmeGeneratorService.generateReadme(profile, template);
         return ResponseEntity.ok(readmeContent);
+    }
+
+    @GetMapping(value = "/export/readme", produces = "text/markdown;charset=UTF-8")
+    public ResponseEntity<String> getExportReadme(@RequestParam(defaultValue = "full") String template) {
+        return getReadme(template);
     }
 
     @GetMapping(value = "/export/json", produces = "application/json;charset=UTF-8")

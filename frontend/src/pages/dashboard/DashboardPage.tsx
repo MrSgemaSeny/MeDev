@@ -1,14 +1,17 @@
+import { useState } from 'react';
 import { useProfile } from '../../shared/api/hooks/useProfile';
 import { useAuthStore } from '../../entities/user/model/store';
 import { Link } from 'react-router-dom';
 import { GitBranch, Link as LinkIcon, Send, Globe, Briefcase, GraduationCap, FolderGit2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { DashboardSkeleton } from '../../shared/ui/Skeleton';
+import { ReadmeModal } from '../../features/profile/ui/ReadmeModal';
 
 export const DashboardPage = () => {
   const { data: profile, isLoading } = useProfile();
   const username = useAuthStore((state) => state.username);
   const plan = useAuthStore((state) => state.plan);
+  const [showReadmeModal, setShowReadmeModal] = useState(false);
   const { t } = useTranslation();
 
   if (isLoading) {
@@ -132,25 +135,14 @@ export const DashboardPage = () => {
           {/* AI Tools & Actions */}
           <div className="grid sm:grid-cols-3 gap-4 mt-6">
             <button
-              onClick={async () => {
-                try {
-                  const { api } = await import('../../shared/api/axios');
-                  const { toast } = await import('sonner');
-                  const res = await api.get('/profile/export/readme');
-                  await navigator.clipboard.writeText(res.data);
-                  toast.success(t('dashboard.readmeCopied', 'GitHub Profile README copied to clipboard!'));
-                } catch (e) {
-                  const { toast } = await import('sonner');
-                  toast.error(t('dashboard.readmeError', 'Failed to generate README.'));
-                }
-              }}
+              onClick={() => setShowReadmeModal(true)}
               className="p-4 rounded-xl border border-default surface-primary card-hover text-left flex items-center gap-3 cursor-pointer"
             >
               <div className="p-2.5 rounded-lg surface-tertiary">
                 <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
               </div>
               <div>
-                <h4 className="font-bold text-sm text-primary">{t('dashboard.copyReadme', 'Copy README')}</h4>
+                <h4 className="font-bold text-sm text-primary">{t('dashboard.copyReadme', 'README Generator')}</h4>
                 <p className="text-xs text-secondary">{t('dashboard.copyReadmeDesc', 'For your GitHub profile')}</p>
               </div>
             </button>
@@ -344,6 +336,8 @@ export const DashboardPage = () => {
           </div>
         </div>
       </section>
+
+      <ReadmeModal isOpen={showReadmeModal} onClose={() => setShowReadmeModal(false)} />
     </div>
   );
 };
