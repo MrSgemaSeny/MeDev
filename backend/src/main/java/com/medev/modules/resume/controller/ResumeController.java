@@ -12,15 +12,25 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class ResumeController {
 
-    private final PdfGeneratorService pdfGeneratorService;
+    private static final java.util.Set<String> ALLOWED_TEMPLATES = java.util.Set.of("apple-modern", "github", "grok-monolith", "milky-soft", "phub-orange");
+    private static final java.util.Set<String> PRO_TEMPLATES = java.util.Set.of("apple-modern", "milky-soft", "phub-orange");
 
+    private final PdfGeneratorService pdfGeneratorService;
+    private final com.medev.modules.auth.repository.UserRepository userRepository;
     @GetMapping("/generate/{template}")
     public ResponseEntity<byte[]> generate(@PathVariable String template, @RequestParam(defaultValue = "false") boolean preview, @RequestParam(defaultValue = "true") boolean singlePage) {
         Long userId = SecurityUtils.getCurrentUserId();
         
-        // Ensure user is PRO if they request pro templates
-        if (template.toLowerCase().contains("pro")) {
-            throw new com.medev.shared.exception.UnauthorizedException("PRO template requires PRO plan");
+        if (!ALLOWED_TEMPLATES.contains(template)) {
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "Invalid template name");
+        }
+        
+        if (PRO_TEMPLATES.contains(template)) {
+            com.medev.modules.auth.entity.User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new com.medev.shared.exception.NotFoundException("User not found"));
+            if (user.getPlan() != com.medev.modules.auth.entity.User.Plan.PRO) {
+                throw new com.medev.shared.exception.UnauthorizedException("PRO template requires PRO plan");
+            }
         }
         
         byte[] pdf = pdfGeneratorService.generatePdf(userId, template, preview, singlePage);
@@ -36,10 +46,17 @@ public class ResumeController {
     public ResponseEntity<String> generateHtml(@PathVariable String template, @RequestParam(defaultValue = "false") boolean preview, @RequestParam(defaultValue = "true") boolean singlePage) {
         Long userId = SecurityUtils.getCurrentUserId();
         
-        if (template.toLowerCase().contains("pro")) {
-            throw new com.medev.shared.exception.UnauthorizedException("PRO template requires PRO plan");
+        if (!ALLOWED_TEMPLATES.contains(template)) {
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "Invalid template name");
         }
         
+        if (PRO_TEMPLATES.contains(template)) {
+            com.medev.modules.auth.entity.User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new com.medev.shared.exception.NotFoundException("User not found"));
+            if (user.getPlan() != com.medev.modules.auth.entity.User.Plan.PRO) {
+                throw new com.medev.shared.exception.UnauthorizedException("PRO template requires PRO plan");
+            }
+        }        
         String html = pdfGeneratorService.generateHtml(userId, template, preview, singlePage);
 
         String disposition = preview ? "inline" : "attachment";

@@ -141,6 +141,7 @@ public class AuthService {
                 .refreshToken(refreshToken)
                 .username(user.getUsername())
                 .plan(user.getPlan().name())
+                .role(user.getRole().name())
                 .build();
     }
 

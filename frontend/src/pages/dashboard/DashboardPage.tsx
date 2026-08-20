@@ -120,24 +120,113 @@ export const DashboardPage = () => {
             </Link>
             
             <Link to="/billing" className="p-6 rounded-2xl border border-default surface-primary card-hover">
-              <div className="w-10 h-10 rounded-lg surface-tertiary flex items-center justify-center mb-4">
-                <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"/></svg>
-              </div>
-              <h3 className="font-bold mb-1.5 text-primary">{t('dashboard.billingQuota', 'Billing & Quota')}</h3>
-              <p className="text-sm text-secondary leading-relaxed">{t('dashboard.billingQuotaDesc', 'Upgrade to Pro for unlimited AI generation and features.')}</p>
-            </Link>
+    <div className="max-w-6xl mx-auto space-y-8 animate-fade-in">
+      {/* Hero Welcome & Quick Stats */}
+      <div className="relative overflow-hidden rounded-2xl border border-default surface-primary p-8 md:p-10 shadow-lg">
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-extrabold tracking-tight text-primary">
+                {t('dashboard.welcome', 'Welcome back')}, {profile?.fullName || username || 'Developer'}!
+              </h1>
+              {plan === 'PRO' && (
+                <span className="px-2.5 py-0.5 text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full">
+                  PRO
+                </span>
+              )}
+            </div>
+            <p className="text-secondary max-w-xl">
+              {profile?.headline || t('dashboard.defaultHeadline', 'Craft your developer presence, optimize your resume, and track job applications in one unified workspace.')}
+            </p>
+          </div>
 
+          <div className="flex items-center gap-3">
+            <Link
+              to="/profile/edit"
+              className="btn btn-primary px-5 py-2.5 shadow-sm hover:shadow transition-all"
+            >
+              {t('dashboard.editProfile', 'Edit Profile')}
+            </Link>
+            <Link
+              to="/resume"
+              className="btn btn-secondary px-5 py-2.5 transition-all"
+            >
+              {t('dashboard.buildResume', 'Build Resume')}
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Grid: Live Preview Card & Quick Actions */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left 2 Cols: Interactive Summary / Completeness */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Completeness Card */}
+          <div className="p-6 rounded-2xl border border-default surface-primary space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-bold text-primary flex items-center gap-2">
+                <Globe className="w-5 h-5 text-emerald-400" />
+                {t('dashboard.profileStrength', 'Profile Strength')}
+              </h2>
+              <span className="text-sm font-semibold text-primary">{completeness}%</span>
+            </div>
+            <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
+              <div
+                className="bg-emerald-500 h-2 rounded-full transition-all duration-500"
+                style={{ width: `${completeness}%` }}
+              />
+            </div>
+            <p className="text-xs text-secondary">
+              {completeness < 100
+                ? t('dashboard.completenessHint', 'Add missing skills, experience, or projects to maximize your resume ATS score and public reach.')
+                : t('dashboard.completenessDone', 'Your profile is fully populated and ready for discovery!')}
+            </p>
+          </div>
+
+          {/* Quick Stats Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="p-5 rounded-xl border border-default surface-primary flex items-center gap-4">
+              <div className="p-3 rounded-lg surface-tertiary text-sky-400">
+                <Briefcase className="w-6 h-6" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-primary">{profile?.experience?.length || 0}</div>
+                <div className="text-xs text-secondary">{t('dashboard.experiences', 'Experiences')}</div>
+              </div>
+            </div>
+
+            <div className="p-5 rounded-xl border border-default surface-primary flex items-center gap-4">
+              <div className="p-3 rounded-lg surface-tertiary text-purple-400">
+                <FolderGit2 className="w-6 h-6" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-primary">{profile?.projects?.length || 0}</div>
+                <div className="text-xs text-secondary">{t('dashboard.projects', 'Projects')}</div>
+              </div>
+            </div>
+
+            <div className="p-5 rounded-xl border border-default surface-primary flex items-center gap-4">
+              <div className="p-3 rounded-lg surface-tertiary text-amber-400">
+                <GraduationCap className="w-6 h-6" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-primary">{profile?.skills?.length || 0}</div>
+                <div className="text-xs text-secondary">{t('dashboard.skills', 'Skills Listed')}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Actions Action Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <button
               onClick={async () => {
                 try {
                   const { api } = await import('../../shared/api/axios');
-                  const { toast } = await import('sonner');
-                  const res = await api.get('/profile/readme');
+                  const res = await api.get('/profile/export/readme');
                   await navigator.clipboard.writeText(res.data);
-                  toast.success('README copied to clipboard!');
+                  alert(t('dashboard.readmeCopied', 'GitHub Profile README copied to clipboard!'));
                 } catch (e) {
-                  const { toast } = await import('sonner');
-                  toast.error('Failed to generate README');
+                  alert(t('dashboard.readmeError', 'Failed to generate README. Please make sure your profile has data.'));
                 }
               }}
               className="p-6 rounded-2xl border border-default surface-primary card-hover text-left flex flex-col items-start w-full cursor-pointer"
@@ -150,7 +239,7 @@ export const DashboardPage = () => {
             </button>
 
             <a
-              href="http://localhost:8080/api/v1/profile/export/json"
+              href={`${BASE_URL}/profile/export/json`}
               download="medev_profile.json"
               className="p-6 rounded-2xl border border-default surface-primary card-hover text-left flex flex-col items-start w-full cursor-pointer"
             >

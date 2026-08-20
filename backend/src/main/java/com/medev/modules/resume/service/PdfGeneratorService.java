@@ -61,7 +61,12 @@ public class PdfGeneratorService {
         }
     }
 
+    private static final java.util.Set<String> ALLOWED_TEMPLATES = java.util.Set.of("classic", "modern", "minimal", "tech", "executive", "creative", "pro-modern", "pro-elegant");
+
     public byte[] generatePdf(Long userId, String templateName, boolean isPreview, boolean singlePage) {
+        if (!ALLOWED_TEMPLATES.contains(templateName)) {
+            throw new IllegalArgumentException("Invalid template name");
+        }
         if (!isPreview) {
             checkGenerationLimit(userId);
         }
@@ -122,6 +127,9 @@ public class PdfGeneratorService {
     }
 
     public String generateHtml(Long userId, String templateName, boolean isPreview, boolean singlePage) {
+        if (!ALLOWED_TEMPLATES.contains(templateName)) {
+            throw new IllegalArgumentException("Invalid template name");
+        }
         if (!isPreview) {
             checkGenerationLimit(userId);
         }

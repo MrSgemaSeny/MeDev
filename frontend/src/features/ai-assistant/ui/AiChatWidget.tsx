@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Bot, Send, X, MessageSquare, Loader2 } from 'lucide-react';
 import { useAiChatStore } from '../model/store';
 import { useAuthStore } from '../../../entities/user/model/store';
+import { BASE_URL } from '../../../shared/api/axios';
 
 export const AiChatWidget = () => {
   const { isOpen, messages, isLoading, pendingPrompt, toggleChat, addMessage, updateLastMessage, setLoading, clearChat, clearPendingPrompt } = useAiChatStore();
@@ -45,7 +46,7 @@ export const AiChatWidget = () => {
     try {
       const historyToSend = messages.slice(-10).map(m => ({ role: m.role, content: m.content }));
       
-      let response = await fetch('http://localhost:8080/api/v1/ai/chat/stream', {
+      let response = await fetch(`${BASE_URL}/ai/chat/stream`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -59,7 +60,7 @@ export const AiChatWidget = () => {
           const { api } = await import('../../../shared/api/axios');
           await api.get('/ai/quota'); // this will trigger the axios interceptor to refresh the token
           const newToken = useAuthStore.getState().accessToken;
-          response = await fetch('http://localhost:8080/api/v1/ai/chat/stream', {
+          response = await fetch(`${BASE_URL}/ai/chat/stream`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

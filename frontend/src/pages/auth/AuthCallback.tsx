@@ -17,8 +17,8 @@ export const AuthCallback = () => {
       exchanged.current = true;
       api.post('/auth/oauth2/exchange', { code })
         .then((res) => {
-          const { accessToken, refreshToken, username, plan } = res.data;
-          setAuth(accessToken, refreshToken, username, plan);
+          const { accessToken, refreshToken, username, plan, role } = res.data;
+          setAuth(accessToken, refreshToken, username, plan, role);
           navigate('/dashboard', { replace: true });
         })
         .catch((err) => {

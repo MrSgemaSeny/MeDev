@@ -44,9 +44,10 @@ github:
 groq:
   api-key: ${GROQ_API_KEY:}
   api-url: https://api.groq.com/openai/v1/chat/completions
+  model: ${GROQ_MODEL:llama-3.3-70b-versatile}
 
 stripe:
-  api-key: ${STRIPE_API_KEY:sk_test_12345}
+  secret-key: ${STRIPE_SECRET_KEY:sk_test_12345}
   webhook-secret: ${STRIPE_WEBHOOK_SECRET:whsec_12345}
   pro-price-id: ${STRIPE_PRO_PRICE_ID:price_12345}
 

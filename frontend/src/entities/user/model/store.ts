@@ -6,7 +6,8 @@ interface AuthState {
   accessToken: string | null;
   username: string | null;
   plan: string | null;
-  setAuth: (accessToken: string, refreshToken: string, username: string, plan: string) => void;
+  role: string | null;
+  setAuth: (accessToken: string, refreshToken: string, username: string, plan: string, role?: string) => void;
   setTokens: (accessToken: string, refreshToken: string) => void;
   setPlan: (plan: string) => void;
   logout: () => void;
@@ -18,12 +19,11 @@ export const useAuthStore = create<AuthState>()(
       accessToken: null,
       username: null,
       plan: null,
-      setAuth: (accessToken, refreshToken, username, plan) => {
-        localStorage.setItem('refreshToken', refreshToken);
-        set({ accessToken, username, plan });
+      role: null,
+      setAuth: (accessToken, _ignoredRefreshToken, username, plan, role) => {
+        set({ accessToken, username, plan, role: role || null });
       },
-      setTokens: (accessToken, refreshToken) => {
-        localStorage.setItem('refreshToken', refreshToken);
+      setTokens: (accessToken, _ignoredRefreshToken) => {
         set({ accessToken });
       },
       setPlan: (plan) => set({ plan }),
@@ -33,13 +33,12 @@ export const useAuthStore = create<AuthState>()(
         } catch (e) {
           console.error('Logout failed on backend', e);
         }
-        localStorage.removeItem('refreshToken');
-        set({ accessToken: null, username: null, plan: null });
+        set({ accessToken: null, username: null, plan: null, role: null });
       },
     }),
     {
       name: 'auth-storage',
-      partialize: (state) => ({ accessToken: state.accessToken, username: state.username, plan: state.plan }),
+      partialize: (state) => ({ username: state.username, plan: state.plan, role: state.role }),
     }
   )
 );

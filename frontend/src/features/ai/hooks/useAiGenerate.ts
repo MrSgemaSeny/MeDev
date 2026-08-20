@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useAuthStore } from '../../../entities/user/model/store';
 import { useUpsellStore } from '../../../entities/user/model/upsellStore';
-import { api } from '../../../shared/api/axios';
+import { api, BASE_URL } from '../../../shared/api/axios';
 
 export function useAiGenerate() {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -10,7 +10,7 @@ export function useAiGenerate() {
   const generate = useCallback(async (prompt: string, onToken: (token: string) => void) => {
     setIsGenerating(true);
     try {
-      let response = await fetch('http://localhost:8080/api/v1/ai/chat/stream', {
+      let response = await fetch(`${BASE_URL}/ai/chat/stream`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -24,7 +24,7 @@ export function useAiGenerate() {
           const { api } = await import('../../../shared/api/axios');
           await api.get('/ai/quota');
           const newToken = useAuthStore.getState().accessToken;
-          response = await fetch('http://localhost:8080/api/v1/ai/chat/stream', {
+          response = await fetch(`${BASE_URL}/ai/chat/stream`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

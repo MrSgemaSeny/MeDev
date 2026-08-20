@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { api } from '../../shared/api/axios';
+import { api, BASE_URL } from '../../shared/api/axios';
 import { useProfile, useGenerateProfile } from '../../shared/api/hooks/useProfile';
 import { Button } from '../../shared/ui/Button';
 import { Card } from '../../shared/ui/Form';
@@ -103,8 +103,7 @@ export const GithubImport = () => {
   };
 
   const handleConnect = () => {
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1';
-    const baseUrl = apiUrl.replace('/api/v1', '');
+    const baseUrl = BASE_URL.replace(/\/api\/v1\/?$/, '');
     
     if (accessToken) {
         // Send token to backend via query param to set secure HttpOnly cookie and redirect

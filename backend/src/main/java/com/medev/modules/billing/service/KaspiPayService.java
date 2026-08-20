@@ -6,6 +6,7 @@ import com.medev.shared.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,35 +16,37 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "kaspi.enabled", havingValue = "true", matchIfMissing = false)
 public class KaspiPayService {
 
     private final UserRepository userRepository;
 
-    @Value("${kaspi.merchant-id}")
+    @Value("${kaspi.enabled:false}")
+    private boolean kaspiEnabled;
+
+    @Value("${kaspi.merchant-id:dummy-merchant}")
     private String merchantId;
 
-    @Value("${kaspi.secret-key}")
+    @Value("${kaspi.secret-key:dummy-secret-key}")
     private String secretKey;
 
-    @Value("${kaspi.pro-price-amount}")
+    @Value("${kaspi.pro-price-amount:15000}")
     private Integer proPriceAmount;
 
     /**
      * Создает сессию оплаты или генерирует ссылку на оплату в Kaspi.
      */
     public String createPaymentLink(Long userId, int months) {
+        if (!kaspiEnabled) {
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND, "Kaspi payments are not enabled");
+        }
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
         if (user.getPlan() == User.Plan.PRO) {
             throw new IllegalStateException("User is already on PRO plan");
         }
-
-        // В реальном приложении здесь делается HTTP-вызов к Kaspi API:
-        // HttpHeaders headers = new HttpHeaders();
-        // headers.set("Authorization", "Bearer " + secretKey);
-        // ... (сборка payload)
-        // String response = restTemplate.postForObject("https://api.kaspi.kz/v1/payments", payload, String.class);
 
         int amountToPay = proPriceAmount * months;
         if (months == 3) amountToPay = 40000;
@@ -63,6 +66,10 @@ public class KaspiPayService {
      */
     @Transactional
     public void handleWebhook(byte[] rawPayload, String signature) {
+        if (!kaspiEnabled) {
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND, "Kaspi payments are not enabled");
+        }
+
         // Шаг 1: Валидация подписи (Security!)
         if (!verifySignature(rawPayload, signature)) {
             log.error("Kaspi webhook signature verification failed!");
@@ -117,7 +124,7 @@ public class KaspiPayService {
         if (signature == null || signature.isBlank()) {
             return false;
         }
-        if (secretKey == null || secretKey.isBlank() || secretKey.equals("changeme") || secretKey.equals("test")) {
+        if (secretKey == null || secretKey.isBlank() || secretKey.equals("changeme") || secretKey.equals("test") || secretKey.equals("dummy-secret-key")) {
             log.error("Kaspi secret key is not configured for production!");
             return false;
         }

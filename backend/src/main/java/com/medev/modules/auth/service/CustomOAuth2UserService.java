@@ -47,19 +47,28 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if ("github".equals(registrationId)) {
             providerId = String.valueOf(attributes.get("id"));
             String login = (String) attributes.get("login");
-            email = (String) attributes.get("email");
+            String accessToken = userRequest.getAccessToken().getTokenValue();
+            email = fetchGitHubPrimaryEmail(accessToken);
+            if (email == null) {
+                email = (String) attributes.get("email");
+            }
             if (email == null) {
                 email = login + "@github.user.medev.com";
             }
-            username = login.toLowerCase();
+            username = login != null ? login.toLowerCase() : "github_user";
             nameAttributeKey = "login";
             avatarUrl = (String) attributes.get("avatar_url");
         } else if ("google".equals(registrationId)) {
             providerId = (String) attributes.get("sub");
+            Boolean emailVerified = (Boolean) attributes.get("email_verified");
+            if (emailVerified != null && !emailVerified) {
+                throw new OAuth2AuthenticationException("Google email is not verified");
+            }
             email = (String) attributes.get("email");
-            String name = (String) attributes.get("name");
-            // username из email: "john.doe@gmail.com" -> "john.doe"
-            username = email.substring(0, email.indexOf("@")).toLowerCase().replaceAll("[^a-z0-9._-]", "");
+            String rawUsername = email != null && email.contains("@")
+                    ? email.substring(0, email.indexOf("@")).toLowerCase().replaceAll("[^a-z0-9._-]", "")
+                    : "";
+            username = rawUsername.isBlank() ? "user_" + UUID.randomUUID().toString().substring(0, 8) : rawUsername;
             nameAttributeKey = "sub";
             avatarUrl = (String) attributes.get("picture");
         } else {
@@ -129,13 +138,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 profileService.createEmptyProfile(saved);
                 return saved;
             });
-
-            // Fix Pre-Account Creation vulnerability:
-            if (user.getPassword() != null && user.getGithubId() == null && user.getGoogleId() == null) {
-                user.setPassword(org.springframework.security.crypto.bcrypt.BCrypt.hashpw(
-                        UUID.randomUUID().toString(), org.springframework.security.crypto.bcrypt.BCrypt.gensalt(12)
-                ));
-            }
         }
 
         // Обновляем provider ID для существующего пользователя
@@ -172,5 +174,38 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 enrichedAttributes,
                 nameAttributeKey
         );
+    }
+
+    private String fetchGitHubPrimaryEmail(String accessToken) {
+        if (accessToken == null || accessToken.isBlank()) {
+            return null;
+        }
+        try {
+            org.springframework.web.client.RestClient restClient = org.springframework.web.client.RestClient.create();
+            java.util.List<Map<String, Object>> emails = restClient.get()
+                    .uri("https://api.github.com/user/emails")
+                    .header("Authorization", "Bearer " + accessToken)
+                    .header("Accept", "application/vnd.github+json")
+                    .retrieve()
+                    .body(new org.springframework.core.ParameterizedTypeReference<java.util.List<Map<String, Object>>>() {});
+            if (emails != null) {
+                for (Map<String, Object> emailObj : emails) {
+                    Boolean primary = (Boolean) emailObj.get("primary");
+                    Boolean verified = (Boolean) emailObj.get("verified");
+                    if (Boolean.TRUE.equals(primary) && Boolean.TRUE.equals(verified)) {
+                        return (String) emailObj.get("email");
+                    }
+                }
+                for (Map<String, Object> emailObj : emails) {
+                    Boolean verified = (Boolean) emailObj.get("verified");
+                    if (Boolean.TRUE.equals(verified)) {
+                        return (String) emailObj.get("email");
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+            // fallback if scope doesn't allow or network error
+        }
+        return null;
     }
 }

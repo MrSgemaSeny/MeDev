@@ -26,15 +26,24 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
           cache-dependency-path: './frontend/package-lock.json'
 
       - name: Install dependencies
         run: npm ci
 
+      - name: Lint & Test
+        run: |
+          npm run lint
+          npm test
+
       - name: Build
-        run: npm run build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL || 'https://medev-api.fly.dev/api/v1' }}
+        run: |
+          npm run build
+          cp dist/index.html dist/404.html
         
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
