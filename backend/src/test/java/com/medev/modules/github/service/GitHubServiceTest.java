@@ -77,7 +77,7 @@ public class GitHubServiceTest {
 
         verify(profileService).updateFromGitHub(userId, profile);
         verify(profileService).importProjects(userId, List.of(repo));
-        verify(profileService).addSkillIfNotExists(userId, "Java", "Backend");
+        verify(profileService).addSkillIfNotExists(userId, "Java", "Language");
     }
 
     @Test

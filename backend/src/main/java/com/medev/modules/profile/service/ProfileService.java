@@ -286,4 +286,55 @@ public class ProfileService {
             skillRepository.save(skill);
         }
     }
+    
+    @Transactional
+    public void importOrganizationsAsExperience(Long userId, List<String> orgs) {
+        Profile profile = getProfileEntityByUserId(userId);
+        List<Experience> existingExp = experienceRepository.findByProfileIdOrderBySortOrderAsc(profile.getId());
+        
+        for (String org : orgs) {
+            boolean exists = existingExp.stream().anyMatch(e -> 
+                e.getCompany() != null && e.getCompany().equalsIgnoreCase(org)
+            );
+            
+            if (!exists) {
+                Experience exp = Experience.builder()
+                        .profile(profile)
+                        .company(org)
+                        .position("Software Engineer")
+                        .isCurrent(true)
+                        .description("Contributor at " + org)
+                        .startDate(java.time.LocalDate.now().minusMonths(1)) // fallback date
+                        .build();
+                experienceRepository.save(exp);
+                existingExp.add(exp);
+            }
+        }
+        eventPublisher.publishEvent(new com.medev.modules.profile.event.ProfileUpdatedEvent(this, userId));
+    }
+    
+    @Transactional
+    public void importLanguageExperience(Long userId, String language, java.time.LocalDate startDate) {
+        Profile profile = getProfileEntityByUserId(userId);
+        List<Experience> existingExp = experienceRepository.findByProfileIdOrderBySortOrderAsc(profile.getId());
+        
+        String title = language + " Developer";
+        boolean exists = existingExp.stream().anyMatch(e -> 
+            e.getPosition() != null && e.getPosition().equalsIgnoreCase(title)
+        );
+        
+        if (!exists) {
+            Experience exp = Experience.builder()
+                    .profile(profile)
+                    .company("Independent / Open Source")
+                    .position(title)
+                    .isCurrent(true)
+                    .description("Developed projects using " + language)
+                    .startDate(startDate)
+                    .build();
+            experienceRepository.save(exp);
+            existingExp.add(exp);
+            eventPublisher.publishEvent(new com.medev.modules.profile.event.ProfileUpdatedEvent(this, userId));
+        }
+    }
 }

@@ -25,6 +25,9 @@ public class GitHubRepoDto {
     @JsonProperty("updated_at")
     private String updatedAt;
     
+    @JsonProperty("created_at")
+    private String createdAt;
+    
     @JsonProperty("fork")
     private Boolean fork;
     
