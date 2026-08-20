@@ -15,7 +15,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Disabled;
 
-@Disabled("Disabled to unblock CI")
 public class ResumeTemplateIntegrationTest {
 
     private SpringTemplateEngine templateEngine;
@@ -51,14 +50,11 @@ public class ResumeTemplateIntegrationTest {
         context.setVariable("generatedAt", LocalDate.now());
         context.setVariable("avatarBase64", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=");
 
-        String[] templates = {"apple-modern", "github", "grok-monolith", "milky-soft", "phub-orange"};
+        String[] templates = {"clean", "apple-modern", "github", "grok-monolith", "milky-soft", "phub-orange"};
         
         for (String tmpl : templates) {
             String pdfHtml = templateEngine.process("resume/" + tmpl, context);
             assertThat(pdfHtml).isNotBlank();
-            
-            String webHtml = templateEngine.process("resume/" + tmpl, context);
-            assertThat(webHtml).isNotBlank();
         }
     }
 }
