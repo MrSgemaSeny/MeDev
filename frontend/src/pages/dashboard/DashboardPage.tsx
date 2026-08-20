@@ -3,6 +3,7 @@ import { useAuthStore } from '../../entities/user/model/store';
 import { Link } from 'react-router-dom';
 import { GitBranch, Link as LinkIcon, Send, Globe, Briefcase, GraduationCap, FolderGit2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { DashboardSkeleton } from '../../shared/ui/Skeleton';
 
 export const DashboardPage = () => {
   const { data: profile, isLoading } = useProfile();
@@ -11,7 +12,7 @@ export const DashboardPage = () => {
   const { t } = useTranslation();
 
   if (isLoading) {
-    return <div className="p-8 text-secondary">{t('dashboard.loading', 'Loading dashboard...')}</div>;
+    return <DashboardSkeleton />;
   }
 
   const getProfileCompleteness = () => {

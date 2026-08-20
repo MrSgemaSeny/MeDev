@@ -51,6 +51,13 @@ export const ExperienceSection = () => {
           )
         }
       />
+
+      {experiences.length === 0 && editingId === null && (
+        <Card className="p-8 text-center border-dashed border-[var(--color-border-default)]">
+          <p className="text-sm text-[var(--color-text-secondary)] mb-4">No work experience added yet.</p>
+          <Button size="sm" variant="secondary" onClick={() => setEditingId('new')}>+ Add Experience</Button>
+        </Card>
+      )}
       
       {editingId === 'new' && (
         <div className="mt-4">

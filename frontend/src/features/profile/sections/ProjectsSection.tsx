@@ -82,6 +82,16 @@ export const ProjectsSection = () => {
           )
         }
       />
+      {projects.length === 0 && editingId === null && (
+        <Card className="p-8 text-center border-dashed border-[var(--color-border-default)]">
+          <p className="text-sm text-[var(--color-text-secondary)] mb-4">No projects added yet.</p>
+          <div className="flex justify-center gap-3">
+            <Button size="sm" variant="secondary" onClick={() => setShowGithubSync(true)}>🐙 Import from GitHub</Button>
+            <Button size="sm" variant="primary" onClick={() => setEditingId('new')}>+ Add Project</Button>
+          </div>
+        </Card>
+      )}
+
       {editingId === 'new' && (
         <div className="mt-4">
           <ProjectForm onSave={(data) => { addMutation.mutate(data); setEditingId(null); }}

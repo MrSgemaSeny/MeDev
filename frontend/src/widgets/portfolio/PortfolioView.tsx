@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { api } from '../../shared/api/axios';
 import type { ProfileDto } from '../../entities/profile/model/types';
 import { Card } from '../../shared/ui/Form';
+import { ProfileSkeleton } from '../../shared/ui/Skeleton';
 
 export const PortfolioView = () => {
   const { username } = useParams<{ username: string }>();
@@ -25,11 +26,7 @@ export const PortfolioView = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen" style={{ backgroundColor: 'var(--color-bg-primary)' }}>
-        <span className="inline-block animate-spin rounded-full" style={{ width: 24, height: 24, border: '2px solid var(--color-border-default)', borderTopColor: 'var(--color-text-muted)' }} />
-      </div>
-    );
+    return <ProfileSkeleton />;
   }
 
   if (error || !profile) {

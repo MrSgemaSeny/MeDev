@@ -153,7 +153,7 @@ public class GitHubService {
     }
 
     public String fetchUserPublicRepos(String username) {
-        if (username == null || username.isEmpty()) return "";
+        if (username == null || username.isBlank() || !username.matches("^[a-zA-Z0-9_-]+$")) return "";
 
         String cacheKey = "github:public_repos:" + username;
         Object cached = redisTemplate.opsForValue().get(cacheKey);
