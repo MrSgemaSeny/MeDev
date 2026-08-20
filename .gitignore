@@ -35,9 +35,13 @@ frontend/dist/
 frontend/.vite/
 frontend/*.tsbuildinfo
 
-# OS & Temp files
-.DS_Store
-Thumbs.db
-*.tmp
-*.bak
+# Internal, Agents & Planning
+.agents/
+.github/
+plan/
+journal/
+Epics/
+AI_AGENT_INSTRUCTION.md
+AUDIT_PROJECT_REVIEW.md
+
 
