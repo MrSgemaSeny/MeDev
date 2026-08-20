@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class ResumeController {
 
-    private static final java.util.Set<String> ALLOWED_TEMPLATES = java.util.Set.of("apple-modern", "github", "grok-monolith", "milky-soft", "phub-orange");
+    private static final java.util.Set<String> ALLOWED_TEMPLATES = java.util.Set.of("apple-modern", "github", "grok-monolith", "milky-soft", "phub-orange", "clean");
     private static final java.util.Set<String> PRO_TEMPLATES = java.util.Set.of("apple-modern", "milky-soft", "phub-orange");
 
     private final PdfGeneratorService pdfGeneratorService;
