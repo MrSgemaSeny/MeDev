@@ -120,135 +120,39 @@ export const DashboardPage = () => {
             </Link>
             
             <Link to="/billing" className="p-6 rounded-2xl border border-default surface-primary card-hover">
-    <div className="max-w-6xl mx-auto space-y-8 animate-fade-in">
-      {/* Hero Welcome & Quick Stats */}
-      <div className="relative overflow-hidden rounded-2xl border border-default surface-primary p-8 md:p-10 shadow-lg">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-extrabold tracking-tight text-primary">
-                {t('dashboard.welcome', 'Welcome back')}, {profile?.fullName || username || 'Developer'}!
-              </h1>
-              {plan === 'PRO' && (
-                <span className="px-2.5 py-0.5 text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full">
-                  PRO
-                </span>
-              )}
-            </div>
-            <p className="text-secondary max-w-xl">
-              {profile?.headline || t('dashboard.defaultHeadline', 'Craft your developer presence, optimize your resume, and track job applications in one unified workspace.')}
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <Link
-              to="/profile/edit"
-              className="btn btn-primary px-5 py-2.5 shadow-sm hover:shadow transition-all"
-            >
-              {t('dashboard.editProfile', 'Edit Profile')}
-            </Link>
-            <Link
-              to="/resume"
-              className="btn btn-secondary px-5 py-2.5 transition-all"
-            >
-              {t('dashboard.buildResume', 'Build Resume')}
+              <div className="w-10 h-10 rounded-lg surface-tertiary flex items-center justify-center mb-4">
+                <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"/></svg>
+              </div>
+              <h3 className="font-bold mb-1.5 text-primary">{t('dashboard.pricingPlans', 'Pricing & Plans')}</h3>
+              <p className="text-sm text-secondary leading-relaxed">{t('dashboard.pricingPlansDesc', 'Upgrade to PRO for unlimited AI resume tailoring and cover letters.')}</p>
             </Link>
           </div>
-        </div>
-      </div>
 
-      {/* Grid: Live Preview Card & Quick Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left 2 Cols: Interactive Summary / Completeness */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Completeness Card */}
-          <div className="p-6 rounded-2xl border border-default surface-primary space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold text-primary flex items-center gap-2">
-                <Globe className="w-5 h-5 text-emerald-400" />
-                {t('dashboard.profileStrength', 'Profile Strength')}
-              </h2>
-              <span className="text-sm font-semibold text-primary">{completeness}%</span>
-            </div>
-            <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
-              <div
-                className="bg-emerald-500 h-2 rounded-full transition-all duration-500"
-                style={{ width: `${completeness}%` }}
-              />
-            </div>
-            <p className="text-xs text-secondary">
-              {completeness < 100
-                ? t('dashboard.completenessHint', 'Add missing skills, experience, or projects to maximize your resume ATS score and public reach.')
-                : t('dashboard.completenessDone', 'Your profile is fully populated and ready for discovery!')}
-            </p>
-          </div>
-
-          {/* Quick Stats Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="p-5 rounded-xl border border-default surface-primary flex items-center gap-4">
-              <div className="p-3 rounded-lg surface-tertiary text-sky-400">
-                <Briefcase className="w-6 h-6" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-primary">{profile?.experience?.length || 0}</div>
-                <div className="text-xs text-secondary">{t('dashboard.experiences', 'Experiences')}</div>
-              </div>
-            </div>
-
-            <div className="p-5 rounded-xl border border-default surface-primary flex items-center gap-4">
-              <div className="p-3 rounded-lg surface-tertiary text-purple-400">
-                <FolderGit2 className="w-6 h-6" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-primary">{profile?.projects?.length || 0}</div>
-                <div className="text-xs text-secondary">{t('dashboard.projects', 'Projects')}</div>
-              </div>
-            </div>
-
-            <div className="p-5 rounded-xl border border-default surface-primary flex items-center gap-4">
-              <div className="p-3 rounded-lg surface-tertiary text-amber-400">
-                <GraduationCap className="w-6 h-6" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-primary">{profile?.skills?.length || 0}</div>
-                <div className="text-xs text-secondary">{t('dashboard.skills', 'Skills Listed')}</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Actions Action Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* AI Tools & Actions */}
+          <div className="grid sm:grid-cols-3 gap-4 mt-6">
             <button
               onClick={async () => {
                 try {
                   const { api } = await import('../../shared/api/axios');
+                  const { toast } = await import('sonner');
                   const res = await api.get('/profile/export/readme');
                   await navigator.clipboard.writeText(res.data);
-                  alert(t('dashboard.readmeCopied', 'GitHub Profile README copied to clipboard!'));
+                  toast.success(t('dashboard.readmeCopied', 'GitHub Profile README copied to clipboard!'));
                 } catch (e) {
-                  alert(t('dashboard.readmeError', 'Failed to generate README. Please make sure your profile has data.'));
+                  const { toast } = await import('sonner');
+                  toast.error(t('dashboard.readmeError', 'Failed to generate README.'));
                 }
               }}
-              className="p-6 rounded-2xl border border-default surface-primary card-hover text-left flex flex-col items-start w-full cursor-pointer"
+              className="p-4 rounded-xl border border-default surface-primary card-hover text-left flex items-center gap-3 cursor-pointer"
             >
-              <div className="w-10 h-10 rounded-lg surface-tertiary flex items-center justify-center mb-4">
+              <div className="p-2.5 rounded-lg surface-tertiary">
                 <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
               </div>
-              <h3 className="font-bold mb-1.5 text-primary">{t('dashboard.copyReadme', 'Copy README')}</h3>
-              <p className="text-sm text-secondary leading-relaxed">{t('dashboard.copyReadmeDesc', 'Copy your Markdown README to paste into your GitHub profile.')}</p>
-            </button>
-
-            <a
-              href={`${BASE_URL}/profile/export/json`}
-              download="medev_profile.json"
-              className="p-6 rounded-2xl border border-default surface-primary card-hover text-left flex flex-col items-start w-full cursor-pointer"
-            >
-              <div className="w-10 h-10 rounded-lg surface-tertiary flex items-center justify-center mb-4">
-                <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+              <div>
+                <h4 className="font-bold text-sm text-primary">{t('dashboard.copyReadme', 'Copy README')}</h4>
+                <p className="text-xs text-secondary">{t('dashboard.copyReadmeDesc', 'For your GitHub profile')}</p>
               </div>
-              <h3 className="font-bold mb-1.5 text-primary">{t('dashboard.exportJson', 'Export JSON')}</h3>
-              <p className="text-sm text-secondary leading-relaxed">{t('dashboard.exportJsonDesc', 'Download your full profile data in raw JSON format.')}</p>
-            </a>
+            </button>
 
             <button
               onClick={async () => {
@@ -263,13 +167,15 @@ export const DashboardPage = () => {
                   toast.error('Failed to generate LinkedIn section');
                 }
               }}
-              className="p-6 rounded-2xl border border-default surface-primary card-hover text-left flex flex-col items-start w-full cursor-pointer"
+              className="p-4 rounded-xl border border-default surface-primary card-hover text-left flex items-center gap-3 cursor-pointer"
             >
-              <div className="w-10 h-10 rounded-lg surface-tertiary flex items-center justify-center mb-4">
+              <div className="p-2.5 rounded-lg surface-tertiary">
                 <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
               </div>
-              <h3 className="font-bold mb-1.5 text-primary">{t('dashboard.copyLinkedin', 'Copy for LinkedIn')}</h3>
-              <p className="text-sm text-secondary leading-relaxed">{t('dashboard.copyLinkedinDesc', 'Generate a tailored About section for LinkedIn via AI.')}</p>
+              <div>
+                <h4 className="font-bold text-sm text-primary">{t('dashboard.copyLinkedin', 'Copy for LinkedIn')}</h4>
+                <p className="text-xs text-secondary">{t('dashboard.copyLinkedinDesc', 'Tailored About section')}</p>
+              </div>
             </button>
 
             <button
@@ -279,22 +185,22 @@ export const DashboardPage = () => {
                   toast.loading(t('dashboard.aiRewriting', 'AI is rewriting your entire profile...'), { id: 'ai-sync' });
                   const { api } = await import('../../shared/api/axios');
                   await api.post('/ai/generate-profile');
-                  
-                  // Reload page to refetch everything (or invalidate queries if we had queryClient here)
+                  toast.success('Profile synced with AI!');
                   window.location.reload();
                 } catch (e: any) {
                   const { toast } = await import('sonner');
                   toast.error(e.response?.data?.message || t('dashboard.syncError', 'Failed to sync profile'), { id: 'ai-sync' });
                 }
               }}
-              className="p-6 rounded-2xl border border-default surface-primary card-hover text-left flex flex-col items-start w-full cursor-pointer relative overflow-hidden"
+              className="p-4 rounded-xl border border-default surface-primary card-hover text-left flex items-center gap-3 cursor-pointer relative overflow-hidden"
             >
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 via-emerald-400 to-teal-500"></div>
-              <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center mb-4">
-                <svg className="w-5 h-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+              <div className="p-2.5 rounded-lg bg-green-500/10 text-green-500">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
               </div>
-              <h3 className="font-bold mb-1.5 text-primary">{t('dashboard.smartSync', 'Smart AI Sync')}</h3>
-              <p className="text-sm text-secondary leading-relaxed">{t('dashboard.smartSyncDesc', 'Merge PDF data and GitHub to generate the perfect profile.')}</p>
+              <div>
+                <h4 className="font-bold text-sm text-primary">{t('dashboard.smartSync', 'Smart AI Sync')}</h4>
+                <p className="text-xs text-secondary">{t('dashboard.smartSyncDesc', 'Merge GitHub & Resume')}</p>
+              </div>
             </button>
           </div>
         </div>

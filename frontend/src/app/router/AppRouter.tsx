@@ -113,8 +113,10 @@ const router = createBrowserRouter([
     element: <PublicLayout />,
     children: [
       { path: '/portfolio/:username', element: <PortfolioPage /> },
+      { path: '/p/:username', element: <PortfolioPage /> },
       { path: '/privacy', element: <PrivacyPolicy /> },
       { path: '/terms', element: <TermsOfService /> },
+      { path: '/:username', element: <PortfolioPage /> },
     ],
   },
 ], { basename: import.meta.env.BASE_URL });
