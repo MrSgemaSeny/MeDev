@@ -8,12 +8,14 @@ import com.medev.modules.ai.dto.*;
 import com.medev.shared.exception.ForbiddenException;
 import com.medev.shared.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProfileService {
@@ -143,8 +145,8 @@ public class ProfileService {
                         .isCurrent(e.getIsCurrent() != null ? e.getIsCurrent() : false)
                         .sortOrder(order++)
                         .build();
-                if (e.getStartDate() != null) { try { exp.setStartDate(java.time.LocalDate.parse(e.getStartDate() + "-01")); } catch (Exception ignored) {} }
-                if (e.getEndDate() != null) { try { exp.setEndDate(java.time.LocalDate.parse(e.getEndDate() + "-01")); } catch (Exception ignored) {} }
+                if (e.getStartDate() != null) { try { exp.setStartDate(java.time.LocalDate.parse(e.getStartDate() + "-01")); } catch (Exception ex) { log.warn("Failed to parse start date {} for experience", e.getStartDate(), ex); } }
+                if (e.getEndDate() != null) { try { exp.setEndDate(java.time.LocalDate.parse(e.getEndDate() + "-01")); } catch (Exception ex) { log.warn("Failed to parse end date {} for experience", e.getEndDate(), ex); } }
                 experienceRepository.save(exp);
             }
         }
@@ -159,8 +161,8 @@ public class ProfileService {
                         .field(ed.getFieldOfStudy())
                         .sortOrder(order++)
                         .build();
-                if (ed.getStartDate() != null) { try { edu.setStartDate(java.time.LocalDate.parse(ed.getStartDate() + "-01")); } catch (Exception ignored) {} }
-                if (ed.getEndDate() != null) { try { edu.setEndDate(java.time.LocalDate.parse(ed.getEndDate() + "-01")); } catch (Exception ignored) {} }
+                if (ed.getStartDate() != null) { try { edu.setStartDate(java.time.LocalDate.parse(ed.getStartDate() + "-01")); } catch (Exception ex) { log.warn("Failed to parse start date {} for education", ed.getStartDate(), ex); } }
+                if (ed.getEndDate() != null) { try { edu.setEndDate(java.time.LocalDate.parse(ed.getEndDate() + "-01")); } catch (Exception ex) { log.warn("Failed to parse end date {} for education", ed.getEndDate(), ex); } }
                 educationRepository.save(edu);
             }
         }

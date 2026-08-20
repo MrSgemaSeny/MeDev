@@ -10,6 +10,7 @@ import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.context.event.EventListener;
 import com.medev.modules.profile.event.ProfileUpdatedEvent;
@@ -95,6 +96,26 @@ public class VectorizationService {
             log.info("Successfully vectorized {} items for user {}", documents.size(), userId);
         } catch (Exception e) {
             log.error("Failed to vectorize profile for user {}: {}", userId, e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Periodically cleans up orphaned vectors in pgvector.
+     * Runs daily at 3 AM.
+     */
+    @Scheduled(cron = "0 0 3 * * *")
+    public void cleanupOrphanedVectors() {
+        log.info("Starting cleanup of orphaned vectors...");
+        try {
+            int deleted = jdbcTemplate.update(
+                "DELETE FROM vector_store vs " +
+                "WHERE NOT EXISTS (" +
+                "  SELECT 1 FROM users u WHERE CAST(u.id AS VARCHAR) = vs.metadata->>'userId'" +
+                ")"
+            );
+            log.info("Cleaned up {} orphaned vectors", deleted);
+        } catch (Exception e) {
+            log.error("Failed to cleanup orphaned vectors: {}", e.getMessage(), e);
         }
     }
 }
