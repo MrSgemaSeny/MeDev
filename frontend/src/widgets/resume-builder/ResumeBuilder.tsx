@@ -14,21 +14,10 @@ const TEMPLATES = [
 
 export const ResumeBuilder = () => {
   const { sections, selectedTemplate, isSinglePageMode, setTemplate, setSinglePageMode, toggleSection, reorderSections } = useResumeEditorStore();
-  const { toggleChat, isOpen } = useAiChatStore();
+  const { openWithPrompt } = useAiChatStore();
 
   const handleAiAnalysis = () => {
-    if (!isOpen) toggleChat();
-    setTimeout(() => {
-      const chatWidget = document.querySelector('textarea[placeholder="Спроси о чём-нибудь..."]') as HTMLTextAreaElement;
-      if (chatWidget) {
-        const form = chatWidget.closest('form');
-        if (form) {
-          chatWidget.value = "Проанализируй моё резюме: насколько оно привлекательно для работодателей? Чего не хватает?";
-          chatWidget.dispatchEvent(new Event('input', { bubbles: true }));
-          form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
-        }
-      }
-    }, 300);
+    openWithPrompt("Проанализируй моё резюме: насколько оно привлекательно для работодателей? Чего не хватает?");
   };
 
   const handleDownload = async () => {
