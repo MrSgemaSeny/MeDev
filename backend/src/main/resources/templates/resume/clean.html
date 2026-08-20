@@ -114,15 +114,9 @@
             </div>
         </div>
 
-        <!-- Dynamic Sections based on sectionOrder -->
-        <th:block th:each="sectionName : ${profile.sectionOrder != null and !profile.sectionOrder.isEmpty() ? profile.sectionOrder : {'summary','experience','education','skills','languages','projects'}}">
+        <!-- Dynamic Sections based on sectionOrder: Header -> Experience -> Education -> Skills -> Projects -->
+        <th:block th:each="sectionName : ${profile.sectionOrder != null and !profile.sectionOrder.isEmpty() ? profile.sectionOrder : {'experience','education','skills','languages','projects'}}">
             <th:block th:switch="${sectionName}">
-                
-                <!-- Summary Section -->
-                <div class="section" th:case="'summary'" th:if="${profile.summary != null and !profile.summary.isEmpty()}">
-                    <div class="section-title">Professional Summary</div>
-                    <div class="summary-text" th:text="${profile.summary}"></div>
-                </div>
 
                 <!-- Experience Section -->
                 <div class="section" th:case="'experience'" th:if="${profile.experience != null and !profile.experience.isEmpty()}">
