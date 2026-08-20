@@ -1,6 +1,6 @@
 package com.medev.modules.profile.service;
 
-import com.medev.modules.profile.entity.Profile;
+import com.medev.modules.profile.dto.ProfileDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
@@ -28,11 +28,11 @@ public class ReadmeGeneratorService {
         textTemplateEngine.setTemplateResolver(templateResolver);
     }
 
-    public String generateReadme(Profile profile) {
+    public String generateReadme(ProfileDto profile) {
         return generateReadme(profile, "full");
     }
 
-    public String generateReadme(Profile profile, String template) {
+    public String generateReadme(ProfileDto profile, String template) {
         Context context = new Context();
         context.setVariable("profile", profile);
         String templateName = switch (template != null ? template.toLowerCase().trim() : "") {

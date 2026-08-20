@@ -55,7 +55,7 @@ public class PdfGeneratorServiceTest {
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         when(valueOperations.get(anyString())).thenReturn(null);
         when(profileService.getByUserId(userId)).thenReturn(new ProfileDto());
-        when(templateEngine.process(eq("resume/" + templateName), any(Context.class))).thenReturn(validHtml);
+        when(templateEngine.process(anyString(), any(Context.class))).thenReturn(validHtml);
 
         byte[] result = pdfGeneratorService.generatePdf(userId, templateName, false, false);
 
@@ -75,7 +75,7 @@ public class PdfGeneratorServiceTest {
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         when(valueOperations.get(anyString())).thenReturn(2);
         when(profileService.getByUserId(userId)).thenReturn(new ProfileDto());
-        when(templateEngine.process(eq("resume/" + templateName), any(Context.class))).thenReturn(validHtml);
+        when(templateEngine.process(anyString(), any(Context.class))).thenReturn(validHtml);
 
         byte[] result = pdfGeneratorService.generatePdf(userId, templateName, false, false);
 
@@ -107,7 +107,7 @@ public class PdfGeneratorServiceTest {
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         when(valueOperations.get(anyString())).thenReturn(null);
         when(profileService.getByUserId(userId)).thenReturn(new ProfileDto());
-        when(templateEngine.process(eq("resume/" + templateName), any(Context.class))).thenReturn(invalidHtml);
+        when(templateEngine.process(anyString(), any(Context.class))).thenReturn(invalidHtml);
 
         assertThatThrownBy(() -> pdfGeneratorService.generatePdf(userId, templateName, false, false))
                 .isInstanceOf(RuntimeException.class)

@@ -31,7 +31,7 @@ public class ProfileController {
     @GetMapping(value = "/readme", produces = "text/markdown;charset=UTF-8")
     public ResponseEntity<String> getReadme(@RequestParam(defaultValue = "full") String template) {
         Long userId = SecurityUtils.getCurrentUserId();
-        com.medev.modules.profile.entity.Profile profile = profileService.getProfileEntityByUserId(userId);
+        ProfileDto profile = profileService.getByUserId(userId);
         String readmeContent = readmeGeneratorService.generateReadme(profile, template);
         return ResponseEntity.ok(readmeContent);
     }
