@@ -1,17 +1,17 @@
 # [(${profile.fullName})]
 
 > [(${profile.headline})]
-[# th:if="${profile.location} != null"]> 📍 [(${profile.location})][/]
+[# th:if="${profile.location} != null"]> [(${profile.location})][/]
 
 [(${profile.summary})]
 
 [# th:if="${profile.skills} != null and !${profile.skills.isEmpty()}"]
-### 🛠 Stack
+### Stack
 [# th:each="skill : ${profile.skills}"]`[(${skill.name})]` [/]
 [/]
 
 [# th:if="${profile.projects} != null and !${profile.projects.isEmpty()}"]
-### 🚀 Projects
+### Projects
 [# th:each="proj : ${profile.projects}"]
 - **[(${proj.name})]**[# th:if="${proj.githubUrl} != null"] ([Source]([(${proj.githubUrl})]))[/][# th:if="${proj.liveUrl} != null"] ([Demo]([(${proj.liveUrl})]))[/]: [(${proj.description})]
 [/]

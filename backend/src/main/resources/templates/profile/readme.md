@@ -1,14 +1,14 @@
 # [(${profile.fullName})]
 
 > [(${profile.headline})]
-> 📍 [(${profile.location})]
+> [(${profile.location})]
 
 [(${profile.summary})]
 
-## 🚀 GitHub Stats
+## GitHub Stats
 * GitHub Username: [[(${profile.githubUsername})](https://github.com/[(${profile.githubUsername})])]
 
-## 💼 Experience
+## Experience
 
 [# th:each="exp : ${profile.experience}"]
 ### [(${exp.position})] at [(${exp.company})]
@@ -19,7 +19,7 @@ _[(${exp.startDate})] - [(${exp.endDate})]_
 **Tech Stack**: [(${exp.techStack})]
 [/]
 
-## 🛠 Projects
+## Projects
 
 [# th:each="proj : ${profile.projects}"]
 ### [(${proj.name})]
@@ -30,7 +30,7 @@ _[(${exp.startDate})] - [(${exp.endDate})]_
 [/] [# th:if="${proj.liveUrl} != null"] | [Live Demo]([(${proj.liveUrl})])[/]
 [/]
 
-## 🎓 Education
+## Education
 
 [# th:each="edu : ${profile.education}"]
 ### [(${edu.institution})]

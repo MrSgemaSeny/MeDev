@@ -59,7 +59,7 @@ export const ReadmeModal: React.FC<ReadmeModalProps> = ({ isOpen, onClose }) => 
                 : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
             }`}
           >
-            🌟 Full & Stats
+            Full and Stats
           </button>
           <button
             type="button"
@@ -70,7 +70,7 @@ export const ReadmeModal: React.FC<ReadmeModalProps> = ({ isOpen, onClose }) => 
                 : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
             }`}
           >
-            ⚡ Minimal
+            Minimal
           </button>
           <button
             type="button"
@@ -81,7 +81,7 @@ export const ReadmeModal: React.FC<ReadmeModalProps> = ({ isOpen, onClose }) => 
                 : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
             }`}
           >
-            👾 Creative ASCII
+            Creative ASCII
           </button>
         </div>
 
@@ -107,25 +107,25 @@ export const ReadmeModal: React.FC<ReadmeModalProps> = ({ isOpen, onClose }) => 
         {/* Action Buttons */}
         <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
           <div className="text-xs text-[var(--color-text-muted)]">
-            💡 Paste this directly into your GitHub special profile repo.
+            Paste this directly into your GitHub profile repository.
           </div>
           <div className="flex gap-2">
             <Button variant="secondary" size="sm" onClick={handleDownload} disabled={!readmeContent || isLoading}>
-              ⬇️ Download .md
+              Download .md
             </Button>
             <Button variant="primary" size="sm" onClick={handleCopy} disabled={!readmeContent || isLoading}>
-              {copied ? '✓ Copied' : '📋 Copy Markdown'}
+              {copied ? 'Copied' : 'Copy Markdown'}
             </Button>
           </div>
         </div>
 
         {/* Instructions */}
         <div className="p-4 rounded-xl border border-[var(--color-border-default)] bg-[var(--color-bg-secondary)] text-xs space-y-2 text-[var(--color-text-secondary)]">
-          <div className="font-semibold text-[var(--color-text-primary)]">📌 How to use on GitHub:</div>
+          <div className="font-semibold text-[var(--color-text-primary)]">How to use on GitHub:</div>
           <ol className="list-decimal list-inside space-y-1">
             <li>Create a new public repository with the exact same name as your GitHub username.</li>
             <li>Initialize it with a <code className="px-1 py-0.5 rounded bg-[var(--color-bg-tertiary)]">README.md</code> file.</li>
-            <li>Click <strong>Copy Markdown</strong> above and paste it into that README file!</li>
+            <li>Click <strong>Copy Markdown</strong> above and paste it into that README file.</li>
           </ol>
         </div>
       </div>
