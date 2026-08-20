@@ -26,8 +26,16 @@
         }
         @page {
             size: A4;
-            margin: 0;
+            margin: 20px 25px;
             background-color: #0d1117;
+        }
+        body {
+            font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            line-height: 1.4;
+            padding: 0;
+            font-size: 11px;
         }
         .container {
             max-width: 1216px;
@@ -39,20 +47,20 @@
         /* Left Sidebar */
         .sidebar {
             display: table-cell;
-            width: 220px;
-            padding-right: 24px;
+            width: 190px;
+            padding-right: 16px;
             vertical-align: top;
         }
         .avatar {
-            width: 140px;
-            height: 140px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             border: 1px solid #30363d;
             background-color: #161b22;
             overflow: hidden;
-            margin: 0 auto 16px auto;
+            margin: 0 auto 10px auto;
             text-align: center;
-            line-height: 140px;
+            line-height: 70px;
         }
         .avatar img {
             width: 100%;
@@ -60,191 +68,173 @@
             object-fit: cover;
             vertical-align: middle;
         }
-        .names { margin-bottom: 16px; }
+        .names { margin-bottom: 10px; }
         .fullname {
-            font-size: 22px;
+            font-size: 17px;
             font-weight: 600;
-            line-height: 1.25;
+            line-height: 1.2;
             color: #c9d1d9;
         }
         .username {
-            font-size: 16px;
+            font-size: 13px;
             color: #8b949e;
             font-weight: 300;
-            line-height: 24px;
+            line-height: 18px;
         }
         .bio {
             font-family: Roboto, sans-serif;
-            font-size: 13px;
+            font-size: 11px;
             color: #c9d1d9;
-            margin-bottom: 16px;
+            margin-bottom: 10px;
         }
         .contact-list {
-            font-size: 13px;
-            margin-bottom: 24px;
+            font-size: 11px;
+            margin-bottom: 14px;
         }
-        .contact-item { margin-bottom: 6px; }
+        .contact-item { margin-bottom: 4px; }
         .contact-item a { color: #c9d1d9; text-decoration: none; }
         .contact-item a:hover { color: #58a6ff; text-decoration: underline; }
         
         .sidebar-section {
             border-top: 1px solid #30363d;
-            padding-top: 16px;
-            margin-top: 16px;
+            padding-top: 10px;
+            margin-top: 10px;
+            page-break-inside: avoid;
         }
         h3.side-title {
-            font-size: 16px;
+            font-size: 13px;
             font-weight: 600;
-            margin-bottom: 16px;
+            margin-bottom: 8px;
             color: #c9d1d9;
         }
         
         /* Tags in sidebar */
-        .skills-group { margin-bottom: 12px; }
+        .skills-group { margin-bottom: 8px; }
         .skills-group-title {
-            font-size: 12px;
+            font-size: 10px;
             color: #8b949e;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             font-weight: 600;
         }
         .tag {
             display: inline-block;
             background-color: rgba(56, 139, 253, 0.1);
             color: #58a6ff;
-            padding: 2px 10px;
-            font-size: 12px;
+            padding: 1px 6px;
+            font-size: 9px;
             font-weight: 500;
-            border-radius: 20px;
-            margin-right: 6px;
-            margin-bottom: 6px;
+            border-radius: 12px;
+            margin-right: 4px;
+            margin-bottom: 4px;
         }
         
         /* Main Content */
         .main-content {
             display: table-cell;
             vertical-align: top;
-            padding-left: 32px;
+            padding-left: 16px;
         }
         .section-header {
-            font-size: 18px;
+            font-size: 14px;
             font-weight: 600;
-            margin-bottom: 16px;
+            margin-bottom: 8px;
             border-bottom: 1px solid #30363d;
-            padding-bottom: 8px;
+            padding-bottom: 4px;
+            page-break-after: avoid;
         }
         
         /* Pinned Projects */
-        .projects-wrapper { width: 100%; margin-bottom: 32px; }
+        .projects-wrapper { width: 100%; margin-bottom: 14px; }
         .pinned-card {
             display: block;
             width: 100%;
             border: 1px solid #30363d;
-            border-radius: 6px;
-            padding: 16px;
+            border-radius: 4px;
+            padding: 8px 10px;
             background-color: #0d1117;
-            margin-bottom: 16px;
+            margin-bottom: 8px;
             page-break-inside: avoid;
         }
         .repo-title {
-            font-size: 16px;
+            font-size: 12px;
             font-weight: 600;
             color: #58a6ff;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
         .repo-title a { color: inherit; text-decoration: none; }
         .repo-desc {
             display: block;
-            font-size: 13px;
+            font-size: 10.5px;
             color: #8b949e;
-            margin-bottom: 12px;
+            margin-bottom: 4px;
+            line-height: 1.3;
         }
         .repo-meta {
-            font-size: 12px;
+            font-size: 9.5px;
             color: #8b949e;
         }
         .lang-dot {
             display: inline-block;
-            width: 12px;
-            height: 12px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             background-color: #238636;
-            margin-right: 4px;
+            margin-right: 3px;
             vertical-align: middle;
         }
         
         /* Timeline items */
-        .timeline-container { margin-bottom: 32px; width: 100%; border-collapse: collapse; page-break-inside: avoid; }
-        .timeline-icon-td { width: 16px; vertical-align: top; text-align: right; }
-        .timeline-content-td { border-left: 1px solid #30363d; padding-left: 16px; padding-bottom: 24px; vertical-align: top; }
+        .timeline-container { margin-bottom: 14px; width: 100%; border-collapse: collapse; page-break-inside: avoid; }
+        .timeline-icon-td { width: 14px; vertical-align: top; text-align: right; }
+        .timeline-content-td { border-left: 1px solid #30363d; padding-left: 12px; padding-bottom: 10px; vertical-align: top; }
         
         .timeline-icon {
             display: inline-block;
-            width: 9px;
-            height: 9px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
             background-color: #388bfd;
-            border: 2px solid #0d1117;
-            margin-top: 5px;
-            margin-right: -6.5px; /* Aligns center of dot precisely over the 1px border */
+            border: 1.5px solid #0d1117;
+            margin-top: 4px;
+            margin-right: -4.5px;
         }
         
         .timeline-content {
-            padding: 0 0 16px 0;
+            padding: 0 0 4px 0;
         }
         .timeline-header {
             width: 100%;
             display: table;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
         .timeline-title {
             display: table-cell;
-            font-size: 16px;
+            font-size: 12px;
             font-weight: 600;
             color: #c9d1d9;
         }
         .timeline-date {
             display: table-cell;
             text-align: right;
-            font-size: 12px;
+            font-size: 10px;
             color: #8b949e;
         }
         .timeline-subtitle {
-            font-size: 14px;
+            font-size: 11px;
             color: #8b949e;
-            margin-bottom: 12px;
+            margin-bottom: 3px;
         }
         .timeline-desc {
-            font-size: 14px;
+            font-size: 10.5px;
             color: #c9d1d9;
+            line-height: 1.35;
         }
         
         /* Single Page Overrides */
-        body.single-page { padding: 20px; font-size: 11px; }
-        .single-page .avatar { width: 80px; height: 80px; margin-bottom: 12px; line-height: 80px; }
-        .single-page .fullname { font-size: 18px; }
-        .single-page .username { font-size: 13px; line-height: 18px; }
-        .single-page .bio { font-size: 11px; margin-bottom: 12px; }
-        .single-page .contact-list { font-size: 11px; margin-bottom: 16px; }
-        .single-page .contact-item { margin-bottom: 4px; }
-        .single-page .sidebar-section { padding-top: 12px; margin-top: 12px; }
-        .single-page h3.side-title { font-size: 13px; margin-bottom: 12px; }
-        .single-page .skills-group-title { font-size: 10px; margin-bottom: 4px; }
-        .single-page .tag { padding: 1px 6px; font-size: 9px; margin-right: 4px; margin-bottom: 4px; }
-        .single-page .section-header { font-size: 14px; margin-bottom: 12px; padding-bottom: 6px; }
-        .single-page .projects-wrapper { margin-bottom: 16px; }
-        .single-page .pinned-card { padding: 12px; margin-bottom: 12px; }
-        .single-page .repo-title { font-size: 13px; margin-bottom: 6px; }
-        .single-page .repo-desc { font-size: 11px; margin-bottom: 8px; }
-        .single-page .repo-meta { font-size: 10px; }
-        .single-page .timeline-container { margin-bottom: 16px; }
-        .single-page .timeline-content-td { padding-bottom: 16px; padding-left: 12px; }
-        .single-page .timeline-content { padding-bottom: 12px; }
-        .single-page .timeline-title { font-size: 13px; }
-        .single-page .timeline-date { font-size: 10.5px; }
-        .single-page .timeline-subtitle { font-size: 11.5px; margin-bottom: 6px; }
-        .single-page .timeline-desc { font-size: 11px; }
-        .single-page .sidebar { width: 180px; padding-right: 16px; }
-        .single-page .main-content { padding-left: 16px; }
+        body.single-page { padding: 0; }
+        .single-page .timeline-container { margin-bottom: 10px; }
+        .single-page .pinned-card { padding: 6px 8px; margin-bottom: 6px; }
+        .single-page .projects-wrapper { margin-bottom: 10px; }
     </style>
 </head>
 <body th:classappend="${singlePage != null and singlePage} ? 'single-page' : 'multi-page'">
