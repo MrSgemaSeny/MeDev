@@ -24,7 +24,6 @@ public class Education {
     @Column(nullable = false)
     private String institution;
 
-    @Column(nullable = false)
     private String degree;
     
     private String field;

@@ -50,6 +50,9 @@ class AuthServiceTest {
     @Mock
     private ProfileService profileService;
 
+    @Mock
+    private com.medev.modules.audit.service.AuditService auditService;
+
     @InjectMocks
     private AuthService authService;
 

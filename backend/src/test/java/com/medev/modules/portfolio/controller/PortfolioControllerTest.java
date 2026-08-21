@@ -14,18 +14,20 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
-import com.medev.AbstractIntegrationTest;
-
+@WebMvcTest(PortfolioController.class)
 @AutoConfigureMockMvc(addFilters = false)
-class PortfolioControllerTest extends AbstractIntegrationTest {
+class PortfolioControllerTest {
 
-    @org.springframework.beans.factory.annotation.Autowired private MockMvc mockMvc;
+    @Autowired private MockMvc mockMvc;
 
     @MockBean
     private PortfolioService portfolioService;
+
+    @MockBean
+    private com.medev.shared.security.JwtService jwtService;
+
+    @MockBean
+    private com.medev.shared.security.JwtFilter jwtFilter;
 
     @Test
     void getPublicProfile_returnsProfile() throws Exception {

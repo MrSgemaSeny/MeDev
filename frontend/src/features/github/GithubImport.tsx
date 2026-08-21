@@ -26,6 +26,8 @@ interface GitHubProfileDto {
 interface GitHubRepoDto {
   id: number;
   name: string;
+  fullName?: string;
+  isPrivate?: boolean;
   htmlUrl: string;
   description: string | null;
   language: string | null;

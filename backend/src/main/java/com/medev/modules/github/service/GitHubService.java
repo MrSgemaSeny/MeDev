@@ -82,11 +82,14 @@ public class GitHubService {
 
             // 3. Parallel fetch languages for top 10
             Mono<Map<String, Integer>> languagesMono = Flux.fromIterable(top10Repos)
-                    .flatMap(repo -> webClient.get()
-                            .uri("/repos/" + user.getLogin() + "/" + repo.getName() + "/languages")
-                            .retrieve()
-                            .bodyToMono(new ParameterizedTypeReference<Map<String, Integer>>() {})
-                            .onErrorResume(e -> Mono.just(new HashMap<>())), 5)
+                    .flatMap(repo -> {
+                        String repoPath = repo.getRepoPath(user != null ? user.getLogin() : null);
+                        return webClient.get()
+                                .uri("/repos/" + repoPath + "/languages")
+                                .retrieve()
+                                .bodyToMono(new ParameterizedTypeReference<Map<String, Integer>>() {})
+                                .onErrorResume(e -> Mono.just(new HashMap<>()));
+                    }, 5)
                     .reduce(new HashMap<String, Integer>(), (acc, map) -> {
                         map.forEach((k, v) -> acc.merge(k, v, Integer::sum));
                         return acc;
@@ -94,13 +97,16 @@ public class GitHubService {
 
             // 4. Parallel fetch READMEs for top 5 to extract tech stack
             Mono<List<String>> techStackMono = Flux.fromIterable(top5ReposByWeight)
-                    .flatMap(repo -> webClient.get()
-                            .uri("/repos/" + user.getLogin() + "/" + repo.getName() + "/readme")
-                            .header("Accept", "application/vnd.github.v3.raw")
-                            .retrieve()
-                            .bodyToMono(String.class)
-                            .onErrorResume(e -> Mono.just(""))
-                            .map(readmeParser::extractTechnologies), 5)
+                    .flatMap(repo -> {
+                        String repoPath = repo.getRepoPath(user != null ? user.getLogin() : null);
+                        return webClient.get()
+                                .uri("/repos/" + repoPath + "/readme")
+                                .header("Accept", "application/vnd.github.v3.raw")
+                                .retrieve()
+                                .bodyToMono(String.class)
+                                .onErrorResume(e -> Mono.just(""))
+                                .map(readmeParser::extractTechnologies);
+                    }, 5)
                     .reduce(new ArrayList<String>(), (acc, list) -> {
                         acc.addAll(list);
                         return acc;
@@ -178,7 +184,10 @@ public class GitHubService {
             StringBuilder sb = new StringBuilder();
             sb.append("Публичные репозитории GitHub (последние 10 обновленных):\n");
             for (GitHubRepoDto repo : repos) {
-                sb.append("- ").append(repo.getName());
+                String displayName = repo.getFullName() != null && !repo.getFullName().isBlank()
+                        ? repo.getFullName()
+                        : repo.getName();
+                sb.append("- ").append(displayName);
                 if (repo.getLanguage() != null) sb.append(" [").append(repo.getLanguage()).append("]");
                 if (repo.getDescription() != null) sb.append(": ").append(repo.getDescription());
                 sb.append("\n");

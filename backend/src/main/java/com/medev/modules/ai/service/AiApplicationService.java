@@ -103,6 +103,7 @@ public class AiApplicationService extends AbstractAiStructuredService {
     }
 
     public com.medev.modules.ai.dto.AiMatchResponse matchJob(Long userId, String jobDescription) {
+        subscriptionService.assertPro(userId);
         ProfileDto profile = profileService.getByUserId(userId);
         
         String profileJson;

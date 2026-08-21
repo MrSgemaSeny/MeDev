@@ -22,6 +22,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.Cookie;
 import com.medev.shared.security.JwtService;
 
+import com.medev.modules.audit.service.AuditService;
+
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
@@ -29,6 +31,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
     private final ProfileService profileService;
     private final JwtService jwtService;
+    private final AuditService auditService;
 
     @Override
     @Transactional
@@ -136,6 +139,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
                 User saved = userRepository.save(builder.build());
                 profileService.createEmptyProfile(saved);
+                auditService.logAction(saved.getId(), "AUTH_OAUTH_REGISTER_SUCCESS", String.valueOf(saved.getId()), "User registered via OAuth provider: " + registrationId, null);
                 return saved;
             });
         }

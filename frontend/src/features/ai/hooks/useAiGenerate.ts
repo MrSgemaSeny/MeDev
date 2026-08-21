@@ -21,7 +21,6 @@ export function useAiGenerate() {
 
       if (response.status === 401) {
         try {
-          const { api } = await import('../../../shared/api/axios');
           await api.get('/ai/quota');
           const newToken = useAuthStore.getState().accessToken;
           response = await fetch(`${BASE_URL}/ai/chat/stream`, {
@@ -32,7 +31,7 @@ export function useAiGenerate() {
             },
             body: JSON.stringify({ prompt: prompt }),
           });
-        } catch (refreshErr) {
+        } catch {
           throw new Error('Сессия истекла. Пожалуйста, войдите снова.');
         }
       }

@@ -1,5 +1,6 @@
 package com.medev.modules.auth.service;
 
+import com.medev.modules.audit.service.AuditService;
 import com.medev.modules.auth.dto.AuthResponse;
 import com.medev.modules.auth.dto.LoginRequest;
 import com.medev.modules.auth.dto.RegisterRequest;
@@ -27,6 +28,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final RedisTemplate<String, String> redisTemplate;
     private final ProfileService profileService;
+    private final AuditService auditService;
 
     public static final java.util.List<String> RESERVED_USERNAMES = java.util.List.of(
             "admin", "root", "system", "support", "billing", "me", "profile", "api", "auth",
@@ -61,6 +63,7 @@ public class AuthService {
 
         // Создаём пустой профиль автоматически
         profileService.createEmptyProfile(user);
+        auditService.logAction(user.getId(), "AUTH_REGISTER_SUCCESS", String.valueOf(user.getId()), "User registered with email: " + user.getEmail(), null);
 
         return buildAuthResponse(user);
     }
@@ -78,17 +81,23 @@ public class AuthService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UnauthorizedException("User not found"));
                 
+        auditService.logAction(user.getId(), "AUTH_OAUTH2_EXCHANGE_SUCCESS", String.valueOf(user.getId()), "OAuth2 code exchanged for user: " + user.getUsername(), null);
         return buildAuthResponse(user);
     }
 
     public AuthResponse login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new UnauthorizedException("Invalid credentials"));
-
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        User user = userRepository.findByEmail(request.getEmail()).orElse(null);
+        if (user == null) {
+            auditService.logAction(null, "AUTH_LOGIN_FAILURE", request.getEmail(), "Login failed: user not found with email: " + request.getEmail(), null);
             throw new UnauthorizedException("Invalid credentials");
         }
 
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            auditService.logAction(user.getId(), "AUTH_LOGIN_FAILURE", String.valueOf(user.getId()), "Login failed: incorrect password", null);
+            throw new UnauthorizedException("Invalid credentials");
+        }
+
+        auditService.logAction(user.getId(), "AUTH_LOGIN_SUCCESS", String.valueOf(user.getId()), "User logged in successfully", null);
         return buildAuthResponse(user);
     }
 
@@ -118,6 +127,7 @@ public class AuthService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UnauthorizedException("User not found"));
                 
+        auditService.logAction(user.getId(), "AUTH_TOKEN_REFRESH_SUCCESS", String.valueOf(user.getId()), "Token refreshed for device: " + deviceId, null);
         return buildAuthResponse(user, deviceId);
     }
 
@@ -158,6 +168,7 @@ public class AuthService {
                     // Для обратной совместимости, если старый токен без deviceId
                     redisTemplate.delete("refresh:" + userId);
                 }
+                auditService.logAction(userId, "AUTH_LOGOUT", String.valueOf(userId), "User logged out session", null);
             }
         }
     }

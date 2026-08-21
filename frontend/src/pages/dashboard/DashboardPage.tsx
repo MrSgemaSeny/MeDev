@@ -155,7 +155,7 @@ export const DashboardPage = () => {
                   const res = await api.get('/ai/export/linkedin');
                   await navigator.clipboard.writeText(res.data);
                   toast.success('LinkedIn About section copied!');
-                } catch (e) {
+                } catch {
                   const { toast } = await import('sonner');
                   toast.error('Failed to generate LinkedIn section');
                 }

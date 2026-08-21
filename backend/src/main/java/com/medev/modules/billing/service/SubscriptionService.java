@@ -1,5 +1,6 @@
 package com.medev.modules.billing.service;
 
+import com.medev.modules.audit.service.AuditService;
 import com.medev.modules.auth.entity.User;
 import com.medev.modules.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -8,11 +9,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class SubscriptionService {
 
     private final UserRepository userRepository;
+    private final AuditService auditService;
 
     /**
      * Asserts that the given user has a PRO plan.
@@ -32,6 +35,7 @@ public class SubscriptionService {
         if (user.getSubscriptionExpiresAt() != null && user.getSubscriptionExpiresAt().isBefore(LocalDateTime.now())) {
             user.setPlan(User.Plan.FREE);
             userRepository.save(user);
+            auditService.logAction(user.getId(), "BILLING_SUBSCRIPTION_EXPIRED", String.valueOf(user.getId()), "PRO subscription expired upon access check", null);
             throw new AccessDeniedException("Your PRO subscription has expired.");
         }
     }
@@ -48,6 +52,7 @@ public class SubscriptionService {
                 .forEach(user -> {
                     user.setPlan(User.Plan.FREE);
                     userRepository.save(user);
+                    auditService.logAction(user.getId(), "BILLING_SUBSCRIPTION_EXPIRED", String.valueOf(user.getId()), "PRO subscription expired and downgraded to FREE by scheduler", null);
                 });
     }
 }

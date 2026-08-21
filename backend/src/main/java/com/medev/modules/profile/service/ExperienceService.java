@@ -24,7 +24,7 @@ public class ExperienceService {
 
     @Transactional
     public ExperienceDto addExperience(Long userId, ExperienceRequest request) {
-        Profile profile = profileService.getProfileEntityByUserId(userId);
+        Profile profile = profileService.getProfileEntityForUpdate(userId);
         Experience exp = Experience.builder()
                 .profile(profile)
                 .company(request.getCompany())
@@ -41,7 +41,7 @@ public class ExperienceService {
 
     @Transactional
     public ExperienceDto updateExperience(Long userId, Long id, ExperienceRequest request) {
-        Profile profile = profileService.getProfileEntityByUserId(userId);
+        Profile profile = profileService.getProfileEntityForUpdate(userId);
         Experience exp = experienceRepository.findById(id).orElseThrow(() -> new NotFoundException("Experience not found"));
         if (!exp.getProfile().getId().equals(profile.getId())) throw new ForbiddenException("Access denied");
         
@@ -58,7 +58,7 @@ public class ExperienceService {
 
     @Transactional
     public void deleteExperience(Long userId, Long id) {
-        Profile profile = profileService.getProfileEntityByUserId(userId);
+        Profile profile = profileService.getProfileEntityForUpdate(userId);
         Experience exp = experienceRepository.findById(id).orElseThrow(() -> new NotFoundException("Experience not found"));
         if (!exp.getProfile().getId().equals(profile.getId())) throw new ForbiddenException("Access denied");
         experienceRepository.delete(exp);
@@ -66,7 +66,7 @@ public class ExperienceService {
 
     @Transactional
     public void reorderExperience(Long userId, List<Long> orderedIds) {
-        Profile profile = profileService.getProfileEntityByUserId(userId);
+        Profile profile = profileService.getProfileEntityForUpdate(userId);
         List<Experience> items = experienceRepository.findAllById(orderedIds);
         if (!items.stream().allMatch(e -> e.getProfile().getId().equals(profile.getId())) || items.size() != orderedIds.size()) {
             throw new ForbiddenException("Access denied");

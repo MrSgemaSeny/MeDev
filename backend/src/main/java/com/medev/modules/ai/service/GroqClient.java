@@ -32,7 +32,7 @@ import java.util.Map;
 @Service
 public class GroqClient implements LlmProvider {
 
-    private static final int MAX_TOKENS = 2048;
+    private static final int MAX_TOKENS = 4096;
 
     private final WebClient webClient;
     private final ObjectMapper objectMapper;
@@ -248,17 +248,7 @@ public class GroqClient implements LlmProvider {
     /** Проверяет, что строка — валидный JSON и очищает маркдаун если нужно */
     private String cleanAndValidateJson(String content) {
         if (content == null) return "{}";
-        String cleaned = content.trim();
-        if (cleaned.startsWith("```json")) {
-            cleaned = cleaned.substring(7);
-        }
-        if (cleaned.startsWith("```")) {
-            cleaned = cleaned.substring(3);
-        }
-        if (cleaned.endsWith("```")) {
-            cleaned = cleaned.substring(0, cleaned.length() - 3);
-        }
-        cleaned = cleaned.trim();
+        String cleaned = extractJson(content);
         try {
             objectMapper.readTree(cleaned);
             return cleaned;
@@ -266,5 +256,49 @@ public class GroqClient implements LlmProvider {
             log.error("[GroqClient] Response is not valid JSON: {}", content);
             throw new LlmException(Reason.INVALID_RESPONSE, "LLM returned invalid JSON");
         }
+    }
+
+    /**
+     * Извлекает чистый JSON-объект или массив из строки LLM ответа,
+     * очищая markdown-блоки (```json ... ```) и разговорный текст/преамбулы.
+     */
+    public static String extractJson(String content) {
+        if (content == null) return "{}";
+        String trimmed = content.trim();
+        if (trimmed.isEmpty()) return "{}";
+
+        int firstBackticks = trimmed.indexOf("```");
+        if (firstBackticks != -1) {
+            int secondBackticks = trimmed.indexOf("```", firstBackticks + 3);
+            if (secondBackticks != -1) {
+                String inside = trimmed.substring(firstBackticks + 3, secondBackticks).trim();
+                if (inside.toLowerCase().startsWith("json")) {
+                    inside = inside.substring(4).trim();
+                }
+                if (!inside.isEmpty()) {
+                    trimmed = inside;
+                }
+            }
+        }
+
+        int firstBrace = trimmed.indexOf('{');
+        int firstBracket = trimmed.indexOf('[');
+
+        int start = -1;
+        int end = -1;
+
+        if (firstBrace != -1 && (firstBracket == -1 || firstBrace < firstBracket)) {
+            start = firstBrace;
+            end = trimmed.lastIndexOf('}');
+        } else if (firstBracket != -1) {
+            start = firstBracket;
+            end = trimmed.lastIndexOf(']');
+        }
+
+        if (start != -1 && end != -1 && end > start) {
+            return trimmed.substring(start, end + 1).trim();
+        }
+
+        return trimmed;
     }
 }

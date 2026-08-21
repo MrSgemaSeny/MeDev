@@ -12,7 +12,12 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,9 +28,11 @@ public class ResumeTemplateIntegrationTest {
 
     private SpringTemplateEngine templateEngine;
     private ProfileDto fullProfile;
+    private ProfileDto cyrillicProfile;
+    private List<String> fontPaths = new ArrayList<>();
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         ClassLoaderTemplateResolver resolver = new ClassLoaderTemplateResolver();
         resolver.setPrefix("templates/");
         resolver.setSuffix(".html");
@@ -36,6 +43,7 @@ public class ResumeTemplateIntegrationTest {
         templateEngine = new SpringTemplateEngine();
         templateEngine.setTemplateResolver(resolver);
 
+        // Standard Latin profile
         fullProfile = new ProfileDto();
         fullProfile.setFullName("Murat Orynbasar");
         fullProfile.setGithubUsername("MrSgemaSeny");
@@ -119,22 +127,105 @@ public class ResumeTemplateIntegrationTest {
 
         fullProfile.setProjects(List.of(proj1, proj2));
         fullProfile.setSectionOrder(List.of("summary", "experience", "education", "skills", "languages", "projects"));
+
+        // Cyrillic Profile (Russian & Kazakh)
+        cyrillicProfile = new ProfileDto();
+        cyrillicProfile.setFullName("Мұрат Орынбасар");
+        cyrillicProfile.setGithubUsername("MrSgemaSeny");
+        cyrillicProfile.setLocation("Қазақстан, Алматы / Астана");
+        cyrillicProfile.setWebsite("https://medev.dev");
+        cyrillicProfile.setLinkedin("https://linkedin.com/in/muratorynbasar");
+        cyrillicProfile.setTelegram("@sgemaseny");
+        cyrillicProfile.setSummary("Ведущий инженер-программист и архитектор. Разработка высоконагруженных SaaS-платформ и микросервисов.");
+
+        ExperienceDto cExp = new ExperienceDto();
+        cExp.setPosition("Ведущий разработчик / Тимлид");
+        cExp.setCompany("ТОО ЖанФинанс");
+        cExp.setStartDate(LocalDate.of(2025, 6, 1));
+        cExp.setIsCurrent(true);
+        cExp.setDescription("Проектирование и разработка B2B CRM платформы с нуля. 6 уровней RBAC, миграции Flyway.");
+        cExp.setTechStack("Java 17, Spring Boot 3, React 19, PostgreSQL");
+        cyrillicProfile.setExperience(List.of(cExp));
+
+        EducationDto cEdu = new EducationDto();
+        cEdu.setInstitution("Университет им. Сулеймана Демиреля (СДУ)");
+        cEdu.setDegree("Бакалавр наук");
+        cEdu.setField("Информационные системы и программирование");
+        cEdu.setStartDate(LocalDate.of(2022, 9, 1));
+        cEdu.setEndDate(LocalDate.of(2026, 6, 1));
+        cEdu.setIsCurrent(false);
+        cyrillicProfile.setEducation(List.of(cEdu));
+
+        SkillDto cs1 = new SkillDto();
+        cs1.setName("Java & Spring Boot");
+        cs1.setCategory("Бэкенд");
+        SkillDto cs2 = new SkillDto();
+        cs2.setName("React & TypeScript");
+        cs2.setCategory("Фронтенд");
+        cyrillicProfile.setSkills(List.of(cs1, cs2));
+
+        LanguageDto cLang1 = new LanguageDto();
+        cLang1.setName("Қазақ тілі");
+        cLang1.setLevel("Ана тілі");
+        LanguageDto cLang2 = new LanguageDto();
+        cLang2.setName("Русский язык");
+        cLang2.setLevel("Свободный");
+        cyrillicProfile.setLanguages(List.of(cLang1, cLang2));
+
+        ProjectDto cProj = new ProjectDto();
+        cProj.setName("MeDev Платформа");
+        cProj.setDescription("Платформа для автоматизации карьерного трекинга и генерации резюме.");
+        cProj.setGithubUrl("https://github.com/MrSgemaSeny/MeDev");
+        cProj.setTechStack("Spring Boot 3, React 19");
+        cProj.setIsVisible(true);
+        cyrillicProfile.setProjects(List.of(cProj));
+        cyrillicProfile.setSectionOrder(List.of("summary", "experience", "education", "skills", "languages", "projects"));
+
+        // Extract fonts for PDF test renderer
+        String[] fontFiles = {
+            "Roboto-Regular.ttf", "Roboto-Bold.ttf",
+            "Inter-Regular.ttf", "Inter-Medium.ttf", "Inter-SemiBold.ttf", "Inter-Bold.ttf",
+            "SpaceGrotesk-Regular.ttf", "SpaceGrotesk-Medium.ttf", "SpaceGrotesk-SemiBold.ttf", "SpaceGrotesk-Bold.ttf",
+            "Lora-Regular.ttf", "Lora-Italic.ttf", "Lora-SemiBold.ttf",
+            "PlayfairDisplay-SemiBold.ttf", "PlayfairDisplay-Bold.ttf",
+            "Anton-Regular.ttf"
+        };
+
+        for (String fontFile : fontFiles) {
+            try (InputStream in = getClass().getClassLoader().getResourceAsStream("fonts/" + fontFile)) {
+                if (in != null) {
+                    String prefix = fontFile.substring(0, fontFile.lastIndexOf('.'));
+                    Path tempFile = Files.createTempFile(prefix, ".ttf");
+                    tempFile.toFile().deleteOnExit();
+                    Files.copy(in, tempFile, StandardCopyOption.REPLACE_EXISTING);
+                    fontPaths.add(tempFile.toAbsolutePath().toString());
+                }
+            }
+        }
     }
 
-    private Context createContext(boolean singlePage) {
+    private Context createContext(ProfileDto profile, boolean singlePage) {
         Context context = new Context();
-        context.setVariable("profile", fullProfile);
+        context.setVariable("profile", profile);
         context.setVariable("singlePage", singlePage);
         context.setVariable("generatedAt", LocalDate.now());
         context.setVariable("avatarBase64", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=");
 
-        Map<String, List<String>> groupedSkills = Map.of(
-                "Backend", List.of("Java 17 & Spring Boot 3.3", "PostgreSQL & Redis"),
-                "Frontend", List.of("React 19 & TypeScript"),
-                "DevOps", List.of("Docker & GitHub Actions")
-        );
-        context.setVariable("groupedSkills", groupedSkills);
-        context.setVariable("languagesStr", "English (Professional Working C1), Russian (Native)");
+        if (profile.getSkills() != null) {
+            Map<String, List<String>> groupedSkills = profile.getSkills().stream()
+                    .collect(java.util.stream.Collectors.groupingBy(
+                            s -> s.getCategory() != null && !s.getCategory().isBlank() ? s.getCategory() : "General",
+                            java.util.stream.Collectors.mapping(SkillDto::getName, java.util.stream.Collectors.toList())
+                    ));
+            context.setVariable("groupedSkills", groupedSkills);
+        }
+
+        if (profile.getLanguages() != null) {
+            String languagesStr = profile.getLanguages().stream()
+                    .map(l -> l.getName() + (l.getLevel() != null && !l.getLevel().isBlank() ? " (" + l.getLevel() + ")" : ""))
+                    .collect(java.util.stream.Collectors.joining(", "));
+            context.setVariable("languagesStr", languagesStr);
+        }
         return context;
     }
 
@@ -142,7 +233,7 @@ public class ResumeTemplateIntegrationTest {
     @ValueSource(strings = {"clean", "github", "apple-modern", "grok-monolith", "milky-soft", "phub-orange"})
     @DisplayName("HTML render check for all 6 templates in single-page mode")
     void testHtmlGeneration_singlePage(String templateName) {
-        Context context = createContext(true);
+        Context context = createContext(fullProfile, true);
         String html = templateEngine.process("resume/" + templateName, context);
 
         assertThat(html).isNotBlank();
@@ -155,7 +246,7 @@ public class ResumeTemplateIntegrationTest {
     @ValueSource(strings = {"clean", "github", "apple-modern", "grok-monolith", "milky-soft", "phub-orange"})
     @DisplayName("HTML render check for all 6 templates in multi-page mode")
     void testHtmlGeneration_multiPage(String templateName) {
-        Context context = createContext(false);
+        Context context = createContext(fullProfile, false);
         String html = templateEngine.process("resume/" + templateName, context);
 
         assertThat(html).isNotBlank();
@@ -167,12 +258,39 @@ public class ResumeTemplateIntegrationTest {
     @ValueSource(strings = {"clean", "github", "apple-modern", "grok-monolith", "milky-soft", "phub-orange"})
     @DisplayName("Strict Flying Saucer XML parse & PDF binary generation for all 6 templates")
     void testPdfBinaryGeneration_allTemplates(String templateName) {
-        Context context = createContext(true);
+        Context context = createContext(fullProfile, true);
         String html = templateEngine.process("resume/" + templateName, context);
 
         assertThatCode(() -> {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             ITextRenderer renderer = new ITextRenderer();
+            for (String fontPath : fontPaths) {
+                renderer.getFontResolver().addFont(fontPath, "Identity-H", true);
+            }
+            renderer.setDocumentFromString(html);
+            renderer.layout();
+            renderer.createPDF(out);
+            renderer.finishPDF();
+
+            byte[] pdfBytes = out.toByteArray();
+            assertThat(pdfBytes).isNotEmpty();
+            assertThat(new String(pdfBytes, 0, Math.min(10, pdfBytes.length))).startsWith("%PDF-");
+        }).doesNotThrowAnyException();
+    }
+
+    @ParameterizedTest(name = "Cyrillic PDF Binary Generation for template: {0}")
+    @ValueSource(strings = {"clean", "github", "apple-modern", "grok-monolith", "milky-soft", "phub-orange"})
+    @DisplayName("Cyrillic font rendering test (Russian/Kazakh) for all 6 templates")
+    void testCyrillicPdfGeneration_allTemplates(String templateName) {
+        Context context = createContext(cyrillicProfile, true);
+        String html = templateEngine.process("resume/" + templateName, context);
+
+        assertThatCode(() -> {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ITextRenderer renderer = new ITextRenderer();
+            for (String fontPath : fontPaths) {
+                renderer.getFontResolver().addFont(fontPath, "Identity-H", true);
+            }
             renderer.setDocumentFromString(html);
             renderer.layout();
             renderer.createPDF(out);

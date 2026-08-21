@@ -1,6 +1,7 @@
 package com.medev.modules.profile.entity;
 
 import com.medev.modules.auth.entity.User;
+import com.medev.shared.security.EncryptedStringConverter;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -33,7 +34,7 @@ public class Profile {
     private String githubUsername;
     
     @Column(columnDefinition = "TEXT")
-    @Convert(converter = com.medev.shared.security.EncryptedStringConverter.class)
+    @Convert(converter = EncryptedStringConverter.class)
     private String githubToken;
     
     private String telegram;

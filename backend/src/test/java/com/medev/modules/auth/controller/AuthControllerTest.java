@@ -22,23 +22,24 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import com.medev.AbstractIntegrationTest;
-
+@WebMvcTest(AuthController.class)
 @AutoConfigureMockMvc(addFilters = false)
-class AuthControllerTest extends AbstractIntegrationTest {
+class AuthControllerTest {
 
-    @org.springframework.beans.factory.annotation.Autowired private MockMvc mockMvc;
-    @org.springframework.beans.factory.annotation.Autowired private com.fasterxml.jackson.databind.ObjectMapper objectMapper;
+    @Autowired private MockMvc mockMvc;
+    @Autowired private ObjectMapper objectMapper;
 
     @MockBean
     private AuthService authService;
 
     @MockBean
     private AuthRateLimiter authRateLimiter;
+
+    @MockBean
+    private com.medev.shared.security.JwtService jwtService;
+
+    @MockBean
+    private com.medev.shared.security.JwtFilter jwtFilter;
 
     @Test
     void register_success() throws Exception {

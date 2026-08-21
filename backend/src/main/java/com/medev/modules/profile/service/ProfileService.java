@@ -40,7 +40,7 @@ public class ProfileService {
 
     @Transactional
     public void setGithubUsernameIfMissing(Long userId, String githubUsername) {
-        profileRepository.findByUserId(userId).ifPresent(profile -> {
+        profileRepository.findByUserIdForUpdate(userId).ifPresent(profile -> {
             if (profile.getGithubUsername() == null || profile.getGithubUsername().isBlank()) {
                 profile.setGithubUsername(githubUsername);
                 profileRepository.save(profile);
@@ -50,7 +50,7 @@ public class ProfileService {
 
     @Transactional
     public void setAvatarIfMissing(Long userId, String avatarUrl) {
-        profileRepository.findByUserId(userId).ifPresent(profile -> {
+        profileRepository.findByUserIdForUpdate(userId).ifPresent(profile -> {
             if (profile.getAvatarUrl() == null || profile.getAvatarUrl().isBlank()) {
                 profile.setAvatarUrl(avatarUrl);
                 profileRepository.save(profile);
@@ -63,7 +63,7 @@ public class ProfileService {
                 .orElseThrow(() -> new NotFoundException("Profile not found"));
     }
 
-    private Profile getProfileEntityForUpdate(Long userId) {
+    public Profile getProfileEntityForUpdate(Long userId) {
         return profileRepository.findByUserIdForUpdate(userId)
                 .orElseThrow(() -> new NotFoundException("Profile not found"));
     }
@@ -76,7 +76,7 @@ public class ProfileService {
 
     @Transactional
     public ProfileDto update(Long userId, UpdateProfileRequest request) {
-        Profile profile = getProfileEntityByUserId(userId);
+        Profile profile = getProfileEntityForUpdate(userId);
         profile.setFullName(request.getFullName());
         profile.setHeadline(request.getHeadline());
         profile.setSummary(request.getSummary());
@@ -94,7 +94,7 @@ public class ProfileService {
 
     @Transactional
     public void updateSectionOrder(Long userId, List<String> sectionOrder) {
-        Profile profile = getProfileEntityByUserId(userId);
+        Profile profile = getProfileEntityForUpdate(userId);
         profile.setSectionOrder(sectionOrder);
         profileRepository.save(profile);
         eventPublisher.publishEvent(new com.medev.modules.profile.event.ProfileUpdatedEvent(this, userId));
@@ -220,7 +220,7 @@ public class ProfileService {
     // ==========================================
     @Transactional
     public void updateFromGitHub(Long userId, com.medev.modules.github.dto.GitHubProfileDto github) {
-        Profile profile = getProfileEntityByUserId(userId);
+        Profile profile = getProfileEntityForUpdate(userId);
         
         if (github.getName() != null && profile.getFullName() == null) profile.setFullName(github.getName());
         if (github.getAvatarUrl() != null) profile.setAvatarUrl(github.getAvatarUrl());
@@ -234,7 +234,7 @@ public class ProfileService {
 
     @Transactional
     public void importProjects(Long userId, List<com.medev.modules.github.dto.GitHubRepoDto> repos) {
-        Profile profile = getProfileEntityByUserId(userId);
+        Profile profile = getProfileEntityForUpdate(userId);
         List<Project> existingProjects = projectRepository.findByProfileIdOrderBySortOrderAsc(profile.getId());
 
         // Deduplicate existing projects (in case of previous race conditions)
@@ -275,7 +275,7 @@ public class ProfileService {
 
     @Transactional
     public void addSkillIfNotExists(Long userId, String skillName, String category) {
-        Profile profile = getProfileEntityByUserId(userId);
+        Profile profile = getProfileEntityForUpdate(userId);
         List<Skill> existingSkills = skillRepository.findByProfileIdOrderBySortOrderAsc(profile.getId());
         if (existingSkills.stream().noneMatch(s -> s.getName().equalsIgnoreCase(skillName))) {
             Skill skill = Skill.builder()
@@ -289,7 +289,7 @@ public class ProfileService {
     
     @Transactional
     public void importOrganizationsAsExperience(Long userId, List<String> orgs) {
-        Profile profile = getProfileEntityByUserId(userId);
+        Profile profile = getProfileEntityForUpdate(userId);
         List<Experience> existingExp = experienceRepository.findByProfileIdOrderBySortOrderAsc(profile.getId());
         
         for (String org : orgs) {
@@ -315,7 +315,7 @@ public class ProfileService {
     
     @Transactional
     public void importLanguageExperience(Long userId, String language, java.time.LocalDate startDate) {
-        Profile profile = getProfileEntityByUserId(userId);
+        Profile profile = getProfileEntityForUpdate(userId);
         List<Experience> existingExp = experienceRepository.findByProfileIdOrderBySortOrderAsc(profile.getId());
         
         String title = language + " Developer";

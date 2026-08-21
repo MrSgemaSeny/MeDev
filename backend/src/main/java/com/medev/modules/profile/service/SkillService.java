@@ -24,7 +24,7 @@ public class SkillService {
 
     @Transactional
     public SkillDto addSkill(Long userId, SkillRequest request) {
-        Profile profile = profileService.getProfileEntityByUserId(userId);
+        Profile profile = profileService.getProfileEntityForUpdate(userId);
         Skill skill = Skill.builder()
                 .profile(profile)
                 .name(request.getName())
@@ -37,7 +37,7 @@ public class SkillService {
 
     @Transactional
     public SkillDto updateSkill(Long userId, Long id, SkillRequest request) {
-        Profile profile = profileService.getProfileEntityByUserId(userId);
+        Profile profile = profileService.getProfileEntityForUpdate(userId);
         Skill skill = skillRepository.findById(id).orElseThrow(() -> new NotFoundException("Skill not found"));
         if (!skill.getProfile().getId().equals(profile.getId())) throw new ForbiddenException("Access denied");
         
@@ -50,7 +50,7 @@ public class SkillService {
 
     @Transactional
     public void deleteSkill(Long userId, Long id) {
-        Profile profile = profileService.getProfileEntityByUserId(userId);
+        Profile profile = profileService.getProfileEntityForUpdate(userId);
         Skill skill = skillRepository.findById(id).orElseThrow(() -> new NotFoundException("Skill not found"));
         if (!skill.getProfile().getId().equals(profile.getId())) throw new ForbiddenException("Access denied");
         skillRepository.delete(skill);
@@ -58,7 +58,7 @@ public class SkillService {
 
     @Transactional
     public void reorderSkills(Long userId, List<Long> orderedIds) {
-        Profile profile = profileService.getProfileEntityByUserId(userId);
+        Profile profile = profileService.getProfileEntityForUpdate(userId);
         List<Skill> items = skillRepository.findAllById(orderedIds);
         if (!items.stream().allMatch(e -> e.getProfile().getId().equals(profile.getId())) || items.size() != orderedIds.size()) {
             throw new ForbiddenException("Access denied");

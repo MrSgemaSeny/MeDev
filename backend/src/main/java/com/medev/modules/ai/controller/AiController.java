@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 
 @Slf4j
@@ -78,7 +79,7 @@ public class AiController {
                 request.getHistory()
         );
 
-        stream.subscribe(
+        Disposable disposable = stream.subscribe(
             chunk -> {
                 try {
                     emitter.send(chunk);
@@ -98,6 +99,10 @@ public class AiController {
             },
             emitter::complete
         );
+
+        emitter.onCompletion(disposable::dispose);
+        emitter.onTimeout(disposable::dispose);
+        emitter.onError(e -> disposable.dispose());
 
         return emitter;
     }
@@ -232,10 +237,9 @@ public class AiController {
             return ResponseEntity.badRequest().build();
         }
 
-        try {
+        try (java.io.InputStream is = file.getInputStream()) {
             byte[] magic = new byte[4];
-            java.io.InputStream is = file.getInputStream();
-            if (is.read(magic) != 4 || !new String(magic).startsWith("%PDF")) {
+            if (is.read(magic) != 4 || !new String(magic, java.nio.charset.StandardCharsets.US_ASCII).startsWith("%PDF")) {
                 return ResponseEntity.badRequest().build();
             }
         } catch (java.io.IOException e) {

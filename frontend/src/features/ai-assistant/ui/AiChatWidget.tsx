@@ -2,7 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import { Bot, Send, X, Loader2 } from 'lucide-react';
 import { useAiChatStore } from '../model/store';
 import { useAuthStore } from '../../../entities/user/model/store';
-import { BASE_URL } from '../../../shared/api/axios';
+import { useUpsellStore } from '../../../entities/user/model/upsellStore';
+import { BASE_URL, api } from '../../../shared/api/axios';
 
 export const AiChatWidget = () => {
   const { isOpen, messages, isLoading, pendingPrompt, toggleChat, addMessage, updateLastMessage, setLoading, clearChat, clearPendingPrompt } = useAiChatStore();
@@ -30,6 +31,7 @@ export const AiChatWidget = () => {
       handleSend(pendingPrompt);
       clearPendingPrompt();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pendingPrompt, isLoading]);
 
   const handleSend = async (text: string = input, isHidden: boolean = false) => {
@@ -57,7 +59,6 @@ export const AiChatWidget = () => {
 
       if (response.status === 401) {
         try {
-          const { api } = await import('../../../shared/api/axios');
           await api.get('/ai/quota'); // this will trigger the axios interceptor to refresh the token
           const newToken = useAuthStore.getState().accessToken;
           response = await fetch(`${BASE_URL}/ai/chat/stream`, {
@@ -68,15 +69,13 @@ export const AiChatWidget = () => {
             },
             body: JSON.stringify({ prompt: text, history: historyToSend })
           });
-        } catch (refreshErr) {
+        } catch {
           throw new Error('Сессия истекла. Пожалуйста, войдите снова.');
         }
       }
 
       if (response.status === 429) {
-        import('../../../entities/user/model/upsellStore').then(({ useUpsellStore }) => {
-          useUpsellStore.getState().openUpsell();
-        });
+        useUpsellStore.getState().openUpsell();
         throw new Error('Лимит запросов исчерпан');
       }
 

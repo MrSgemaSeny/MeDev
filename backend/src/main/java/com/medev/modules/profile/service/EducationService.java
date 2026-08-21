@@ -24,7 +24,7 @@ public class EducationService {
 
     @Transactional
     public EducationDto addEducation(Long userId, EducationRequest request) {
-        Profile profile = profileService.getProfileEntityByUserId(userId);
+        Profile profile = profileService.getProfileEntityForUpdate(userId);
         Education edu = Education.builder()
                 .profile(profile)
                 .institution(request.getInstitution())
@@ -40,7 +40,7 @@ public class EducationService {
 
     @Transactional
     public EducationDto updateEducation(Long userId, Long id, EducationRequest request) {
-        Profile profile = profileService.getProfileEntityByUserId(userId);
+        Profile profile = profileService.getProfileEntityForUpdate(userId);
         Education edu = educationRepository.findById(id).orElseThrow(() -> new NotFoundException("Education not found"));
         if (!edu.getProfile().getId().equals(profile.getId())) throw new ForbiddenException("Access denied");
         
@@ -56,7 +56,7 @@ public class EducationService {
 
     @Transactional
     public void deleteEducation(Long userId, Long id) {
-        Profile profile = profileService.getProfileEntityByUserId(userId);
+        Profile profile = profileService.getProfileEntityForUpdate(userId);
         Education edu = educationRepository.findById(id).orElseThrow(() -> new NotFoundException("Education not found"));
         if (!edu.getProfile().getId().equals(profile.getId())) throw new ForbiddenException("Access denied");
         educationRepository.delete(edu);
@@ -64,7 +64,7 @@ public class EducationService {
 
     @Transactional
     public void reorderEducation(Long userId, List<Long> orderedIds) {
-        Profile profile = profileService.getProfileEntityByUserId(userId);
+        Profile profile = profileService.getProfileEntityForUpdate(userId);
         List<Education> items = educationRepository.findAllById(orderedIds);
         if (!items.stream().allMatch(e -> e.getProfile().getId().equals(profile.getId())) || items.size() != orderedIds.size()) {
             throw new ForbiddenException("Access denied");

@@ -6,8 +6,10 @@ import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
 import javax.crypto.Cipher;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Base64;
 
@@ -17,9 +19,11 @@ public class EncryptionUtils {
     private static final String ALGORITHM = "AES/GCM/NoPadding";
     private static final int GCM_IV_LENGTH = 12;
     private static final int GCM_TAG_LENGTH = 128;
-    private static final String DEFAULT_SECRET = "super_secret_encryption_key_that_is_at_least_32_bytes_long_12345";
+    public static final String DEFAULT_SECRET = "super_secret_encryption_key_that_is_at_least_32_bytes_long_12345";
     
-    private static byte[] primaryKey;
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+
+    private static byte[] primaryKey = buildKeyBytes(DEFAULT_SECRET);
     private static byte[] secondaryKey;
 
     private final Environment env;
@@ -27,7 +31,7 @@ public class EncryptionUtils {
     private final String secondarySecret;
 
     public EncryptionUtils(Environment env, 
-                           @Value("${encryption.secret}") String primarySecret,
+                           @Value("${encryption.secret:super_secret_encryption_key_that_is_at_least_32_bytes_long_12345}") String primarySecret,
                            @Value("${encryption.secret-old:#{null}}") String secondarySecret) {
         this.env = env;
         this.primarySecret = primarySecret;
@@ -36,22 +40,36 @@ public class EncryptionUtils {
 
     @PostConstruct
     public void init() {
-        if (Arrays.asList(env.getActiveProfiles()).contains("prod")) {
-            if (DEFAULT_SECRET.equals(primarySecret)) {
+        if (env != null && env.getActiveProfiles() != null && Arrays.asList(env.getActiveProfiles()).contains("prod")) {
+            if (DEFAULT_SECRET.equals(primarySecret) || primarySecret == null || primarySecret.isBlank()) {
                 throw new IllegalStateException("FATAL: Default encryption key used in production!");
             }
         }
         
-        primaryKey = buildKeyBytes(primarySecret);
+        primaryKey = buildKeyBytes(primarySecret != null && !primarySecret.isBlank() ? primarySecret : DEFAULT_SECRET);
         if (secondarySecret != null && !secondarySecret.isBlank()) {
             secondaryKey = buildKeyBytes(secondarySecret);
+        } else {
+            secondaryKey = null;
         }
     }
 
-    private byte[] buildKeyBytes(String secret) {
+    public static synchronized void setKeysForTesting(String primary, String secondary) {
+        primaryKey = buildKeyBytes(primary != null && !primary.isBlank() ? primary : DEFAULT_SECRET);
+        secondaryKey = (secondary != null && !secondary.isBlank()) ? buildKeyBytes(secondary) : null;
+    }
+
+    public static synchronized void resetKeys() {
+        primaryKey = buildKeyBytes(DEFAULT_SECRET);
+        secondaryKey = null;
+    }
+
+    private static byte[] buildKeyBytes(String secret) {
         byte[] keyBytes = new byte[32];
-        byte[] secretBytes = secret.getBytes(StandardCharsets.UTF_8);
-        System.arraycopy(secretBytes, 0, keyBytes, 0, Math.min(secretBytes.length, keyBytes.length));
+        if (secret != null) {
+            byte[] secretBytes = secret.getBytes(StandardCharsets.UTF_8);
+            System.arraycopy(secretBytes, 0, keyBytes, 0, Math.min(secretBytes.length, keyBytes.length));
+        }
         return keyBytes;
     }
 
@@ -60,9 +78,9 @@ public class EncryptionUtils {
         if (primaryKey == null) throw new IllegalStateException("Encryption key not initialized");
         try {
             byte[] iv = new byte[GCM_IV_LENGTH];
-            new java.security.SecureRandom().nextBytes(iv);
+            SECURE_RANDOM.nextBytes(iv);
             
-            javax.crypto.spec.GCMParameterSpec paramSpec = new javax.crypto.spec.GCMParameterSpec(GCM_TAG_LENGTH, iv);
+            GCMParameterSpec paramSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
             Cipher cipher = Cipher.getInstance(ALGORITHM);
             cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(primaryKey, "AES"), paramSpec);
             byte[] encrypted = cipher.doFinal(value.getBytes(StandardCharsets.UTF_8));
@@ -99,12 +117,13 @@ public class EncryptionUtils {
         if (combined.length <= GCM_IV_LENGTH) {
             throw new RuntimeException("Encrypted data is too short");
         }
-        byte[] iv = java.util.Arrays.copyOfRange(combined, 0, GCM_IV_LENGTH);
-        byte[] ciphertext = java.util.Arrays.copyOfRange(combined, GCM_IV_LENGTH, combined.length);
+        byte[] iv = Arrays.copyOfRange(combined, 0, GCM_IV_LENGTH);
+        byte[] ciphertext = Arrays.copyOfRange(combined, GCM_IV_LENGTH, combined.length);
         
-        javax.crypto.spec.GCMParameterSpec paramSpec = new javax.crypto.spec.GCMParameterSpec(GCM_TAG_LENGTH, iv);
+        GCMParameterSpec paramSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
         Cipher cipher = Cipher.getInstance(ALGORITHM);
         cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, "AES"), paramSpec);
         return new String(cipher.doFinal(ciphertext), StandardCharsets.UTF_8);
     }
 }
+

@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title th:text="${profile.fullName} + ' - Milky Soft Resume'">Murat Orynbasar - Milky Soft Resume</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&amp;family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&amp;display=swap');
-        
         @page {
             size: A4;
             margin: 15mm;
@@ -16,7 +14,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
-            font-family: 'Lora', serif;
+            font-family: 'Lora', Roboto, serif;
             background-color: #f9f6f0;
             color: #3e3a37;
             line-height: 1.8;
@@ -35,7 +33,7 @@
         }
         
         h1 {
-            font-family: 'Playfair Display', serif;
+            font-family: 'Playfair Display', Roboto, serif;
             font-size: 52px;
             font-weight: 700;
             color: #3e3a37;
@@ -78,7 +76,7 @@
         
         h2.section-title-text {
             display: table-cell;
-            font-family: 'Playfair Display', serif;
+            font-family: 'Playfair Display', Roboto, serif;
             font-size: 24px;
             color: #3e3a37;
             font-weight: 600;
@@ -129,7 +127,7 @@
         
         .item-title {
             float: left;
-            font-family: 'Playfair Display', serif;
+            font-family: 'Playfair Display', Roboto, serif;
             font-size: 20px;
             font-weight: 600;
             color: #3e3a37;
@@ -170,7 +168,7 @@
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 13px;
-            font-family: -apple-system, sans-serif;
+            font-family: Roboto, -apple-system, sans-serif;
             margin-right: 8px;
             margin-bottom: 8px;
         }
@@ -200,7 +198,7 @@
         }
         
         .skill-group-name {
-            font-family: 'Playfair Display', serif;
+            font-family: 'Playfair Display', Roboto, serif;
             font-size: 18px;
             font-weight: 600;
             margin-bottom: 16px;

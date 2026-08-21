@@ -47,18 +47,8 @@ public class AiAnalysisService {
         String jsonResponse = llmProvider.structuredCompletion(systemPrompt, finalPrompt);
         
         try {
-            if (jsonResponse.startsWith("```json")) {
-                jsonResponse = jsonResponse.substring(7);
-            }
-            if (jsonResponse.startsWith("```")) {
-                jsonResponse = jsonResponse.substring(3);
-            }
-            if (jsonResponse.endsWith("```")) {
-                jsonResponse = jsonResponse.substring(0, jsonResponse.length() - 3);
-            }
-            jsonResponse = jsonResponse.trim();
-            
-            return objectMapper.readValue(jsonResponse, AiParsedResumeDto.class);
+            String cleaned = GroqClient.extractJson(jsonResponse);
+            return objectMapper.readValue(cleaned, AiParsedResumeDto.class);
         } catch (Exception e) {
             log.error("Failed to parse Groq response: {}", jsonResponse, e);
             throw new RuntimeException("AI generation failed or returned invalid format. Aborting to prevent data loss.", e);
@@ -100,18 +90,8 @@ public class AiAnalysisService {
         String jsonResponse = llmProvider.structuredCompletion(systemPrompt, finalPrompt);
         
         try {
-            if (jsonResponse.startsWith("```json")) {
-                jsonResponse = jsonResponse.substring(7);
-            }
-            if (jsonResponse.startsWith("```")) {
-                jsonResponse = jsonResponse.substring(3);
-            }
-            if (jsonResponse.endsWith("```")) {
-                jsonResponse = jsonResponse.substring(0, jsonResponse.length() - 3);
-            }
-            jsonResponse = jsonResponse.trim();
-            
-            return objectMapper.readValue(jsonResponse, AiParsedResumeDto.class);
+            String cleaned = GroqClient.extractJson(jsonResponse);
+            return objectMapper.readValue(cleaned, AiParsedResumeDto.class);
         } catch (Exception e) {
             log.error("Failed to parse Groq response: {}", jsonResponse, e);
             throw new RuntimeException("AI generation failed or returned invalid format. Aborting to prevent data loss.", e);

@@ -41,6 +41,9 @@ class StripeServiceTest {
     @Mock
     private org.springframework.data.redis.core.ValueOperations<String, Object> valueOperations;
 
+    @Mock
+    private com.medev.modules.audit.service.AuditService auditService;
+
     @InjectMocks
     private StripeService stripeService;
 
@@ -84,6 +87,7 @@ class StripeServiceTest {
         String url = stripeService.createCheckoutSession(1L);
 
         assertThat(url).isEqualTo("https://checkout.stripe.com/test");
+        verify(auditService).logAction(eq(1L), eq("BILLING_STRIPE_CHECKOUT_INITIATED"), eq("1"), anyString(), isNull());
     }
 
     @Test
@@ -107,12 +111,14 @@ class StripeServiceTest {
         String sigHeader = "sig";
 
         Event event = mock(Event.class);
+        when(event.getId()).thenReturn("evt_123");
         when(event.getType()).thenReturn("checkout.session.completed");
         
         EventDataObjectDeserializer deserializer = mock(EventDataObjectDeserializer.class);
         when(event.getDataObjectDeserializer()).thenReturn(deserializer);
         
         Session session = mock(Session.class);
+        when(session.getId()).thenReturn("cs_123");
         when(deserializer.getObject()).thenReturn(Optional.of(session));
         
         when(session.getMetadata()).thenReturn(Map.of("userId", "1"));
@@ -128,5 +134,47 @@ class StripeServiceTest {
         assertThat(user.getPlan()).isEqualTo(User.Plan.PRO);
         assertThat(user.getStripeCustomerId()).isEqualTo("cus_123");
         verify(userRepository).save(user);
+        verify(auditService).logAction(eq(1L), eq("BILLING_STRIPE_PAYMENT_SUCCESS"), eq("cus_123"), anyString(), isNull());
+    }
+
+    @Test
+    void handleWebhook_alreadyProcessed_skipsExecution() throws Exception {
+        String payload = "{}";
+        String sigHeader = "sig";
+
+        Event event = mock(Event.class);
+        when(event.getId()).thenReturn("evt_already_done");
+        mockedWebhook.when(() -> Webhook.constructEvent(anyString(), anyString(), anyString())).thenReturn(event);
+
+        when(valueOperations.setIfAbsent(eq("stripe:webhook:evt_already_done"), eq("PROCESSED"), any())).thenReturn(false);
+
+        stripeService.handleWebhook(payload, sigHeader);
+
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    void handleWebhook_processingError_clearsRedisKeyForRetry() throws Exception {
+        String payload = "{}";
+        String sigHeader = "sig";
+
+        Event event = mock(Event.class);
+        when(event.getId()).thenReturn("evt_fail");
+        when(event.getType()).thenReturn("checkout.session.completed");
+
+        EventDataObjectDeserializer deserializer = mock(EventDataObjectDeserializer.class);
+        when(event.getDataObjectDeserializer()).thenReturn(deserializer);
+
+        Session session = mock(Session.class);
+        when(deserializer.getObject()).thenReturn(Optional.of(session));
+        when(session.getMetadata()).thenReturn(Map.of("userId", "999"));
+
+        mockedWebhook.when(() -> Webhook.constructEvent(anyString(), anyString(), anyString())).thenReturn(event);
+        when(userRepository.findById(999L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> stripeService.handleWebhook(payload, sigHeader))
+                .isInstanceOf(NotFoundException.class);
+
+        verify(redisTemplate).delete("stripe:webhook:evt_fail");
     }
 }

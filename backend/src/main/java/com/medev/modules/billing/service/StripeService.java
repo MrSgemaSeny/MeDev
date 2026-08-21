@@ -1,5 +1,6 @@
 package com.medev.modules.billing.service;
 
+import com.medev.modules.audit.service.AuditService;
 import com.medev.modules.auth.entity.User;
 import com.medev.modules.auth.repository.UserRepository;
 import com.medev.shared.exception.NotFoundException;
@@ -22,6 +23,7 @@ public class StripeService {
 
     private final UserRepository userRepository;
     private final org.springframework.data.redis.core.RedisTemplate<String, Object> redisTemplate;
+    private final AuditService auditService;
 
     @Value("${stripe.pro-price-id}")
     private String proPriceId;
@@ -58,6 +60,7 @@ public class StripeService {
                     );
 
             Session session = Session.create(paramsBuilder.build());
+            auditService.logAction(userId, "BILLING_STRIPE_CHECKOUT_INITIATED", String.valueOf(userId), "Stripe checkout session initiated", null);
             return session.getUrl();
         } catch (StripeException e) {
             log.error("Failed to create Stripe Checkout Session for user {}", userId, e);
@@ -94,31 +97,37 @@ public class StripeService {
             return;
         }
 
-        if ("checkout.session.completed".equals(event.getType())) {
-            Session session = (Session) event.getDataObjectDeserializer().getObject().orElse(null);
-            if (session != null) {
-                handleSuccessfulCheckout(session);
-            }
-        } else if ("customer.subscription.deleted".equals(event.getType())) {
-            com.stripe.model.Subscription subscription = (com.stripe.model.Subscription) event.getDataObjectDeserializer().getObject().orElse(null);
-            if (subscription != null) {
-                downgradeUser(subscription.getCustomer());
-            }
-        } else if ("customer.subscription.updated".equals(event.getType())) {
-            com.stripe.model.Subscription subscription = (com.stripe.model.Subscription) event.getDataObjectDeserializer().getObject().orElse(null);
-            if (subscription != null) {
-                String status = subscription.getStatus();
-                if ("canceled".equals(status) || "unpaid".equals(status) || "past_due".equals(status)) {
+        try {
+            if ("checkout.session.completed".equals(event.getType())) {
+                Session session = (Session) event.getDataObjectDeserializer().getObject().orElse(null);
+                if (session != null) {
+                    handleSuccessfulCheckout(session);
+                }
+            } else if ("customer.subscription.deleted".equals(event.getType())) {
+                com.stripe.model.Subscription subscription = (com.stripe.model.Subscription) event.getDataObjectDeserializer().getObject().orElse(null);
+                if (subscription != null) {
                     downgradeUser(subscription.getCustomer());
-                } else if ("active".equals(status)) {
-                    upgradeUserByCustomer(subscription.getCustomer());
+                }
+            } else if ("customer.subscription.updated".equals(event.getType())) {
+                com.stripe.model.Subscription subscription = (com.stripe.model.Subscription) event.getDataObjectDeserializer().getObject().orElse(null);
+                if (subscription != null) {
+                    String status = subscription.getStatus();
+                    if ("canceled".equals(status) || "unpaid".equals(status) || "past_due".equals(status)) {
+                        downgradeUser(subscription.getCustomer());
+                    } else if ("active".equals(status)) {
+                        upgradeUserByCustomer(subscription.getCustomer());
+                    }
+                }
+            } else if ("invoice.payment_failed".equals(event.getType())) {
+                com.stripe.model.Invoice invoice = (com.stripe.model.Invoice) event.getDataObjectDeserializer().getObject().orElse(null);
+                if (invoice != null) {
+                    downgradeUser(invoice.getCustomer());
                 }
             }
-        } else if ("invoice.payment_failed".equals(event.getType())) {
-            com.stripe.model.Invoice invoice = (com.stripe.model.Invoice) event.getDataObjectDeserializer().getObject().orElse(null);
-            if (invoice != null) {
-                downgradeUser(invoice.getCustomer());
-            }
+        } catch (Exception e) {
+            redisTemplate.delete(idempotencyKey);
+            log.error("Error processing Stripe webhook event {}, cleared idempotency key for retry", eventId, e);
+            throw e;
         }
     }
 
@@ -134,6 +143,7 @@ public class StripeService {
             userRepository.save(user);
             
             log.info("Successfully upgraded user {} to PRO", userId);
+            auditService.logAction(userId, "BILLING_STRIPE_PAYMENT_SUCCESS", session.getCustomer(), "Upgraded to PRO via Stripe Checkout session " + session.getId(), null);
         } else {
             log.warn("Checkout session {} completed but no userId in metadata", session.getId());
         }
@@ -144,6 +154,7 @@ public class StripeService {
             user.setPlan(User.Plan.FREE);
             userRepository.save(user);
             log.info("Downgraded user {} to FREE plan", user.getId());
+            auditService.logAction(user.getId(), "BILLING_STRIPE_SUBSCRIPTION_DOWNGRADE", customerId, "Downgraded to FREE plan via Stripe", null);
         });
     }
 
@@ -152,6 +163,7 @@ public class StripeService {
             user.setPlan(User.Plan.PRO);
             userRepository.save(user);
             log.info("Upgraded user {} to PRO plan via subscription update", user.getId());
+            auditService.logAction(user.getId(), "BILLING_STRIPE_SUBSCRIPTION_RENEWAL", customerId, "Upgraded to PRO plan via Stripe subscription update", null);
         });
     }
 }

@@ -1,5 +1,6 @@
 package com.medev.modules.auth.security;
 
+import com.medev.modules.audit.service.AuditService;
 import com.medev.modules.auth.entity.User;
 import com.medev.modules.auth.repository.UserRepository;
 import com.medev.shared.security.JwtService;
@@ -25,6 +26,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final RedisTemplate<String, String> redisTemplate;
+    private final AuditService auditService;
 
     @Value("${cors.allowed-origins:http://localhost:5173}")
     private String allowedOrigins;
@@ -52,6 +54,8 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             user.getId().toString(),
             Duration.ofMinutes(5)
         );
+
+        auditService.logAction(user.getId(), "AUTH_OAUTH_LOGIN_SUCCESS", String.valueOf(user.getId()), "OAuth2 login successful via " + user.getEmail(), null);
 
         String frontendOrigin = allowedOrigins.split(",")[0];
         String frontendUrl = frontendOrigin + "/auth/callback?code=" + oauth2Code;

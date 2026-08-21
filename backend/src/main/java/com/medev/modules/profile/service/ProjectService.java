@@ -24,7 +24,7 @@ public class ProjectService {
 
     @Transactional
     public ProjectDto addProject(Long userId, ProjectRequest request) {
-        Profile profile = profileService.getProfileEntityByUserId(userId);
+        Profile profile = profileService.getProfileEntityForUpdate(userId);
         Project project = Project.builder()
                 .profile(profile)
                 .name(request.getName())
@@ -41,7 +41,7 @@ public class ProjectService {
 
     @Transactional
     public ProjectDto updateProject(Long userId, Long id, ProjectRequest request) {
-        Profile profile = profileService.getProfileEntityByUserId(userId);
+        Profile profile = profileService.getProfileEntityForUpdate(userId);
         Project project = projectRepository.findById(id).orElseThrow(() -> new NotFoundException("Project not found"));
         if (!project.getProfile().getId().equals(profile.getId())) throw new ForbiddenException("Access denied");
         
@@ -58,7 +58,7 @@ public class ProjectService {
 
     @Transactional
     public void deleteProject(Long userId, Long id) {
-        Profile profile = profileService.getProfileEntityByUserId(userId);
+        Profile profile = profileService.getProfileEntityForUpdate(userId);
         Project project = projectRepository.findById(id).orElseThrow(() -> new NotFoundException("Project not found"));
         if (!project.getProfile().getId().equals(profile.getId())) throw new ForbiddenException("Access denied");
         projectRepository.delete(project);
@@ -66,7 +66,7 @@ public class ProjectService {
 
     @Transactional
     public void reorderProjects(Long userId, List<Long> orderedIds) {
-        Profile profile = profileService.getProfileEntityByUserId(userId);
+        Profile profile = profileService.getProfileEntityForUpdate(userId);
         List<Project> items = projectRepository.findAllById(orderedIds);
         if (!items.stream().allMatch(e -> e.getProfile().getId().equals(profile.getId())) || items.size() != orderedIds.size()) {
             throw new ForbiddenException("Access denied");

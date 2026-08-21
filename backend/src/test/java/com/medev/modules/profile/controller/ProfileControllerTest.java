@@ -25,15 +25,9 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
-import com.medev.AbstractIntegrationTest;
-
+@WebMvcTest(ProfileController.class)
 @AutoConfigureMockMvc(addFilters = false)
-class ProfileControllerTest extends AbstractIntegrationTest {
+class ProfileControllerTest {
 
     @Autowired private MockMvc mockMvc;
     @Autowired private com.fasterxml.jackson.databind.ObjectMapper objectMapper;
@@ -45,6 +39,8 @@ class ProfileControllerTest extends AbstractIntegrationTest {
     @MockBean private LanguageService languageService;
     @MockBean private ProjectService projectService;
     @MockBean private ReadmeGeneratorService readmeGeneratorService;
+    @MockBean private com.medev.shared.security.JwtService jwtService;
+    @MockBean private com.medev.shared.security.JwtFilter jwtFilter;
 
     @BeforeEach
     void setUp() {

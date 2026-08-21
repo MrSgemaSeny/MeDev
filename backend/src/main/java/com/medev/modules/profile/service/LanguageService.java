@@ -24,7 +24,7 @@ public class LanguageService {
 
     @Transactional
     public LanguageDto addLanguage(Long userId, LanguageRequest request) {
-        Profile profile = profileService.getProfileEntityByUserId(userId);
+        Profile profile = profileService.getProfileEntityForUpdate(userId);
         Language lang = Language.builder()
                 .profile(profile)
                 .name(request.getName())
@@ -36,7 +36,7 @@ public class LanguageService {
 
     @Transactional
     public LanguageDto updateLanguage(Long userId, Long id, LanguageRequest request) {
-        Profile profile = profileService.getProfileEntityByUserId(userId);
+        Profile profile = profileService.getProfileEntityForUpdate(userId);
         Language lang = languageRepository.findById(id).orElseThrow(() -> new NotFoundException("Language not found"));
         if (!lang.getProfile().getId().equals(profile.getId())) throw new ForbiddenException("Access denied");
         
@@ -48,7 +48,7 @@ public class LanguageService {
 
     @Transactional
     public void deleteLanguage(Long userId, Long id) {
-        Profile profile = profileService.getProfileEntityByUserId(userId);
+        Profile profile = profileService.getProfileEntityForUpdate(userId);
         Language lang = languageRepository.findById(id).orElseThrow(() -> new NotFoundException("Language not found"));
         if (!lang.getProfile().getId().equals(profile.getId())) throw new ForbiddenException("Access denied");
         languageRepository.delete(lang);
@@ -56,7 +56,7 @@ public class LanguageService {
 
     @Transactional
     public void reorderLanguages(Long userId, List<Long> orderedIds) {
-        Profile profile = profileService.getProfileEntityByUserId(userId);
+        Profile profile = profileService.getProfileEntityForUpdate(userId);
         List<Language> items = languageRepository.findAllById(orderedIds);
         if (!items.stream().allMatch(e -> e.getProfile().getId().equals(profile.getId())) || items.size() != orderedIds.size()) {
             throw new ForbiddenException("Access denied");
