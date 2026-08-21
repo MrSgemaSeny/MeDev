@@ -37,14 +37,14 @@ com.medev/
     ├── github/        # Импорт репо, языков, README tech-stack, GraphQL contributions, snapshots
     ├── ai/            # GroqClient, streaming, structured (JSON), RAG vectorization, rate limits, token accounting
     ├── portfolio/     # Публичная страница по username
-    ├── resume/        # PDF/HTML генерация (5 шаблонов), квоты
+    ├── resume/        # PDF/HTML генерация (6 шаблонов с поддержкой кириллицы), квоты
     ├── tracker/       # Job applications CRUD + JD scraping + AI matching
-    ├── billing/       # Stripe (подписки), Kaspi Pay (mock), assertPro gate
-    ├── admin/         # Управление юзерами, ролями, планами
-    └── audit/         # Audit logs (готов, но не wired)
+    ├── billing/       # Stripe (подписки), Kaspi Pay (интеграция), assertPro gate
+    ├── admin/         # Управление юзерами, ролями, планами, AI-метрики
+    └── audit/         # Audit logs (асинхронно подключен к auth/billing/admin)
 ```
 
-**141 Java-класс, 9 модулей.**
+**10 модулей, 253 бэкенд-теста, 37 фронтенд-тестов.**
 
 ### Принципы
 - **SRP** — сервисы компактные (ExperienceService, SkillService, ProjectService, LanguageService разнесены). Нет god-objects.
