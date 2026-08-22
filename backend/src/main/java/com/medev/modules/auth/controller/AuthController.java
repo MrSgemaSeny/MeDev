@@ -68,7 +68,7 @@ public class AuthController {
                 .secure(true)
                 .path("/")
                 .maxAge(300) // 5 minutes
-                .sameSite("Lax")
+                .sameSite("None")
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, linkCookie.toString());
         response.sendRedirect("/api/oauth2/authorization/" + provider);
@@ -81,9 +81,9 @@ public class AuthController {
         }
         ResponseCookie cookie = ResponseCookie.from("refresh_token", "")
                 .httpOnly(true)
-                .path("/api/v1/auth/refresh")
+                .path("/")
                 .maxAge(0)
-                .sameSite("Lax")
+                .sameSite("None")
                 .secure(true)
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
@@ -94,9 +94,9 @@ public class AuthController {
         if (refreshToken == null) return;
         ResponseCookie cookie = ResponseCookie.from("refresh_token", refreshToken)
                 .httpOnly(true)
-                .path("/api/v1/auth/refresh")
+                .path("/")
                 .maxAge(30 * 24 * 60 * 60) // 30 days
-                .sameSite("Lax")
+                .sameSite("None")
                 .secure(true)
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
