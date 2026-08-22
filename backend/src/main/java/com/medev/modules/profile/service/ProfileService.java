@@ -136,17 +136,21 @@ public class ProfileService {
         if (parsed.getExperience() != null) {
             int order = 0;
             for (com.medev.modules.ai.dto.AiExperienceDto e : parsed.getExperience()) {
+                LocalDate start = parseDateSafe(e.getStartDate());
+                if (start == null) {
+                    start = LocalDate.now();
+                }
                 Experience exp = Experience.builder()
                         .profile(profile)
                         .company(e.getCompany())
                         .position(e.getPosition())
                         .description(e.getDescription())
                         .techStack(e.getTechStack())
+                        .startDate(start)
+                        .endDate(parseDateSafe(e.getEndDate()))
                         .isCurrent(e.getIsCurrent() != null ? e.getIsCurrent() : false)
                         .sortOrder(order++)
                         .build();
-                if (e.getStartDate() != null) { try { exp.setStartDate(java.time.LocalDate.parse(e.getStartDate() + "-01")); } catch (Exception ex) { log.warn("Failed to parse start date {} for experience", e.getStartDate(), ex); } }
-                if (e.getEndDate() != null) { try { exp.setEndDate(java.time.LocalDate.parse(e.getEndDate() + "-01")); } catch (Exception ex) { log.warn("Failed to parse end date {} for experience", e.getEndDate(), ex); } }
                 experienceRepository.save(exp);
             }
         }
@@ -154,15 +158,19 @@ public class ProfileService {
         if (parsed.getEducation() != null) {
             int order = 0;
             for (com.medev.modules.ai.dto.AiEducationDto ed : parsed.getEducation()) {
+                LocalDate start = parseDateSafe(ed.getStartDate());
+                if (start == null) {
+                    start = LocalDate.now();
+                }
                 Education edu = Education.builder()
                         .profile(profile)
                         .institution(ed.getInstitution())
                         .degree(ed.getDegree())
                         .field(ed.getFieldOfStudy())
+                        .startDate(start)
+                        .endDate(parseDateSafe(ed.getEndDate()))
                         .sortOrder(order++)
                         .build();
-                if (ed.getStartDate() != null) { try { edu.setStartDate(java.time.LocalDate.parse(ed.getStartDate() + "-01")); } catch (Exception ex) { log.warn("Failed to parse start date {} for education", ed.getStartDate(), ex); } }
-                if (ed.getEndDate() != null) { try { edu.setEndDate(java.time.LocalDate.parse(ed.getEndDate() + "-01")); } catch (Exception ex) { log.warn("Failed to parse end date {} for education", ed.getEndDate(), ex); } }
                 educationRepository.save(edu);
             }
         }
@@ -335,6 +343,27 @@ public class ProfileService {
             experienceRepository.save(exp);
             existingExp.add(exp);
             eventPublisher.publishEvent(new com.medev.modules.profile.event.ProfileUpdatedEvent(this, userId));
+        }
+    }
+
+    private LocalDate parseDateSafe(String dateStr) {
+        if (dateStr == null || dateStr.isBlank()) {
+            return null;
+        }
+        String trimmed = dateStr.trim();
+        try {
+            if (trimmed.length() == 10) { // yyyy-MM-dd
+                return LocalDate.parse(trimmed);
+            } else if (trimmed.length() == 7) { // yyyy-MM
+                return LocalDate.parse(trimmed + "-01");
+            } else if (trimmed.length() == 4) { // yyyy
+                return LocalDate.parse(trimmed + "-01-01");
+            } else {
+                return LocalDate.parse(trimmed);
+            }
+        } catch (Exception e) {
+            log.warn("Failed to parse date string '{}'", dateStr);
+            return null;
         }
     }
 }

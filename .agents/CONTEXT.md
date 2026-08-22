@@ -1,7 +1,7 @@
 # Current Project Context
 
 ## Status
-- **Project Stage**: Level 4 — Production-Ready v1.0 Release
+- **Project Stage**: Level 3 — MVP Release (8 phases & audit complete, 253 backend + 37 frontend tests, deployment pending)
 - **Developer Level**: Senior / Tech Lead
 - **Latest Work (2026-08-21 Multi-Module Audit & Remediation)**:
   - **P0: PDF Engine & AI Core Remediation (M1)**: Eliminated PDFBox `InputStream` leaks via try-with-resources. Validated Cyrillic Roboto font embedding across all 6 resume HTML/PDF templates (`clean`, `github`, `apple-modern`, `grok-monolith`, `milky-soft`, `phub-orange`). Wired reactive `Disposable.dispose()` on SSE client disconnects in `AiController`. Raised `MAX_TOKENS` to 4096 with robust markdown/JSON extraction. Refined PII masking regexes to preserve technical skills. Fixed inverted PRO-gating in `ResumeController` and enforced PRO check on `AiApplicationService.matchJob`.
