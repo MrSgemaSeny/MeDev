@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Button } from '../../shared/ui/Button';
 import { Input } from '../../shared/ui/Input';
 import { api, BASE_URL } from '../../shared/api/axios';
@@ -6,6 +6,7 @@ import { useAuthStore } from '../../entities/user/model/store';
 import { useState } from 'react';
 
 export function LoginPage() {
+  const [searchParams] = useSearchParams();
   const baseUrl = BASE_URL.replace(/\/api\/v1\/?$/, '');
   const originParam = typeof window !== 'undefined' ? `?redirect_uri=${encodeURIComponent(window.location.origin)}` : '';
   const githubUrl = `${baseUrl}/api/oauth2/authorization/github${originParam}`;
@@ -13,7 +14,8 @@ export function LoginPage() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const oauthErr = searchParams.get('oauth_error') || searchParams.get('error');
+  const [error, setError] = useState<string | null>(oauthErr ? 'OAuth авторизация была отменена или завершилась с ошибкой.' : null);
   const [loading, setLoading] = useState(false);
   const setAuth = useAuthStore((state) => state.setAuth);
 

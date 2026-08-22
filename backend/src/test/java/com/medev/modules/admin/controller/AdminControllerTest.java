@@ -40,6 +40,9 @@ class AdminControllerTest {
     private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
     @MockBean
+    private com.medev.modules.auth.security.OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+
+    @MockBean
     private com.medev.modules.auth.security.CookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository;
 
     @MockBean
