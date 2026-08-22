@@ -8,8 +8,8 @@ Explain WHY, not just WHAT (Senior Tech Lead mentoring approach: architect think
 - **Backend**: Spring Boot 3.3.0, Java 17, PostgreSQL, Flyway, Redis (cache & refresh tokens)
 - **Frontend**: React 19, Vite, TypeScript, FSD architecture, Tailwind CSS v4, Zustand, React Query, `@dnd-kit/core`
 - **Auth**: JWT (access 24h, refresh 30d in Redis), GitHub OAuth
-- **AI**: Groq API (via backend proxy), SSE (Server-Sent Events) for chat streaming
-- **Deploy**: Fly.io (backend planned), GitHub Pages (frontend planned)
+- **AI**: Groq API (openai/gpt-oss-20b via backend proxy), SSE (Server-Sent Events) for chat streaming
+- **Deploy**: Fly.io / Render (backend planned), GitHub Pages / Vercel (frontend planned)
 - **PDF Generation**: Thymeleaf + Flying Saucer + PDFBox
 - **Payments**: Stripe / Kaspi Pay (Planned)
 - **Design System**: Strict GitHub Dark Mode aesthetic (`#0d1117` bg, `#161b22` cards, `#30363d` borders, `#238636` accent). НИКАКОГО Glassmorphism.

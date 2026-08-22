@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -136,7 +137,7 @@ public class ProfileService {
         if (parsed.getExperience() != null) {
             int order = 0;
             for (com.medev.modules.ai.dto.AiExperienceDto e : parsed.getExperience()) {
-                LocalDate start = parseDateSafe(e.getStartDate());
+                LocalDate start = e.getStartDate();
                 if (start == null) {
                     start = LocalDate.now();
                 }
@@ -147,7 +148,7 @@ public class ProfileService {
                         .description(e.getDescription())
                         .techStack(e.getTechStack())
                         .startDate(start)
-                        .endDate(parseDateSafe(e.getEndDate()))
+                        .endDate(e.getEndDate())
                         .isCurrent(e.getIsCurrent() != null ? e.getIsCurrent() : false)
                         .sortOrder(order++)
                         .build();
@@ -158,7 +159,7 @@ public class ProfileService {
         if (parsed.getEducation() != null) {
             int order = 0;
             for (com.medev.modules.ai.dto.AiEducationDto ed : parsed.getEducation()) {
-                LocalDate start = parseDateSafe(ed.getStartDate());
+                LocalDate start = ed.getStartDate();
                 if (start == null) {
                     start = LocalDate.now();
                 }
@@ -168,7 +169,7 @@ public class ProfileService {
                         .degree(ed.getDegree())
                         .field(ed.getFieldOfStudy())
                         .startDate(start)
-                        .endDate(parseDateSafe(ed.getEndDate()))
+                        .endDate(ed.getEndDate())
                         .sortOrder(order++)
                         .build();
                 educationRepository.save(edu);

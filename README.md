@@ -48,7 +48,7 @@ By analyzing repository topologies, commit distributions, language byte densitie
         |                                              |                            |
 +-------v-------+                              +-------v-------+            +-------v-------+
 |  PostgreSQL   |                              |  Redis Cache  |            |   Groq API    |
-|  Flyway (V24) |                              |  Tokens / Rate|            |  Llama 3.3 70B|
+|  Flyway (V24) |                              |  Tokens / Rate|            | gpt-oss-20b   |
 |  AES-256 GCM  |                              |  Limit Quotas |            |  SSE Streaming|
 +---------------+                              +---------------+            +---------------+
 ```
@@ -117,7 +117,7 @@ By analyzing repository topologies, commit distributions, language byte densitie
 | **Security** | Spring Security 6, JJWT | Stateless authentication, OAuth2, RBAC, AES-256-GCM |
 | **Persistence** | PostgreSQL 16, Flyway (V24) | Schema validation, relational data, pgvector |
 | **Cache & In-Memory** | Redis 7, Lettuce | Distributed rate-limiting, session tokens, idempotency locks |
-| **AI Integration** | Groq API (Llama 3.3 70B) | Reactive SSE streaming, structured JSON, token accounting |
+| **AI Integration** | Groq API (openai/gpt-oss-20b) | Reactive SSE streaming, structured JSON, token accounting |
 | **Document Processing**| Thymeleaf, Flying Saucer, PDFBox | Leak-free PDF & HTML rendering, Cyrillic font embedding |
 | **Frontend Framework** | React 19, Vite, TypeScript | Single Page Application |
 | **State Management** | Zustand (Persistent), React Query | Client state & asynchronous server state |
@@ -183,7 +183,7 @@ REDIS_PORT=6379
 JWT_SECRET=your_minimum_256_bit_secure_jwt_secret_key
 ENCRYPTION_SECRET=your_32_character_encryption_key_gcm
 GROQ_API_KEY=gsk_your_groq_api_key
-GROQ_MODEL=llama-3.3-70b-versatile
+GROQ_MODEL=openai/gpt-oss-20b
 STRIPE_SECRET_KEY=sk_live_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 STRIPE_PRO_PRICE_ID=price_...
