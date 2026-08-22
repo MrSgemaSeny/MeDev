@@ -43,3 +43,6 @@ management:
   endpoint:
     health:
       show-details: when_authorized
+
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:https://me-dev-two.vercel.app}
