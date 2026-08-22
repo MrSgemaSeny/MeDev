@@ -57,7 +57,23 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         auditService.logAction(user.getId(), "AUTH_OAUTH_LOGIN_SUCCESS", String.valueOf(user.getId()), "OAuth2 login successful via " + user.getEmail(), null);
 
-        String frontendOrigin = allowedOrigins.split(",")[0];
+        String frontendOrigin = allowedOrigins.split(",")[0].trim();
+        jakarta.servlet.http.Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (jakarta.servlet.http.Cookie cookie : cookies) {
+                if ("redirect_uri".equals(cookie.getName()) && cookie.getValue() != null && !cookie.getValue().isBlank()) {
+                    String candidate = cookie.getValue().trim();
+                    for (String allowed : allowedOrigins.split(",")) {
+                        String cleanAllowed = allowed.trim();
+                        if (!cleanAllowed.isEmpty() && (candidate.equalsIgnoreCase(cleanAllowed) || candidate.startsWith(cleanAllowed + "/") || cleanAllowed.equals("*"))) {
+                            frontendOrigin = cleanAllowed.equals("*") ? candidate : cleanAllowed;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
         String frontendUrl = frontendOrigin + "/auth/callback?code=" + oauth2Code;
         
         String action = (String) oAuth2User.getAttributes().get("_action");

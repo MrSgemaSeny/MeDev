@@ -13,6 +13,7 @@ import java.util.Base64;
 public class CookieOAuth2AuthorizationRequestRepository implements AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
 
     public static final String OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME = "oauth2_auth_request";
+    public static final String REDIRECT_URI_PARAM_COOKIE_NAME = "redirect_uri";
     private static final int COOKIE_EXPIRE_SECONDS = 180;
 
     @Override
@@ -36,6 +37,16 @@ public class CookieOAuth2AuthorizationRequestRepository implements Authorization
         cookie.setMaxAge(COOKIE_EXPIRE_SECONDS);
         cookie.setSecure(request.isSecure() || "https".equalsIgnoreCase(request.getHeader("X-Forwarded-Proto")));
         response.addCookie(cookie);
+
+        String redirectUriAfterLogin = request.getParameter(REDIRECT_URI_PARAM_COOKIE_NAME);
+        if (redirectUriAfterLogin != null && !redirectUriAfterLogin.isBlank()) {
+            Cookie redirectCookie = new Cookie(REDIRECT_URI_PARAM_COOKIE_NAME, redirectUriAfterLogin.trim());
+            redirectCookie.setPath("/");
+            redirectCookie.setHttpOnly(true);
+            redirectCookie.setMaxAge(COOKIE_EXPIRE_SECONDS);
+            redirectCookie.setSecure(request.isSecure() || "https".equalsIgnoreCase(request.getHeader("X-Forwarded-Proto")));
+            response.addCookie(redirectCookie);
+        }
     }
 
     @Override
@@ -47,6 +58,12 @@ public class CookieOAuth2AuthorizationRequestRepository implements Authorization
 
     public void removeAuthorizationRequestCookies(HttpServletRequest request, HttpServletResponse response) {
         fetchCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME).ifPresent(cookie -> {
+            cookie.setValue("");
+            cookie.setPath("/");
+            cookie.setMaxAge(0);
+            response.addCookie(cookie);
+        });
+        fetchCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME).ifPresent(cookie -> {
             cookie.setValue("");
             cookie.setPath("/");
             cookie.setMaxAge(0);

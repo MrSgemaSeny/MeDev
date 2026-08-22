@@ -7,8 +7,9 @@ import { useState } from 'react';
 
 export function LoginPage() {
   const baseUrl = BASE_URL.replace(/\/api\/v1\/?$/, '');
-  const githubUrl = `${baseUrl}/api/oauth2/authorization/github`;
-  const googleUrl = `${baseUrl}/api/oauth2/authorization/google`;
+  const originParam = typeof window !== 'undefined' ? `?redirect_uri=${encodeURIComponent(window.location.origin)}` : '';
+  const githubUrl = `${baseUrl}/api/oauth2/authorization/github${originParam}`;
+  const googleUrl = `${baseUrl}/api/oauth2/authorization/google${originParam}`;
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
