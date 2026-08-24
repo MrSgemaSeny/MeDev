@@ -85,21 +85,20 @@ export const AiChatWidget = () => {
       const reader = response.body.getReader();
       const decoder = new TextDecoder('utf-8');
 
+      let buffer = '';
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
 
-        const chunk = decoder.decode(value, { stream: true });
+        buffer += decoder.decode(value, { stream: true });
         
-        // SSE responses from SseEmitter usually look like: "data:chunktext\n\n"
-        // Since Groq chunks are small, we might get multiple data lines in one read.
-        const lines = chunk.split('\n');
-        for (const line of lines) {
+        let newlineIndex;
+        while ((newlineIndex = buffer.indexOf('\n')) >= 0) {
+          const line = buffer.slice(0, newlineIndex).trim();
+          buffer = buffer.slice(newlineIndex + 1);
+          
           if (line.startsWith('data:')) {
-            const dataText = line.substring(5); // The SseEmitter might add space, e.g. "data: " or just "data:"
-            // Because SseEmitter sends exactly what we give it, if Groq sent " Hello", it will be "data: Hello" or "data:Hello".
-            // Spring adds "data:" without space by default if sending raw object, but usually "data:"
-            // Actually, SseEmitter sends `data:chunk\n\n`.
+            const dataText = line.substring(5);
             updateLastMessage(dataText);
           }
         }

@@ -49,16 +49,22 @@ export function useAiGenerate() {
       if (!reader) throw new Error('No reader available');
       
       const decoder = new TextDecoder();
+      let buffer = '';
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
         
-        const chunk = decoder.decode(value);
-        const lines = chunk.split('\n');
+        buffer += decoder.decode(value, { stream: true });
         
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const token = line.slice(6);
+        let newlineIndex;
+        while ((newlineIndex = buffer.indexOf('\n')) >= 0) {
+          const line = buffer.slice(0, newlineIndex).trim();
+          buffer = buffer.slice(newlineIndex + 1);
+          
+          if (line.startsWith('data:')) {
+            let token = line.substring(5);
+            if (token.startsWith(' ')) token = token.substring(1);
+            
             if (token !== '[DONE]') {
               onToken(token);
             }

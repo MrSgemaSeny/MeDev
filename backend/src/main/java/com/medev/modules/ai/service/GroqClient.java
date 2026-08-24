@@ -75,7 +75,13 @@ public class GroqClient implements LlmProvider {
                 .slidingWindowSize(10)
                 .waitDurationInOpenState(Duration.ofSeconds(60))
                 .permittedNumberOfCallsInHalfOpenState(1)
-                .recordExceptions(LlmException.class, WebClientResponseException.class)
+                .recordException(e -> {
+                    if (e instanceof LlmException) {
+                        LlmException llm = (LlmException) e;
+                        return llm.getReason() == Reason.PROVIDER_UNAVAILABLE || llm.getReason() == Reason.TIMEOUT;
+                    }
+                    return e instanceof WebClientResponseException && ((WebClientResponseException) e).getStatusCode().is5xxServerError();
+                })
                 .build();
         this.circuitBreaker = CircuitBreaker.of("groq", config);
 

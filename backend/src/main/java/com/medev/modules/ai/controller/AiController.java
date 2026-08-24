@@ -64,11 +64,15 @@ public class AiController {
      * Rate limited по userId.
      */
     @PostMapping(value = "/chat/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter streamChat(@RequestBody ChatRequest request) {
+    public SseEmitter streamChat(@RequestBody ChatRequest request, jakarta.servlet.http.HttpServletResponse response) {
         Long userId = SecurityUtils.getCurrentUserId();
 
         // Проверка лимита ПЕРЕД обращением к Groq
         aiRateLimiter.checkAndConsume(userId);
+
+        // Отключаем буферизацию на Nginx / прокси (Render/Vercel)
+        response.setHeader("X-Accel-Buffering", "no");
+        response.setHeader("Cache-Control", "no-cache, no-transform");
 
         String systemPrompt = aiContextService.buildAssistantSystemPrompt(userId);
         SseEmitter emitter = new SseEmitter(120_000L);
