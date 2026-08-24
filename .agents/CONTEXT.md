@@ -9,11 +9,9 @@
   - **Database**: Render PostgreSQL 17 (`medev-postgres`, Flyway V24).
   - **Cache & Redis**: Render Redis (`medev-redis`, Valkey 8.1.4).
   - **AI Model**: `openai/gpt-oss-20b` via Groq API.
-- **Latest Work (2026-08-23 Deployment & Environment Fixes)**:
-  - **Compile & Docker Fix**: Resolved `ProfileService` `LocalDate` type mismatch and missing import; added `chmod +x gradlew` in Dockerfile.
-  - **Antigravity Stabilisation**: Disabled blocking PowerShell lifecycle hooks in `hooks.json` and deduplicated `config.json`.
-  - **Auth & Routing**: Implemented dynamic `redirect_uri` in OAuth2 (GitHub/Google) flow via cookie preservation; added `vercel.json` SPA rewrites.
-  - **Environment Separation**: Clean DEV (`localhost:5173` / `localhost:8080`) and PROD (`me-dev-two.vercel.app` / `medev-backend.onrender.com`) profiles.
+- **Latest Work (2026-08-24 Security & Architecture Audits)**:
+  - **AI Streaming Fixes**: Fixed 502/TCP fragmentation in SSE streams via `X-Accel-Buffering: no` and buffered client chunk concatenation. Fixed `GroqClient` circuit breaker predicate (only trip on 5xx/timeouts, not 4xx).
+  - **Security Audits (IDOR/Leaks/OOM)**: Restricted AI prompt limits to prevent token exhaustion. Fixed Redis race condition in rate limits. Secured Stripe/Kaspi webhook cache invalidation. Added strict `@Size` limits to Tracker DTOs to prevent database bloat. Fixed `PortfolioService` leaking hidden projects. Added WebClient `.timeout()` everywhere to prevent hanging threads.
 - **Test Baseline**: 253 backend tests passing (100% green via `.\gradlew.bat test`), 37 frontend tests passing (100% green via `npm test`), 0 build/lint warnings.
 
 ## Active Backlog

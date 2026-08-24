@@ -65,6 +65,7 @@ public class GitHubGraphQLService {
                     .bodyValue(body)
                     .retrieve()
                     .bodyToMono(Map.class)
+                    .timeout(Duration.ofSeconds(10))
                     .block();
 
             if (response == null || !response.containsKey("data")) {
