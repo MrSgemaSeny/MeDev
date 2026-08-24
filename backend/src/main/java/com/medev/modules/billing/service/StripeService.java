@@ -141,6 +141,7 @@ public class StripeService {
             user.setPlan(User.Plan.PRO);
             user.setStripeCustomerId(session.getCustomer());
             userRepository.save(user);
+            redisTemplate.delete("user_plan:" + userId);
             
             log.info("Successfully upgraded user {} to PRO", userId);
             auditService.logAction(userId, "BILLING_STRIPE_PAYMENT_SUCCESS", session.getCustomer(), "Upgraded to PRO via Stripe Checkout session " + session.getId(), null);
@@ -153,6 +154,7 @@ public class StripeService {
         userRepository.findByStripeCustomerId(customerId).ifPresent(user -> {
             user.setPlan(User.Plan.FREE);
             userRepository.save(user);
+            redisTemplate.delete("user_plan:" + user.getId());
             log.info("Downgraded user {} to FREE plan", user.getId());
             auditService.logAction(user.getId(), "BILLING_STRIPE_SUBSCRIPTION_DOWNGRADE", customerId, "Downgraded to FREE plan via Stripe", null);
         });
@@ -162,6 +164,7 @@ public class StripeService {
         userRepository.findByStripeCustomerId(customerId).ifPresent(user -> {
             user.setPlan(User.Plan.PRO);
             userRepository.save(user);
+            redisTemplate.delete("user_plan:" + user.getId());
             log.info("Upgraded user {} to PRO plan via subscription update", user.getId());
             auditService.logAction(user.getId(), "BILLING_STRIPE_SUBSCRIPTION_RENEWAL", customerId, "Upgraded to PRO plan via Stripe subscription update", null);
         });

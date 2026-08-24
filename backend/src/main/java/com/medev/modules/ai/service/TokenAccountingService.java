@@ -18,19 +18,22 @@ public class TokenAccountingService {
     private final UserRepository userRepository;
 
     @Async
-    @Transactional
     public void recordUsageAsync(Long userId, String model, int promptTokens, int completionTokens, int totalTokens, String endpoint) {
-        userRepository.findById(userId).ifPresent(user -> {
-            AiUsage usage = AiUsage.builder()
-                    .user(user)
-                    .model(model)
-                    .promptTokens(promptTokens)
-                    .completionTokens(completionTokens)
-                    .totalTokens(totalTokens)
-                    .endpoint(endpoint)
-                    .build();
-            aiUsageRepository.save(usage);
-            log.debug("Recorded AI usage for user {}: {} tokens", userId, totalTokens);
-        });
+        try {
+            userRepository.findById(userId).ifPresent(user -> {
+                AiUsage usage = AiUsage.builder()
+                        .user(user)
+                        .model(model)
+                        .promptTokens(promptTokens)
+                        .completionTokens(completionTokens)
+                        .totalTokens(totalTokens)
+                        .endpoint(endpoint)
+                        .build();
+                aiUsageRepository.save(usage);
+                log.debug("Recorded AI usage for user {}: {} tokens", userId, totalTokens);
+            });
+        } catch (Exception e) {
+            log.warn("Failed to record AI usage for user {}: {}", userId, e.getMessage());
+        }
     }
 }

@@ -17,5 +17,6 @@ public class RegisterRequest {
 
     @NotBlank
     @Size(min = 3, max = 50)
+    @jakarta.validation.constraints.Pattern(regexp = "^[a-zA-Z0-9_.-]{3,50}$", message = "Username may only contain letters, digits, underscores, dots, or hyphens")
     private String username;
 }

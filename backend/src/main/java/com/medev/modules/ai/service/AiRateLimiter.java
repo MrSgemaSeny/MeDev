@@ -29,6 +29,11 @@ public class AiRateLimiter {
         Long current = redisTemplate.opsForValue().increment(key);
         if (current != null && current == 1L) {
             redisTemplate.expire(key, Duration.ofDays(1));
+        } else if (current != null) {
+            Long expire = redisTemplate.getExpire(key);
+            if (expire != null && expire == -1L) {
+                redisTemplate.expire(key, Duration.ofDays(1));
+            }
         }
 
         if (current != null && current > limit) {
@@ -64,10 +69,19 @@ public class AiRateLimiter {
         String planStr = (String) redisTemplate.opsForValue().get(planKey);
         
         if (planStr == null) {
-            User.Plan plan = userRepository.findById(userId)
-                    .map(User::getPlan)
-                    .orElse(User.Plan.FREE);
-            planStr = plan.name();
+            User user = userRepository.findById(userId).orElse(null);
+            if (user != null) {
+                if (user.getPlan() == User.Plan.PRO && user.getSubscriptionExpiresAt() != null 
+                        && user.getSubscriptionExpiresAt().isBefore(java.time.LocalDateTime.now())) {
+                    user.setPlan(User.Plan.FREE);
+                    userRepository.save(user);
+                    planStr = "FREE";
+                } else {
+                    planStr = user.getPlan().name();
+                }
+            } else {
+                planStr = "FREE";
+            }
             redisTemplate.opsForValue().set(planKey, planStr, Duration.ofMinutes(15));
         }
         

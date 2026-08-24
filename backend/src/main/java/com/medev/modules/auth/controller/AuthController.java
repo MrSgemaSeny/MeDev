@@ -103,9 +103,10 @@ public class AuthController {
     }
 
     private String getClientIp(HttpServletRequest request) {
-        // Prevent X-Forwarded-For spoofing by relying on the remote address.
-        // If behind a trusted proxy (e.g. Fly.io), Spring Boot should be configured 
-        // to trust it via server.forward-headers-strategy=FRAMEWORK, making getRemoteAddr safe.
-        return request.getRemoteAddr();
+        String ip = request.getRemoteAddr();
+        if ("127.0.0.1".equals(ip) || "0:0:0:0:0:0:0:1".equals(ip)) {
+            org.slf4j.LoggerFactory.getLogger(AuthController.class).warn("[AuthRateLimiter] localhost IP detected, forward-headers may not be configured correctly");
+        }
+        return ip;
     }
 }

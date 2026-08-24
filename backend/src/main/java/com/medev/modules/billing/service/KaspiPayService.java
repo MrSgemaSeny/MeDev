@@ -177,6 +177,7 @@ public class KaspiPayService {
                 }
                 
                 userRepository.save(user);
+                redisTemplate.delete("user_plan:" + userId);
                 log.info("Successfully upgraded user {} to PRO for {} months via Kaspi Pay", userId, months);
                 auditService.logAction(userId, "BILLING_KASPI_PAYMENT_SUCCESS", orderIdStr, "Upgraded to PRO for " + months + " months via Kaspi Pay", null);
             } else if ("FAILED".equalsIgnoreCase(status) || "REFUNDED".equalsIgnoreCase(status)) {
@@ -226,6 +227,7 @@ public class KaspiPayService {
         userRepository.findByKaspiCustomerId(kaspiCustomer).ifPresent(user -> {
             user.setPlan(User.Plan.FREE);
             userRepository.save(user);
+            redisTemplate.delete("user_plan:" + user.getId());
             log.info("Downgraded user {} to FREE plan via Kaspi Pay refund", user.getId());
             auditService.logAction(user.getId(), "BILLING_KASPI_PAYMENT_REFUNDED", kaspiCustomer, "Downgraded to FREE plan via Kaspi refund", null);
         });

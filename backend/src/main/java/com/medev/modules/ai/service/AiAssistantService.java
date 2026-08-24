@@ -20,7 +20,16 @@ public class AiAssistantService {
         messages.add(Map.of("role", "system", "content", systemPrompt));
         
         if (previousHistory != null) {
-            messages.addAll(previousHistory);
+            int limit = 20;
+            int start = Math.max(0, previousHistory.size() - limit);
+            for (int i = start; i < previousHistory.size(); i++) {
+                Map<String, String> msg = previousHistory.get(i);
+                String role = msg.getOrDefault("role", "user");
+                if (!"user".equals(role) && !"assistant".equals(role)) continue;
+                String content = msg.getOrDefault("content", "");
+                if (content.length() > 2000) content = content.substring(0, 2000);
+                messages.add(Map.of("role", role, "content", content));
+            }
         }
         
         messages.add(Map.of("role", "user", "content", userMessage));
