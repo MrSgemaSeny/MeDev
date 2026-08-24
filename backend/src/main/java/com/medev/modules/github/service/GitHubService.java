@@ -61,12 +61,12 @@ public class GitHubService {
         try {
             // 1. Fetch User Data
             GitHubUserDto user = webClient.get().uri("/user")
-                    .retrieve().bodyToMono(GitHubUserDto.class).block();
+                    .retrieve().bodyToMono(GitHubUserDto.class).timeout(Duration.ofSeconds(10)).block();
 
             // 2. Fetch All Repos
             List<GitHubRepoDto> allRepos = webClient.get()
                     .uri("/user/repos?sort=updated&per_page=100")
-                    .retrieve().bodyToFlux(GitHubRepoDto.class).collectList().block();
+                    .retrieve().bodyToFlux(GitHubRepoDto.class).timeout(Duration.ofSeconds(15)).collectList().block();
 
             if (allRepos == null) allRepos = new ArrayList<>();
 
@@ -135,7 +135,7 @@ public class GitHubService {
                             .detectedTechnologies(tuple.getT2())
                             .organizations(tuple.getT3())
                             .build()
-                    ).block();
+                    ).timeout(Duration.ofSeconds(20)).block();
 
             // 7. Save Snapshot
             if (result != null) {
@@ -176,6 +176,7 @@ public class GitHubService {
                     .uri("/users/" + username + "/repos?sort=updated&per_page=10")
                     .retrieve()
                     .bodyToFlux(GitHubRepoDto.class)
+                    .timeout(Duration.ofSeconds(10))
                     .collectList()
                     .block();
 

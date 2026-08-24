@@ -28,6 +28,12 @@ public class PortfolioService {
             throw new NotFoundException("Profile not found");
         }
 
-        return portfolioMapper.toDto(profile, user);
+        PublicProfileDto dto = portfolioMapper.toDto(profile, user);
+        if (dto.getProjects() != null) {
+            dto.setProjects(dto.getProjects().stream()
+                    .filter(p -> Boolean.TRUE.equals(p.getIsVisible()))
+                    .collect(java.util.stream.Collectors.toList()));
+        }
+        return dto;
     }
 }

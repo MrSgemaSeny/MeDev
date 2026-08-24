@@ -26,6 +26,7 @@ public class AdminService {
     private final AuditLogRepository auditLogRepository;
     private final AiUsageRepository aiUsageRepository;
     private final AuditService auditService;
+    private final org.springframework.data.redis.core.RedisTemplate<String, Object> redisTemplate;
 
     @Transactional(readOnly = true)
     public Page<AdminUserDto> getAllUsers(Pageable pageable) {
@@ -39,6 +40,7 @@ public class AdminService {
         user.setPlan(plan);
         userRepository.save(user);
         auditService.logAction(userId, "ADMIN_PLAN_UPDATE", String.valueOf(userId), "Admin updated plan to " + plan.name(), null);
+        redisTemplate.delete("user_plan:" + userId);
     }
 
     @Transactional
