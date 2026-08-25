@@ -113,19 +113,19 @@ com.medev/
 - Схема **только** через Flyway миграции. `ddl-auto=validate`.
 - Файлы: `src/main/resources/db/migration/V{N}__{description}.sql`
 - **Никогда не модифицировать существующие миграции** — ломает чексуммы и деплой.
-- Текущая последняя миграция: **V23** (23 скрипта).
+- Текущая последняя миграция: **V24** (24 скрипта).
 
 ### Основные таблицы
 | Таблица | Миграция | Назначение |
 |---|---|---|
 | `users` | V1 + надстройки V10/V11/V14/V22/V23 | Аккаунты, планы, OAuth IDs, зашифрованный GitHub токен |
 | `profiles` | V2 + V9 | 1:1 с users, секции, is_public, section_order (jsonb) |
-| `experience`/`education`/`skills`/`languages`/`projects` | V3-V7 | Профильные данные с `sort_order` |
+| `experience`/`education`/`skills`/`languages`/`projects` | V3-V7 + V16/V24 | Профильные данные с `sort_order`, расширение полей языка |
 | `subscriptions` | V8 | **Мёртвая** — план в `users.plan` |
 | `ai_usage`/`ai_evaluations` | V12/V13 | Token accounting + feedback |
 | `job_applications` | V17 + V21 | Tracker + matching fields |
 | `vector_store` | V18 | pgvector, HNSW, cosine, 384 dim |
-| `audit_logs` | V19 | Аудит (готов, не wired) |
+| `audit_logs` | V19 | Аудит действий пользователей и админов |
 | `github_snapshots` | V20 | Composite PK (user_id, fetched_at), raw JSON |
 
 ### Никогда

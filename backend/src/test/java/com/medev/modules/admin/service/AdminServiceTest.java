@@ -45,6 +45,9 @@ class AdminServiceTest {
     @Mock
     private AuditService auditService;
 
+    @Mock
+    private org.springframework.data.redis.core.RedisTemplate<String, Object> redisTemplate;
+
     @InjectMocks
     private AdminService adminService;
 
@@ -89,6 +92,7 @@ class AdminServiceTest {
         assertThat(user.getPlan()).isEqualTo(User.Plan.PRO);
         verify(userRepository).save(user);
         verify(auditService).logAction(eq(10L), eq("ADMIN_PLAN_UPDATE"), eq("10"), contains("PRO"), isNull());
+        verify(redisTemplate).delete("user_plan:10");
     }
 
     @Test
