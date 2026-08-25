@@ -9,6 +9,8 @@ import com.medev.shared.exception.ForbiddenException;
 import com.medev.shared.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,12 +72,14 @@ public class ProfileService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "profiles", key = "#userId")
     public ProfileDto getByUserId(Long userId) {
         Profile profile = getProfileEntityByUserId(userId);
         return mapToProfileDto(profile);
     }
 
     @Transactional
+    @CacheEvict(value = "profiles", key = "#userId")
     public ProfileDto update(Long userId, UpdateProfileRequest request) {
         Profile profile = getProfileEntityForUpdate(userId);
         profile.setFullName(request.getFullName());

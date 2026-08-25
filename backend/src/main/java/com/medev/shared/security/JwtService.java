@@ -10,12 +10,20 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import jakarta.annotation.PostConstruct;
 
 @Service
 public class JwtService {
 
     @Value("${jwt.secret}")
     private String secret;
+
+    @PostConstruct
+    void validateSecret() {
+        if (secret.getBytes(StandardCharsets.UTF_8).length < 32) {
+            throw new IllegalStateException("JWT secret must be at least 256 bits (32 bytes)");
+        }
+    }
 
     @Value("${jwt.expiration}")
     private long expiration;
