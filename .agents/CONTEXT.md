@@ -10,6 +10,7 @@
   - **Cache & Redis**: Render Redis (`medev-redis`, Valkey 8.1.4) + In-Memory Caffeine L1 (`profiles`, `public-profiles`).
   - **AI Model**: `openai/gpt-oss-20b` via Groq API.
 - **Latest Work (2026-08-27 Deployment & Cache Architecture)**:
+  - **Spring Boot 4.1 Compatibility**: Dependabot-обновление доведено до рабочей сборки: Gradle 8.14.3, новые Boot 4 API/тестовые модули, `@MockitoBean`, Jackson 2 и WebClient compatibility modules. Неиспользуемый Spring Cloud Function исключён из Spring AI; полный backend build на JDK 17 проходит.
   - **GitHub Pages & Vercel Dual Deployment**: Настроен dynamic base path в `vite.config.ts` (`/MeDev/` для GitHub Pages, `/` для Vercel), скрипт `build:github`, исправлены пути к ассетам и фавикону, обновлен workflow `deploy.yml`.
   - **L1 Caffeine Cache & Transaction Synchronization**: Внедрен in-memory кэш Caffeine для публичного портфолио (`/api/v1/portfolio/:username`). Устранен race condition через `TransactionSynchronizationManager.afterCommit()`. Добавлен `PublicProfileCacheEvictListener` и `PublicRateLimiter` (60 req/min).
   - **HikariCP & Tomcat Fail-Fast Tuning**: `connection-timeout: 10s`, `maximum-pool-size: 10`, `server.tomcat.threads.max: 25`.
@@ -21,5 +22,4 @@
 - Sentry and Prometheus/Grafana monitoring dashboards.
 - **RAG Retrieval (незаконченная фича):** `VectorizationService` пишет векторы в pgvector при каждом `ProfileUpdatedEvent`, но `vectorStore.similaritySearch()` нигде не вызывается. Приоритет реализации: Job Tracker → AI Match по вакансии через семантический поиск по опыту пользователя. См. `[[knowledge/arch-rag-indexing-vs-retrieval]]`.
 - **Async PDF:** Генерация PDF синхронная — 3 параллельных запроса убивают 0.1 CPU. Нужен `ThreadPoolTaskExecutor(core=1, max=2)` + 202 Accepted паттерн.
-
 

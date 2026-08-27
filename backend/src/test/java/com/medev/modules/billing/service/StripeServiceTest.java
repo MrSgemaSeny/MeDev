@@ -20,6 +20,7 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
 
@@ -53,7 +54,7 @@ class StripeServiceTest {
     @BeforeEach
     void setUp() {
         lenient().when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-        lenient().when(valueOperations.setIfAbsent(anyString(), anyString(), any())).thenReturn(true);
+        lenient().when(valueOperations.setIfAbsent(anyString(), anyString(), any(Duration.class))).thenReturn(true);
 
         ReflectionTestUtils.setField(stripeService, "proPriceId", "price_test");
         ReflectionTestUtils.setField(stripeService, "webhookSecret", "whsec_test");
@@ -146,7 +147,7 @@ class StripeServiceTest {
         when(event.getId()).thenReturn("evt_already_done");
         mockedWebhook.when(() -> Webhook.constructEvent(anyString(), anyString(), anyString())).thenReturn(event);
 
-        when(valueOperations.setIfAbsent(eq("stripe:webhook:evt_already_done"), eq("PROCESSED"), any())).thenReturn(false);
+        when(valueOperations.setIfAbsent(eq("stripe:webhook:evt_already_done"), eq("PROCESSED"), any(Duration.class))).thenReturn(false);
 
         stripeService.handleWebhook(payload, sigHeader);
 

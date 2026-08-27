@@ -51,7 +51,7 @@ class KaspiPayServiceTest {
     @BeforeEach
     void setUp() {
         lenient().when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-        lenient().when(valueOperations.setIfAbsent(anyString(), anyString(), any())).thenReturn(true);
+        lenient().when(valueOperations.setIfAbsent(anyString(), anyString(), any(Duration.class))).thenReturn(true);
 
         ReflectionTestUtils.setField(kaspiPayService, "kaspiEnabled", true);
         ReflectionTestUtils.setField(kaspiPayService, "merchantId", "merchant123");

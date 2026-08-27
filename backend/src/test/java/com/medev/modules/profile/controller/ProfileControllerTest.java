@@ -8,9 +8,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,15 +32,15 @@ class ProfileControllerTest {
     @Autowired private MockMvc mockMvc;
     @Autowired private com.fasterxml.jackson.databind.ObjectMapper objectMapper;
 
-    @MockBean private ProfileService profileService;
-    @MockBean private ExperienceService experienceService;
-    @MockBean private EducationService educationService;
-    @MockBean private SkillService skillService;
-    @MockBean private LanguageService languageService;
-    @MockBean private ProjectService projectService;
-    @MockBean private ReadmeGeneratorService readmeGeneratorService;
-    @MockBean private com.medev.shared.security.JwtService jwtService;
-    @MockBean private com.medev.shared.security.JwtFilter jwtFilter;
+    @MockitoBean private ProfileService profileService;
+    @MockitoBean private ExperienceService experienceService;
+    @MockitoBean private EducationService educationService;
+    @MockitoBean private SkillService skillService;
+    @MockitoBean private LanguageService languageService;
+    @MockitoBean private ProjectService projectService;
+    @MockitoBean private ReadmeGeneratorService readmeGeneratorService;
+    @MockitoBean private com.medev.shared.security.JwtService jwtService;
+    @MockitoBean private com.medev.shared.security.JwtFilter jwtFilter;
 
     @BeforeEach
     void setUp() {
