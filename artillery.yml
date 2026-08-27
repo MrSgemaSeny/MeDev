@@ -1,0 +1,20 @@
+config:
+  target: 'https://medev-backend.onrender.com'
+  phases:
+    - duration: 10
+      arrivalRate: 50
+      name: "Warmup (50 RPS)"
+    - duration: 20
+      arrivalRate: 50
+      rampTo: 200
+      name: "Ramp (200 RPS)"
+    - duration: 15
+      arrivalRate: 500
+      name: "Tsunami (500 RPS)"
+scenarios:
+  - name: 'Public Endpoints Load'
+    flow:
+      - get:
+          url: '/api/actuator/health'
+      - get:
+          url: '/api/v1/portfolio/MrSgemaSeny'

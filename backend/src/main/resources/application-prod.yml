@@ -4,9 +4,9 @@ spring:
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
     hikari:
-      maximum-pool-size: 20
-      minimum-idle: 5
-      connection-timeout: 20000
+      maximum-pool-size: 10        # Render Free PostgreSQL лимит ~25. 10 коннектов — безопасный максимум.
+      minimum-idle: 2
+      connection-timeout: 10000    # Fail-fast: 10s. Не режем легитимные запросы, но не висим 20s под DDoS.
       idle-timeout: 300000
       max-lifetime: 1200000
   data:
@@ -14,6 +14,12 @@ spring:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
       password: ${REDIS_PASSWORD:}
+
+server:
+  tomcat:
+    threads:
+      max: 25          # Дефолт 200 убивает 0.1 CPU context switching-ом.
+      min-spare: 5
 
 jwt:
   secret: ${JWT_SECRET}

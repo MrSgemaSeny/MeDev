@@ -80,7 +80,7 @@ api.interceptors.response.use(
     // Handle desynced token state (valid token, but user/profile deleted from DB)
     if (error.response?.status === 404 && originalRequest.url?.includes('/profile')) {
       useAuthStore.getState().logout();
-      window.location.href = '/';
+      window.location.href = import.meta.env.BASE_URL;
       return Promise.reject(error);
     }
 

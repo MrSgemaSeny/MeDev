@@ -29,6 +29,9 @@ class PortfolioControllerTest {
     @MockBean
     private com.medev.shared.security.JwtFilter jwtFilter;
 
+    @MockBean
+    private com.medev.shared.security.PublicRateLimiter publicRateLimiter;
+
     @Test
     void getPublicProfile_returnsProfile() throws Exception {
         PublicProfileDto dto = PublicProfileDto.builder().build();

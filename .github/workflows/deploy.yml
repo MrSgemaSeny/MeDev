@@ -40,9 +40,10 @@ jobs:
 
       - name: Build
         env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL || 'https://medev-api.fly.dev/api/v1' }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL || 'https://medev-backend.onrender.com/api/v1' }}
+          GITHUB_PAGES: 'true'
         run: |
-          npm run build
+          npm run build:github
           cp dist/index.html dist/404.html
         
       - name: Upload artifact

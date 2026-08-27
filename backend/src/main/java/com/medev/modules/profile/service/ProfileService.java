@@ -13,6 +13,9 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+import com.medev.modules.profile.event.ProfileUpdatedEvent;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -47,6 +50,7 @@ public class ProfileService {
             if (profile.getGithubUsername() == null || profile.getGithubUsername().isBlank()) {
                 profile.setGithubUsername(githubUsername);
                 profileRepository.save(profile);
+                publishAfterCommit(userId);
             }
         });
     }
@@ -57,6 +61,7 @@ public class ProfileService {
             if (profile.getAvatarUrl() == null || profile.getAvatarUrl().isBlank()) {
                 profile.setAvatarUrl(avatarUrl);
                 profileRepository.save(profile);
+                publishAfterCommit(userId);
             }
         });
     }
@@ -93,7 +98,7 @@ public class ProfileService {
         profile.setLinkedin(request.getLinkedin());
         
         profileRepository.save(profile);
-        eventPublisher.publishEvent(new com.medev.modules.profile.event.ProfileUpdatedEvent(this, userId));
+        publishAfterCommit(userId);
         return mapToProfileDto(profile);
     }
 
@@ -102,7 +107,7 @@ public class ProfileService {
         Profile profile = getProfileEntityForUpdate(userId);
         profile.setSectionOrder(sectionOrder);
         profileRepository.save(profile);
-        eventPublisher.publishEvent(new com.medev.modules.profile.event.ProfileUpdatedEvent(this, userId));
+        publishAfterCommit(userId);
     }
 
     @Transactional
@@ -211,7 +216,7 @@ public class ProfileService {
             }
         }
 
-        eventPublisher.publishEvent(new com.medev.modules.profile.event.ProfileUpdatedEvent(this, userId));
+        publishAfterCommit(userId);
         return mapToProfileDto(profile);
     }
 
@@ -242,7 +247,7 @@ public class ProfileService {
         
         profile.setGithubUsername(github.getUsername());
         profileRepository.save(profile);
-        eventPublisher.publishEvent(new com.medev.modules.profile.event.ProfileUpdatedEvent(this, userId));
+        publishAfterCommit(userId);
     }
 
     @Transactional
@@ -283,7 +288,7 @@ public class ProfileService {
                 existingProjects.add(project); // Update local list for subsequent iterations
             }
         }
-        eventPublisher.publishEvent(new com.medev.modules.profile.event.ProfileUpdatedEvent(this, userId));
+        publishAfterCommit(userId);
     }
 
     @Transactional
@@ -323,7 +328,7 @@ public class ProfileService {
                 existingExp.add(exp);
             }
         }
-        eventPublisher.publishEvent(new com.medev.modules.profile.event.ProfileUpdatedEvent(this, userId));
+        publishAfterCommit(userId);
     }
     
     @Transactional
@@ -347,7 +352,7 @@ public class ProfileService {
                     .build();
             experienceRepository.save(exp);
             existingExp.add(exp);
-            eventPublisher.publishEvent(new com.medev.modules.profile.event.ProfileUpdatedEvent(this, userId));
+            publishAfterCommit(userId);
         }
     }
 
@@ -369,6 +374,31 @@ public class ProfileService {
         } catch (Exception e) {
             log.warn("Failed to parse date string '{}'", dateStr);
             return null;
+        }
+    }
+
+    /**
+     * Публикует ProfileUpdatedEvent строго ПОСЛЕ коммита транзакции.
+     *
+     * Проблема без этого: publishEvent() внутри @Transactional вызывается до коммита.
+     * @Async listener стартует параллельно -> эвиктит кэш -> следующий cache-miss
+     * читает из БД незакоммиченные (старые) данные -> кеширует их. Баг.
+     *
+     * Фикс: registerSynchronization().afterCommit() гарантирует порядок:
+     * [commit] -> [evict cache] -> [следующий запрос видит свежие данные].
+     */
+    private void publishAfterCommit(Long userId) {
+        ProfileUpdatedEvent event = new ProfileUpdatedEvent(this, userId);
+        if (TransactionSynchronizationManager.isActualTransactionActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    eventPublisher.publishEvent(event);
+                }
+            });
+        } else {
+            // вне транзакции — публикуем сразу (тесты без @Transactional контекста)
+            eventPublisher.publishEvent(event);
         }
     }
 }
