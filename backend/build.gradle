@@ -67,8 +67,8 @@ dependencies {
     // Prod Readiness
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
-    implementation 'io.github.resilience4j:resilience4j-circuitbreaker:2.2.0'
-    implementation 'io.github.resilience4j:resilience4j-reactor:2.2.0'
+    implementation 'io.github.resilience4j:resilience4j-circuitbreaker:2.4.0'
+    implementation 'io.github.resilience4j:resilience4j-reactor:2.4.0'
 
     // AI & Vector DB
     implementation 'org.springframework.ai:spring-ai-core'
