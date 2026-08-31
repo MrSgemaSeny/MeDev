@@ -1,5 +1,6 @@
 # MeDev — Data-First AI SaaS Platform for Software Engineers
 
+[![Release Status](https://img.shields.io/badge/Status-v1.0.0--RC%20%7C%20Pre--Launch%20%28Private%20Beta%29-orange?style=flat-square)](https://me-dev-two.vercel.app)
 [![CI/CD Pipeline](https://img.shields.io/github/actions/workflow/status/MrSgemaSeny/MeDev/deploy.yml?branch=main&style=flat-square&label=CI%2FCD)](https://github.com/MrSgemaSeny/MeDev/actions)
 [![Backend Tests](https://img.shields.io/badge/Backend%20Tests-253%20passed-brightgreen?style=flat-square&logo=junit5)](backend)
 [![Frontend Tests](https://img.shields.io/badge/Frontend%20Tests-37%20passed-brightgreen?style=flat-square&logo=vitest)](frontend)
@@ -13,6 +14,20 @@
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](LICENSE)
 
 MeDev (DevProfile) — специализированная data-first B2B/B2C SaaS-платформа для разработчиков и технических специалистов. Платформа трансформирует реальную активность инженера в GitHub (топологию репозиториев, хронологию коммитов, плотность байтов языков программирования) в подтвержденные ATS-оптимизированные резюме, публичные интерактивные портфолио и сквозной трекинг откликов на вакансии без галлюцинаций LLM.
+
+---
+
+## Статус Проекта и Выход на Рынок (Pre-Launch / Private Beta)
+
+* **Текущий этап**: **v1.0.0-RC / Pre-Launch (Level 4 — Production Ready)**.
+* **Инфраструктурная готовность**: Бэкенд и фронтенд полностью развернуты в боевом окружении (Render Web Service + Vercel SPA + Render PostgreSQL 17 + Render Redis Valkey + Groq LLM API), прошли стресс-тестирование (500 RPS) и аудит безопасности.
+* **Доступность**: Продукт готов к коммерческой эксплуатации и находится на этапе закрытого предрелизного тестирования (Early Access) перед открытым выходом на рынок.
+* **Live Production Endpoints (Early Access)**:
+  * **Web Application (Vercel SPA)**: [https://me-dev-two.vercel.app](https://me-dev-two.vercel.app)
+  * **Mirror / Static Build (GitHub Pages)**: [https://mrsgemaseny.github.io/MeDev/](https://mrsgemaseny.github.io/MeDev/)
+  * **Backend API Base**: `https://medev-backend.onrender.com/api/v1`
+  * **Actuator Health**: [https://medev-backend.onrender.com/api/actuator/health](https://medev-backend.onrender.com/api/actuator/health)
+
 
 ---
 
@@ -236,6 +251,28 @@ npm run build
 - **Zero Resource Leak Policy**: Все потоки ввода-вывода (PDFBox, WebClient SSE emitters) закрываются через try-with-resources и хуки `Disposable.dispose()`.
 - **Flyway Immutability**: Все 24 миграции строго неизменяемы, поддержка отказоустойчивой схемы данных.
 - **Защита секретов**: Длина JWT секрета валидируется при старте приложения (`@PostConstruct >= 256 bit`), токены интеграций зашифрованы в БД.
+
+## Дорожная Карта Выхода на Рынок (Go-to-Market Roadmap)
+
+### Фаза 1: Инженерная и Инфраструктурная Готовность (Завершена)
+- [x] Развертывание боевой инфраструктуры (Render, Vercel, PostgreSQL 17, Redis Valkey, Flyway V24).
+- [x] Стресс-тестирование спайками до 500 RPS (Chaos Engineering) и тюнинг HikariCP / Bucket4j.
+- [x] Внедрение двухуровневого кэша L1 Caffeine + L2 Valkey с транзакционной инвалидацией.
+- [x] Комплексный аудит безопасности (A- Production Ready: AES-256-GCM, RLS, IDOR defense).
+- [x] Рефакторинг лендинга по стандарту FSD в строгом стиле GitHub Dark Mode.
+- [x] 100% покрытие базовыми тестами (253 бэкенд + 37 фронтенд).
+
+### Фаза 2: Закрытое Тестирование и Подготовка к Запуску (Текущий этап)
+- [ ] Закрытый онбординг первых пользователей (Private Beta / Early Adopters feedback loop).
+- [ ] Привязка кастомного домена (`medev.dev` / `medev.kz`) с настройкой Cloudflare DNS, WAF и SSL.
+- [ ] Настройка Sentry для онлайн-мониторинга исключений и алертинга в Telegram.
+- [ ] Настройка автоматического резервного копирования PostgreSQL по расписанию.
+- [ ] Асинхронная очередь для тяжелых задач генерации PDF (`202 Accepted`).
+
+### Фаза 3: Публичный Релиз и Коммерциализация (Q3/Q4 2026)
+- [ ] Открытие публичной регистрации (Product Hunt, Хабр, LinkedIn, профильные сообщества).
+- [ ] Перевод платежных шлюзов (Kaspi Pay / Stripe) в боевой (Live) режим.
+- [ ] Запуск AI Job Match на базе векторного поиска `pgvector` в модуле Job Tracker.
 
 ---
 
