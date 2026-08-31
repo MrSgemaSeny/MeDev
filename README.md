@@ -1,8 +1,6 @@
-# MeDev
+# MeDev — Data-First AI SaaS Platform for Software Engineers
 
-> Data-First AI SaaS Platform for Software Engineers
-
-[![CI/CD Pipeline](https://img.shields.io/github/actions/workflow/status/MrSgemaSeny/MeDev/ci.yml?branch=main&style=flat-square&label=CI%2FCD)](https://github.com/MrSgemaSeny/MeDev/actions)
+[![CI/CD Pipeline](https://img.shields.io/github/actions/workflow/status/MrSgemaSeny/MeDev/deploy.yml?branch=main&style=flat-square&label=CI%2FCD)](https://github.com/MrSgemaSeny/MeDev/actions)
 [![Backend Tests](https://img.shields.io/badge/Backend%20Tests-253%20passed-brightgreen?style=flat-square&logo=junit5)](backend)
 [![Frontend Tests](https://img.shields.io/badge/Frontend%20Tests-37%20passed-brightgreen?style=flat-square&logo=vitest)](frontend)
 [![Java](https://img.shields.io/badge/Java-17-007396?style=flat-square&logo=openjdk&logoColor=white)](https://openjdk.org/)
@@ -10,220 +8,237 @@
 [![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![Redis](https://img.shields.io/badge/Redis-7-DC382D?style=flat-square&logo=redis&logoColor=white)](https://redis.io/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Redis](https://img.shields.io/badge/Redis-Valkey%208.1-DC382D?style=flat-square&logo=redis&logoColor=white)](https://redis.io/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](LICENSE)
 
-MeDev automates career management, resume generation, and technical portfolio hosting by using GitHub activity as the primary Source of Truth. 
-
-By analyzing repository topologies, commit distributions, language byte densities, and architectural decisions, MeDev transforms raw engineering data into ATS-optimized resumes, live portfolio web pages, and tailored job applications without LLM hallucinations.
+MeDev (DevProfile) — специализированная data-first B2B/B2C SaaS-платформа для разработчиков и технических специалистов. Платформа трансформирует реальную активность инженера в GitHub (топологию репозиториев, хронологию коммитов, плотность байтов языков программирования) в подтвержденные ATS-оптимизированные резюме, публичные интерактивные портфолио и сквозной трекинг откликов на вакансии без галлюцинаций LLM.
 
 ---
 
-## Architecture Overview
+## Документация и База Знаний
+
+* **[AUDIT_2026-08-27.md](AUDIT_2026-08-27.md)**: Актуальный комплексный технический аудит системы (оценка A-, Level 4 Production Ready, Chaos Engineering бенчмарки).
+* **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**: Полный обзор архитектуры, модульный монолит, FSD-слои фронтенда, стратегия двухуровневого кэширования и модель данных.
+* **[docs/ONBOARDING.md](docs/ONBOARDING.md)**: Регламент быстрого старта для инженеров (настройка локального окружения, Docker, миграции Flyway, запуск тестов).
+* **[docs/RUNBOOK.md](docs/RUNBOOK.md)**: Эксплуатационный регламент, мониторинг, траблшутинг пулов HikariCP, регламент инцидентов и аварийного восстановления.
+* **[docs/ADR.md](docs/ADR.md)**: Реестр архитектурных решений (ADR-001..010: выбор кэша L1 Caffeine + L2 Redis, pgvector, AES-256-GCM, FSD).
+* **[docs/SECURITY_AUDIT.md](docs/SECURITY_AUDIT.md)**: Отчет по безопасности: защита от IDOR, RLS-изоляция, валидация криптографических ключей, аудит вебхуков.
+* **[docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)**: Стандарты разработки, политика неизменяемости миграций Flyway, правила коммитов и качество кода.
+
+---
+
+## Архитектура и Технологический Стек
+
+### Backend (Модульный монолит)
+- **Core Framework**: Java 17, Spring Boot 3.3.0
+- **Модульная архитектура**: 10 изолированных доменных модулей (`auth`, `profile`, `portfolio`, `github`, `ai`, `resume`, `tracker`, `billing`, `audit`, `admin`).
+- **Security & Auth**: Spring Security 6, Stateless JWT (Access 24h, Refresh 30d в Redis), GitHub OAuth2, RBAC (`USER`, `ADMIN`), Row-Level Security через `SecurityUtils.getCurrentUserId()`.
+- **Data & Migration**: PostgreSQL 17, Spring Data JPA, Hibernate, Flyway (цепочка миграций V1–V24), векторные расширения `pgvector`.
+- **Двухуровневое кэширование (L1 + L2)**: 
+  - **L1 (In-Memory Caffeine)**: регионы `profiles` и `public-profiles` для наносекундной отдачи без сетевых задержек.
+  - **L2 (Redis / Valkey 8.1.4)**: распределенные сессии, токены, защита идемпотентности вебхуков.
+  - **Транзакционная инвалидация**: синхронизация через `TransactionSynchronizationManager.afterCommit()` (`PublicProfileCacheEvictListener`) для предотвращения race conditions.
+- **AI Core & Streaming**: Groq API (`openai/gpt-oss-20b`), реактивный WebClient, Server-Sent Events (SSE) с детерминированным закрытием подписок (`Disposable.dispose()`), PII-маскирование персональных данных.
+- **Document & PDF Engine**: Thymeleaf, Flying Saucer, Apache PDFBox, локальные кириллические шрифты Roboto (без внешних `@import`).
+- **Resilience & Rate Limiting**: Bucket4j (распределенный и локальный лимитер: Public 60/min, AI 10/min, Auth 5/min), HikariCP fail-fast тюнинг (`connection-timeout: 10s`, `maximum-pool-size: 10`).
+
+### Frontend (Feature-Sliced Design)
+- **Core Framework**: React 19, TypeScript 5, Vite
+- **Архитектура**: Feature-Sliced Design (FSD) (`app` -> `pages` -> `widgets` -> `features` -> `entities` -> `shared`).
+- **State Management**: Zustand (с персистентностью), TanStack React Query v5 (дедупликация и кэширование запросов).
+- **Design System**: Tailwind CSS v4, строгий GitHub Dark Mode (`#0d1117` фон, `#161b22` карточки, `#30363d` границы, `#238636` акцент). Никакого ресурсоемкого glassmorphism.
+- **Interactive UI**: `@dnd-kit/core` (Канбан-доска откликов с защитой от гонок состояний), Lucide Icons, i18next (мультиязычность).
+
+### Инфраструктура и Деплой
+- **API Base Routing**: Версионированные эндпоинты `/api/v1/**`
+- **Dual Frontend Deployment**: 
+  - Vercel (`https://me-dev-two.vercel.app`) — SPA с rewrites в `vercel.json`.
+  - GitHub Pages (`https://mrsgemaseny.github.io/MeDev/`) — динамический `base: /MeDev/` через `build:github`.
+- **Backend Hosting**: Render Web Service (Docker-контейнер, Java 17, оптимизация JVM памяти для 512MB RAM).
+- **База данных и Кэш**: Render PostgreSQL 17 + Render Redis (Valkey 8.1.4).
+- **CI/CD**: GitHub Actions (автоматическая проверка типов, прогон 290 тестов, сборка артефактов и деплой).
+
+---
+
+## Архитектурная Схема Системы
 
 ```
-                          +------------------------------------------+
-                          |           Client Tier (React 19)         |
-                          |  FSD Architecture / Zustand / Vite / SSE |
-                          +--------------------+---------------------+
-                                               |
-                                       HTTPS / WSS / REST
-                                               |
-+----------------------------------------------v-----------------------------------------------+
-|                               Spring Boot 3.3 Modular Monolith                               |
-|                                                                                              |
-|  [ Auth Module ]       [ Profile Module ]    [ Resume Module ]    [ Job Tracker Module ]     |
-|  - JWT Type Segreg     - Drag-n-Drop Sort    - 6 HTML/PDF Themes  - CRM List & Kanban        |
-|  - OAuth2 Exchange     - Smart Merge Logic   - Flying Saucer A4   - URL Scraping (Anti-SSRF) |
-|  - Refresh in Redis    - Pessimistic Locks   - Live HTML Preview  - AI Job Matching Score    |
-|                                                                                              |
-|  [ GitHub Module ]     [ AI Core Module ]    [ Portfolio Module ] [ Billing & Audit Module ] |
-|  - GraphQL Stats       - Groq LLM Proxy      - Public /:username  - Stripe & Kaspi Webhooks  |
-|  - README Tech Parser  - Reactive SSE Stream - Schema.org Person  - Redis Idempotency Locks  |
-|  - Commit Chronology   - PII Masker / Tokens - OG & Twitter Cards - Async Audit Logging      |
-+-----------------------+----------------------+--------------------+--------------------------+
-                        |                      |                    |
-        +---------------+                      +-------+            +---------------+
-        |                                              |                            |
-+-------v-------+                              +-------v-------+            +-------v-------+
-|  PostgreSQL   |                              |  Redis Cache  |            |   Groq API    |
-|  Flyway (V24) |                              |  Tokens / Rate|            | gpt-oss-20b   |
-|  AES-256 GCM  |                              |  Limit Quotas |            |  SSE Streaming|
-+---------------+                              +---------------+            +---------------+
+                           +------------------------------------------+
+                           |        Client Tier (React 19 / FSD)      |
+                           |  Vercel / GitHub Pages Dual Deployment   |
+                           +--------------------+---------------------+
+                                                |
+                                        HTTPS / WSS / REST
+                                                |
++-----------------------------------------------v-----------------------------------------------+
+|                               Spring Boot 3.3.0 Modular Monolith                              |
+|                                                                                               |
+|  [ Auth Module ]       [ Profile Module ]     [ Resume Module ]    [ Job Tracker Module ]     |
+|  - JWT Type Segreg     - Drag-n-Drop Sort     - 6 HTML/PDF Themes  - Kanban Board (@dnd-kit)  |
+|  - OAuth2 GitHub       - Smart Merge Logic    - Flying Saucer A4   - Anti-SSRF Job Scraper    |
+|  - Redis Refresh TTL   - Pessimistic Locks    - Live HTML Preview  - AI Skill Gap Matcher     |
+|                                                                                               |
+|  [ GitHub Module ]     [ AI Core Module ]     [ Portfolio Module ] [ Billing & Audit Module ] |
+|  - GraphQL Stats       - Groq LLM Proxy       - Public /:username  - Stripe & Kaspi Webhooks  |
+|  - README Tech Parser  - Reactive SSE Stream  - L1 Caffeine Cache  - Redis Idempotency Locks  |
+|  - Commit Chronology   - PII Masker / Tokens  - Schema.org Person  - Async Action Logging     |
++-----------------------+-----------------------+--------------------+--------------------------+
+                        |                       |                    |
+        +---------------+                       +-------+            +---------------+
+        |                                               |                            |
++-------v-------+                               +-------v-------+            +-------v-------+
+|  PostgreSQL   |                               |  Redis Cache  |            |   Groq API    |
+|  Postgres 17  |                               |  Valkey 8.1   |            | gpt-oss-20b   |
+|  Flyway (V24) |                               |  Sessions /   |            | Reactive SSE  |
+|  AES-256-GCM  |                               |  Rate Limits  |            | Streaming     |
++---------------+                               +---------------+            +---------------+
 ```
 
 ---
 
-## Key Capabilities
+## Ключевые Модули Системы
 
-### 1. GitHub as Single Source of Truth
-- Automatic calculation of actual years of experience based on first commit timestamps and language byte densities.
-- Extraction of production technologies from repository `README.md` files and dependency configurations.
-- Identification of engineering organizations and automated population of employment history.
+### 1. Синхронизация GitHub (Source of Truth)
+- Автоматический расчет коммерческого стажа на основе временных меток первых коммитов и байтовой плотности языков.
+- Извлечение стека технологий из файлов `README.md` и конфигураций зависимостей.
+- Агрегация метаданных репозиториев в таблицу `github_snapshots` (миграция V20) для исключения избыточных вызовов GitHub API.
 
-### 2. Smart AI Sync & Zero-Loss PDF Import
-- PDF resume text extraction via PDFBox with client-side and server-side magic byte validation (`%PDF-`) and leak-free resource management.
-- Automated PII masking (phones, emails, national ID numbers) prior to upstream LLM transmission while strictly preserving technical skill tags.
-- Deterministic merge algorithm that prioritizes verified GitHub commits for technical skills while preserving verified PDF dates and corporate credentials.
+### 2. AI Core & Zero-Loss PDF Resume Engine
+- Извлечение текста из существующих PDF через Apache PDFBox с валидацией сигнатур (`%PDF-`) и детерминированным освобождением ресурсов (try-with-resources).
+- Автоматическое маскирование персональных данных (PII Masker) перед отправкой в LLM с сохранением технических тегов.
+- **6 дизайн-шаблонов резюме**: `clean` (ATS Classic), `github` (Terminal Dark), `apple-modern` (Minimalist Light), `grok-monolith` (Bento Grid), `milky-soft` (Editorial), `phub-orange` (Accent Poster).
+- Точный экспорт в A4 PDF через Flying Saucer + PDFBox с встроенными кириллическими глифами шрифта Roboto.
 
-### 3. World-Class Resume Design Engine
-- **6 Distinct Aesthetic Themes**:
-  - `clean`: Recruiter Classic / ATS-friendly clean layout with high density.
-  - `github`: Monospaced GitHub Dark / Developer-first terminal aesthetic.
-  - `apple-modern`: Minimalist light design with bold typography.
-  - `grok-monolith`: Dark Bento Grid layout with masonry arrangement.
-  - `milky-soft`: Clean editorial style optimized for readability.
-  - `phub-orange`: High-contrast poster layout with accent branding.
-- **Dual Engine Output & Single-Page Fit**:
-  - Instantaneous Live HTML preview with native web fonts and fixed A4 sheet container.
-  - Exact A4 PDF export powered by Flying Saucer + PDFBox with embedded Roboto fonts for flawless Cyrillic glyph support and single-page / multi-page toggle.
+### 3. Публичное портфолио и наносекундный кэш L1
+- Vanity-URL маршрутизация (`/:username` и `/p/:username`) для мгновенного веб-присутствия разработчика.
+- Микросекундный отклик за счет In-Memory кэша Caffeine с автоматической инвалидацией при транзакционном коммите изменений в профиле.
+- Полная генерация метатегов OpenGraph, Twitter Cards и микроразметки Schema.org `Person` (JSON-LD) для поисковой индексации.
 
 ### 4. Job Tracker CRM & AI Matcher
-- Dual-view interface: Kanban Board with `@dnd-kit` drag-and-drop state management and dense CRM data table.
-- Anti-SSRF protected scraper for HeadHunter (hh.ru / hh.kz) and LinkedIn job vacancies.
-- Real-time Match Score calculation comparing candidate capabilities against recruiter requirements with missing skill gap identification.
+- Двухрежимный интерфейс: интерактивная Канбан-доска с drag-and-drop на базе `@dnd-kit` и табличное представление откликов.
+- Защищенный от SSRF парсер вакансий (HeadHunter, LinkedIn).
+- AI Matcher: расчет скоринга соответствия кандидата требованиям вакансии с выделением недостающих навыков (Skill Gaps).
 
-### 5. GitHub Profile README Generator
-- Generates dynamic Markdown for `github.com/username/username` profile repositories.
-- 3 Layout Options: Full Stats with dynamic badges, Minimalist Clean, and Cyberpunk ASCII Banner.
+### 5. Безопасность, Аутентификация и Шифрование
+- **Защита от IDOR**: все операции строго валидируют контекст пользователя через `SecurityUtils.getCurrentUserId()`.
+- **Шифрование данных**: чувствительные сторонние токены шифруются алгоритмом **AES-256-GCM** с уникальным 12-байтным вектором инициализации (IV) на каждую запись (`EncryptedStringConverter`).
+- **Пессимистические блокировки**: вызовы `getProfileEntityForUpdate(userId)` (`PESSIMISTIC_WRITE`) предотвращают состояние гонки при параллельном обновлении данных.
 
-### 6. Public Portfolio & SEO
-- Vanity URL routing (`/:username` and `/p/:username`) for instant developer web presence.
-- Fully populated OpenGraph, Twitter Cards, and Schema.org `Person` JSON-LD metadata for search engine indexing.
-
----
-
-## Security & Reliability Model
-
-- **Row-Level IDOR Protection**: All mutations resolve identity strictly through `SecurityUtils.getCurrentUserId()` extracted from cryptographically signed JWT access tokens.
-- **Token Security**:
-  - Short-lived Access Tokens (15 min) with explicit `type=access` segregation.
-  - Refresh tokens stored exclusively in Redis (`refresh:{userId}:{deviceId}`) and transmitted via `HttpOnly`, `SameSite=Lax` cookies.
-  - Short-lived, single-use `oauth2_code` exchange pattern in Redis to prevent token leaks in browser URL histories.
-- **Data-at-Rest Encryption**: Sensitive third-party credentials (GitHub tokens) are encrypted in PostgreSQL using **AES-256 GCM** with per-record 12-byte random IVs and dual-key rotation fallback support (`EncryptedStringConverter` + `EncryptionUtils`).
-- **Concurrency & Transaction Isolation**: Pessimistic write locking (`findByUserIdForUpdate`) on all profile mutation flows to prevent race conditions.
-- **Billing Idempotency & Signature Verification**: Constant-time HMAC-SHA256 webhook signature verification with distributed Redis lock release for Stripe and Kaspi Pay.
-- **Audit Logging & Accounting**: Live token tracking via `AiUsageRepository` and asynchronous action auditing (`AuditService.logAction`) for auth, billing, and admin events.
-- **Distributed Rate Limiting**: Redis-backed sliding window rate limiters (Bucket4j) protecting against credential brute-forcing and AI quota abuse.
+### 6. Биллинг, Идемпотентность и Аудит
+- Поддержка международных платежей (Stripe) и локального эквайринга (Kaspi Pay).
+- Идемпотентная обработка вебхуков через распределенные Redis-блокировки по `orderId`.
+- Полнотекстовый асинхронный аудит системных событий (`AuditService.logAction`) с фиксацией IP-адресов в `audit_logs` (миграция V19).
 
 ---
 
-## Tech Stack
+## Структура Проекта
 
-| Layer | Technology | Purpose |
-| :--- | :--- | :--- |
-| **Backend Framework** | Spring Boot 3.3.0 / Java 17 | Core Modular Monolith API |
-| **Security** | Spring Security 6, JJWT | Stateless authentication, OAuth2, RBAC, AES-256-GCM |
-| **Persistence** | PostgreSQL 16, Flyway (V24) | Schema validation, relational data, pgvector |
-| **Cache & In-Memory** | Redis 7, Lettuce | Distributed rate-limiting, session tokens, idempotency locks |
-| **AI Integration** | Groq API (openai/gpt-oss-20b) | Reactive SSE streaming, structured JSON, token accounting |
-| **Document Processing**| Thymeleaf, Flying Saucer, PDFBox | Leak-free PDF & HTML rendering, Cyrillic font embedding |
-| **Frontend Framework** | React 19, Vite, TypeScript | Single Page Application |
-| **State Management** | Zustand (Persistent), React Query | Client state & asynchronous server state |
-| **Architecture** | Feature-Sliced Design (FSD) | Scalable modular directory structure |
-| **Styling** | Tailwind CSS v4 | Strict GitHub Dark Mode design system |
-| **Testing** | Vitest, Testing Library, JUnit 5, MockMvc, Testcontainers | 290 total automated tests (100% green) |
+```
+MeDev/
+├── backend/                   # Spring Boot 3.3.0 модульный монолит
+│   ├── src/main/java/com/medev/
+│   │   ├── modules/           # Доменные модули (auth, profile, portfolio, ai, resume, tracker, billing, audit)
+│   │   └── shared/            # Общие компоненты (security, config, entity, exception, util)
+│   ├── src/main/resources/
+│   │   ├── db/migration/      # Цепочка миграций Flyway (V1..V24)
+│   │   ├── templates/resume/  # HTML/CSS шаблоны резюме
+│   │   └── fonts/             # Локальные шрифты Roboto
+│   └── src/test/java/         # 253 Unit и Integration теста (JUnit 5, Mockito, MockMvc)
+├── frontend/                  # React 19 SPA на базе Feature-Sliced Design
+│   ├── src/
+│   │   ├── app/               # Провайдеры, роутер, глобальные стили
+│   │   ├── pages/             # Страницы (Dashboard, Profile, Resume, Tracker, Landing, Billing, Admin)
+│   │   ├── widgets/           # Композитные виджеты (Landing widgets: Hero, Features, Pricing, Header, Footer)
+│   │   ├── features/          # Бизнес-фичи (AI Assistant, Profile Edit, Resume Editor, Job Tracker)
+│   │   ├── entities/          # Бизнес-сущности и Zustand-хранилища
+│   │   └── shared/            # UI-kit, Axios клиенты, хуки, утилиты
+│   └── src/test/              # 37 тестов Vitest + React Testing Library
+├── docs/                      # Инженерная документация (ARCHITECTURE, RUNBOOK, ADR, API)
+├── AUDIT_2026-08-27.md        # Комплексный аудит готовности к релизу
+├── docker-compose.yml         # Локальная инфраструктура (PostgreSQL 17, Redis, Backend, Frontend)
+└── artillery.yml              # Сценарии нагрузочного тестирования (Chaos Engineering)
+```
 
 ---
 
-## Getting Started
+## Запуск в Локальном Окружении
 
-### Prerequisites
+### Системные требования
 - JDK 17+
 - Node.js 20+
-- Docker & Docker Compose
+- Docker и Docker Compose
 
-### 1. Instant Launch via Docker Compose
+### 1. Запуск через Docker Compose (Полный стек)
 
 ```bash
-# Clone the repository
+# Клонирование репозитория
 git clone https://github.com/MrSgemaSeny/MeDev.git
 cd MeDev
 
-# Spin up full stack (PostgreSQL, Redis, Backend, Frontend)
+# Поднятие всех сервисов (PostgreSQL, Redis, Backend, Frontend)
 docker-compose up --build -d
 ```
 
 - Frontend: `http://localhost:5173`
 - Backend API: `http://localhost:8080/api`
-- API Health Endpoint: `http://localhost:8080/api/actuator/health`
+- Actuator Health Check: `http://localhost:8080/api/actuator/health`
 
-### 2. Manual Development Setup
+### 2. Ручной запуск для разработки
+
+#### База данных и Redis
+```bash
+docker compose up -d postgres redis
+```
 
 #### Backend
 ```bash
 cd backend
-
-# Ensure PostgreSQL and Redis are running locally, then:
 ./gradlew bootRun
 ```
 
 #### Frontend
 ```bash
 cd frontend
-
-# Install dependencies and start Vite dev server
 npm install
 npm run dev
 ```
 
 ---
 
-## Environment Variables
+## Запуск Тестов
 
-### Backend Configuration (`application-prod.yml`)
-
-```env
-DATABASE_URL=jdbc:postgresql://localhost:5432/medev
-DATABASE_USERNAME=postgres
-DATABASE_PASSWORD=postgres
-REDIS_HOST=localhost
-REDIS_PORT=6379
-JWT_SECRET=your_minimum_256_bit_secure_jwt_secret_key
-ENCRYPTION_SECRET=your_32_character_encryption_key_gcm
-GROQ_API_KEY=gsk_your_groq_api_key
-GROQ_MODEL=openai/gpt-oss-20b
-STRIPE_SECRET_KEY=sk_live_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-STRIPE_PRO_PRICE_ID=price_...
-```
-
-### Frontend Configuration (`.env`)
-
-```env
-VITE_API_URL=http://localhost:8080/api/v1
-```
-
----
-
-## Test Suite Execution
-
+### Backend Unit & Integration Tests (253 теста):
 ```bash
-# Run backend integration & unit tests (253 tests)
 cd backend
 ./gradlew test
+```
 
-# Run frontend unit & component tests (37 tests)
+### Frontend Unit & Component Tests (37 тестов):
+```bash
 cd frontend
 npm test
 ```
 
----
-
-## Documentation & Architecture Records
-
-- [Architecture Guide](docs/ARCHITECTURE.md)
-- [API Reference](docs/API_REFERENCE.md)
-- [Deployment Runbook](docs/DEPLOYMENT.md)
-- [Strategic Epics & Roadmap](docs/EPICS.md)
-- [Architectural Decision Records (ADR-001..010)](docs/ADR.md)
-- [Security Audit & Hardening Report](docs/SECURITY_AUDIT.md)
-- [Production Runbook](docs/RUNBOOK.md)
-- [Contributing Guidelines](docs/CONTRIBUTING.md)
+### Проверка сборки TypeScript и бандла:
+```bash
+cd frontend
+npm run build
+```
 
 ---
 
-## License
+## Статус Безопасности, Нагрузочной Устойчивости и Комплаенса
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+- **Chaos Engineering & Стресс-устойчивость**: Система протестирована спайк-нагрузкой до 500 RPS (10 500 виртуальных пользователей за 45 сек на инстансе 0.1 CPU). Сервер выдержал нагрузку без падения JVM по памяти (нет OOM). Bucket4j Rate Limiter предотвратил деградацию базы данных, отсекая избыточный трафик ответами `429 Too Many Requests`.
+- **HikariCP Fail-Fast Protection**: Таймаут получения коннекта ограничен 10 секундами, максимальный пул коннектов зафиксирован на 10, пул потоков веб-сервера ограничен 25 потоками.
+- **Pessimistic Concurrency Control**: Мутации профиля защищены пессимистическими блокировками (`PESSIMISTIC_WRITE`), что исключает гонки при одновременной синхронизации нескольких репозиториев.
+- **Zero Resource Leak Policy**: Все потоки ввода-вывода (PDFBox, WebClient SSE emitters) закрываются через try-with-resources и хуки `Disposable.dispose()`.
+- **Flyway Immutability**: Все 24 миграции строго неизменяемы, поддержка отказоустойчивой схемы данных.
+- **Защита секретов**: Длина JWT секрета валидируется при старте приложения (`@PostConstruct >= 256 bit`), токены интеграций зашифрованы в БД.
+
+---
+
+## Лицензия
+
+Проект распространяется под лицензией MIT. Подробности в файле [LICENSE](LICENSE).
