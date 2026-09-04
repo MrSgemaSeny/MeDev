@@ -11,7 +11,7 @@ public class GroqHealthIndicator implements HealthIndicator {
     @Value("${groq.api-key:}")
     private String apiKey;
 
-    @Value("${groq.model:llama-3.3-70b-versatile}")
+    @Value("${groq.model:openai/gpt-oss-20b}")
     private String model;
 
     @Override

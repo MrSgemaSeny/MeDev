@@ -46,7 +46,7 @@ public class GroqClient implements LlmProvider {
             TokenAccountingService tokenAccountingService,
             @org.springframework.beans.factory.annotation.Value("${groq.api-key:}") String apiKey,
             @org.springframework.beans.factory.annotation.Value("${groq.api-url:https://api.groq.com/openai/v1/chat/completions}") String apiUrl,
-            @org.springframework.beans.factory.annotation.Value("${groq.model:llama-3.3-70b-versatile}") String model
+            @org.springframework.beans.factory.annotation.Value("${groq.model:openai/gpt-oss-20b}") String model
     ) {
         if (apiKey == null || apiKey.isBlank()) {
             log.warn("[GroqClient] GROQ_API_KEY is not configured — AI features will fail at runtime");

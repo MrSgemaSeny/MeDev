@@ -8,7 +8,7 @@
   - **Backend API**: Render Web Service (`https://medev-backend.onrender.com/api`), Docker, Java 17, Spring Boot 3.3.0.
   - **Database**: Render PostgreSQL 17 (`medev-postgres`, Flyway V24).
   - **Cache & Redis**: Render Redis (`medev-redis`, Valkey 8.1.4) + In-Memory Caffeine L1 (`profiles`, `public-profiles`).
-  - **AI Model**: `openai/gpt-oss-20b` via Groq API.
+  - **AI Model**: `openai/gpt-oss-20b` (GPT-20B) via Groq API. СТРОГО: Модели Llama НЕ РАБОТАЮТ и запрещены. Работает ТОЛЬКО `openai/gpt-oss-20b`.
 - **Latest Work (2026-08-27 Deployment & Cache Architecture)**:
   - **GitHub Pages & Vercel Dual Deployment**: Настроен dynamic base path в `vite.config.ts` (`/MeDev/` для GitHub Pages, `/` для Vercel), скрипт `build:github`, исправлены пути к ассетам и фавикону, обновлен workflow `deploy.yml`.
   - **L1 Caffeine Cache & Transaction Synchronization**: Внедрен in-memory кэш Caffeine для публичного портфолио (`/api/v1/portfolio/:username`). Устранен race condition через `TransactionSynchronizationManager.afterCommit()`. Добавлен `PublicProfileCacheEvictListener` и `PublicRateLimiter` (60 req/min).

@@ -36,6 +36,7 @@ Explain WHY, not just WHAT (Senior Tech Lead mentoring approach: architect think
 8. **Flyway Migrations (MeDev)**: NEVER modify existing files in `db/migration/`. All DB changes must be new `V{N}__` scripts.
 9. **No God Objects (MeDev)**: Строго соблюдай SRP (Single Responsibility Principle). Сервисы должны быть компактными.
 10. **FSD Compliance (MeDev)**: Frontend обязан строго следовать Feature-Sliced Design (app, pages, features, entities, shared).
+11. **Groq Model (STRICT)**: Единственная рабочая и разрешенная модель для Groq API — `openai/gpt-oss-20b` (GPT-20B). Модели Llama НЕ РАБОТАЮТ и СТРОГО ЗАПРЕЩЕНЫ к установке. Никаких подмен модели.
 
 ## Current Technical Debt & Unfinished Phases (Sprint Backlog)
 *Все CRITICAL, WARNING и INFO задачи из аудитов 1 и 2 закрыты (2026-08-13). Бэклог чист.*
