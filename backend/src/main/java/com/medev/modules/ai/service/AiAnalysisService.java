@@ -57,7 +57,11 @@ public class AiAnalysisService {
 
     private String extractTextFromPdf(MultipartFile file) {
         String contentType = file.getContentType();
-        if (contentType == null || !contentType.equals("application/pdf")) {
+        String filename = file.getOriginalFilename();
+        boolean isPdfMime = contentType != null && (contentType.equalsIgnoreCase("application/pdf") || contentType.equalsIgnoreCase("application/x-pdf"));
+        boolean isPdfExt = filename != null && filename.toLowerCase().endsWith(".pdf");
+        
+        if (!isPdfMime && !isPdfExt) {
             throw new IllegalArgumentException("Only PDF files are allowed");
         }
         
@@ -68,8 +72,14 @@ public class AiAnalysisService {
             }
             try (PDDocument document = Loader.loadPDF(fileBytes)) {
                 PDFTextStripper stripper = new PDFTextStripper();
-                return stripper.getText(document);
+                String text = stripper.getText(document);
+                if (text == null || text.trim().isEmpty()) {
+                    throw new IllegalArgumentException("The uploaded PDF does not contain extractable text (e.g. scanned image). Please upload a PDF with selectable text.");
+                }
+                return text;
             }
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (IOException e) {
             throw new RuntimeException("Failed to read PDF file", e);
         }

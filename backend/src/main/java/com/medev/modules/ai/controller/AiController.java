@@ -237,13 +237,17 @@ public class AiController {
             return ResponseEntity.badRequest().build();
         }
 
-        if (!"application/pdf".equals(file.getContentType())) {
+        String contentType = file.getContentType();
+        String filename = file.getOriginalFilename();
+        boolean isPdfMime = contentType != null && (contentType.equalsIgnoreCase("application/pdf") || contentType.equalsIgnoreCase("application/x-pdf"));
+        boolean isPdfExt = filename != null && filename.toLowerCase().endsWith(".pdf");
+        if (!isPdfMime && !isPdfExt) {
             return ResponseEntity.badRequest().build();
         }
 
-        try (java.io.InputStream is = file.getInputStream()) {
-            byte[] magic = new byte[4];
-            if (is.read(magic) != 4 || !new String(magic, java.nio.charset.StandardCharsets.US_ASCII).startsWith("%PDF")) {
+        try {
+            byte[] bytes = file.getBytes();
+            if (bytes.length < 4 || bytes[0] != '%' || bytes[1] != 'P' || bytes[2] != 'D' || bytes[3] != 'F') {
                 return ResponseEntity.badRequest().build();
             }
         } catch (java.io.IOException e) {

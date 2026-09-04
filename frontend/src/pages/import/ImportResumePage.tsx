@@ -3,6 +3,7 @@ import { useParseResume } from '../../shared/api/hooks/useProfile';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../shared/ui/Button';
 import { UploadCloud, FileText } from 'lucide-react';
+import { toast } from 'sonner';
 
 export const ImportResumePage = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -12,11 +13,23 @@ export const ImportResumePage = () => {
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (!file.name.toLowerCase().endsWith('.pdf') && file.type !== 'application/pdf') {
+        toast.error('Пожалуйста, загрузите резюме в формате PDF.');
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error('Файл слишком большой. Максимальный размер: 10 МБ.');
+        return;
+      }
       parseResume(file, {
-        onSuccess: () => navigate('/profile/edit'),
-        onError: (err) => {
+        onSuccess: () => {
+          toast.success('Резюме успешно проанализировано!');
+          navigate('/profile/edit');
+        },
+        onError: (err: any) => {
           console.error(err);
-          alert('Failed to parse resume.');
+          const message = err.response?.data?.error || err.response?.data?.message || 'Не удалось распознать резюме. Убедитесь, что в файле есть текст.';
+          toast.error(message);
         }
       });
     }
@@ -46,7 +59,7 @@ export const ImportResumePage = () => {
             type="file" 
             ref={fileInputRef} 
             className="hidden" 
-            accept=".pdf,.doc,.docx"
+            accept="application/pdf,.pdf"
             onChange={handleFileUpload}
           />
           {isParsing ? (
@@ -62,7 +75,7 @@ export const ImportResumePage = () => {
               </div>
               <h3 className="text-xl font-bold text-primary mb-2">Upload Resume or LinkedIn Export</h3>
               <p className="text-sm text-secondary mb-6 max-w-sm">
-                We support PDF, DOC, and DOCX files up to 5MB. Your data is processed securely.
+                We support PDF files up to 10MB. Your data is processed securely.
               </p>
               <Button variant="primary" size="lg" type="button" className="pointer-events-none rounded-xl px-8 shadow-md">
                 Select File

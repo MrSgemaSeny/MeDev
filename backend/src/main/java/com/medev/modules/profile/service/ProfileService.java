@@ -111,6 +111,7 @@ public class ProfileService {
     }
 
     @Transactional
+    @CacheEvict(value = "profiles", key = "#userId")
     public ProfileDto importParsedResume(Long userId, AiParsedResumeDto parsed) {
         Profile profile = getProfileEntityForUpdate(userId);
         
@@ -139,6 +140,7 @@ public class ProfileService {
                 if (s.getName() != null && !s.getName().isBlank()) {
                     Skill skill = Skill.builder().profile(profile).name(s.getName()).sortOrder(order++).build();
                     skillRepository.save(skill);
+                    profile.getSkills().add(skill);
                 }
             }
         }
@@ -162,6 +164,7 @@ public class ProfileService {
                         .sortOrder(order++)
                         .build();
                 experienceRepository.save(exp);
+                profile.getExperiences().add(exp);
             }
         }
 
@@ -182,6 +185,7 @@ public class ProfileService {
                         .sortOrder(order++)
                         .build();
                 educationRepository.save(edu);
+                profile.getEducations().add(edu);
             }
         }
 
@@ -195,6 +199,7 @@ public class ProfileService {
                     }
                     Language lang = Language.builder().profile(profile).name(l.getName()).level(level).sortOrder(order++).build();
                     languageRepository.save(lang);
+                    profile.getLanguages().add(lang);
                 }
             }
         }
@@ -212,6 +217,7 @@ public class ProfileService {
                             .sortOrder(order++)
                             .build();
                     projectRepository.save(proj);
+                    profile.getProjects().add(proj);
                 }
             }
         }
@@ -219,10 +225,6 @@ public class ProfileService {
         publishAfterCommit(userId);
         return mapToProfileDto(profile);
     }
-
-
-
-
 
     // ==========================================
     // MAPPERS
