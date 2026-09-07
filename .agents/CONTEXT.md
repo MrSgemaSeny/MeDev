@@ -9,12 +9,11 @@
   - **Database**: Render PostgreSQL 17 (`medev-postgres`, Flyway V24).
   - **Cache & Redis**: Render Redis (`medev-redis`, Valkey 8.1.4) + In-Memory Caffeine L1 (`profiles`, `public-profiles`).
   - **AI Model**: `openai/gpt-oss-20b` (GPT-20B) via Groq API. СТРОГО: Модели Llama НЕ РАБОТАЮТ и запрещены. Работает ТОЛЬКО `openai/gpt-oss-20b`.
-- **Latest Work (2026-09-07 Custom Domain Configuration)**:
+- **Latest Work (2026-09-07 Landing Page & Custom Domain)**:
+  - **Landing Page for `medev.mrsgemaseny.com`**: Разработан полноценный лендинг в GitHub Dark Mode эстетике (`Header`, `Hero` с интерактивным терминалом и Dev карточкой, 4-pillar Bento Grid `Features`, `TemplatesShowcase` для 6 PDF-шаблонов, `Pricing` с тарифами Kaspi/Stripe, `Faq`, `Footer`).
   - **Custom Domain `medev.mrsgemaseny.com`**: Настроен CNAME в Namecheap на `cname.vercel-dns.com`, обновлен CORS (`cors.allowed-origins`) и `app.frontend-url` на бэкенде.
-  - **GitHub Pages & Vercel Dual Deployment**: Настроен dynamic base path в `vite.config.ts` (`/MeDev/` для GitHub Pages, `/` для Vercel), скрипт `build:github`, исправлены пути к ассетам и фавикону, обновлен workflow `deploy.yml`.
-  - **L1 Caffeine Cache & Transaction Synchronization**: Внедрен in-memory кэш Caffeine для публичного портфолио (`/api/v1/portfolio/:username`). Устранен race condition через `TransactionSynchronizationManager.afterCommit()`. Добавлен `PublicProfileCacheEvictListener` и `PublicRateLimiter` (60 req/min).
-  - **HikariCP & Tomcat Fail-Fast Tuning**: `connection-timeout: 10s`, `maximum-pool-size: 10`, `server.tomcat.threads.max: 25`.
-- **Test Baseline**: 253 backend tests passing (100% green via `.\gradlew.bat test`), 37 frontend tests passing (100% green via `npm test`), 0 build/lint warnings.
+  - **L1 Caffeine Cache & Transaction Synchronization**: In-memory кэш Caffeine для публичного портфолио (`/api/v1/portfolio/:username`) с TransactionSynchronizationManager.afterCommit().
+- **Test Baseline**: 253 backend tests passing (100% green), 38 frontend tests passing (100% green via `npm test`), 0 build/lint warnings.
 
 ## Active Backlog
 - Setting up automated nightly DB backup jobs.
