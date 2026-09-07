@@ -21,7 +21,6 @@ const AdminAuditPage = lazy(() => import('../../pages/admin/AdminAuditPage').the
 const SettingsPage = lazy(() => import('../../pages/settings/SettingsPage').then(m => ({ default: m.SettingsPage })));
 const PrivacyPolicy = lazy(() => import('../../pages/legal/PrivacyPolicy').then(m => ({ default: m.PrivacyPolicy })));
 const TermsOfService = lazy(() => import('../../pages/legal/TermsOfService').then(m => ({ default: m.TermsOfService })));
-const LandingPage = lazy(() => import('../../pages/landing/LandingPage').then(m => ({ default: m.LandingPage })));
 import { AdminGuard } from '../providers/AdminGuard';
 
 const PageLoader = () => (
@@ -73,8 +72,23 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   return !accessToken ? children : <Navigate to="/dashboard" replace />;
 };
 
+const RootRedirect = () => {
+  const [hasHydrated, setHasHydrated] = useState(false);
+
+  useEffect(() => {
+    const unsub = useAuthStore.persist.onFinishHydration(() => setHasHydrated(true));
+    setHasHydrated(useAuthStore.persist.hasHydrated());
+    return unsub;
+  }, []);
+
+  const accessToken = useAuthStore((state) => state.accessToken);
+
+  if (!hasHydrated) return <PageLoader />;
+  return accessToken ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />;
+};
+
 const router = createBrowserRouter([
-  { path: '/', element: <LandingPage /> },
+  { path: '/', element: <RootRedirect /> },
   {
     path: '/login',
     element: (<PublicRoute><LoginPage /></PublicRoute>),
