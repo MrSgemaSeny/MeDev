@@ -33,12 +33,21 @@ export const metadata: Metadata = {
     siteName: 'MeDev',
     locale: 'ru_RU',
     type: 'website',
+    images: [
+      {
+        url: 'https://medev.mrsgemaseny.com/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'MeDev — резюме из твоего GitHub за 2 минуты',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'MeDev — Резюме и портфолио из твоего GitHub',
     description:
       'Подключи GitHub — MeDev создаст сильное резюме под конкретную вакансию и личную страницу-портфолио.',
+    images: ['https://medev.mrsgemaseny.com/og-image.png'],
   },
   robots: {
     index: true,
