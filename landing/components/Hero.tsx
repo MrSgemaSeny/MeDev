@@ -1,11 +1,9 @@
 import React from 'react';
 import {
   ArrowRight,
-  CheckCircle2,
   FileCheck,
   Briefcase,
   Download,
-  Zap,
 } from 'lucide-react';
 import { GithubIcon } from './GithubIcon';
 
@@ -13,10 +11,10 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://app.medev.mrsgemasen
 
 export const Hero = () => {
   return (
-    <section className="relative overflow-hidden border-b border-[#30363d] bg-[#0d1117] pt-14 pb-16 sm:pt-20 sm:pb-24">
+    <section className="relative overflow-hidden border-b border-[#30363d] bg-[#0d1117] pt-20 pb-20 sm:pt-28 sm:pb-28">
       {/* Background glow */}
       <div
-        className="pointer-events-none absolute -top-40 left-1/2 -z-10 h-[500px] w-[800px] -translate-x-1/2 rounded-full opacity-10 blur-3xl"
+        className="pointer-events-none absolute -top-40 left-1/2 -z-10 h-[500px] w-[800px] -translate-x-1/2 rounded-full opacity-15 blur-3xl"
         style={{
           background: 'radial-gradient(circle, #238636 0%, #1f6feb 60%, transparent 90%)',
         }}
@@ -25,195 +23,129 @@ export const Hero = () => {
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center text-center">
-          {/* Trust badge */}
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#30363d] bg-[#161b22] px-3.5 py-1 text-xs font-medium text-[#c9d1d9] shadow-sm">
-            <span className="flex h-2 w-2 rounded-full bg-[#2ea043]" />
-            <span>Бесплатно · Без привязки карты · Готово за 2 минуты</span>
-          </div>
-
-          {/* Heading */}
-          <h1 className="mt-6 max-w-4xl text-3xl font-extrabold tracking-tight text-[#f0f6fc] sm:text-5xl lg:text-6xl">
-            У тебя есть <span className="text-[#2ea043]">GitHub</span>. Пора чтобы он работал на тебя.
+          {/* Main Heading */}
+          <h1 className="max-w-5xl text-4xl font-extrabold tracking-tight text-[#f0f6fc] sm:text-6xl lg:text-7xl">
+            У тебя есть <span className="text-[#2ea043]">GitHub</span>. <br className="hidden sm:inline" />
+            Пора чтобы он работал на тебя.
           </h1>
 
           {/* Subtitle */}
-          <p className="mt-5 max-w-2xl text-sm leading-relaxed text-[#8b949e] sm:text-base">
-            Подключи GitHub — MeDev сам разберёт твои проекты и напишет резюме под конкретную вакансию. Плюс личная страница-портфолио по ссылке. Без Word, без Canva, без потраченных часов.
+          <p className="mt-8 max-w-3xl text-lg leading-relaxed text-[#c9d1d9] sm:text-2xl">
+            Подключи GitHub — MeDev сам разберёт твои проекты и составит резюме под конкретную вакансию. Плюс личная страница-портфолио по ссылке.
           </p>
 
           {/* Actions */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3.5">
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-5">
             <a
               href={`${APP_URL}/login`}
-              className="flex items-center gap-2 rounded-md bg-[#238636] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-[#2ea043] focus-visible:outline-2 focus-visible:outline-[#238636]"
+              className="flex items-center gap-3 rounded-xl bg-[#238636] px-8 py-4 text-base font-bold text-white shadow-lg transition-all hover:bg-[#2ea043] focus-visible:outline-2 focus-visible:outline-[#238636]"
             >
-              <GithubIcon className="h-4 w-4" />
+              <GithubIcon className="h-5 w-5" />
               <span>Войти через GitHub</span>
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight className="h-5 w-5" />
             </a>
             <a
               href="#features"
-              className="flex items-center gap-2 rounded-md border border-[#30363d] bg-[#21262d] px-5 py-2.5 text-sm font-semibold text-[#c9d1d9] transition-colors hover:bg-[#30363d] hover:text-white"
+              className="flex items-center gap-2 rounded-xl border border-[#30363d] bg-[#21262d] px-8 py-4 text-base font-semibold text-[#c9d1d9] transition-colors hover:bg-[#30363d] hover:text-white"
             >
               <span>Возможности</span>
             </a>
           </div>
-
-          {/* Trust points */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-[#8b949e]">
-            <div className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-3.5 w-3.5 text-[#2ea043]" />
-              <span>Бесплатно, без карты</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-3.5 w-3.5 text-[#2ea043]" />
-              <span>Готово за 2 минуты</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-3.5 w-3.5 text-[#2ea043]" />
-              <span>Ссылка на портфолио сразу</span>
-            </div>
-          </div>
         </div>
 
-        {/* Real Product UI Demonstration */}
-        <div className="mt-12 rounded-xl border border-[#30363d] bg-[#161b22] shadow-2xl overflow-hidden">
+        {/* Product UI Demonstration */}
+        <div className="mt-20 rounded-2xl border border-[#30363d] bg-[#161b22] shadow-2xl overflow-hidden">
           {/* Top Window Bar */}
-          <div className="flex items-center justify-between border-b border-[#30363d] bg-[#0d1117] px-4 py-2.5">
-            <div className="flex items-center space-x-2">
-              <div className="h-2.5 w-2.5 rounded-full bg-[#30363d]" />
-              <div className="h-2.5 w-2.5 rounded-full bg-[#30363d]" />
-              <div className="h-2.5 w-2.5 rounded-full bg-[#30363d]" />
+          <div className="flex items-center justify-between border-b border-[#30363d] bg-[#0d1117] px-6 py-4">
+            <div className="flex items-center space-x-2.5">
+              <div className="h-3 w-3 rounded-full bg-[#30363d]" />
+              <div className="h-3 w-3 rounded-full bg-[#30363d]" />
+              <div className="h-3 w-3 rounded-full bg-[#30363d]" />
             </div>
-            <div className="flex items-center gap-2 rounded border border-[#30363d] bg-[#161b22] px-3 py-1 font-mono text-[11px] text-[#8b949e]">
+            <div className="rounded border border-[#30363d] bg-[#161b22] px-4 py-1.5 font-mono text-xs text-[#8b949e]">
               <span>medev.mrsgemaseny.com/username</span>
             </div>
-            <div className="text-[11px] font-medium text-[#2ea043] flex items-center gap-1">
-              <Zap className="h-3 w-3" />
-              <span>Личный кабинет</span>
+            <div className="text-sm font-semibold text-[#2ea043]">
+              Личный кабинет
             </div>
           </div>
 
           {/* Product Interface Body */}
-          <div className="p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 bg-[#0d1117]/50">
-            {/* Left: GitHub Sync Box */}
-            <div className="lg:col-span-5 space-y-4">
-              <div className="rounded-lg border border-[#30363d] bg-[#161b22] p-4">
-                <div className="flex items-center justify-between">
-                  <div className="text-xs font-semibold text-[#8b949e] uppercase tracking-wider">
-                    GitHub Подключен
-                  </div>
-                  <span className="rounded bg-[#238636]/15 border border-[#238636]/30 px-2 py-0.5 text-[10px] font-semibold text-[#2ea043]">
-                    Активен
-                  </span>
-                </div>
+          <div className="p-6 sm:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8 bg-[#0d1117]/60">
+            {/* Left Box */}
+            <div className="lg:col-span-5 space-y-6">
+              <div className="rounded-xl border border-[#30363d] bg-[#161b22] p-6">
+                <h3 className="text-lg font-bold text-[#f0f6fc]">
+                  GitHub подключен
+                </h3>
+                <p className="mt-2 text-sm text-[#8b949e]">
+                  Публичные репозитории, коммиты и стек синхронизированы автоматически.
+                </p>
 
-                <div className="mt-4 space-y-2.5 text-xs text-[#c9d1d9]">
-                  <div className="flex justify-between items-center py-1 border-b border-[#30363d]/50">
-                    <span className="text-[#8b949e]">Репозитории</span>
-                    <span className="font-semibold text-[#f0f6fc]">Публичные проекты импортированы</span>
+                <div className="mt-6 space-y-3">
+                  <div className="flex justify-between items-center py-2 border-b border-[#30363d]">
+                    <span className="text-sm text-[#8b949e]">Репозитории</span>
+                    <span className="font-semibold text-[#f0f6fc]">Импортированы</span>
                   </div>
-                  <div className="flex justify-between items-center py-1 border-b border-[#30363d]/50">
-                    <span className="text-[#8b949e]">История разработки</span>
-                    <span className="font-semibold text-[#f0f6fc]">Коммиты подтверждены</span>
+                  <div className="flex justify-between items-center py-2 border-b border-[#30363d]">
+                    <span className="text-sm text-[#8b949e]">История разработки</span>
+                    <span className="font-semibold text-[#f0f6fc]">Подтверждена</span>
                   </div>
-                  <div className="flex justify-between items-center py-1">
-                    <span className="text-[#8b949e]">Основной стек</span>
-                    <span className="font-semibold text-[#58a6ff]">Определен автоматически</span>
-                  </div>
-                </div>
-
-                <div className="mt-4">
-                  <div className="flex justify-between text-[10px] text-[#8b949e] mb-1">
-                    <span>Распределение языков</span>
-                    <span>По кодовой базе</span>
-                  </div>
-                  <div className="flex h-2 w-full overflow-hidden rounded bg-[#21262d]">
-                    <div className="bg-[#b07219] w-[45%]" title="Backend" />
-                    <div className="bg-[#3178c6] w-[35%]" title="Frontend" />
-                    <div className="bg-[#e34c26] w-[20%]" title="Other" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Projects Preview */}
-              <div className="rounded-lg border border-[#30363d] bg-[#161b22] p-4">
-                <div className="text-xs font-semibold text-[#8b949e] uppercase tracking-wider mb-3">
-                  Твои лучшие проекты
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between rounded border border-[#30363d]/60 bg-[#21262d]/40 px-3 py-2 text-xs">
-                    <span className="font-mono font-medium text-[#f0f6fc]">Основной проект</span>
-                    <span className="text-[11px] text-[#2ea043]">В резюме</span>
-                  </div>
-                  <div className="flex items-center justify-between rounded border border-[#30363d]/60 bg-[#21262d]/40 px-3 py-2 text-xs">
-                    <span className="font-mono font-medium text-[#f0f6fc]">Пет-проект</span>
-                    <span className="text-[11px] text-[#2ea043]">В портфолио</span>
+                  <div className="flex justify-between items-center py-2">
+                    <span className="text-sm text-[#8b949e]">Основной стек</span>
+                    <span className="font-semibold text-[#58a6ff]">Определен</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Right: Resume Generator & Kanban */}
-            <div className="lg:col-span-7 space-y-4">
-              <div className="rounded-lg border border-[#30363d] bg-[#161b22] p-4">
-                <div className="flex items-center justify-between border-b border-[#30363d] pb-3">
-                  <div className="flex items-center gap-2">
-                    <FileCheck className="h-4 w-4 text-[#2ea043]" />
-                    <span className="text-xs font-semibold text-[#f0f6fc]">
-                      Резюме под вакансию
-                    </span>
-                  </div>
-                  <span className="rounded border border-[#238636]/30 bg-[#238636]/10 px-2 py-0.5 text-[10px] font-semibold text-[#2ea043]">
-                    Готово к скачиванию
-                  </span>
+            {/* Right Box */}
+            <div className="lg:col-span-7 space-y-6">
+              <div className="rounded-xl border border-[#30363d] bg-[#161b22] p-6">
+                <div className="flex items-center gap-3">
+                  <FileCheck className="h-6 w-6 text-[#2ea043]" />
+                  <h3 className="text-lg font-bold text-[#f0f6fc]">
+                    Резюме готово под вакансию
+                  </h3>
                 </div>
 
-                <div className="mt-3.5 space-y-2.5">
-                  <div className="rounded border border-[#30363d]/60 bg-[#0d1117] p-3 text-xs">
-                    <div className="text-[11px] font-semibold text-[#2ea043] mb-1">
-                      Только твои реальные данные
-                    </div>
-                    <p className="text-[#8b949e] leading-relaxed">
-                      Текст составлен на основе твоего опыта разработки и адаптирован под требования целевой позиции.
-                    </p>
-                  </div>
+                <p className="mt-4 text-base leading-relaxed text-[#c9d1d9]">
+                  Текст составлен на основе твоего реального опыта разработки и отформатирован для прохождения фильтров работодателей.
+                </p>
 
-                  <div className="flex items-center justify-between rounded border border-[#30363d]/60 bg-[#21262d]/40 p-3 text-xs">
-                    <div className="space-y-0.5">
-                      <div className="font-medium text-[#f0f6fc]">6 готовых шаблонов на выбор</div>
-                      <div className="text-[11px] text-[#8b949e]">Проходят фильтры HR-платформ</div>
-                    </div>
-                    <span className="rounded bg-[#238636] px-3 py-1 text-[11px] font-semibold text-white flex items-center gap-1">
-                      <Download className="h-3 w-3" />
-                      <span>Скачать PDF</span>
-                    </span>
-                  </div>
+                <div className="mt-6 flex items-center justify-between rounded-lg border border-[#30363d] bg-[#0d1117] p-4">
+                  <span className="text-sm font-semibold text-[#f0f6fc]">
+                    6 готовых шаблонов резюме
+                  </span>
+                  <a
+                    href={`${APP_URL}/login`}
+                    className="flex items-center gap-2 rounded-lg bg-[#238636] px-4 py-2 text-sm font-bold text-white hover:bg-[#2ea043]"
+                  >
+                    <Download className="h-4 w-4" />
+                    <span>Скачать PDF</span>
+                  </a>
                 </div>
               </div>
 
-              {/* Application Tracker Mini */}
-              <div className="rounded-lg border border-[#30363d] bg-[#161b22] p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="text-xs font-semibold text-[#8b949e] uppercase tracking-wider flex items-center gap-1.5">
-                    <Briefcase className="h-3.5 w-3.5 text-[#58a6ff]" />
-                    <span>Трекер откликов</span>
-                  </div>
-                  <span className="text-[11px] text-[#8b949e]">Все заявки под контролем</span>
+              {/* Mini Tracker */}
+              <div className="rounded-xl border border-[#30363d] bg-[#161b22] p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Briefcase className="h-5 w-5 text-[#58a6ff]" />
+                  <h4 className="text-base font-bold text-[#f0f6fc]">Трекер откликов</h4>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                  <div className="rounded border border-[#30363d]/50 bg-[#0d1117] p-2">
-                    <div className="text-[10px] text-[#8b949e]">Отклики</div>
-                    <div className="mt-1 font-bold text-[#f0f6fc]">Отправлено</div>
+                <div className="grid grid-cols-3 gap-3 text-center">
+                  <div className="rounded-lg border border-[#30363d] bg-[#0d1117] p-3">
+                    <div className="text-xs text-[#8b949e]">Отклики</div>
+                    <div className="mt-1 font-bold text-base text-[#f0f6fc]">Отправлено</div>
                   </div>
-                  <div className="rounded border border-[#30363d]/50 bg-[#0d1117] p-2">
-                    <div className="text-[10px] text-[#8b949e]">Интервью</div>
-                    <div className="mt-1 font-bold text-[#58a6ff]">В процессе</div>
+                  <div className="rounded-lg border border-[#30363d] bg-[#0d1117] p-3">
+                    <div className="text-xs text-[#8b949e]">Интервью</div>
+                    <div className="mt-1 font-bold text-base text-[#58a6ff]">В процессе</div>
                   </div>
-                  <div className="rounded border border-[#238636]/30 bg-[#238636]/10 p-2">
-                    <div className="text-[10px] text-[#2ea043]">Офферы</div>
-                    <div className="mt-1 font-bold text-[#2ea043]">Получено</div>
+                  <div className="rounded-lg border border-[#238636]/30 bg-[#238636]/10 p-3">
+                    <div className="text-xs text-[#2ea043]">Офферы</div>
+                    <div className="mt-1 font-bold text-base text-[#2ea043]">Получено</div>
                   </div>
                 </div>
               </div>
