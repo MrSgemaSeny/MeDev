@@ -121,7 +121,10 @@ public class AuthService {
         String redisToken = redisTemplate.opsForValue().get("refresh:" + userId + ":" + deviceId);
         
         if (redisToken == null || !redisToken.equals(refreshToken)) {
-            throw new UnauthorizedException("Invalid or expired refresh token");
+            String graceToken = redisTemplate.opsForValue().get("refresh:" + userId + ":" + deviceId + ":grace");
+            if (graceToken == null || !graceToken.equals(refreshToken)) {
+                throw new UnauthorizedException("Invalid or expired refresh token");
+            }
         }
         
         User user = userRepository.findById(userId)
@@ -138,6 +141,16 @@ public class AuthService {
     private AuthResponse buildAuthResponse(User user, String deviceId) {
         String accessToken  = jwtService.generateAccessToken(user, deviceId);
         String refreshToken = jwtService.generateRefreshToken(user, deviceId);
+
+        // Сохраняем старый токен в grace-период на 15 секунд для параллельных запросов со вкладок
+        String currentToken = redisTemplate.opsForValue().get("refresh:" + user.getId() + ":" + deviceId);
+        if (currentToken != null) {
+            redisTemplate.opsForValue().set(
+                "refresh:" + user.getId() + ":" + deviceId + ":grace",
+                currentToken,
+                Duration.ofSeconds(15)
+            );
+        }
 
         // Refresh token в Redis с TTL 30 дней, ключ привязан к устройству
         redisTemplate.opsForValue().set(
@@ -162,8 +175,9 @@ public class AuthService {
                 Long userId = jwtService.extractUserId(token);
                 String deviceId = jwtService.extractDeviceId(token);
                 if (deviceId != null) {
-                    // Удаляем только текущую сессию (устройство)
+                    // Удаляем текущую сессию и ее grace токен
                     redisTemplate.delete("refresh:" + userId + ":" + deviceId);
+                    redisTemplate.delete("refresh:" + userId + ":" + deviceId + ":grace");
                 } else {
                     // Для обратной совместимости, если старый токен без deviceId
                     redisTemplate.delete("refresh:" + userId);

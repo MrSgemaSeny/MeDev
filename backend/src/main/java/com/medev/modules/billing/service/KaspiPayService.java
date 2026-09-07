@@ -64,7 +64,7 @@ public class KaspiPayService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
-        if (user.getPlan() == User.Plan.PRO) {
+        if (user.getPlan() == User.Plan.PRO && user.getSubscriptionExpiresAt() == null) {
             throw new IllegalStateException("User is already on PRO plan");
         }
 

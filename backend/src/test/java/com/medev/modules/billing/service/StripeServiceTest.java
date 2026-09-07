@@ -133,6 +133,7 @@ class StripeServiceTest {
 
         assertThat(user.getPlan()).isEqualTo(User.Plan.PRO);
         assertThat(user.getStripeCustomerId()).isEqualTo("cus_123");
+        assertThat(user.getSubscriptionExpiresAt()).isNotNull();
         verify(userRepository).save(user);
         verify(auditService).logAction(eq(1L), eq("BILLING_STRIPE_PAYMENT_SUCCESS"), eq("cus_123"), anyString(), isNull());
     }

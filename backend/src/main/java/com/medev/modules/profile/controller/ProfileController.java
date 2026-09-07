@@ -81,7 +81,7 @@ public class ProfileController {
     }
 
     @PutMapping("/experience/reorder")
-    public ResponseEntity<Void> reorderExperience(@RequestBody ReorderRequest request) {
+    public ResponseEntity<Void> reorderExperience(@Valid @RequestBody ReorderRequest request) {
         experienceService.reorderExperience(SecurityUtils.getCurrentUserId(), request.getIds());
         return ResponseEntity.noContent().build();
     }
@@ -104,7 +104,7 @@ public class ProfileController {
     }
 
     @PutMapping("/education/reorder")
-    public ResponseEntity<Void> reorderEducation(@RequestBody ReorderRequest request) {
+    public ResponseEntity<Void> reorderEducation(@Valid @RequestBody ReorderRequest request) {
         educationService.reorderEducation(SecurityUtils.getCurrentUserId(), request.getIds());
         return ResponseEntity.noContent().build();
     }
@@ -127,7 +127,7 @@ public class ProfileController {
     }
 
     @PutMapping("/skills/reorder")
-    public ResponseEntity<Void> reorderSkills(@RequestBody ReorderRequest request) {
+    public ResponseEntity<Void> reorderSkills(@Valid @RequestBody ReorderRequest request) {
         skillService.reorderSkills(SecurityUtils.getCurrentUserId(), request.getIds());
         return ResponseEntity.noContent().build();
     }
@@ -150,7 +150,7 @@ public class ProfileController {
     }
 
     @PutMapping("/languages/reorder")
-    public ResponseEntity<Void> reorderLanguages(@RequestBody ReorderRequest request) {
+    public ResponseEntity<Void> reorderLanguages(@Valid @RequestBody ReorderRequest request) {
         languageService.reorderLanguages(SecurityUtils.getCurrentUserId(), request.getIds());
         return ResponseEntity.noContent().build();
     }
@@ -173,7 +173,7 @@ public class ProfileController {
     }
 
     @PutMapping("/projects/reorder")
-    public ResponseEntity<Void> reorderProjects(@RequestBody ReorderRequest request) {
+    public ResponseEntity<Void> reorderProjects(@Valid @RequestBody ReorderRequest request) {
         projectService.reorderProjects(SecurityUtils.getCurrentUserId(), request.getIds());
         return ResponseEntity.noContent().build();
     }

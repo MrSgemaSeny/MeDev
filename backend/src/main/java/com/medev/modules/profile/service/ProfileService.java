@@ -102,10 +102,29 @@ public class ProfileService {
         return mapToProfileDto(profile);
     }
 
+    private static final java.util.Set<String> ALLOWED_SECTIONS = java.util.Set.of(
+            "summary", "experience", "education", "skills", "languages", "projects"
+    );
+
     @Transactional
     public void updateSectionOrder(Long userId, List<String> sectionOrder) {
+        if (sectionOrder == null || sectionOrder.isEmpty()) {
+            throw new IllegalArgumentException("Section order cannot be empty");
+        }
+        if (sectionOrder.size() > ALLOWED_SECTIONS.size()) {
+            throw new IllegalArgumentException("Section order contains too many items");
+        }
+        java.util.Set<String> seen = new java.util.HashSet<>();
+        for (String section : sectionOrder) {
+            if (section == null || !ALLOWED_SECTIONS.contains(section.toLowerCase().trim())) {
+                throw new IllegalArgumentException("Invalid section name: " + section);
+            }
+            if (!seen.add(section.toLowerCase().trim())) {
+                throw new IllegalArgumentException("Duplicate section in order: " + section);
+            }
+        }
         Profile profile = getProfileEntityForUpdate(userId);
-        profile.setSectionOrder(sectionOrder);
+        profile.setSectionOrder(sectionOrder.stream().map(s -> s.toLowerCase().trim()).toList());
         profileRepository.save(profile);
         publishAfterCommit(userId);
     }

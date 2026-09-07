@@ -134,7 +134,21 @@ public class PdfGeneratorService {
                 throw new RuntimeException("PDF font loading failed", fontEx);
             }
 
-            renderer.setDocumentFromString(safeXml);
+            // Защита от XXE / SSRF: безопасный DocumentBuilder с отключением внешних DTD и сущностей
+            javax.xml.parsers.DocumentBuilderFactory dbf = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+            dbf.setNamespaceAware(true);
+            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false); // Flying Saucer может использовать XHTML doctype
+            dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            dbf.setXIncludeAware(false);
+            dbf.setExpandEntityReferences(false);
+            
+            org.w3c.dom.Document doc = dbf.newDocumentBuilder().parse(
+                    new java.io.ByteArrayInputStream(safeXml.getBytes(java.nio.charset.StandardCharsets.UTF_8))
+            );
+
+            renderer.setDocument(doc, null);
             renderer.layout();
             renderer.createPDF(out);
             renderer.finishPDF();

@@ -124,6 +124,27 @@ class ProfileServiceTest {
     }
 
     @Test
+    void updateSectionOrder_rejectsInvalidSection() {
+        assertThatThrownBy(() -> profileService.updateSectionOrder(1L, List.of("skills", "malicious_script")))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Invalid section name");
+    }
+
+    @Test
+    void updateSectionOrder_rejectsDuplicateSection() {
+        assertThatThrownBy(() -> profileService.updateSectionOrder(1L, List.of("skills", "skills")))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Duplicate section");
+    }
+
+    @Test
+    void updateSectionOrder_rejectsEmptyOrder() {
+        assertThatThrownBy(() -> profileService.updateSectionOrder(1L, List.of()))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("cannot be empty");
+    }
+
+    @Test
     void importParsedResume_mergesFieldsAndSaves() {
         when(profileRepository.findByUserIdForUpdate(1L)).thenReturn(Optional.of(profile));
 

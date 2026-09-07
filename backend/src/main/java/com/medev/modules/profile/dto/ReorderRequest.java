@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 public class ReorderRequest {
-    @NotNull
+    @NotNull(message = "Ids list cannot be null")
     @jakarta.validation.constraints.Size(max = 100, message = "Cannot reorder more than 100 items at once")
-    private List<Long> ids;
+    private List<@NotNull(message = "Item ID cannot be null") Long> ids;
 }

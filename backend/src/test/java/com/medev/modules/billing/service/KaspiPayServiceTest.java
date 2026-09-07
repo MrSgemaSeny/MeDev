@@ -111,6 +111,22 @@ class KaspiPayServiceTest {
     }
 
     @Test
+    @DisplayName("createPaymentLink allows renewal when user is on expiring PRO plan")
+    void testCreatePaymentLink_RenewProSuccess() {
+        User user = User.builder()
+                .id(5L)
+                .email("pro@test.com")
+                .plan(User.Plan.PRO)
+                .subscriptionExpiresAt(LocalDateTime.now().plusDays(5))
+                .build();
+        when(userRepository.findById(5L)).thenReturn(Optional.of(user));
+
+        String url = kaspiPayService.createPaymentLink(5L, 1);
+        assertThat(url).contains("https://pay.kaspi.kz/pay/merchant123");
+        assertThat(url).contains("amount=15000");
+    }
+
+    @Test
     @DisplayName("createPaymentLink throws when Kaspi is disabled")
     void testCreatePaymentLink_Disabled() {
         ReflectionTestUtils.setField(kaspiPayService, "kaspiEnabled", false);

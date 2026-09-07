@@ -55,7 +55,8 @@ public class WebScraperService {
 
             Document doc = Jsoup.connect(url)
                     .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36")
-                    .timeout(10000)
+                    .maxBodySize(2 * 1024 * 1024)
+                    .timeout(4000)
                     .get();
 
             // Generic fallback extraction
@@ -72,6 +73,11 @@ public class WebScraperService {
                 // Fallback for job description: grab the body text and take first 2000 chars
                 String bodyText = doc.body().text();
                 request.setJobDescription(bodyText.substring(0, Math.min(bodyText.length(), 2000)));
+            }
+
+            // Sanitize job description to prevent Stored XSS
+            if (request.getJobDescription() != null) {
+                request.setJobDescription(org.jsoup.Jsoup.clean(request.getJobDescription(), org.jsoup.safety.Safelist.none()));
             }
         } catch (IOException e) {
             log.error("Failed to scrape job url: {}", url, e);
@@ -133,8 +139,8 @@ public class WebScraperService {
             }
             
             InetAddress addr = InetAddress.getByName(host);
-            if (addr.isLoopbackAddress() || addr.isSiteLocalAddress() || addr.isLinkLocalAddress()) {
-                throw new IllegalArgumentException("Private/loopback addresses are not allowed");
+            if (addr.isLoopbackAddress() || addr.isSiteLocalAddress() || addr.isLinkLocalAddress() || addr.isAnyLocalAddress() || "169.254.169.254".equals(addr.getHostAddress())) {
+                throw new IllegalArgumentException("Private/loopback/cloud-metadata addresses are not allowed");
             }
         } catch (URISyntaxException | UnknownHostException e) {
             throw new IllegalArgumentException("Invalid URL format");

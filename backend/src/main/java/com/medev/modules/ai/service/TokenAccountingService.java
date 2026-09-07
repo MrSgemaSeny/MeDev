@@ -18,6 +18,7 @@ public class TokenAccountingService {
     private final UserRepository userRepository;
 
     @Async
+    @Transactional
     public void recordUsageAsync(Long userId, String model, int promptTokens, int completionTokens, int totalTokens, String endpoint) {
         try {
             userRepository.findById(userId).ifPresent(user -> {

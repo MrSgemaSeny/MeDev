@@ -101,7 +101,8 @@ class JwtFilterTest {
         jwtFilter.doFilterInternal(request, response, filterChain);
 
         assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
-        verify(filterChain).doFilter(request, response);
+        verify(response).sendError(jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED, "Token has been revoked");
+        verify(filterChain, never()).doFilter(request, response);
         verifyNoInteractions(jwtService);
     }
 }

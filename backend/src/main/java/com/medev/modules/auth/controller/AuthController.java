@@ -111,12 +111,21 @@ public class AuthController {
 
     private void validateCsrf(HttpServletRequest request) {
         String origin = request.getHeader("Origin");
-        if (origin != null && !origin.isBlank() && allowedOrigins != null) {
+        if (origin == null || origin.isBlank()) {
+            String referer = request.getHeader("Referer");
+            if (referer != null && !referer.isBlank()) {
+                try {
+                    java.net.URI uri = java.net.URI.create(referer);
+                    origin = uri.getScheme() + "://" + uri.getAuthority();
+                } catch (Exception ignored) {}
+            }
+        }
+        if (allowedOrigins != null && origin != null && !origin.isBlank()) {
             java.util.List<String> allowed = java.util.Arrays.stream(allowedOrigins.split(","))
                     .map(String::trim)
                     .map(String::toLowerCase)
                     .toList();
-            if (!allowed.contains(origin.trim().toLowerCase())) {
+            if (!allowed.contains(origin.trim().toLowerCase()) && !allowed.contains("*")) {
                 throw new com.medev.shared.exception.ForbiddenException("Cross-origin request rejected");
             }
         }

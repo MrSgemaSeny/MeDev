@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -140,6 +142,7 @@ public class StripeService {
 
             user.setPlan(User.Plan.PRO);
             user.setStripeCustomerId(session.getCustomer());
+            user.setSubscriptionExpiresAt(LocalDateTime.now().plusMonths(1));
             userRepository.save(user);
             redisTemplate.delete("user_plan:" + userId);
             
@@ -153,6 +156,7 @@ public class StripeService {
     private void downgradeUser(String customerId) {
         userRepository.findByStripeCustomerId(customerId).ifPresent(user -> {
             user.setPlan(User.Plan.FREE);
+            user.setSubscriptionExpiresAt(null);
             userRepository.save(user);
             redisTemplate.delete("user_plan:" + user.getId());
             log.info("Downgraded user {} to FREE plan", user.getId());
@@ -163,6 +167,7 @@ public class StripeService {
     private void upgradeUserByCustomer(String customerId) {
         userRepository.findByStripeCustomerId(customerId).ifPresent(user -> {
             user.setPlan(User.Plan.PRO);
+            user.setSubscriptionExpiresAt(LocalDateTime.now().plusMonths(1));
             userRepository.save(user);
             redisTemplate.delete("user_plan:" + user.getId());
             log.info("Upgraded user {} to PRO plan via subscription update", user.getId());
