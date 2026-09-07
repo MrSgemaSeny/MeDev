@@ -7,6 +7,7 @@ import { api } from '../../shared/api/axios';
 import type { ProfileDto } from '../../entities/profile/model/types';
 import { Card } from '../../shared/ui/Form';
 import { ProfileSkeleton } from '../../shared/ui/Skeleton';
+import { sanitizeUrl } from '../../shared/lib/utils';
 
 export const PortfolioView = () => {
   const { username } = useParams<{ username: string }>();
@@ -129,17 +130,17 @@ export const PortfolioView = () => {
                 </span>
               )}
               {profile.website && (
-                <a href={profile.website} target="_blank" rel="noreferrer" className="hover:underline flex items-center gap-1 text-[var(--color-link)]">
+                <a href={sanitizeUrl(profile.website)} target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-1 text-[var(--color-link)]">
                   🌐 Website
                 </a>
               )}
               {profile.githubUsername && (
-                <a href={`https://github.com/${profile.githubUsername}`} target="_blank" rel="noreferrer" className="hover:underline flex items-center gap-1 text-[var(--color-link)]">
+                <a href={`https://github.com/${encodeURIComponent(profile.githubUsername)}`} target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-1 text-[var(--color-link)]">
                   🐙 GitHub
                 </a>
               )}
               {profile.linkedin && (
-                <a href={profile.linkedin} target="_blank" rel="noreferrer" className="hover:underline flex items-center gap-1 text-[var(--color-link)]">
+                <a href={sanitizeUrl(profile.linkedin)} target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-1 text-[var(--color-link)]">
                   💼 LinkedIn
                 </a>
               )}
@@ -194,7 +195,7 @@ export const PortfolioView = () => {
                       <div className="flex items-start justify-between gap-2 mb-1">
                         <h3 className="font-semibold text-sm" style={{ color: 'var(--color-text-primary)' }}>
                           {proj.githubUrl ? (
-                            <a href={proj.githubUrl} target="_blank" rel="noreferrer" className="hover:underline">
+                            <a href={sanitizeUrl(proj.githubUrl)} target="_blank" rel="noopener noreferrer" className="hover:underline">
                               {proj.name}
                             </a>
                           ) : proj.name}
@@ -206,7 +207,7 @@ export const PortfolioView = () => {
                             </span>
                           )}
                           {proj.liveUrl && (
-                            <a href={proj.liveUrl} target="_blank" rel="noreferrer" className="text-xs px-2 py-0.5 rounded font-medium hover:underline" style={{ backgroundColor: 'var(--color-bg-tertiary)', color: 'var(--color-accent)' }}>
+                            <a href={sanitizeUrl(proj.liveUrl)} target="_blank" rel="noopener noreferrer" className="text-xs px-2 py-0.5 rounded font-medium hover:underline" style={{ backgroundColor: 'var(--color-bg-tertiary)', color: 'var(--color-accent)' }}>
                               Live Demo ↗
                             </a>
                           )}

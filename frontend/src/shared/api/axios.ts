@@ -8,6 +8,9 @@ export const BASE_URL =
 export const api = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,
+  headers: {
+    'X-Requested-With': 'XMLHttpRequest',
+  },
 });
 
 // Interceptor для подстановки токена
@@ -59,6 +62,9 @@ api.interceptors.response.use(
       try {
         const { data } = await axios.post(`${BASE_URL}/auth/refresh`, {}, {
           withCredentials: true,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+          },
         });
         
         useAuthStore.getState().setTokens(data.accessToken, ''); // HttpOnly cookie manages refresh token

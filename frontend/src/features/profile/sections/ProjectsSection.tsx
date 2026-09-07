@@ -4,6 +4,7 @@ import type { ProjectDto } from '../../../entities/profile/model/types';
 import { Button } from '../../../shared/ui/Button';
 import { Input, Textarea, Label, Card } from '../../../shared/ui/Form';
 import { Modal } from '../../../shared/ui/Modal';
+import { sanitizeUrl } from '../../../shared/lib/utils';
 import { SortableList } from '../../../shared/ui/SortableList';
 import { GithubImport, GithubIcon } from '../../github/GithubImport';
 
@@ -68,7 +69,7 @@ export const ProjectsSection = () => {
                 <div className="min-w-0">
                   <h3 className="font-semibold text-sm" style={{ color: 'var(--color-text-primary)' }}>{proj.name}</h3>
                   {proj.githubUrl && (
-                    <a href={proj.githubUrl} target="_blank" rel="noreferrer" className="text-sm hover:underline" style={{ color: 'var(--color-link)' }}>{proj.githubUrl}</a>
+                    <a href={sanitizeUrl(proj.githubUrl)} target="_blank" rel="noopener noreferrer" className="text-sm hover:underline" style={{ color: 'var(--color-link)' }}>{proj.githubUrl}</a>
                   )}
 
                   {proj.description && <p className="mt-2 text-sm whitespace-pre-wrap" style={{ color: 'var(--color-text-secondary)' }}>{proj.description}</p>}

@@ -1,0 +1,28 @@
+# MeDev Project & Multi-Agent Orchestrator Rules
+
+## Role
+Senior Full-Stack Engineer / Tech Lead for MeDev (data-first SaaS platform for developers).
+
+## Multi-Agent Orchestration Bridge
+У тебя есть доступ к локальному скрипту-оркестратору `scripts/orchestrate.js`.
+Ты можешь вызывать внешние специализированные ИИ-модели для консультаций, ревью или генерации:
+
+```bash
+node scripts/orchestrate.js --role <reviewer|architect|copywriter|tester> --prompt "<задача>"
+```
+
+### Паттерн использования:
+1. **Security & Code Review**: Перед финализацией критических изменений вызывай `--role reviewer` с диффом или описанием изменений.
+2. **Architecture Decisions**: При проектировании новых сервисов или таблиц вызывай `--role architect`.
+3. **QA & Edge Cases**: Перед закрытием задач вызывай `--role tester` для генерации граничных кейсов.
+4. **Интеграция**: Ответ из терминала анализируй критически и применяй в коде.
+
+## Project Stack & Standards
+- **Backend**: Spring Boot 3.3.0, Java 17, PostgreSQL, Flyway, Redis (cache & refresh tokens)
+- **Frontend**: React 19, Vite, TypeScript, FSD architecture, Tailwind CSS v4, Zustand, React Query
+- **Security**: Stateless backend, Row-Level Security via `SecurityUtils.getCurrentUserId()`. Защита от IDOR критична.
+- **Rules**:
+  - Никаких эмодзи в ответах, коде или коммитах.
+  - ТЕСТЫ ПРОШЛИ -> ЗАПИСЬ В ЖУРНАЛ -> GIT COMMIT/PUSH.
+  - Flyway миграции: никогда не менять старые `V{N}__`, только новые.
+  - AI Модель в бэкенде: ТОЛЬКО `openai/gpt-oss-20b` через Groq API.

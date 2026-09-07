@@ -4,6 +4,7 @@ import type { DragStartEvent, DragEndEvent } from '@dnd-kit/core';
 import { useDroppable, useDraggable } from '@dnd-kit/core';
 import type { JobApplicationDto, ApplicationStatus } from '../../../entities/job-tracker/model/types';
 import { Badge } from '../../../shared/ui/Form';
+import { sanitizeUrl } from '../../../shared/lib/utils';
 import { Target, TrendingUp, CheckCircle2, XCircle, Clock, ExternalLink, Wand2, Trash2 } from 'lucide-react';
 
 const STATUS_CONFIG: Record<ApplicationStatus, { label: string; tone: 'default' | 'accent' | 'danger', icon: any }> = {
@@ -156,7 +157,7 @@ const KanbanCard: React.FC<KanbanCardProps> = ({ app, isOverlay, onCoverLetter, 
         {!isOverlay && (
           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity" onPointerDown={(e) => e.stopPropagation()}>
             {app.jobUrl && (
-              <a href={app.jobUrl} target="_blank" rel="noreferrer" className="p-1 text-secondary hover:text-[var(--color-accent)] rounded" title="View Job Post">
+              <a href={sanitizeUrl(app.jobUrl)} target="_blank" rel="noopener noreferrer" className="p-1 text-secondary hover:text-[var(--color-accent)] rounded" title="View Job Post">
                 <ExternalLink size={14} />
               </a>
             )}

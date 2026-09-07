@@ -5,6 +5,7 @@ import { AppLayout } from '../layouts/AppLayout';
 import { PublicLayout } from '../layouts/PublicLayout';
 const LoginPage = lazy(() => import('../../pages/auth/LoginPage').then(m => ({ default: m.LoginPage })));
 const RegisterPage = lazy(() => import('../../pages/auth/RegisterPage').then(m => ({ default: m.RegisterPage })));
+const ResetPasswordPage = lazy(() => import('../../pages/auth/ResetPasswordPage').then(m => ({ default: m.ResetPasswordPage })));
 const AuthCallback = lazy(() => import('../../pages/auth/AuthCallback').then(m => ({ default: m.AuthCallback })));
 const DashboardPage = lazy(() => import('../../pages/dashboard/DashboardPage').then(m => ({ default: m.DashboardPage })));
 const ProfileEditPage = lazy(() => import('../../pages/profile/ProfileEditPage').then(m => ({ default: m.ProfileEditPage })));
@@ -97,6 +98,10 @@ const router = createBrowserRouter([
   {
     path: '/register',
     element: (<PublicRoute><RegisterPage /></PublicRoute>),
+  },
+  {
+    path: '/reset-password',
+    element: (<PublicRoute><ResetPasswordPage /></PublicRoute>),
   },
   {
     path: '/auth/callback',

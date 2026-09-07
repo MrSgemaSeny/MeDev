@@ -8,6 +8,9 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react(), tailwindcss()],
     base: isGitHubPages ? '/MeDev/' : '/',
+    build: {
+      sourcemap: false,
+    },
     test: {
       globals: true,
       environment: 'jsdom',

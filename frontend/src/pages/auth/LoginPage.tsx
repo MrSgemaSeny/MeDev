@@ -160,12 +160,17 @@ export function LoginPage() {
           </Button>
         </form>
 
-        <p className="text-center text-sm mt-6" style={{ color: 'var(--color-text-muted)' }}>
-          Don't have an account?{' '}
-          <Link to="/register" style={{ color: 'var(--color-link)' }}>
-            Sign up
+        <div className="flex items-center justify-between text-sm mt-6" style={{ color: 'var(--color-text-muted)' }}>
+          <Link to="/reset-password" style={{ color: 'var(--color-link)' }}>
+            Забыли пароль?
           </Link>
-        </p>
+          <span>
+            Don't have an account?{' '}
+            <Link to="/register" style={{ color: 'var(--color-link)' }}>
+              Sign up
+            </Link>
+          </span>
+        </div>
 
         <p className="text-[11px] text-center leading-relaxed mt-4" style={{ color: 'var(--color-text-muted)' }}>
           <Link to="/terms" className="underline hover:text-white">
