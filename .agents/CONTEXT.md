@@ -13,11 +13,17 @@
   - `backend/`: Spring Boot 3.3.0 (Java 17, PostgreSQL 17, Redis, Groq AI).
   - `frontend/`: Vite + React 19 SPA (`app.medev.mrsgemaseny.com`, Dashboard, Resume Builder, ATS).
   - `landing/`: Next.js 15 App Router SSG (`medev.mrsgemaseny.com`, Marketing, SEO, OpenGraph).
-- **Latest Work (2026-09-07 Next.js 15 SSG Landing & Customer-Centric Copy Rewrite)**:
-  - **Next.js 15 App Router in `landing/`**: Создан изолированный SSG модуль лендинга с полным OpenGraph/SEO, `sitemap.ts`, `robots.ts`, Tailwind CSS v4 и строгим GitHub Dark Mode.
-  - **Multi-Zone Subdomain Pattern**: `medev.mrsgemaseny.com` (Next.js) + `app.medev.mrsgemaseny.com` (Vite SPA).
-  - **Customer-Centric Rewrite**: Полная переработка текстов и позиционирования. Убран внутренний инженерный жаргон и фейковые метрики. Добавлен 3-шаговый блок "Как это работает" и финальный CTA блок перед футером.
-- **Test Baseline**: 253 backend tests passing (100% green), 38 frontend tests passing (100% green via `npm test`), Next.js SSG build: 8/8 static pages generated.
+- **Latest Work (2026-09-07 Full 13-Point Compliance, Accessibility & Legal Audit)**:
+  - **WCAG 2.1 AA Contrast**: Исправлена переменная `--color-text-muted` в `.dark` (`#8b949e`, контраст 6.05:1) и light (`#59636e`, 4.6:1), устранены неконтрастные `text-gray-500` и `text-[#7d8590]`.
+  - **Descriptive Alt Text**: Все аватары и графики оснащены содержательными alt-описаниями; декоративные SVG получили `aria-hidden="true"`.
+  - **Refund Policy (14-Day Guarantee)**: Внедрена страница `/refund` в Next.js лендинге и Vite SPA, ссылки интегрированы в футеры и модалку оплаты.
+  - **Privacy & Terms**: Развернуты подробные юридические документы (соответствие ЗРК № 94-V, GDPR, PII-маскирование перед Groq AI, права на удаление).
+  - **Accessibility (A11y)**: WAI-ARIA аккордеон FAQ, `focus-visible` кольца для клавиатуры, `aria-label` для icon-only кнопок, диалоговые роли в Modal, Skip Link.
+  - **Zero Fake Reviews Verified**: Подтверждена чистота проекта от фальшивых отзывов.
+  - **Cookies Policy & Banner**: Создан доступный `CookieBanner` с сохранением согласия в `localStorage`.
+  - **Form Consent**: Добавлены ссылки на соглашение под формами входа/регистрации и загрузчиком PDF.
+  - **Rule 11 & Domain Fix**: Исправлено название модели на `GPT-20B` в `AiChatWidget.tsx`; заменены все устаревшие ссылки `medev.app` на `medev.mrsgemaseny.com`.
+- **Test Baseline**: 253/253 backend tests green (100%), 38/38 frontend tests green (100%), Next.js SSG build: 9/9 static pages generated.
 
 ## Active Backlog
 - Setting up automated nightly DB backup jobs.

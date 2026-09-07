@@ -157,6 +157,16 @@ export function LoginPage() {
             Sign up
           </Link>
         </p>
+
+        <p className="text-[11px] text-center leading-relaxed mt-4" style={{ color: 'var(--color-text-muted)' }}>
+          <Link to="/terms" className="underline hover:text-white">
+            Условия использования
+          </Link>{' '}
+          ·{' '}
+          <Link to="/privacy" className="underline hover:text-white">
+            Конфиденциальность
+          </Link>
+        </p>
       </div>
     </div>
   );

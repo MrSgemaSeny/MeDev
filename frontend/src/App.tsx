@@ -2,6 +2,7 @@ import { AppRouter } from './app/router/AppRouter';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { Analytics } from '@vercel/analytics/react';
+import { CookieBanner } from './shared/ui/CookieBanner';
 
 import { useEffect, useState } from 'react';
 import { useAuthStore } from './entities/user/model/store';
@@ -40,6 +41,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AppRouter />
       <Analytics />
+      <CookieBanner />
       <Toaster
         position="bottom-right"
         toastOptions={{

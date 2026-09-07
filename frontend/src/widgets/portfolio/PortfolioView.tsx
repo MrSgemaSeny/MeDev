@@ -43,7 +43,7 @@ export const PortfolioView = () => {
     "@type": "Person",
     "name": profile.fullName || username,
     "jobTitle": profile.headline,
-    "url": `https://medev.app/${username}`,
+    "url": `https://medev.mrsgemaseny.com/${username}`,
     "sameAs": [
       profile.githubUsername ? `https://github.com/${profile.githubUsername}` : null,
       profile.linkedin,
@@ -78,7 +78,7 @@ export const PortfolioView = () => {
           {profile.avatarUrl ? (
             <img
               src={profile.avatarUrl}
-              alt={profile.fullName || username}
+              alt={`${profile.fullName || username} — фото профиля`}
               className="w-24 h-24 rounded-full flex-shrink-0 object-cover"
               style={{ border: '2px solid var(--color-border-default)' }}
             />
@@ -302,7 +302,7 @@ export const PortfolioView = () => {
             <Card className="p-4 overflow-x-auto">
               <img
                 src={`https://ghchart.rshah.org/238636/${profile.githubUsername}`}
-                alt={`${profile.githubUsername}'s GitHub chart`}
+                alt={`График активности коммитов GitHub пользователя ${profile.githubUsername}`}
                 className="w-full min-w-[600px] select-none pointer-events-none"
               />
             </Card>
@@ -311,7 +311,7 @@ export const PortfolioView = () => {
 
         {/* Footer branding */}
         <footer className="mt-16 pt-6 border-t text-center text-xs" style={{ borderColor: 'var(--color-border-default)', color: 'var(--color-text-muted)' }}>
-          Powered by <a href="https://medev.app" className="font-semibold hover:underline" style={{ color: 'var(--color-text-primary)' }}>MeDev</a> — The Developer Profile Platform
+          Powered by <a href="https://medev.mrsgemaseny.com" className="font-semibold hover:underline" style={{ color: 'var(--color-text-primary)' }}>MeDev</a> — The Developer Profile Platform
         </footer>
       </div>
     </>

@@ -161,13 +161,23 @@ const KanbanCard: React.FC<KanbanCardProps> = ({ app, isOverlay, onCoverLetter, 
               </a>
             )}
             {onCoverLetter && (
-              <button onClick={onCoverLetter} className="p-1 text-secondary hover:text-purple-400 rounded" title="AI Cover Letter">
-                <Wand2 size={14} />
+              <button 
+                onClick={onCoverLetter} 
+                aria-label="AI Cover Letter"
+                className="p-1 text-secondary hover:text-purple-400 rounded focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none" 
+                title="AI Cover Letter"
+              >
+                <Wand2 size={14} aria-hidden="true" />
               </button>
             )}
             {onDelete && (
-              <button onClick={onDelete} className="p-1 text-secondary hover:text-danger rounded" title="Delete">
-                <Trash2 size={14} />
+              <button 
+                onClick={onDelete} 
+                aria-label="Delete job application"
+                className="p-1 text-secondary hover:text-danger rounded focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none" 
+                title="Delete"
+              >
+                <Trash2 size={14} aria-hidden="true" />
               </button>
             )}
           </div>

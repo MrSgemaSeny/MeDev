@@ -69,6 +69,11 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/refund" className="hover:text-[#f0f6fc] transition-colors">
+                  Политика возврата средств
+                </Link>
+              </li>
+              <li>
                 <a
                   href="https://github.com/MrSgemaSeny/MeDev"
                   target="_blank"

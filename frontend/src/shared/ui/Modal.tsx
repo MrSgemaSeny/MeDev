@@ -34,6 +34,9 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
       style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
         className="relative w-full max-w-2xl max-h-[90vh] flex flex-col rounded-md"
         onClick={(e) => e.stopPropagation()}
         style={{
@@ -46,7 +49,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
           className="flex items-center justify-between px-4 py-3 border-b"
           style={{ borderColor: 'var(--color-border-default)' }}
         >
-          <h2 className="text-base font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+          <h2 id="modal-title" className="text-base font-semibold" style={{ color: 'var(--color-text-primary)' }}>
             {title}
           </h2>
           <button

@@ -21,6 +21,7 @@ const AdminAuditPage = lazy(() => import('../../pages/admin/AdminAuditPage').the
 const SettingsPage = lazy(() => import('../../pages/settings/SettingsPage').then(m => ({ default: m.SettingsPage })));
 const PrivacyPolicy = lazy(() => import('../../pages/legal/PrivacyPolicy').then(m => ({ default: m.PrivacyPolicy })));
 const TermsOfService = lazy(() => import('../../pages/legal/TermsOfService').then(m => ({ default: m.TermsOfService })));
+const RefundPolicy = lazy(() => import('../../pages/legal/RefundPolicy').then(m => ({ default: m.RefundPolicy })));
 import { AdminGuard } from '../providers/AdminGuard';
 
 const PageLoader = () => (
@@ -131,6 +132,7 @@ const router = createBrowserRouter([
       { path: '/p/:username', element: <PortfolioPage /> },
       { path: '/privacy', element: <PrivacyPolicy /> },
       { path: '/terms', element: <TermsOfService /> },
+      { path: '/refund', element: <RefundPolicy /> },
       { path: '/:username', element: <PortfolioPage /> },
     ],
   },

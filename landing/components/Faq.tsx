@@ -30,9 +30,9 @@ const faqs = [
       'Да. Все шаблоны сделаны с расчётом что рекрутер тратит на резюме 6-10 секунд. Чистая вёрстка, правильная иерархия, нужные секции на виду.',
   },
   {
-    question: 'Как оплатить PRO из Казахстана?',
+    question: 'Как оплатить PRO из Казахстана и есть ли возврат?',
     answer:
-      'Через Kaspi Pay — привычно и мгновенно. Или через Stripe если платишь картой. Подписка активируется сразу, отменить можно в настройках в любой момент.',
+      'Через Kaspi Pay в тенге или через Stripe картой. Подписка активируется мгновенно. Действует 14-дневная гарантия возврата средств при первом обращении, а отключить продление можно в любой момент в настройках.',
   },
 ];
 
@@ -58,26 +58,38 @@ export const Faq = () => {
         <div className="mt-16 space-y-4">
           {faqs.map((faq, idx) => {
             const isOpen = openIndex === idx;
+            const btnId = `faq-btn-${idx}`;
+            const panelId = `faq-panel-${idx}`;
             return (
               <div
                 key={faq.question}
                 className="rounded-2xl border border-[#30363d] bg-[#161b22] transition-colors"
               >
                 <button
+                  id={btnId}
+                  type="button"
+                  aria-expanded={isOpen}
+                  aria-controls={panelId}
                   onClick={() => toggle(idx)}
-                  className="flex w-full items-center justify-between p-6 sm:p-8 text-left transition-colors hover:text-[#58a6ff]"
+                  className="flex w-full items-center justify-between p-6 sm:p-8 text-left transition-colors hover:text-[#58a6ff] focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded-2xl"
                 >
                   <span className="text-lg sm:text-xl font-bold text-[#f0f6fc]">
                     {faq.question}
                   </span>
                   <ChevronDown
+                    aria-hidden="true"
                     className={`h-6 w-6 shrink-0 text-[#8b949e] transition-transform duration-200 ${
                       isOpen ? 'rotate-180 text-[#2ea043]' : ''
                     }`}
                   />
                 </button>
                 {isOpen && (
-                  <div className="px-6 sm:px-8 pb-8 pt-2 text-base sm:text-lg leading-relaxed text-[#c9d1d9] border-t border-[#30363d]">
+                  <div
+                    id={panelId}
+                    role="region"
+                    aria-labelledby={btnId}
+                    className="px-6 sm:px-8 pb-8 pt-2 text-base sm:text-lg leading-relaxed text-[#c9d1d9] border-t border-[#30363d]"
+                  >
                     {faq.answer}
                   </div>
                 )}

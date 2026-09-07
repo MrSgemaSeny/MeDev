@@ -142,23 +142,24 @@ export const AiChatWidget = () => {
               <h3 className="font-semibold text-sm text-[#e6edf3]">MeDev Assistant</h3>
               <span className="w-2 h-2 rounded-full bg-[#238636] animate-pulse" />
             </div>
-            <p className="text-[11px] text-[#7d8590]">Llama 3.3 70B · SSE Stream</p>
+            <p className="text-[11px] text-[#8b949e]">GPT-20B · SSE Stream</p>
           </div>
         </div>
         <div className="flex items-center gap-1.5">
           {messages.length > 0 && (
             <button 
               onClick={clearChat} 
-              className="text-[11px] px-2 py-1 rounded text-[#7d8590] hover:text-[#e6edf3] hover:bg-[#21262d] transition-colors"
+              className="text-[11px] px-2 py-1 rounded text-[#8b949e] hover:text-[#e6edf3] hover:bg-[#21262d] transition-colors"
             >
               Clear
             </button>
           )}
           <button 
-            onClick={toggleChat} 
-            className="p-1.5 rounded-lg text-[#7d8590] hover:text-[#e6edf3] hover:bg-[#21262d] transition-colors"
+            onClick={toggleChat}
+            aria-label="Закрыть чат"
+            className="p-1.5 rounded-lg text-[#8b949e] hover:text-[#e6edf3] hover:bg-[#21262d] transition-colors focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
           >
-            <X size={18} />
+            <X size={18} aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -198,7 +199,7 @@ export const AiChatWidget = () => {
               key={idx}
               disabled={isLoading}
               onClick={() => handleSend(qp.text)}
-              className="text-[11px] px-2.5 py-1 rounded-full bg-[#161b22] hover:bg-[#21262d] text-[#7d8590] hover:text-[#e6edf3] border border-[#30363d] whitespace-nowrap transition-colors"
+              className="text-[11px] px-2.5 py-1 rounded-full bg-[#161b22] hover:bg-[#21262d] text-[#8b949e] hover:text-[#e6edf3] border border-[#30363d] whitespace-nowrap transition-colors"
             >
               {qp.label}
             </button>
@@ -222,15 +223,16 @@ export const AiChatWidget = () => {
               }
             }}
             placeholder="Спроси о резюме или подготовке к интервью..."
-            className="w-full bg-transparent px-3 py-1.5 text-sm text-[#e6edf3] placeholder-[#7d8590] focus:outline-none resize-none max-h-28 min-h-[38px] leading-relaxed"
+            className="w-full bg-transparent px-3 py-1.5 text-sm text-[#e6edf3] placeholder-[#8b949e] focus:outline-none resize-none max-h-28 min-h-[38px] leading-relaxed"
             rows={1}
           />
           <button 
             type="submit" 
+            aria-label="Отправить сообщение"
             disabled={!input.trim() || isLoading}
-            className="p-2 rounded-lg bg-[#238636] hover:bg-[#2ea043] text-white disabled:opacity-30 disabled:hover:bg-[#238636] transition-all shrink-0 ml-1"
+            className="p-2 rounded-lg bg-[#238636] hover:bg-[#2ea043] text-white disabled:opacity-30 disabled:hover:bg-[#238636] transition-all shrink-0 ml-1 focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
           >
-            <Send size={15} />
+            <Send size={15} aria-hidden="true" />
           </button>
         </form>
       </div>

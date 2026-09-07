@@ -38,4 +38,4 @@ status: "Building software"
 [/]
 
 ---
-<sub>Crafted with <a href="https://medev.app">MeDev</a></sub>
+<sub>Crafted with <a href="https://medev.mrsgemaseny.com">MeDev</a></sub>

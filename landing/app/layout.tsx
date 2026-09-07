@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
+import { CookieBanner } from '../components/CookieBanner';
 
 const inter = Inter({
   subsets: ['latin', 'cyrillic'],
@@ -80,7 +81,14 @@ export default function RootLayout({
   return (
     <html lang="ru" className={`dark ${inter.variable} ${jetbrainsMono.variable}`}>
       <body className="min-h-screen bg-[#0d1117] font-sans text-[#c9d1d9] antialiased selection:bg-[#238636]/30 selection:text-[#f0f6fc]">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:bg-[#238636] focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-white focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-white"
+        >
+          Перейти к основному содержимому
+        </a>
         {children}
+        <CookieBanner />
       </body>
     </html>
   );

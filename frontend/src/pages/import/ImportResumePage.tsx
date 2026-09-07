@@ -83,6 +83,9 @@ export const ImportResumePage = () => {
             </>
           )}
         </div>
+        <p className="text-xs text-center mt-4 text-secondary max-w-xl mx-auto">
+          Загружая резюме, вы соглашаетесь на обработку данных для генерации профиля. Конфиденциальные PII-данные автоматически маскируются перед передачей в AI.
+        </p>
       </div>
     </div>
   );

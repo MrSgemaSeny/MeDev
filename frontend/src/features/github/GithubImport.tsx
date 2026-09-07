@@ -139,7 +139,7 @@ export const GithubImport = () => {
                 <div className="flex items-center gap-4 p-4 rounded-xl" style={{ border: '1px solid var(--color-border-default)', backgroundColor: 'var(--color-bg-secondary)' }}>
                   <div className="w-14 h-14 rounded-full flex items-center justify-center overflow-hidden shrink-0" style={{ border: '2px solid var(--color-border-default)', backgroundColor: 'var(--color-bg-inset)' }}>
                     {profileData?.avatarUrl ? (
-                      <img src={profileData.avatarUrl} alt="GitHub Avatar" className="w-full h-full object-cover" />
+                      <img src={profileData.avatarUrl} alt={`${profileData.githubUsername} — аватар GitHub`} className="w-full h-full object-cover" />
                     ) : (
                       <GithubIcon className="w-7 h-7 text-secondary" />
                     )}
@@ -214,7 +214,7 @@ export const GithubImport = () => {
                 {profile.avatarUrl ? (
                   <img
                     src={profile.avatarUrl}
-                    alt={profile.username}
+                    alt={`${profile.name || profile.username} — аватар GitHub`}
                     className="w-12 h-12 rounded-full border"
                     style={{ borderColor: 'var(--color-border-muted)' }}
                   />

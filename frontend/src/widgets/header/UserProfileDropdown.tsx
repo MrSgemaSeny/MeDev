@@ -67,18 +67,21 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
       {/* Триггер */}
       <button
         onClick={() => setIsOpen(!isOpen)}
+        aria-label="Профиль пользователя и настройки"
+        aria-expanded={isOpen}
+        aria-haspopup="true"
         className={
           isHeader
-            ? 'h-9 w-9 rounded-full overflow-hidden shrink-0 hover:ring-2 transition-all'
-            : 'w-full flex items-center justify-between gap-2 py-1.5 rounded-md hover:bg-surface-2 transition-colors'
+            ? 'h-9 w-9 rounded-full overflow-hidden shrink-0 hover:ring-2 transition-all focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none'
+            : 'w-full flex items-center justify-between gap-2 py-1.5 rounded-md hover:bg-surface-2 transition-colors focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none'
         }
         style={isHeader ? ({ '--tw-ring-color': 'var(--color-border-default)' } as React.CSSProperties) : undefined}
       >
         {isHeader ? (
-          <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+          <img src={avatarUrl} alt={`${username || 'User'} — фото профиля`} className="w-full h-full object-cover" />
         ) : (
           <div className="flex items-center gap-2">
-            <img src={avatarUrl} alt="Avatar" className="w-7 h-7 shrink-0 rounded-full object-cover shadow-sm border border-default" style={{ backgroundColor: 'var(--color-bg-tertiary)' }} />
+            <img src={avatarUrl} alt={`${username || 'User'} — фото профиля`} className="w-7 h-7 shrink-0 rounded-full object-cover shadow-sm border border-default" style={{ backgroundColor: 'var(--color-bg-tertiary)' }} />
             <div className="flex flex-col items-start leading-tight">
               <span className="text-[13px] font-medium text-primary">{username}</span>
               <span className="text-[10px] text-muted">{formatterTime.format(currentTime)}</span>
@@ -100,7 +103,7 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
           }}
         >
           <div className="px-4 py-3 border-b border-muted flex items-center gap-3">
-            <img src={avatarUrl} alt="Avatar" className="w-10 h-10 rounded-full object-cover border border-default shrink-0" style={{ backgroundColor: 'var(--color-bg-tertiary)' }} />
+            <img src={avatarUrl} alt={`${username || 'User'} — фото профиля`} className="w-10 h-10 rounded-full object-cover border border-default shrink-0" style={{ backgroundColor: 'var(--color-bg-tertiary)' }} />
             <div className="flex flex-col overflow-hidden">
               <span className="font-semibold text-[15px] truncate text-primary">{username}</span>
             </div>

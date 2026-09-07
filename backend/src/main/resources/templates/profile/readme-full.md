@@ -50,5 +50,5 @@
 
 ---
 <p align="center">
-  <sub>Generated automatically with <a href="https://medev.app">MeDev</a></sub>
+  <sub>Generated automatically with <a href="https://medev.mrsgemaseny.com">MeDev</a></sub>
 </p>

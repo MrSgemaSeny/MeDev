@@ -158,6 +158,17 @@ export function RegisterPage() {
           <Button type="submit" variant="primary" className="w-full" disabled={loading}>
             {loading ? 'Creating...' : 'Create account'}
           </Button>
+          <p className="text-[11px] text-center leading-relaxed mt-3" style={{ color: 'var(--color-text-muted)' }}>
+            Регистрируясь, вы соглашаетесь с{' '}
+            <Link to="/terms" className="underline hover:text-white">
+              Условиями использования
+            </Link>{' '}
+            и{' '}
+            <Link to="/privacy" className="underline hover:text-white">
+              Политикой конфиденциальности
+            </Link>
+            .
+          </p>
         </form>
 
         <p className="text-center text-sm mt-6" style={{ color: 'var(--color-text-muted)' }}>

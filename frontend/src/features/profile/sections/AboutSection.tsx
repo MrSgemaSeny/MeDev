@@ -109,7 +109,7 @@ export const AboutSection = () => {
         {profile?.githubUsername ? (
           <img 
             src={`https://github.com/${profile.githubUsername}.png`} 
-            alt="Avatar" 
+            alt={`${formData.fullName || username || 'Пользователь'} — фото профиля`} 
             className="w-12 h-12 rounded-full border border-default object-cover shrink-0" 
           />
         ) : (

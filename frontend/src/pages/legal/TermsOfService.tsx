@@ -1,33 +1,80 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowLeft, FileText } from 'lucide-react';
 
 export const TermsOfService: React.FC = () => {
-    return (
-        <div className="min-h-screen bg-[#0d1117] text-[#c9d1d9] py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-3xl mx-auto space-y-8">
-                <h1 className="text-3xl font-bold text-white mb-8">Terms of Service</h1>
-                
-                <section className="space-y-4">
-                    <h2 className="text-xl font-semibold text-white">1. Acceptance of Terms</h2>
-                    <p>By accessing or using MeDev, you agree to be bound by these Terms of Service. If you disagree with any part of the terms, you may not access the service.</p>
-                </section>
+  return (
+    <div className="min-h-screen bg-[#0d1117] text-[#c9d1d9] py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto space-y-8">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#58a6ff] hover:underline mb-2 focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+          <span>Вернуться на главную</span>
+        </Link>
 
-                <section className="space-y-4">
-                    <h2 className="text-xl font-semibold text-white">2. Subscriptions and Billing</h2>
-                    <p>Certain features (e.g., advanced AI parsing, Kaspi Pay/Stripe integrations) require a PRO subscription. Subscriptions are billed in advance and are non-refundable. Your PRO plan will be automatically downgraded to FREE upon expiration if not renewed.</p>
-                </section>
-
-                <section className="space-y-4">
-                    <h2 className="text-xl font-semibold text-white">3. Acceptable Use</h2>
-                    <p>You agree not to use the platform for any unlawful purpose, to upload malicious files (e.g., exploiting PDF parsers), or to attempt to bypass our rate limits or security mechanisms.</p>
-                </section>
-
-                <section className="space-y-4">
-                    <h2 className="text-xl font-semibold text-white">4. AI Features Disclaimer</h2>
-                    <p>Our AI-powered features (powered by Groq and OpenAI) are provided "as is". We are not responsible for inaccuracies in AI-generated profiles. We take measures to mask Personal Identifiable Information (PII) before processing.</p>
-                </section>
-
-                <p className="text-sm text-gray-500 mt-12">Last updated: August 2026</p>
-            </div>
+        <div className="flex items-center gap-3">
+          <FileText className="h-8 w-8 text-[#2ea043]" aria-hidden="true" />
+          <h1 className="text-3xl font-extrabold text-[#f0f6fc]">Terms of Service</h1>
         </div>
-    );
+        <div className="text-xs text-[#8b949e]">Last updated: September 7, 2026</div>
+
+        <div className="space-y-6 text-sm leading-relaxed">
+          <section className="space-y-3">
+            <h2 className="text-xl font-semibold text-[#f0f6fc]">1. Acceptance of Terms</h2>
+            <p>
+              By accessing or using the MeDev platform, you agree to be bound by these Terms of Service. If you disagree with any part of these terms, you may discontinue use of the service.
+            </p>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-xl font-semibold text-[#f0f6fc]">2. Subscriptions, Billing & Refund Guarantee</h2>
+            <p>
+              MeDev offers free developer accounts and a premium PRO subscription. PRO features are billed in advance via Kaspi Pay or Stripe.
+            </p>
+            <p>
+              We provide a <strong>14-day money-back guarantee</strong> for first-time subscribers. Subscriptions can be canceled at any time in account settings. Please review our full{' '}
+              <Link to="/refund" className="text-[#58a6ff] hover:underline font-medium">
+                Refund Policy
+              </Link>{' '}
+              for eligibility and turnaround procedures.
+            </p>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-xl font-semibold text-[#f0f6fc]">3. Intellectual Property</h2>
+            <p>
+              You retain full ownership of your code, repository commits, and resume content. MeDev does not claim any copyright or proprietary rights over your career data or source code.
+            </p>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-xl font-semibold text-[#f0f6fc]">4. Acceptable Use and Security</h2>
+            <p>
+              You agree not to exploit the platform for unlawful activities, attempt to bypass rate limits, or upload malicious payloads via PDF parsers.
+            </p>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-xl font-semibold text-[#f0f6fc]">5. Governing Law and Disputes</h2>
+            <p>
+              These terms are governed by the laws of the Republic of Kazakhstan. Disputes will be resolved through good-faith pre-trial negotiation, and if necessary, in the competent courts of the Republic of Kazakhstan.
+            </p>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-xl font-semibold text-[#f0f6fc]">6. Contact Information</h2>
+            <p>
+              For any legal or service inquiries, please contact:{' '}
+              <a href="mailto:support@medev.mrsgemaseny.com" className="text-[#58a6ff] hover:underline">
+                support@medev.mrsgemaseny.com
+              </a>
+              .
+            </p>
+          </section>
+        </div>
+      </div>
+    </div>
+  );
 };

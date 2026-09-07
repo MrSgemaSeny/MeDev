@@ -81,6 +81,24 @@ export const PricingPage = () => {
             </div>
           </Card>
         </div>
+
+        <div className="mt-10 text-center text-xs space-y-1" style={{ color: 'var(--color-text-muted)' }}>
+          <div>Kaspi Pay и Stripe · Мгновенная активация · Отмена в любой момент</div>
+          <div>
+            Действует{' '}
+            <a href="/refund" target="_blank" rel="noreferrer" className="underline hover:text-white" style={{ color: 'var(--color-link)' }}>
+              14-дневная гарантия возврата средств
+            </a>{' '}
+            ·{' '}
+            <a href="/terms" target="_blank" rel="noreferrer" className="underline hover:text-white" style={{ color: 'var(--color-link)' }}>
+              Условия использования
+            </a>{' '}
+            ·{' '}
+            <a href="/privacy" target="_blank" rel="noreferrer" className="underline hover:text-white" style={{ color: 'var(--color-link)' }}>
+              Конфиденциальность
+            </a>
+          </div>
+        </div>
       </div>
 
       {isModalOpen && (
@@ -196,8 +214,22 @@ export const PricingPage = () => {
               </Card>
             </div>
             
-            <div className="mt-12 text-sm text-center" style={{ color: 'var(--color-text-muted)' }}>
-              Безопасная оплата через Kaspi. Подписка не продлевается автоматически.
+            <div className="mt-12 text-sm text-center space-y-2" style={{ color: 'var(--color-text-muted)' }}>
+              <div>Безопасная оплата через Kaspi Pay и Stripe. Подписка не продлевается автоматически.</div>
+              <div className="text-xs">
+                Действует{' '}
+                <a href="/refund" target="_blank" rel="noreferrer" className="underline hover:text-white" style={{ color: 'var(--color-link)' }}>
+                  14-дневная гарантия возврата средств
+                </a>{' '}
+                ·{' '}
+                <a href="/terms" target="_blank" rel="noreferrer" className="underline hover:text-white" style={{ color: 'var(--color-link)' }}>
+                  Условия использования
+                </a>{' '}
+                ·{' '}
+                <a href="/privacy" target="_blank" rel="noreferrer" className="underline hover:text-white" style={{ color: 'var(--color-link)' }}>
+                  Конфиденциальность
+                </a>
+              </div>
             </div>
           </div>
         </div>

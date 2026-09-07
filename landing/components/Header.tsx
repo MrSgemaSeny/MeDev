@@ -9,32 +9,35 @@ export const Header = () => {
     <header className="sticky top-0 z-50 w-full border-b border-[#30363d] bg-[#0d1117]/95 backdrop-blur-md">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-10">
-          <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-90">
+          <Link
+            href="/"
+            className="flex items-center gap-2 transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded"
+          >
             <span className="text-2xl font-black tracking-tight text-[#f0f6fc]">MeDev</span>
           </Link>
 
           <nav className="hidden items-center gap-8 md:flex">
             <a
               href="#features"
-              className="text-base font-semibold text-[#8b949e] transition-colors hover:text-[#f0f6fc]"
+              className="text-base font-semibold text-[#8b949e] transition-colors hover:text-[#f0f6fc] focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded px-1"
             >
               Возможности
             </a>
             <a
               href="#templates"
-              className="text-base font-semibold text-[#8b949e] transition-colors hover:text-[#f0f6fc]"
+              className="text-base font-semibold text-[#8b949e] transition-colors hover:text-[#f0f6fc] focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded px-1"
             >
               Шаблоны
             </a>
             <a
               href="#pricing"
-              className="text-base font-semibold text-[#8b949e] transition-colors hover:text-[#f0f6fc]"
+              className="text-base font-semibold text-[#8b949e] transition-colors hover:text-[#f0f6fc] focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded px-1"
             >
               Тарифы
             </a>
             <a
               href="#faq"
-              className="text-base font-semibold text-[#8b949e] transition-colors hover:text-[#f0f6fc]"
+              className="text-base font-semibold text-[#8b949e] transition-colors hover:text-[#f0f6fc] focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded px-1"
             >
               FAQ
             </a>
@@ -44,16 +47,16 @@ export const Header = () => {
         <div className="flex items-center gap-4">
           <a
             href={`${APP_URL}/login`}
-            className="rounded-xl px-4 py-2.5 text-base font-semibold text-[#c9d1d9] transition-colors hover:bg-[#21262d] hover:text-white"
+            className="rounded-xl px-4 py-2.5 text-base font-semibold text-[#c9d1d9] transition-colors hover:bg-[#21262d] hover:text-white focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
           >
             Войти
           </a>
           <a
             href={`${APP_URL}/login`}
-            className="flex items-center gap-2 rounded-xl bg-[#238636] px-5 py-2.5 text-base font-bold text-white shadow-md transition-colors hover:bg-[#2ea043]"
+            className="flex items-center gap-2 rounded-xl bg-[#238636] px-5 py-2.5 text-base font-bold text-white shadow-md transition-colors hover:bg-[#2ea043] focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
           >
             <span>Начать бесплатно</span>
-            <ArrowRight className="h-4 w-4" />
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </a>
         </div>
       </div>

@@ -12,7 +12,7 @@ export default function HomePage() {
   return (
     <div className="flex min-h-screen flex-col bg-[#0d1117]">
       <Header />
-      <main className="flex-1">
+      <main id="main-content" className="flex-1">
         <Hero />
         <Features />
         <TemplatesShowcase />

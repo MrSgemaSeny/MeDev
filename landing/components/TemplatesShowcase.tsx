@@ -69,7 +69,7 @@ export const TemplatesShowcase = () => {
                 </p>
 
                 {/* Miniature CSS Document Skeleton Preview */}
-                <div className="mt-6 rounded-xl border border-[#30363d] bg-[#0d1117] p-4 shadow-inner">
+                <div className="mt-6 rounded-xl border border-[#30363d] bg-[#0d1117] p-4 shadow-inner" aria-hidden="true">
                   {tpl.layoutType === 'two-column' ? (
                     <div className="grid grid-cols-3 gap-2">
                       <div className="col-span-1 space-y-2 border-r border-[#30363d]/60 pr-2">
@@ -112,10 +112,10 @@ export const TemplatesShowcase = () => {
               <div className="mt-8 pt-4 border-t border-[#30363d]">
                 <a
                   href={`${APP_URL}/login`}
-                  className="flex items-center justify-center gap-2 rounded-xl border border-[#30363d] bg-[#21262d] py-3 text-sm font-bold text-[#c9d1d9] transition-colors hover:bg-[#30363d] hover:text-white"
+                  className="flex items-center justify-center gap-2 rounded-xl border border-[#30363d] bg-[#21262d] py-3 text-sm font-bold text-[#c9d1d9] transition-colors hover:bg-[#30363d] hover:text-white focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
                 >
                   <span>Выбрать шаблон</span>
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </a>
               </div>
             </div>

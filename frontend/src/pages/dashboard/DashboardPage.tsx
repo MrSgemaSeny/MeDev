@@ -208,12 +208,12 @@ export const DashboardPage = () => {
               <div className="w-3 h-3 rounded-full bg-red-400"></div>
               <div className="w-3 h-3 rounded-full bg-amber-400"></div>
               <div className="w-3 h-3 rounded-full bg-green-400"></div>
-              <span className="ml-3 text-xs text-muted font-mono">medev.io/@{username || 'developer'}</span>
+              <span className="ml-3 text-xs text-muted font-mono">medev.mrsgemaseny.com/{username || 'developer'}</span>
             </div>
             <div className="p-6 sm:p-8">
               <div className="flex items-center gap-5 mb-6">
                 {profile?.avatarUrl ? (
-                  <img src={profile.avatarUrl} alt="Avatar" className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border border-default" />
+                  <img src={profile.avatarUrl} alt={`${displayName} — фото профиля`} className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border border-default" />
                 ) : (
                   <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full surface-tertiary flex items-center justify-center flex-shrink-0 text-xl font-bold">
                     {displayName.charAt(0)}

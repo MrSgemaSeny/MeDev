@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { Check } from 'lucide-react';
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://app.medev.mrsgemaseny.com';
@@ -86,7 +87,7 @@ export const Pricing = () => {
                   <ul className="space-y-4">
                     {tier.features.map((feature) => (
                       <li key={feature} className="flex items-start gap-3 text-base text-[#c9d1d9]">
-                        <Check className="h-5 w-5 shrink-0 text-[#2ea043] mt-0.5" />
+                        <Check className="h-5 w-5 shrink-0 text-[#2ea043] mt-0.5" aria-hidden="true" />
                         <span>{feature}</span>
                       </li>
                     ))}
@@ -97,7 +98,7 @@ export const Pricing = () => {
               <div className="mt-10 pt-8 border-t border-[#30363d]">
                 <a
                   href={tier.href}
-                  className={`flex w-full items-center justify-center rounded-xl py-4 text-base font-bold transition-all ${
+                  className={`flex w-full items-center justify-center rounded-xl py-4 text-base font-bold transition-all focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none ${
                     tier.featured
                       ? 'bg-[#238636] text-white shadow-md hover:bg-[#2ea043]'
                       : 'border border-[#30363d] bg-[#21262d] text-[#c9d1d9] hover:bg-[#30363d] hover:text-white'
@@ -110,9 +111,18 @@ export const Pricing = () => {
           ))}
         </div>
 
-        {/* Payment info */}
-        <div className="mt-12 text-center text-base text-[#8b949e]">
-          Kaspi Pay для Казахстана · Stripe для всего мира · Отмена в любой момент
+        {/* Payment info & Refund guarantee */}
+        <div className="mt-12 text-center text-sm text-[#8b949e] space-y-1">
+          <div>
+            Kaspi Pay для Казахстана · Stripe для всего мира · Отмена в любой момент
+          </div>
+          <div>
+            Действует{' '}
+            <Link href="/refund" className="text-[#58a6ff] hover:underline font-medium">
+              14-дневная гарантия полного возврата средств
+            </Link>
+            .
+          </div>
         </div>
       </div>
     </section>

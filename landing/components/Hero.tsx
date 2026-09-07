@@ -38,15 +38,15 @@ export const Hero = () => {
           <div className="mt-10 flex flex-wrap items-center justify-center gap-5">
             <a
               href={`${APP_URL}/login`}
-              className="flex items-center gap-3 rounded-xl bg-[#238636] px-8 py-4 text-base font-bold text-white shadow-lg transition-all hover:bg-[#2ea043] focus-visible:outline-2 focus-visible:outline-[#238636]"
+              className="flex items-center gap-3 rounded-xl bg-[#238636] px-8 py-4 text-base font-bold text-white shadow-lg transition-all hover:bg-[#2ea043] focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
             >
               <GithubIcon className="h-5 w-5" />
               <span>Войти через GitHub</span>
-              <ArrowRight className="h-5 w-5" />
+              <ArrowRight className="h-5 w-5" aria-hidden="true" />
             </a>
             <a
               href="#features"
-              className="flex items-center gap-2 rounded-xl border border-[#30363d] bg-[#21262d] px-8 py-4 text-base font-semibold text-[#c9d1d9] transition-colors hover:bg-[#30363d] hover:text-white"
+              className="flex items-center gap-2 rounded-xl border border-[#30363d] bg-[#21262d] px-8 py-4 text-base font-semibold text-[#c9d1d9] transition-colors hover:bg-[#30363d] hover:text-white focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
             >
               <span>Возможности</span>
             </a>
@@ -57,7 +57,7 @@ export const Hero = () => {
         <div className="mt-20 rounded-2xl border border-[#30363d] bg-[#161b22] shadow-2xl overflow-hidden">
           {/* Top Window Bar */}
           <div className="flex items-center justify-between border-b border-[#30363d] bg-[#0d1117] px-6 py-4">
-            <div className="flex items-center space-x-2.5">
+            <div className="flex items-center space-x-2.5" aria-hidden="true">
               <div className="h-3 w-3 rounded-full bg-[#30363d]" />
               <div className="h-3 w-3 rounded-full bg-[#30363d]" />
               <div className="h-3 w-3 rounded-full bg-[#30363d]" />
@@ -103,7 +103,7 @@ export const Hero = () => {
             <div className="lg:col-span-7 space-y-6">
               <div className="rounded-xl border border-[#30363d] bg-[#161b22] p-6">
                 <div className="flex items-center gap-3">
-                  <FileCheck className="h-6 w-6 text-[#2ea043]" />
+                  <FileCheck className="h-6 w-6 text-[#2ea043]" aria-hidden="true" />
                   <h3 className="text-lg font-bold text-[#f0f6fc]">
                     Резюме готово под вакансию
                   </h3>
@@ -119,9 +119,9 @@ export const Hero = () => {
                   </span>
                   <a
                     href={`${APP_URL}/login`}
-                    className="flex items-center gap-2 rounded-lg bg-[#238636] px-4 py-2 text-sm font-bold text-white hover:bg-[#2ea043]"
+                    className="flex items-center gap-2 rounded-lg bg-[#238636] px-4 py-2 text-sm font-bold text-white hover:bg-[#2ea043] focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
                   >
-                    <Download className="h-4 w-4" />
+                    <Download className="h-4 w-4" aria-hidden="true" />
                     <span>Скачать PDF</span>
                   </a>
                 </div>
@@ -130,7 +130,7 @@ export const Hero = () => {
               {/* Mini Tracker */}
               <div className="rounded-xl border border-[#30363d] bg-[#161b22] p-6">
                 <div className="flex items-center gap-2 mb-4">
-                  <Briefcase className="h-5 w-5 text-[#58a6ff]" />
+                  <Briefcase className="h-5 w-5 text-[#58a6ff]" aria-hidden="true" />
                   <h4 className="text-base font-bold text-[#f0f6fc]">Трекер откликов</h4>
                 </div>
 

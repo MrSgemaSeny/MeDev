@@ -1,49 +1,114 @@
 import React from 'react';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Shield } from 'lucide-react';
 import { Header } from '../../components/Header';
 import { Footer } from '../../components/Footer';
 
 export const metadata = {
   title: 'Политика конфиденциальности — MeDev',
+  description: 'Политика конфиденциальности, обработки персональных данных и файлов cookie платформы MeDev.',
 };
 
 export default function PrivacyPage() {
   return (
     <div className="flex min-h-screen flex-col bg-[#0d1117]">
       <Header />
-      <main className="flex-1 py-16">
+      <main id="main-content" className="flex-1 py-16">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#58a6ff] hover:underline mb-8"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#58a6ff] hover:underline mb-8 focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded"
           >
-            <ArrowLeft className="h-3.5 w-3.5" />
+            <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
             <span>Вернуться на главную</span>
           </Link>
 
-          <h1 className="text-3xl font-extrabold text-[#f0f6fc]">Политика конфиденциальности</h1>
+          <div className="flex items-center gap-3">
+            <Shield className="h-8 w-8 text-[#2ea043]" aria-hidden="true" />
+            <h1 className="text-3xl font-extrabold text-[#f0f6fc]">Политика конфиденциальности</h1>
+          </div>
           <div className="mt-2 text-xs text-[#8b949e]">Последнее обновление: 7 сентября 2026 г.</div>
 
-          <div className="mt-8 space-y-6 text-sm text-[#c9d1d9] leading-relaxed">
-            <section className="space-y-2">
-              <h2 className="text-lg font-semibold text-[#f0f6fc]">1. Сбор информации</h2>
+          <div className="mt-8 space-y-8 text-sm text-[#c9d1d9] leading-relaxed">
+            <section className="space-y-3">
+              <h2 className="text-xl font-bold text-[#f0f6fc]">1. Общие положения и оператор данных</h2>
               <p>
-                MeDev запрашивает доступ к вашим публичным данным GitHub через OAuth2 исключительно для формирования профиля инженера и синхронизации репозиториев. Мы не запрашиваем и не храним пароли от ваших внешних учетных записей.
+                Настоящая Политика конфиденциальности определяет порядок обработки и защиты персональной информации пользователей платформы <strong>MeDev</strong> (доступной по адресам <code>medev.mrsgemaseny.com</code> и <code>app.medev.mrsgemaseny.com</code>).
+              </p>
+              <p>
+                Оператором обработки персональных данных является MeDev / Murat Orynbasar. Сервис соблюдает нормы Закона Республики Казахстан от 21 мая 2013 года № 94-V «О персональных данных и их защите», а также общие принципы Общего регламента защиты данных ЕС (GDPR 2016/679).
               </p>
             </section>
 
-            <section className="space-y-2">
-              <h2 className="text-lg font-semibold text-[#f0f6fc]">2. Использование данных и AI</h2>
-              <p>
-                Ваши данные используются для генерации структурированных PDF-резюме и ведения трекера откликов. Данные передаются в нейросеть Groq AI только в момент явного запроса генерации без сохранения для обучения сторонних моделей.
-              </p>
+            <section className="space-y-3">
+              <h2 className="text-xl font-bold text-[#f0f6fc]">2. Какие данные мы собираем</h2>
+              <ul className="list-disc pl-5 space-y-1.5 text-[#c9d1d9]">
+                <li>
+                  <strong>GitHub OAuth данные</strong>: публичный логин GitHub, адрес электронной почты, публичный аватар, публичные репозитории, языки программирования и статистика коммитов. Доступ к приватным репозиториям не запрашивается и не сохраняется.
+                </li>
+                <li>
+                  <strong>Данные профиля и резюме</strong>: имя, фамилия, контактные ссылки (LinkedIn, Telegram), история профессионального опыта, образование и навыки, вносимые вами вручную либо извлекаемые из загружаемого PDF-резюме.
+                </li>
+                <li>
+                  <strong>Платежные данные</strong>: при оплате подписки PRO обработка транзакций выполняется сертифицированными провайдерами Kaspi Pay и Stripe. MeDev <em>никогда не хранит</em> полные номера банковских карт или CVV/CVC коды на своих серверах.
+                </li>
+                <li>
+                  <strong>Технические данные</strong>: IP-адрес, тип браузера, анонимная телеметрия производительности (Vercel Web Analytics).
+                </li>
+              </ul>
             </section>
 
-            <section className="space-y-2">
-              <h2 className="text-lg font-semibold text-[#f0f6fc]">3. Безопасность</h2>
+            <section className="space-y-3">
+              <h2 className="text-xl font-bold text-[#f0f6fc]">3. Использование искусственного интеллекта (AI) и безопасность PII</h2>
               <p>
-                Мы применяем строгие стандарты защиты (Row-Level Security, токены в httpOnly cookies, шифрование секретов в базе данных PostgreSQL).
+                Для улучшения формулировок и адаптации резюме под вакансии используется Groq Cloud API (модель <code>openai/gpt-oss-20b</code>).
+              </p>
+              <p>
+                <strong>Строгие гарантии:</strong>
+              </p>
+              <ul className="list-disc pl-5 space-y-1.5 text-[#c9d1d9]">
+                <li>Перед отправкой текста в нейросеть конфиденциальные персональные данные (номер телефона, точный домашний адрес, персональный email) автоматически маскируются.</li>
+                <li>Передаваемые в API данные <strong>не сохраняются и не используются для дообучения сторонних моделей искусственного интеллекта</strong>.</li>
+              </ul>
+            </section>
+
+            <section className="space-y-3">
+              <h2 className="text-xl font-bold text-[#f0f6fc]">4. Политика файлов cookie и локального хранилища</h2>
+              <p>
+                Мы используем только строго необходимые (Strictly Necessary) и функциональные файлы cookie и записи <code>localStorage</code>:
+              </p>
+              <ul className="list-disc pl-5 space-y-1.5 text-[#c9d1d9]">
+                <li><code>refresh_token</code>: зашифрованный HttpOnly-cookie для безопасного поддержания авторизованной сессии.</li>
+                <li><code>theme</code> в localStorage: сохранение выбранной цветовой темы (темная/светлая).</li>
+                <li><code>cookie_consent</code> в localStorage: сохранение вашего подтверждения ознакомления с политикой.</li>
+                <li>Vercel Analytics: cookieless-сбор агрегированных метрик загрузки страниц. Рекламные сторонние трекеры (Meta Pixel, Google Ads) отсутствуют.</li>
+              </ul>
+            </section>
+
+            <section className="space-y-3">
+              <h2 className="text-xl font-bold text-[#f0f6fc]">5. Права пользователя и удаление данных</h2>
+              <p>Вы имеете полное право в любой момент:</p>
+              <ul className="list-disc pl-5 space-y-1.5 text-[#c9d1d9]">
+                <li>Запросить выгрузку ваших данных в машиночитаемом формате (JSON / Markdown).</li>
+                <li>Отредактировать любую информацию в личном кабинете.</li>
+                <li>
+                  Запросить <strong>полное и безвозвратное удаление</strong> вашего аккаунта и всех связанных баз данных, резюме и откликов, написав нам на{' '}
+                  <a href="mailto:support@medev.mrsgemaseny.com" className="text-[#58a6ff] hover:underline">
+                    support@medev.mrsgemaseny.com
+                  </a>
+                  . Удаление выполняется в течение 48 часов.
+                </li>
+              </ul>
+            </section>
+
+            <section className="space-y-3">
+              <h2 className="text-xl font-bold text-[#f0f6fc]">6. Контактная информация</h2>
+              <p>
+                По любым вопросам конфиденциальности и обработки персональных данных обращайтесь по адресу:{' '}
+                <a href="mailto:support@medev.mrsgemaseny.com" className="font-semibold text-[#58a6ff] hover:underline">
+                  support@medev.mrsgemaseny.com
+                </a>
+                .
               </p>
             </section>
           </div>
