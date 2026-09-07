@@ -37,7 +37,7 @@ async function callOpenRouter(prompt, role, model) {
           { role: 'system', content: systemPrompt },
           { role: 'user', content: prompt }
         ],
-        max_tokens: 512
+        max_tokens: 1500
       }),
       signal: controller.signal
     });
