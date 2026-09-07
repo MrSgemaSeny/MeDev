@@ -84,6 +84,9 @@ public class GitHubService {
             Mono<Map<String, Integer>> languagesMono = Flux.fromIterable(top10Repos)
                     .flatMap(repo -> {
                         String repoPath = repo.getRepoPath(user != null ? user.getLogin() : null);
+                        if (repoPath == null || !repoPath.matches("^[a-zA-Z0-9_.-]+/[a-zA-Z0-9_.-]+$")) {
+                            return Mono.just(new HashMap<String, Integer>());
+                        }
                         return webClient.get()
                                 .uri("/repos/" + repoPath + "/languages")
                                 .retrieve()
@@ -99,6 +102,9 @@ public class GitHubService {
             Mono<List<String>> techStackMono = Flux.fromIterable(top5ReposByWeight)
                     .flatMap(repo -> {
                         String repoPath = repo.getRepoPath(user != null ? user.getLogin() : null);
+                        if (repoPath == null || !repoPath.matches("^[a-zA-Z0-9_.-]+/[a-zA-Z0-9_.-]+$")) {
+                            return Mono.just(Collections.<String>emptyList());
+                        }
                         return webClient.get()
                                 .uri("/repos/" + repoPath + "/readme")
                                 .header("Accept", "application/vnd.github.v3.raw")

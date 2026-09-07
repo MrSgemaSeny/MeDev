@@ -62,6 +62,8 @@ public class ResumeController {
         String disposition = preview ? "inline" : "attachment";
         return ResponseEntity.ok()
                 .header("Content-Disposition", disposition + "; filename=resume.html")
+                .header("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'; font-src data:; img-src data: https:; sandbox;")
+                .header("X-Content-Type-Options", "nosniff")
                 .body(html);
     }
 }

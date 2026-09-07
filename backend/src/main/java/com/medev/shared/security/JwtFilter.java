@@ -20,6 +20,7 @@ import java.util.Collections;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    private final org.springframework.data.redis.core.RedisTemplate<String, Object> redisTemplate;
 
     @Override
     protected void doFilterInternal(
@@ -35,6 +36,11 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         final String token = authHeader.substring(7);
+
+        if (Boolean.TRUE.equals(redisTemplate.hasKey("blacklist:access:" + token))) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         if (jwtService.validateToken(token)) {
             String type = jwtService.extractType(token);

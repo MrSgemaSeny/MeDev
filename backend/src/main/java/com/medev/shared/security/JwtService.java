@@ -79,6 +79,10 @@ public class JwtService {
         return getClaims(token).get("type", String.class);
     }
 
+    public Date extractExpiration(String token) {
+        return getClaims(token).getExpiration();
+    }
+
     public boolean validateToken(String token) {
         try {
             getClaims(token);

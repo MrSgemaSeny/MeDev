@@ -75,6 +75,12 @@ public class SecurityConfig {
                     response.getWriter().write("{\"error\":\"Unauthorized\",\"message\":\"" + authException.getMessage() + "\"}");
                 })
             )
+            .headers(headers -> headers
+                .contentTypeOptions(Customizer.withDefaults())
+                .frameOptions(frame -> frame.deny())
+                .referrerPolicy(ref -> ref.policy(org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
+                .permissionsPolicy(perm -> perm.policy("camera=(), microphone=(), geolocation=()"))
+            )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
             .build();
     }
@@ -82,7 +88,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource(@org.springframework.beans.factory.annotation.Value("${cors.allowed-origins:http://localhost:5173}") String allowedOrigins) {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(allowedOrigins.split(",")));
+        java.util.List<String> origins = java.util.Arrays.stream(allowedOrigins.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isBlank() && !s.equals("*"))
+                .toList();
+        configuration.setAllowedOrigins(origins);
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type", "Accept", "Origin", "X-Requested-With", "baggage", "sentry-trace"));
         configuration.setExposedHeaders(List.of("Authorization", "Set-Cookie"));

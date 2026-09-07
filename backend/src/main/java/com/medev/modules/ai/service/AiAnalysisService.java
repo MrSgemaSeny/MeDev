@@ -71,6 +71,9 @@ public class AiAnalysisService {
                 throw new IllegalArgumentException("Invalid PDF magic bytes");
             }
             try (PDDocument document = Loader.loadPDF(fileBytes)) {
+                if (document.getNumberOfPages() > 30) {
+                    throw new IllegalArgumentException("PDF exceeds maximum allowed page count (30 pages)");
+                }
                 PDFTextStripper stripper = new PDFTextStripper();
                 String text = stripper.getText(document);
                 if (text == null || text.trim().isEmpty()) {

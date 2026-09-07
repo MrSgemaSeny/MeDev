@@ -213,4 +213,55 @@ class AuthServiceTest {
 
         verify(redisTemplate).delete("refresh:1:" + deviceId);
     }
+
+    @Test
+    void forgotPassword_userExists_storesTokenInRedis() {
+        com.medev.modules.auth.dto.ForgotPasswordRequest req = new com.medev.modules.auth.dto.ForgotPasswordRequest("test@example.com");
+        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(testUser));
+        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+
+        authService.forgotPassword(req);
+
+        verify(valueOperations).set(startsWith("password_reset:token:"), eq("1"), eq(Duration.ofMinutes(15)));
+    }
+
+    @Test
+    void forgotPassword_userDoesNotExist_doesNotThrow() {
+        com.medev.modules.auth.dto.ForgotPasswordRequest req = new com.medev.modules.auth.dto.ForgotPasswordRequest("unknown@example.com");
+        when(userRepository.findByEmail("unknown@example.com")).thenReturn(Optional.empty());
+
+        authService.forgotPassword(req);
+
+        verifyNoInteractions(valueOperations);
+    }
+
+    @Test
+    void resetPassword_validToken_updatesPasswordAndInvalidatesSessions() {
+        String token = "valid-reset-token";
+        com.medev.modules.auth.dto.ResetPasswordRequest req = new com.medev.modules.auth.dto.ResetPasswordRequest(token, "newPassword123");
+        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+        when(valueOperations.get("password_reset:token:" + token)).thenReturn("1");
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+        when(passwordEncoder.encode("newPassword123")).thenReturn("encodedNewPassword");
+        when(redisTemplate.keys("refresh:1:*")).thenReturn(java.util.Set.of("refresh:1:dev1"));
+
+        authService.resetPassword(req);
+
+        verify(redisTemplate).delete("password_reset:token:" + token);
+        verify(passwordEncoder).encode("newPassword123");
+        verify(userRepository).save(testUser);
+        verify(redisTemplate).delete(any(java.util.Set.class));
+        verify(redisTemplate).delete("refresh:1");
+    }
+
+    @Test
+    void resetPassword_invalidToken_throwsIllegalArgumentException() {
+        com.medev.modules.auth.dto.ResetPasswordRequest req = new com.medev.modules.auth.dto.ResetPasswordRequest("invalid-token", "newPassword123");
+        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+        when(valueOperations.get("password_reset:token:invalid-token")).thenReturn(null);
+
+        assertThatThrownBy(() -> authService.resetPassword(req))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Invalid or expired password reset token");
+    }
 }

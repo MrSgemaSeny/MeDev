@@ -14,8 +14,10 @@ public class ProjectRequest {
     @jakarta.validation.constraints.Size(max = 500)
     private String techStack;
     @jakarta.validation.constraints.Size(max = 300)
+    @jakarta.validation.constraints.Pattern(regexp = "^$|^(https?://)[^\\s<>\"]+$", message = "GitHub URL must be a valid HTTP or HTTPS URL")
     private String githubUrl;
     @jakarta.validation.constraints.Size(max = 300)
+    @jakarta.validation.constraints.Pattern(regexp = "^$|^(https?://)[^\\s<>\"]+$", message = "Live URL must be a valid HTTP or HTTPS URL")
     private String liveUrl;
     private Boolean isFeatured;
     private Boolean isVisible;

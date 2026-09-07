@@ -32,6 +32,9 @@ class JwtFilterTest {
     @Mock
     private FilterChain filterChain;
 
+    @Mock
+    private org.springframework.data.redis.core.RedisTemplate<String, Object> redisTemplate;
+
     @InjectMocks
     private JwtFilter jwtFilter;
 
@@ -87,5 +90,18 @@ class JwtFilterTest {
 
         assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
         verify(filterChain).doFilter(request, response);
+    }
+
+    @Test
+    void blacklistedToken_doesNotSetSecurityContext() throws ServletException, IOException {
+        String token = "blacklisted.token";
+        when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
+        when(redisTemplate.hasKey("blacklist:access:" + token)).thenReturn(true);
+
+        jwtFilter.doFilterInternal(request, response, filterChain);
+
+        assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
+        verify(filterChain).doFilter(request, response);
+        verifyNoInteractions(jwtService);
     }
 }

@@ -168,8 +168,59 @@ public class AuthService {
                     // Для обратной совместимости, если старый токен без deviceId
                     redisTemplate.delete("refresh:" + userId);
                 }
+
+                // Blacklist the access token until its expiration
+                try {
+                    java.util.Date exp = jwtService.extractExpiration(token);
+                    long remainingMs = exp.getTime() - System.currentTimeMillis();
+                    if (remainingMs > 0) {
+                        redisTemplate.opsForValue().set("blacklist:access:" + token, "revoked", Duration.ofMillis(remainingMs));
+                    }
+                } catch (Exception ignored) {}
+
                 auditService.logAction(userId, "AUTH_LOGOUT", String.valueOf(userId), "User logged out session", null);
             }
         }
+    }
+
+    public void forgotPassword(com.medev.modules.auth.dto.ForgotPasswordRequest request) {
+        User user = userRepository.findByEmail(request.getEmail()).orElse(null);
+        if (user != null) {
+            byte[] randomBytes = new byte[32];
+            new java.security.SecureRandom().nextBytes(randomBytes);
+            StringBuilder sb = new StringBuilder(64);
+            for (byte b : randomBytes) {
+                sb.append(String.format("%02x", b));
+            }
+            String token = sb.toString();
+            redisTemplate.opsForValue().set("password_reset:token:" + token, String.valueOf(user.getId()), Duration.ofMinutes(15));
+            auditService.logAction(user.getId(), "AUTH_PASSWORD_RESET_REQUESTED", String.valueOf(user.getId()), "Password reset requested for email: " + user.getEmail(), null);
+        }
+    }
+
+    public void resetPassword(com.medev.modules.auth.dto.ResetPasswordRequest request) {
+        String key = "password_reset:token:" + request.getToken();
+        String userIdStr = redisTemplate.opsForValue().get(key);
+        if (userIdStr == null) {
+            throw new IllegalArgumentException("Invalid or expired password reset token");
+        }
+
+        redisTemplate.delete(key);
+
+        Long userId = Long.parseLong(userIdStr);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new com.medev.shared.exception.NotFoundException("User not found"));
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+
+        // Invalidate all active refresh sessions for user
+        java.util.Set<String> sessionKeys = redisTemplate.keys("refresh:" + userId + ":*");
+        if (sessionKeys != null && !sessionKeys.isEmpty()) {
+            redisTemplate.delete(sessionKeys);
+        }
+        redisTemplate.delete("refresh:" + userId);
+
+        auditService.logAction(userId, "AUTH_PASSWORD_RESET_SUCCESS", String.valueOf(userId), "Password reset successful, sessions invalidated", null);
     }
 }

@@ -21,6 +21,7 @@ public class CreateJobApplicationRequest {
     private ApplicationStatus status;
     
     @jakarta.validation.constraints.Size(max = 1000)
+    @jakarta.validation.constraints.Pattern(regexp = "^$|^(https?://)[^\\s<>\"]+$", message = "Job URL must be a valid HTTP or HTTPS URL")
     private String jobUrl;
     @jakarta.validation.constraints.Size(max = 200)
     private String location;

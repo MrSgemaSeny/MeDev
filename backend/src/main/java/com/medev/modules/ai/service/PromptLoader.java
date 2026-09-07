@@ -58,6 +58,9 @@ public class PromptLoader {
      * @throws IllegalStateException если файл не найден
      */
     public String load(String name) {
+        if (name == null || !name.matches("^[a-zA-Z0-9_-]+$")) {
+            throw new IllegalArgumentException("Invalid prompt name: " + name);
+        }
         return cache.computeIfAbsent(name, this::readFromClasspath);
     }
 

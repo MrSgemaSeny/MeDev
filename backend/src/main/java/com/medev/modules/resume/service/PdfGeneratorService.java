@@ -207,6 +207,9 @@ public class PdfGeneratorService {
     }
 
     private String fetchAvatarBase64(String githubUsername) {
+        if (githubUsername == null || !githubUsername.matches("^[a-zA-Z0-9](?:[a-zA-Z0-9]|-(?=[a-zA-Z0-9])){0,38}$")) {
+            return null;
+        }
         try {
             java.net.URL url = new java.net.URL("https://github.com/" + githubUsername + ".png");
             java.net.HttpURLConnection connection = (java.net.HttpURLConnection) url.openConnection();
@@ -214,15 +217,32 @@ public class PdfGeneratorService {
             connection.setRequestProperty("User-Agent", "Mozilla/5.0");
             connection.setConnectTimeout(3000);
             connection.setReadTimeout(3000);
-            connection.setInstanceFollowRedirects(true);
+            connection.setInstanceFollowRedirects(false);
             
             int status = connection.getResponseCode();
             if (status == java.net.HttpURLConnection.HTTP_MOVED_TEMP
                 || status == java.net.HttpURLConnection.HTTP_MOVED_PERM
                 || status == java.net.HttpURLConnection.HTTP_SEE_OTHER) {
                 String newUrl = connection.getHeaderField("Location");
-                connection = (java.net.HttpURLConnection) new java.net.URL(newUrl).openConnection();
+                if (newUrl == null) return null;
+                java.net.URI uri = java.net.URI.create(newUrl);
+                String scheme = uri.getScheme();
+                String host = uri.getHost();
+                if (scheme == null || !scheme.equalsIgnoreCase("https") || host == null) {
+                    return null;
+                }
+                String lowerHost = host.toLowerCase();
+                if (!lowerHost.equals("github.com") && !lowerHost.endsWith(".github.com") && !lowerHost.endsWith(".githubusercontent.com")) {
+                    return null;
+                }
+                java.net.InetAddress addr = java.net.InetAddress.getByName(host);
+                if (addr.isLoopbackAddress() || addr.isSiteLocalAddress() || addr.isLinkLocalAddress() || addr.isAnyLocalAddress()) {
+                    return null;
+                }
+                connection = (java.net.HttpURLConnection) uri.toURL().openConnection();
                 connection.setRequestProperty("User-Agent", "Mozilla/5.0");
+                connection.setConnectTimeout(3000);
+                connection.setReadTimeout(3000);
             }
             if (connection.getResponseCode() != 200) return null;
 

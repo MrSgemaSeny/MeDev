@@ -13,23 +13,17 @@
   - `backend/`: Spring Boot 3.3.0 (Java 17, PostgreSQL 17, Redis, Groq AI).
   - `frontend/`: Vite + React 19 SPA (`app.medev.mrsgemaseny.com`, Dashboard, Resume Builder, ATS).
   - `landing/`: Next.js 15 App Router SSG (`medev.mrsgemaseny.com`, Marketing, SEO, OpenGraph).
-- **Latest Work (2026-09-07 Full 19-Point Compliance, Accessibility & Legal Audit — 100% COMPLETE)**:
-  - **WCAG 2.1 AA Contrast**: Исправлена переменная `--color-text-muted` в `.dark` (`#8b949e`, 6.05:1) и light (`#59636e`, 4.6:1), устранены неконтрастные цвета.
-  - **Descriptive Alt Text**: Все аватары и графики оснащены содержательными alt-описаниями; декоративные SVG получили `aria-hidden="true"`.
-  - **Refund Policy (14-Day Guarantee)**: Внедрена страница `/refund` в Next.js лендинге и Vite SPA, ссылки интегрированы в футеры и модалку оплаты.
-  - **Privacy & Terms**: Развернуты подробные юридические документы (соответствие ЗРК № 94-V, GDPR, PII-маскирование перед Groq AI, права на удаление).
-  - **Accessibility (A11y)**: WAI-ARIA аккордеон FAQ, `focus-visible` кольца для клавиатуры, `aria-label` для icon-only кнопок, диалоговые роли в Modal, Skip Link.
-  - **Zero Fake Reviews Verified**: Подтверждена чистота проекта от фальшивых отзывов.
-  - **Cookies Policy & Banner**: Создан доступный `CookieBanner` с сохранением согласия в `localStorage`.
-  - **Form Consent**: Добавлены ссылки на соглашение под формами входа/регистрации и загрузчиком PDF.
-  - **Clear Button Labels (Item 14)**: Однозначные лейблы действий на кнопках лендинга, баннера («Принять необходимые»), профиля («Сохранить изменения профиля») и импорта PDF («Выбрать PDF-файл резюме»).
-  - **Cookie Consent Check (Item 15)**: Регламентировано использование исключительно strictly necessary куки и localStorage, анонимная аналитика Vercel без куки.
-  - **Real Business Details (Item 16)**: Внедрен блок официальных реквизитов ИП Орынбасар М. (г. Алматы, РК, support/privacy email, Telegram) во все правовые страницы и футер.
-  - **Data Minimization (Item 17)**: В Политику добавлен отдельный раздел минимизации данных (GDPR ст. 5(1)(c), ЗРК № 94-V ст. 5), сбор строго ограничен профессиональными полями.
-  - **Keyboard Friendly Forms (Item 18)**: `<label htmlFor>` связаны с `id`, `aria-invalid` и `role="alert"` для ошибок, дропзона PDF получила `role="button"`, `tabIndex={0}`, `onKeyDown` (Enter/Space), четкие кольца фокуса `Input.tsx`.
-  - **Remove Unsupported Claims (Item 19)**: Устранены абсолютные и непроверяемые утверждения («все сервисы», «100% точность», «все крупные HR-платформы») и заменены на корректные стандарты ATS.
-  - **Rule 11 & Domain Fix**: Модель зафиксирована как `GPT-20B` в `AiChatWidget.tsx`; все ссылки обновлены на `medev.mrsgemaseny.com`.
-- **Test Baseline**: 253/253 backend tests green (100%), 38/38 frontend tests green (100%), Next.js SSG build: 9/9 static pages generated.
+- **Latest Work (2026-09-07 Full 37-Point Compliance, Accessibility, Legal & Security Hardening — 100% COMPLETE)**:
+  - **Compliance & Legal (Items 1–19)**: WCAG 2.1 AA контрастность (`--color-text-muted`), семантичные alt-описания, 14-дневная политика возврата (`/refund`), исчерпывающие Privacy/Terms (ЗРК № 94-V, GDPR), доступность форм (WAI-ARIA, `focus-visible`, `<label htmlFor>`), Cookie-баннер (`localStorage`), реквизиты ИП Орынбасар М. (Алматы, РК), минимизация данных, устранение абсолютных маркетинговых клеймов.
+  - **Security Hardening (Items 20–37)**:
+    - *XSS & CSRF (20-21)*: Санитизация URL (`sanitizeUrl`), строгий CSP (`default-src 'self'`), `X-Frame-Options: DENY`, проверка `Origin` против белого списка и заголовок `X-Requested-With: XMLHttpRequest` для cookie-эндпоинтов (`/auth/refresh`, `/auth/logout`).
+    - *Uploads & Traversal (22-23)*: Блокировка PDF-бомб памяти (`document.getNumberOfPages() > 30`), magic bytes `%PDF`, regex-проверка промптов `^[a-zA-Z0-9_-]+$`.
+    - *SSRF (24)*: Whitelist хостов GitHub, запрет авто-редиректов в `PdfGeneratorService`, фильтрация приватных (RFC 1918), loopback и cloud metadata IP.
+    - *Password Reset & Sessions (25-26)*: Одноразовый 256-бит токен в Redis (15 мин TTL), anti-enumeration ответы, аннулирование refresh-сессий, черный список JWT в Redis (`blacklist:access:<token>`) при логауте с валидацией в `JwtFilter`.
+    - *Secrets, CORS, Rate Limits (27-29)*: Fail-fast проверка 256-бит JWT-секрета при старте, запрет `*` в CORS с credentials, трехуровневый Bucket4j rate limiting (auth 20, public 60, ai 10 req/min).
+    - *Envs, Credentials, Webhooks (30-32)*: Защита Actuator (`ADMIN` role), Swagger отключен в prod, валидация Stripe (`Webhook.constructEvent`) и Kaspi Pay (HMAC-SHA256 константное сравнение).
+    - *Payment Checks, IDOR, Logs & Maps (33-37)*: Серверные проверки PRO-плана (`assertPro`), изоляция данных через `SecurityUtils.getCurrentUserId()`, маскирование токенов в логах, сокрытие стек-трейсов, `sourcemap: false` в Vite и Next.js.
+  - **Test Baseline**: 255/255 backend tests green (100%), 38/38 frontend tests green (100%), Next.js SSG build: 9/9 static pages generated.
 
 ## Active Backlog
 - Setting up automated nightly DB backup jobs.

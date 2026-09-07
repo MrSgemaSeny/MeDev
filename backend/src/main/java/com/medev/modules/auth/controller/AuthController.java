@@ -23,6 +23,9 @@ public class AuthController {
     private final AuthService authService;
     private final com.medev.modules.auth.service.AuthRateLimiter authRateLimiter;
 
+    @org.springframework.beans.factory.annotation.Value("${cors.allowed-origins:http://localhost:5173}")
+    private String allowedOrigins;
+
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request, HttpServletRequest httpRequest, HttpServletResponse response) {
         authRateLimiter.checkAndConsume(getClientIp(httpRequest));
@@ -39,8 +42,23 @@ public class AuthController {
         return ResponseEntity.ok(res);
     }
 
+    @PostMapping("/forgot-password")
+    public ResponseEntity<java.util.Map<String, String>> forgotPassword(@Valid @RequestBody com.medev.modules.auth.dto.ForgotPasswordRequest request, HttpServletRequest httpRequest) {
+        authRateLimiter.checkAndConsume(getClientIp(httpRequest));
+        authService.forgotPassword(request);
+        return ResponseEntity.ok(java.util.Map.of("message", "If an account with that email exists, password reset instructions have been dispatched."));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<java.util.Map<String, String>> resetPassword(@Valid @RequestBody com.medev.modules.auth.dto.ResetPasswordRequest request, HttpServletRequest httpRequest) {
+        authRateLimiter.checkAndConsume(getClientIp(httpRequest));
+        authService.resetPassword(request);
+        return ResponseEntity.ok(java.util.Map.of("message", "Password has been reset successfully."));
+    }
+
     @PostMapping("/refresh")
     public ResponseEntity<AuthResponse> refresh(@CookieValue(name = "refresh_token", required = false) String refreshToken, HttpServletRequest httpRequest, HttpServletResponse response) {
+        validateCsrf(httpRequest);
         authRateLimiter.checkAndConsume(getClientIp(httpRequest));
         if (refreshToken == null || refreshToken.isBlank()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -75,7 +93,8 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@RequestHeader(value = "Authorization", required = false) String token, HttpServletResponse response) {
+    public ResponseEntity<Void> logout(@RequestHeader(value = "Authorization", required = false) String token, HttpServletRequest httpRequest, HttpServletResponse response) {
+        validateCsrf(httpRequest);
         if (token != null && !token.isBlank()) {
             authService.logout(token);
         }
@@ -88,6 +107,19 @@ public class AuthController {
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         return ResponseEntity.noContent().build();
+    }
+
+    private void validateCsrf(HttpServletRequest request) {
+        String origin = request.getHeader("Origin");
+        if (origin != null && !origin.isBlank() && allowedOrigins != null) {
+            java.util.List<String> allowed = java.util.Arrays.stream(allowedOrigins.split(","))
+                    .map(String::trim)
+                    .map(String::toLowerCase)
+                    .toList();
+            if (!allowed.contains(origin.trim().toLowerCase())) {
+                throw new com.medev.shared.exception.ForbiddenException("Cross-origin request rejected");
+            }
+        }
     }
 
     private void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
