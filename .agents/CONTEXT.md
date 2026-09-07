@@ -13,9 +13,10 @@
   - `backend/`: Spring Boot 3.3.0 (Java 17, PostgreSQL 17, Redis, Groq AI).
   - `frontend/`: Vite + React 19 SPA (`app.medev.mrsgemaseny.com`, Dashboard, Resume Builder, ATS).
   - `landing/`: Next.js 15 App Router SSG (`medev.mrsgemaseny.com`, Marketing, SEO, OpenGraph).
-- **Latest Work (2026-09-07 Next.js 15 SSG Landing Monorepo)**:
+- **Latest Work (2026-09-07 Next.js 15 SSG Landing & Customer-Centric Copy Rewrite)**:
   - **Next.js 15 App Router in `landing/`**: Создан изолированный SSG модуль лендинга с полным OpenGraph/SEO, `sitemap.ts`, `robots.ts`, Tailwind CSS v4 и строгим GitHub Dark Mode.
   - **Multi-Zone Subdomain Pattern**: `medev.mrsgemaseny.com` (Next.js) + `app.medev.mrsgemaseny.com` (Vite SPA).
+  - **Customer-Centric Rewrite**: Полная переработка текстов и позиционирования. Убран внутренний инженерный жаргон и фейковые метрики. Добавлен 3-шаговый блок "Как это работает" и финальный CTA блок перед футером.
 - **Test Baseline**: 253 backend tests passing (100% green), 38 frontend tests passing (100% green via `npm test`), Next.js SSG build: 8/8 static pages generated.
 
 ## Active Backlog

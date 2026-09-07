@@ -1,7 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { GithubIcon } from './GithubIcon';
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://app.medev.mrsgemaseny.com';
 
@@ -12,9 +11,6 @@ export const Header = () => {
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-90">
             <span className="text-xl font-extrabold tracking-tight text-[#f0f6fc]">MeDev</span>
-            <span className="rounded border border-[#30363d] bg-[#161b22] px-1.5 py-0.5 text-[11px] font-mono font-medium text-[#8b949e]">
-              v1.0
-            </span>
           </Link>
 
           <nav className="hidden items-center gap-6 md:flex">
@@ -47,30 +43,18 @@ export const Header = () => {
 
         <div className="flex items-center gap-3">
           <a
-            href="https://github.com/MrSgemaSeny/MeDev"
-            target="_blank"
-            rel="noreferrer"
-            className="hidden items-center gap-1.5 rounded-md border border-[#30363d] bg-[#21262d] px-3 py-1.5 text-xs font-semibold text-[#c9d1d9] transition-colors hover:bg-[#30363d] sm:flex"
+            href={`${APP_URL}/login`}
+            className="rounded-md px-3 py-1.5 text-xs font-semibold text-[#c9d1d9] transition-colors hover:bg-[#21262d] hover:text-white"
           >
-            <GithubIcon className="h-3.5 w-3.5" />
-            <span>GitHub</span>
+            Войти
           </a>
-
-          <div className="flex items-center gap-2">
-            <a
-              href={`${APP_URL}/login`}
-              className="rounded-md px-3 py-1.5 text-xs font-semibold text-[#c9d1d9] transition-colors hover:bg-[#21262d] hover:text-white"
-            >
-              Войти
-            </a>
-            <a
-              href={`${APP_URL}/register`}
-              className="flex items-center gap-1 rounded-md bg-[#238636] px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-[#2ea043]"
-            >
-              <span>Начать бесплатно</span>
-              <ArrowRight className="h-3.5 w-3.5" />
-            </a>
-          </div>
+          <a
+            href={`${APP_URL}/login`}
+            className="flex items-center gap-1.5 rounded-md bg-[#238636] px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-[#2ea043]"
+          >
+            <span>Начать бесплатно</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </a>
         </div>
       </div>
     </header>

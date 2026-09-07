@@ -11,16 +11,13 @@ export const Footer = () => {
           <div className="md:col-span-2 space-y-3">
             <div className="flex items-center gap-2">
               <span className="text-lg font-extrabold text-[#f0f6fc]">MeDev</span>
-              <span className="rounded border border-[#30363d] bg-[#161b22] px-1.5 py-0.5 text-[10px] font-mono text-[#8b949e]">
-                v1.0
-              </span>
             </div>
             <p className="max-w-sm text-xs leading-relaxed text-[#8b949e]">
-              Data-first SaaS платформа для инженеров. Автоматическое портфолио, генерация ATS-резюме на базе Groq AI и трекер собеседований.
+              Инструмент для разработчиков которые хотят найти работу быстрее. Резюме, портфолио и трекер откликов в одном месте.
             </p>
             <div className="flex items-center gap-2 text-xs text-[#8b949e] pt-1">
               <span className="h-2 w-2 rounded-full bg-[#2ea043]" />
-              <span>Все системы работают в штатном режиме</span>
+              <span>Все сервисы работают в штатном режиме</span>
             </div>
           </div>
 
@@ -53,7 +50,7 @@ export const Footer = () => {
             </ul>
           </div>
 
-          {/* Legal & Project */}
+          {/* Legal & Links */}
           <div className="space-y-2.5">
             <div className="text-xs font-semibold text-[#f0f6fc] uppercase tracking-wider">
               Юридическая информация
@@ -77,7 +74,7 @@ export const Footer = () => {
                   className="hover:text-[#f0f6fc] transition-colors flex items-center gap-1.5"
                 >
                   <GithubIcon className="h-3.5 w-3.5" />
-                  <span>GitHub Repository</span>
+                  <span>GitHub</span>
                 </a>
               </li>
             </ul>
@@ -87,11 +84,10 @@ export const Footer = () => {
         {/* Bottom Bar */}
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#8b949e] gap-4">
           <div>
-            © {new Date().getFullYear()} MeDev (DevProfile). Платформа для разработчиков.
+            © {new Date().getFullYear()} MeDev. Платформа для разработчиков.
           </div>
-          <div className="flex items-center gap-1">
-            <span>Production Live at</span>
-            <span className="font-mono text-[#58a6ff]">medev.mrsgemaseny.com</span>
+          <div>
+            Сделано для разработчиков
           </div>
         </div>
       </div>

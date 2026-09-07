@@ -1,68 +1,72 @@
 import React from 'react';
 import {
   GitPullRequest,
-  Bot,
+  Sparkles,
   KanbanSquare,
-  FileCode2,
-  Lock,
-  Zap,
-  Database,
+  Globe,
+  ArrowRight,
+  FileText,
+  Sliders,
+  Download,
 } from 'lucide-react';
 
 const pillars = [
   {
-    title: 'Автоматический GitHub Sync',
-    tag: 'GitHub API v3',
+    title: 'Резюме из твоих реальных проектов',
+    tag: 'GitHub',
     description:
-      'Импорт всех публичных репозиториев, языков программирования, динамики коммитов и верифицированных проектов без ручного заполнения анкет.',
+      'Подключи GitHub одним кликом. MeDev сам найдёт твои лучшие проекты, языки и опыт — без ручного заполнения анкет.',
     icon: GitPullRequest,
-    metrics: ['Авто-детект топ-языков', 'Синхронизация коммитов', 'Верифицированные ссылки'],
+    metrics: ['Всё из реальных коммитов', 'Без выдуманного опыта', 'Обновляется автоматически'],
     highlight: 'border-[#30363d] bg-[#161b22]',
   },
   {
-    title: 'AI Resume Studio (Groq GPT-20B)',
-    tag: 'Smart Merge Core',
+    title: 'Резюме под конкретную вакансию',
+    tag: 'Адаптация',
     description:
-      'Генерация резюме под конкретные вакансии. Наш алгоритм Smart Merge сверяет реальные коммиты с PDF-опытом, исключая галлюцинации LLM.',
-    icon: Bot,
-    metrics: ['Строгая модель openai/gpt-oss-20b', 'ATS-оптимизированный текст', '0% выдуманных технологий'],
+      'Вставь ссылку на вакансию — получи резюме адаптированное под её требования. Только твой реальный опыт, никаких выдумок.',
+    icon: Sparkles,
+    metrics: ['Адаптация под каждую вакансию', 'Только реальный опыт', 'Формат понятен HR-системам'],
     highlight: 'border-[#238636]/40 bg-[#161b22]',
   },
   {
-    title: 'Мгновенное портфолио (/:username)',
-    tag: 'L1 Caffeine + L2 Valkey',
+    title: 'Твоё портфолио по личной ссылке',
+    tag: 'Портфолио',
     description:
-      'Персональная страница разработчика с откликом менее 15мс. Двухуровневый кэш, реактивная инвалидация через события Spring и адаптивный дизайн.',
-    icon: Zap,
-    metrics: ['Отклик sub-15ms', '6 цветовых схем', 'SEO и OpenGraph метатеги'],
+      'Получи страницу medev.mrsgemaseny.com/твой-ник с проектами, стеком и контактами. Отправляй её вместо резюме или вместе с ним.',
+    icon: Globe,
+    metrics: ['Готово сразу после регистрации', 'Открывается мгновенно', '6 цветовых схем'],
     highlight: 'border-[#30363d] bg-[#161b22]',
   },
   {
-    title: 'Job Tracker ATS & Kanban',
-    tag: 'Career CRM',
+    title: 'Не теряй отклики',
+    tag: 'Трекер',
     description:
-      'Полноценный трекер собеседований с drag-and-drop доской, фиксацией зарплатных вилок, дат этапов, заметок рекрутеров и архивной аналитикой.',
+      'Канбан-доска для всех твоих заявок. Статус, дата, контакт рекрутера, зарплатная вилка — всё в одном месте.',
     icon: KanbanSquare,
-    metrics: ['Drag-and-Drop воронка', 'История статусов и офферов', 'Аналитика конверсии'],
+    metrics: ['Перетаскивай карточки по этапам', 'Фиксируй условия офферов', 'Видишь всю воронку сразу'],
     highlight: 'border-[#30363d] bg-[#161b22]',
   },
 ];
 
-const smallFeatures = [
+const steps = [
   {
-    icon: FileCode2,
-    title: 'Экспорт в PDF через Flying Saucer',
-    description: 'Чистый векторный PDF без сдвигов верстки, проходящий любые корпоративные ATS-парсеры.',
+    step: '01',
+    icon: GitPullRequest,
+    title: 'Подключи GitHub',
+    description: 'Вход в 1 клик. Сервис автоматически определит твои основные языки, проекты и историю коммитов.',
   },
   {
-    icon: Lock,
-    title: 'Zero-Trust Безопасность & RLS',
-    description: 'Row-Level Security на уровне бэкенда, JWT в безопасных cookies и полная защита от IDOR.',
+    step: '02',
+    icon: Sliders,
+    title: 'Настрой резюме',
+    description: 'Выбери подходящий дизайн из 6 шаблонов и при необходимости адаптируй текст под желаемую вакансию.',
   },
   {
-    icon: Database,
-    title: 'PostgreSQL 17 + Flyway',
-    description: 'Строгие миграции БД, версионирование схемы и подготовка к семантическому поиску через pgvector.',
+    step: '03',
+    icon: Download,
+    title: 'Скачай PDF',
+    description: 'Получи готовый PDF-файл, который без ошибок распознается HR-системами и рекрутерами.',
   },
 ];
 
@@ -73,14 +77,14 @@ export const Features = () => {
         {/* Section Header */}
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-2xl font-bold tracking-tight text-[#f0f6fc] sm:text-4xl">
-            Все инструменты инженера в одной платформе
+            Всё что нужно чтобы найти работу быстрее
           </h2>
           <p className="mt-4 text-sm text-[#8b949e] sm:text-base">
-            Хватит тратить часы на верстку резюме в Word или Canva. MeDev берет достоверные данные из вашего GitHub и превращает их в рабочий карьерный арсенал.
+            От пустого резюме до оффера — один инструмент.
           </p>
         </div>
 
-        {/* 4 Major Pillars (Bento Grid) */}
+        {/* 4 Major Pillars */}
         <div className="mt-14 grid grid-cols-1 md:grid-cols-2 gap-6">
           {pillars.map((pillar) => (
             <div
@@ -115,20 +119,34 @@ export const Features = () => {
           ))}
         </div>
 
-        {/* 3 Secondary Features */}
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-          {smallFeatures.map((item) => (
-            <div
-              key={item.title}
-              className="rounded-xl border border-[#30363d] bg-[#161b22] p-6 transition-all hover:border-[#8b949e]/40"
-            >
-              <div className="flex h-9 w-9 items-center justify-center rounded-md border border-[#30363d] bg-[#21262d]">
-                <item.icon className="h-4 w-4 text-[#58a6ff]" />
+        {/* How It Works (3 Steps) */}
+        <div className="mt-16 rounded-2xl border border-[#30363d] bg-[#161b22] p-8 sm:p-10">
+          <div className="text-center mb-8">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#2ea043]">
+              Простой процесс
+            </span>
+            <h3 className="mt-2 text-xl font-bold text-[#f0f6fc] sm:text-2xl">
+              Как это работает
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {steps.map((s) => (
+              <div
+                key={s.step}
+                className="relative rounded-xl border border-[#30363d]/70 bg-[#0d1117] p-6 transition-all hover:border-[#8b949e]/40"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-[#30363d] bg-[#21262d]">
+                    <s.icon className="h-5 w-5 text-[#58a6ff]" />
+                  </div>
+                  <span className="font-mono text-xs font-bold text-[#8b949e]">{s.step}</span>
+                </div>
+                <h4 className="text-base font-semibold text-[#f0f6fc]">{s.title}</h4>
+                <p className="mt-2 text-xs leading-relaxed text-[#8b949e]">{s.description}</p>
               </div>
-              <h4 className="mt-4 text-sm font-semibold text-[#f0f6fc]">{item.title}</h4>
-              <p className="mt-2 text-xs leading-relaxed text-[#8b949e]">{item.description}</p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>

@@ -7,56 +7,56 @@ const templates = [
   {
     id: 'classic',
     name: 'Classic ATS',
-    category: 'Enterprise & BigTech',
-    description: 'Одноколоночный строгий макет со стандартными секциями. Идеальная проходимость через любые корпоративные ATS-парсеры.',
+    category: 'Enterprise & Корпорации',
+    description: 'Строгий, чистый, без лишнего. Идеально подходит для крупных компаний и банков.',
     atsScore: '100%',
     layoutType: 'single-column',
-    features: ['Строгая хронология', 'Стандартные заголовки', 'Без разрывов страниц'],
+    features: ['Строгая хронология', 'Стандартные секции', 'Легко читается HR'],
   },
   {
     id: 'modern',
     name: 'Modern Split',
     category: 'Product & FinTech',
-    description: 'Двухколоночная структура с акцентным сайдбаром для навыков и языков. Позволяет компактно уместить опыт на 1 странице.',
+    description: 'Двухколоночный макет с боковой панелью для навыков. Удобно умещает опыт на 1 странице.',
     atsScore: '98%',
     layoutType: 'two-column',
-    features: ['Сайдбар для навыков', 'Выделение ключевых метрик', 'Плотная верстка'],
+    features: ['Сайдбар для навыков', 'Компактное оформление', 'Акцент на опыте'],
   },
   {
     id: 'minimal',
     name: 'Minimal Clean',
-    category: 'Startups & Scaleups',
-    description: 'Лаконичный дизайн без визуального шума. Быстро сканируется рекрутером за 6 секунд, выделяя только факты и результаты.',
+    category: 'Стартапы & Scaleups',
+    description: 'Лаконичный дизайн без визуального шума. Рекрутер считывает главное за 6 секунд.',
     atsScore: '99%',
     layoutType: 'minimal',
-    features: ['Высокая плотность текста', 'Минималистичные буллеты', 'Фокус на результатах'],
+    features: ['Высокая читаемость', 'Четкая структура', 'Фокус на результатах'],
   },
   {
     id: 'technical',
     name: 'Technical GitHub',
     category: 'Backend & Systems',
-    description: 'Макет с акцентом на архитектуру, стек технологий, подтвержденные репозитории и ссылки на кодовую базу.',
+    description: 'Акцент на ключевой стек, подтвержденные репозитории и ссылки на кодовую базу.',
     atsScore: '97%',
     layoutType: 'technical',
-    features: ['Блок репозиториев', 'Стек-матрица', 'Верифицированный код'],
+    features: ['Блок репозиториев', 'Стек технологий', 'Ссылки на код'],
   },
   {
     id: 'executive',
     name: 'Executive Lead',
-    category: 'Tech Lead & Architect',
-    description: 'Фокус на лидерство, архитектурные решения, управление командами и бизнес-эффект для руководящих позиций.',
+    category: 'Tech Lead & Senior',
+    description: 'Для опытных специалистов: упор на лидерство, результаты и управление проектами.',
     atsScore: '98%',
     layoutType: 'executive',
-    features: ['Блок архитектуры', 'Метрики команды', 'Бизнес-импакт'],
+    features: ['Управление проектами', 'Достижения команды', 'Масштаб решений'],
   },
   {
     id: 'creative',
     name: 'Creative UI',
     category: 'Frontend & Full-Stack',
-    description: 'Выразительная сетка для разработчиков с сильным визуальным портфолио, скриншотами проектов и дизайн-системами.',
+    description: 'Выразительный макет для frontend и full-stack разработчиков с упором на витрину проектов.',
     atsScore: '96%',
     layoutType: 'creative',
-    features: ['Витрина проектов', 'UI-акценты', 'Доступность WCAG'],
+    features: ['Витрина проектов', 'Визуальные акценты', 'Современная сетка'],
   },
 ];
 
@@ -70,10 +70,10 @@ export const TemplatesShowcase = () => {
             <span>Шаблоны резюме</span>
           </div>
           <h2 className="mt-4 text-2xl font-bold tracking-tight text-[#f0f6fc] sm:text-4xl">
-            6 инженерных форматов для любых требований
+            6 шаблонов резюме — выбери свой стиль
           </h2>
           <p className="mt-4 text-sm text-[#8b949e] sm:text-base">
-            Каждый шаблон оптимизирован под стандарты международного найма и генерирует чистый векторный PDF в 1 клик.
+            Скачай PDF в один клик. Все шаблоны проходят автоматические фильтры HR-систем.
           </p>
         </div>
 
@@ -91,7 +91,7 @@ export const TemplatesShowcase = () => {
                     {tpl.category}
                   </span>
                   <span className="text-[11px] font-semibold text-[#2ea043] bg-[#238636]/10 border border-[#238636]/30 px-2 py-0.5 rounded">
-                    ATS {tpl.atsScore}
+                    Совместимость {tpl.atsScore}
                   </span>
                 </div>
 

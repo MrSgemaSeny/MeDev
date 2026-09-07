@@ -9,17 +9,16 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'MeDev — Data-First SaaS Платформа для Разработчиков',
+  title: 'MeDev — Резюме и портфолио из твоего GitHub',
   description:
-    'Превратите ваш GitHub в профессиональное портфолио. Генерация ATS-резюме на базе Groq AI без галлюцинаций и встроенный Kanban-трекер откликов.',
+    'Подключи GitHub — MeDev создаст сильное резюме под конкретную вакансию и личную страницу-портфолио. Скачай готовый PDF в один клик.',
   keywords: [
     'MeDev',
-    'GitHub Resume',
-    'ATS Resume Builder',
-    'Groq AI',
-    'Developer Portfolio',
-    'Job Tracker',
-    'Developer SaaS',
+    'GitHub резюме',
+    'конструктор резюме для разработчиков',
+    'портфолио разработчика',
+    'трекер откликов',
+    'IT резюме PDF',
   ],
   authors: [{ name: 'Murat Orynbasar', url: 'https://github.com/MrSgemaSeny' }],
   metadataBase: new URL('https://medev.mrsgemaseny.com'),
@@ -27,9 +26,9 @@ export const metadata: Metadata = {
     canonical: 'https://medev.mrsgemaseny.com',
   },
   openGraph: {
-    title: 'MeDev — Data-First SaaS Платформа для Разработчиков',
+    title: 'MeDev — Резюме и портфолио из твоего GitHub',
     description:
-      'Автоматический парсинг GitHub, генерация ATS-friendly PDF-резюме через Groq AI и персональный трекер откликов.',
+      'Подключи GitHub — MeDev создаст сильное резюме под конкретную вакансию и личную страницу-портфолио. Скачай готовый PDF в один клик.',
     url: 'https://medev.mrsgemaseny.com',
     siteName: 'MeDev',
     locale: 'ru_RU',
@@ -37,9 +36,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'MeDev — Платформа для инженеров',
+    title: 'MeDev — Резюме и портфолио из твоего GitHub',
     description:
-      'Синхронизация GitHub, генерация ATS PDF-резюме на базе Groq AI и трекер откликов.',
+      'Подключи GitHub — MeDev создаст сильное резюме под конкретную вакансию и личную страницу-портфолио.',
   },
   robots: {
     index: true,
