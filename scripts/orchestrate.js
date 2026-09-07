@@ -49,8 +49,14 @@ async function callOpenRouter(prompt, role, model) {
 
     const msg = data.choices?.[0]?.message;
     let content = (msg?.content || msg?.reasoning || '').trim();
-    // Удаляем теги рассуждений при наличии
+    // Удаляем теги рассуждений и блоки Thinking Process
     content = content.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+    if (content.startsWith('Thinking Process:')) {
+      const parts = content.split(/\n\n(?=[A-ZА-Я0-9#*-])/);
+      if (parts.length > 1) {
+        content = parts.slice(1).join('\n\n').trim();
+      }
+    }
     return content;
   } finally {
     clearTimeout(timeout);
