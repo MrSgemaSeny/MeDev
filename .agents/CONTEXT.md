@@ -13,8 +13,8 @@
   - `backend/`: Spring Boot 3.3.0 (Java 17, PostgreSQL 17, Redis, Groq AI).
   - `frontend/`: Vite + React 19 SPA (`app.medev.mrsgemaseny.com`, Dashboard, Resume Builder, ATS).
   - `landing/`: Next.js 15 App Router SSG (`medev.mrsgemaseny.com`, Marketing, SEO, OpenGraph).
-- **Latest Work (2026-09-07 Full 13-Point Compliance, Accessibility & Legal Audit)**:
-  - **WCAG 2.1 AA Contrast**: Исправлена переменная `--color-text-muted` в `.dark` (`#8b949e`, контраст 6.05:1) и light (`#59636e`, 4.6:1), устранены неконтрастные `text-gray-500` и `text-[#7d8590]`.
+- **Latest Work (2026-09-07 Full 19-Point Compliance, Accessibility & Legal Audit — 100% COMPLETE)**:
+  - **WCAG 2.1 AA Contrast**: Исправлена переменная `--color-text-muted` в `.dark` (`#8b949e`, 6.05:1) и light (`#59636e`, 4.6:1), устранены неконтрастные цвета.
   - **Descriptive Alt Text**: Все аватары и графики оснащены содержательными alt-описаниями; декоративные SVG получили `aria-hidden="true"`.
   - **Refund Policy (14-Day Guarantee)**: Внедрена страница `/refund` в Next.js лендинге и Vite SPA, ссылки интегрированы в футеры и модалку оплаты.
   - **Privacy & Terms**: Развернуты подробные юридические документы (соответствие ЗРК № 94-V, GDPR, PII-маскирование перед Groq AI, права на удаление).
@@ -22,7 +22,13 @@
   - **Zero Fake Reviews Verified**: Подтверждена чистота проекта от фальшивых отзывов.
   - **Cookies Policy & Banner**: Создан доступный `CookieBanner` с сохранением согласия в `localStorage`.
   - **Form Consent**: Добавлены ссылки на соглашение под формами входа/регистрации и загрузчиком PDF.
-  - **Rule 11 & Domain Fix**: Исправлено название модели на `GPT-20B` в `AiChatWidget.tsx`; заменены все устаревшие ссылки `medev.app` на `medev.mrsgemaseny.com`.
+  - **Clear Button Labels (Item 14)**: Однозначные лейблы действий на кнопках лендинга, баннера («Принять необходимые»), профиля («Сохранить изменения профиля») и импорта PDF («Выбрать PDF-файл резюме»).
+  - **Cookie Consent Check (Item 15)**: Регламентировано использование исключительно strictly necessary куки и localStorage, анонимная аналитика Vercel без куки.
+  - **Real Business Details (Item 16)**: Внедрен блок официальных реквизитов ИП Орынбасар М. (г. Алматы, РК, support/privacy email, Telegram) во все правовые страницы и футер.
+  - **Data Minimization (Item 17)**: В Политику добавлен отдельный раздел минимизации данных (GDPR ст. 5(1)(c), ЗРК № 94-V ст. 5), сбор строго ограничен профессиональными полями.
+  - **Keyboard Friendly Forms (Item 18)**: `<label htmlFor>` связаны с `id`, `aria-invalid` и `role="alert"` для ошибок, дропзона PDF получила `role="button"`, `tabIndex={0}`, `onKeyDown` (Enter/Space), четкие кольца фокуса `Input.tsx`.
+  - **Remove Unsupported Claims (Item 19)**: Устранены абсолютные и непроверяемые утверждения («все сервисы», «100% точность», «все крупные HR-платформы») и заменены на корректные стандарты ATS.
+  - **Rule 11 & Domain Fix**: Модель зафиксирована как `GPT-20B` в `AiChatWidget.tsx`; все ссылки обновлены на `medev.mrsgemaseny.com`.
 - **Test Baseline**: 253/253 backend tests green (100%), 38/38 frontend tests green (100%), Next.js SSG build: 9/9 static pages generated.
 
 ## Active Backlog

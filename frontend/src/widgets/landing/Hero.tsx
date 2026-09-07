@@ -93,7 +93,7 @@ export const Hero = () => {
             </div>
             <div className="text-[11px] font-medium text-[#2ea043] flex items-center gap-1">
               <Zap className="h-3 w-3" />
-              <span>100% Live</span>
+              <span>Live Sync</span>
             </div>
           </div>
 
@@ -129,7 +129,7 @@ export const Hero = () => {
                 <div className="mt-4">
                   <div className="flex justify-between text-[10px] text-[#8b949e] mb-1">
                     <span>Языки в кодовой базе</span>
-                    <span>100% точность</span>
+                    <span>GitHub API</span>
                   </div>
                   <div className="flex h-2 w-full overflow-hidden rounded bg-[#21262d]">
                     <div className="bg-[#b07219] w-[45%]" title="Java 45%" />

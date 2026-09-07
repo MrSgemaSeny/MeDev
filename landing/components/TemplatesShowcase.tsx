@@ -51,7 +51,7 @@ export const TemplatesShowcase = () => {
             6 шаблонов резюме — выбери свой стиль
           </h2>
           <p className="mt-5 text-lg leading-relaxed text-[#8b949e] sm:text-xl">
-            Скачай PDF в один клик. Все шаблоны проходят автоматические фильтры HR-систем.
+            Скачай PDF в один клик. Шаблоны спроектированы в соответствии со стандартами ATS для безошибочного считывания текстовой структуры рекрутинговыми системами.
           </p>
         </div>
 
@@ -114,7 +114,7 @@ export const TemplatesShowcase = () => {
                   href={`${APP_URL}/login`}
                   className="flex items-center justify-center gap-2 rounded-xl border border-[#30363d] bg-[#21262d] py-3 text-sm font-bold text-[#c9d1d9] transition-colors hover:bg-[#30363d] hover:text-white focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
                 >
-                  <span>Выбрать шаблон</span>
+                  <span>Выбрать шаблон резюме</span>
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </a>
               </div>

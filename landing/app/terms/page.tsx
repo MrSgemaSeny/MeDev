@@ -33,7 +33,7 @@ export default function TermsPage() {
             <section className="space-y-3">
               <h2 className="text-xl font-bold text-[#f0f6fc]">1. Предмет соглашения и акцепт</h2>
               <p>
-                Настоящие Условия использования представляют собой юридически обязательный договор между вами (Пользователем) и платформой <strong>MeDev</strong> (Оператор: MeDev / Murat Orynbasar). Регистрируя аккаунт, подключая учетную запись GitHub или продолжая использование сайта, вы безоговорочно соглашаетесь с данными условиями.
+                Настоящие Условия использования представляют собой юридически обязательный договор между вами (Пользователем) и платформой <strong>MeDev</strong> (Оператор: Индивидуальный предприниматель Орынбасар Мурат / ИП Орынбасар М., г. Алматы, Республика Казахстан). Регистрируя аккаунт, подключая учетную запись GitHub или продолжая использование сайта, вы безоговорочно соглашаетесь с данными условиями.
               </p>
             </section>
 
@@ -92,14 +92,15 @@ export default function TermsPage() {
             </section>
 
             <section className="space-y-3">
-              <h2 className="text-xl font-bold text-[#f0f6fc]">7. Контакты службы поддержки</h2>
-              <p>
-                По вопросам условий обслуживания и юридическим уведомлениям:{' '}
-                <a href="mailto:support@medev.mrsgemaseny.com" className="font-semibold text-[#58a6ff] hover:underline">
-                  support@medev.mrsgemaseny.com
-                </a>
-                .
-              </p>
+              <h2 className="text-xl font-bold text-[#f0f6fc]">7. Реквизиты исполнителя и контакты</h2>
+              <div className="rounded-xl border border-[#30363d] bg-[#161b22] p-5 space-y-2 text-xs">
+                <div><strong>Исполнитель:</strong> Индивидуальный предприниматель Орынбасар Мурат (ИП Орынбасар М.)</div>
+                <div><strong>Юрисдикция регистрации:</strong> г. Алматы, Республика Казахстан</div>
+                <div><strong>Служба поддержки:</strong> <a href="mailto:support@medev.mrsgemaseny.com" className="text-[#58a6ff] hover:underline">support@medev.mrsgemaseny.com</a></div>
+                <div><strong>Юридические вопросы:</strong> <a href="mailto:privacy@medev.mrsgemaseny.com" className="text-[#58a6ff] hover:underline">privacy@medev.mrsgemaseny.com</a></div>
+                <div><strong>Telegram:</strong> <a href="https://t.me/MrSgemaSeny" target="_blank" rel="noreferrer" className="text-[#58a6ff] hover:underline">@MrSgemaSeny</a></div>
+                <div><strong>Режим работы поддержки:</strong> Ежедневно, ответ в течение 24–48 часов</div>
+              </div>
             </section>
           </div>
         </div>

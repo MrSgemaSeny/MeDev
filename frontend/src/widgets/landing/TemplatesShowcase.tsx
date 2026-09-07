@@ -7,7 +7,7 @@ const templates = [
     name: 'Classic ATS',
     category: 'Enterprise & BigTech',
     description: 'Одноколоночный строгий макет со стандартными секциями. Идеальная проходимость через любые корпоративные ATS-парсеры.',
-    atsScore: '100%',
+    atsScore: 'ATS-Ready',
     layoutType: 'single-column',
     features: ['Строгая хронология', 'Стандартные заголовки', 'Без разрывов страниц'],
   },

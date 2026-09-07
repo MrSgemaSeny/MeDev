@@ -40,7 +40,7 @@ const tiers = [
       'Экспорт профиля в JSON и Markdown',
       'Приоритетная поддержка',
     ],
-    buttonText: 'Перейти на PRO',
+    buttonText: 'Оформить подписку PRO',
     featured: true,
   },
 ];

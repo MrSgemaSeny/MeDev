@@ -95,10 +95,11 @@ export const AboutSection = () => {
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={parseResume.isPending}
-            className="inline-flex items-center gap-2 text-[12px] px-3 py-2 rounded-md border border-[var(--color-border-default)] surface-secondary text-secondary hover:surface-tertiary hover:text-primary transition-colors whitespace-nowrap cursor-pointer disabled:opacity-50"
+            aria-label="Импортировать данные из PDF-файла"
+            className="inline-flex items-center gap-2 text-[12px] px-3 py-2 rounded-md border border-[var(--color-border-default)] surface-secondary text-secondary hover:surface-tertiary hover:text-primary focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none transition-colors whitespace-nowrap cursor-pointer disabled:opacity-50"
           >
-            <Upload size={14} />
-            {parseResume.isPending ? 'Parsing...' : 'Import from PDF'}
+            <Upload size={14} aria-hidden="true" />
+            {parseResume.isPending ? 'Импорт...' : 'Импортировать из PDF'}
             <span className="text-[10px] py-0.5 px-1 bg-[var(--bg-pro)] text-[var(--text-pro)] border border-[var(--border-pro)] rounded font-medium tracking-wide ml-1">Pro</span>
           </button>
         </div>
@@ -127,27 +128,61 @@ export const AboutSection = () => {
       <form onSubmit={handleSubmit}>
         
         {/* Basic info */}
-        <div className="text-[11px] font-semibold text-muted tracking-widest uppercase mb-3">Basic info</div>
+        <div className="text-[11px] font-semibold text-muted tracking-widest uppercase mb-3">Основная информация</div>
         <div className="grid grid-cols-3 gap-3 mb-6">
           <div className="flex flex-col gap-1.5">
-            <label className="text-[11px] text-muted font-medium tracking-wide uppercase">Full name</label>
-            <input name="fullName" value={formData.fullName} onChange={handleChange} className="surface-inset border border-default rounded-md py-2 px-3 text-[13px] text-primary w-full outline-none focus:border-[var(--color-accent)] hover:border-[var(--color-border-muted)] transition-colors placeholder:text-muted" />
+            <label htmlFor="about-fullname" className="text-[11px] text-muted font-medium tracking-wide uppercase">Полное имя</label>
+            <input 
+              id="about-fullname" 
+              name="fullName" 
+              value={formData.fullName} 
+              onChange={handleChange} 
+              className="surface-inset border border-default rounded-md py-2 px-3 text-[13px] text-primary w-full outline-none focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:border-transparent hover:border-[var(--color-border-muted)] transition-all placeholder:text-muted" 
+            />
           </div>
           <div className="flex flex-col gap-1.5 col-span-2">
-            <label className="text-[11px] text-muted font-medium tracking-wide uppercase">Headline</label>
-            <input name="headline" value={formData.headline} onChange={handleChange} placeholder="e.g. Senior Full-Stack Engineer" className="surface-inset border border-default rounded-md py-2 px-3 text-[13px] text-primary w-full outline-none focus:border-[var(--color-accent)] hover:border-[var(--color-border-muted)] transition-colors placeholder:text-muted" />
+            <label htmlFor="about-headline" className="text-[11px] text-muted font-medium tracking-wide uppercase">Заголовок / Профессия</label>
+            <input 
+              id="about-headline" 
+              name="headline" 
+              value={formData.headline} 
+              onChange={handleChange} 
+              placeholder="например, Senior Full-Stack Engineer" 
+              className="surface-inset border border-default rounded-md py-2 px-3 text-[13px] text-primary w-full outline-none focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:border-transparent hover:border-[var(--color-border-muted)] transition-all placeholder:text-muted" 
+            />
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-[11px] text-muted font-medium tracking-wide uppercase">Location</label>
-            <input name="location" value={formData.location} onChange={handleChange} placeholder="City, Country" className="surface-inset border border-default rounded-md py-2 px-3 text-[13px] text-primary w-full outline-none focus:border-[var(--color-accent)] hover:border-[var(--color-border-muted)] transition-colors placeholder:text-muted" />
+            <label htmlFor="about-location" className="text-[11px] text-muted font-medium tracking-wide uppercase">Город, Страна</label>
+            <input 
+              id="about-location" 
+              name="location" 
+              value={formData.location} 
+              onChange={handleChange} 
+              placeholder="Алматы, Казахстан" 
+              className="surface-inset border border-default rounded-md py-2 px-3 text-[13px] text-primary w-full outline-none focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:border-transparent hover:border-[var(--color-border-muted)] transition-all placeholder:text-muted" 
+            />
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-[11px] text-muted font-medium tracking-wide uppercase">Website</label>
-            <input name="website" value={formData.website} onChange={handleChange} placeholder="https://" className="surface-inset border border-default rounded-md py-2 px-3 text-[13px] text-primary w-full outline-none focus:border-[var(--color-accent)] hover:border-[var(--color-border-muted)] transition-colors placeholder:text-muted" />
+            <label htmlFor="about-website" className="text-[11px] text-muted font-medium tracking-wide uppercase">Веб-сайт / Портфолио</label>
+            <input 
+              id="about-website" 
+              name="website" 
+              value={formData.website} 
+              onChange={handleChange} 
+              placeholder="https://" 
+              className="surface-inset border border-default rounded-md py-2 px-3 text-[13px] text-primary w-full outline-none focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:border-transparent hover:border-[var(--color-border-muted)] transition-all placeholder:text-muted" 
+            />
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-[11px] text-muted font-medium tracking-wide uppercase">GitHub</label>
-            <input name="githubUsername" value={formData.githubUsername} onChange={handleChange} placeholder="github.com/username" className="surface-inset border border-default rounded-md py-2 px-3 text-[13px] text-primary w-full outline-none focus:border-[var(--color-accent)] hover:border-[var(--color-border-muted)] transition-colors placeholder:text-muted" />
+            <label htmlFor="about-github" className="text-[11px] text-muted font-medium tracking-wide uppercase">GitHub никнейм</label>
+            <input 
+              id="about-github" 
+              name="githubUsername" 
+              value={formData.githubUsername} 
+              onChange={handleChange} 
+              placeholder="логин на github.com" 
+              className="surface-inset border border-default rounded-md py-2 px-3 text-[13px] text-primary w-full outline-none focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:border-transparent hover:border-[var(--color-border-muted)] transition-all placeholder:text-muted" 
+            />
           </div>
         </div>
 
@@ -155,24 +190,26 @@ export const AboutSection = () => {
 
         {/* Summary */}
         <div className="flex justify-between items-center mb-2">
-          <div className="text-[11px] font-semibold text-muted tracking-widest uppercase m-0">Summary</div>
+          <label htmlFor="about-summary" className="text-[11px] font-semibold text-muted tracking-widest uppercase m-0">О себе (Summary)</label>
           <button 
             type="button" 
             onClick={handleGenerateSummary}
             disabled={isGenerating}
-            className="inline-flex items-center gap-1.5 text-[11px] py-1 px-2 rounded-md border border-[var(--color-border-default)] surface-secondary text-secondary hover:surface-tertiary hover:text-primary transition-colors cursor-pointer disabled:opacity-50"
+            aria-label="Сгенерировать краткое резюме с помощью искусственного интеллекта"
+            className="inline-flex items-center gap-1.5 text-[11px] py-1 px-2 rounded-md border border-[var(--color-border-default)] surface-secondary text-secondary hover:surface-tertiary hover:text-primary focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none transition-colors cursor-pointer disabled:opacity-50"
           >
-            <Sparkles size={13} />
-            {isGenerating ? 'Generating...' : 'Generate with AI'}
+            <Sparkles size={13} aria-hidden="true" />
+            {isGenerating ? 'Генерация...' : 'Сгенерировать резюме через AI'}
           </button>
         </div>
         <div className="flex flex-col gap-1 mb-6">
           <textarea 
+            id="about-summary"
             name="summary" 
             value={formData.summary} 
             onChange={handleChange} 
             rows={3} 
-            className="surface-inset border border-default rounded-md py-2 px-3 text-[13px] text-primary w-full outline-none focus:border-[var(--color-accent)] hover:border-[var(--color-border-muted)] transition-colors placeholder:text-muted resize-none leading-relaxed"
+            className="surface-inset border border-default rounded-md py-2 px-3 text-[13px] text-primary w-full outline-none focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:border-transparent hover:border-[var(--color-border-muted)] transition-all placeholder:text-muted resize-none leading-relaxed"
           />
           <div className="text-[11px] text-muted text-right mt-1">
             <span style={{ color: formData.summary.length > 600 ? 'var(--color-danger)' : '' }}>{formData.summary.length}</span> / 600
@@ -186,20 +223,33 @@ export const AboutSection = () => {
           <button 
             type="submit" 
             disabled={updateProfile.isPending}
-            className="py-2 px-4 rounded-md border-none bg-[var(--color-accent)] text-white text-[13px] font-medium cursor-pointer hover:bg-[var(--color-accent-hover)] transition-colors disabled:opacity-50"
+            className="py-2 px-4 rounded-md border-none bg-[var(--color-accent)] text-white text-[13px] font-medium cursor-pointer hover:bg-[var(--color-accent-hover)] focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none transition-colors disabled:opacity-50"
           >
-            {updateProfile.isPending ? 'Saving...' : 'Save changes'}
+            {updateProfile.isPending ? 'Сохранение...' : 'Сохранить изменения профиля'}
           </button>
           <button 
             type="button"
-            className="py-2 px-4 rounded-md border border-[var(--color-border-default)] bg-transparent text-secondary text-[13px] cursor-pointer hover:surface-secondary hover:text-primary transition-colors"
+            onClick={() => {
+              if (profile) {
+                setFormData({
+                  fullName: profile.fullName || '',
+                  headline: profile.headline || '',
+                  summary: profile.summary || '',
+                  location: profile.location || '',
+                  website: profile.website || '',
+                  githubUsername: profile.githubUsername || '',
+                  linkedin: profile.linkedin || '',
+                });
+              }
+            }}
+            className="py-2 px-4 rounded-md border border-[var(--color-border-default)] bg-transparent text-secondary text-[13px] cursor-pointer hover:surface-secondary hover:text-primary focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none transition-colors"
           >
-            Discard
+            Отменить изменения
           </button>
           {toastVisible && (
             <span className="inline-flex items-center gap-2 text-[12px] text-[#4ade80] ml-2">
-              <Check size={14} />
-              Saved
+              <Check size={14} aria-hidden="true" />
+              Сохранено
             </span>
           )}
         </div>

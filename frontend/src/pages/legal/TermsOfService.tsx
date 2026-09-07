@@ -24,7 +24,7 @@ export const TermsOfService: React.FC = () => {
           <section className="space-y-3">
             <h2 className="text-xl font-semibold text-[#f0f6fc]">1. Acceptance of Terms</h2>
             <p>
-              By accessing or using the MeDev platform, you agree to be bound by these Terms of Service. If you disagree with any part of these terms, you may discontinue use of the service.
+              By accessing or using the MeDev platform (operated by Individual Entrepreneur Murat Orynbasar / ИП Орынбасар М., Almaty, Republic of Kazakhstan), you agree to be bound by these Terms of Service. If you disagree with any part of these terms, you may discontinue use of the service.
             </p>
           </section>
 
@@ -64,14 +64,15 @@ export const TermsOfService: React.FC = () => {
           </section>
 
           <section className="space-y-3">
-            <h2 className="text-xl font-semibold text-[#f0f6fc]">6. Contact Information</h2>
-            <p>
-              For any legal or service inquiries, please contact:{' '}
-              <a href="mailto:support@medev.mrsgemaseny.com" className="text-[#58a6ff] hover:underline">
-                support@medev.mrsgemaseny.com
-              </a>
-              .
-            </p>
+            <h2 className="text-xl font-semibold text-[#f0f6fc]">6. Business Entity & Contacts</h2>
+            <div className="rounded-xl border border-[#30363d] bg-[#161b22] p-5 space-y-2 text-xs">
+              <div><strong>Service Operator:</strong> Individual Entrepreneur Murat Orynbasar (ИП Орынбасар М.)</div>
+              <div><strong>Registration Jurisdiction:</strong> Almaty, Republic of Kazakhstan</div>
+              <div><strong>Customer Support:</strong> <a href="mailto:support@medev.mrsgemaseny.com" className="text-[#58a6ff] hover:underline">support@medev.mrsgemaseny.com</a></div>
+              <div><strong>Legal & Privacy:</strong> <a href="mailto:privacy@medev.mrsgemaseny.com" className="text-[#58a6ff] hover:underline">privacy@medev.mrsgemaseny.com</a></div>
+              <div><strong>Telegram:</strong> <a href="https://t.me/MrSgemaSeny" target="_blank" rel="noreferrer" className="text-[#58a6ff] hover:underline">@MrSgemaSeny</a></div>
+              <div><strong>Support Response SLA:</strong> 24 to 48 hours</div>
+            </div>
           </section>
         </div>
       </div>

@@ -32,14 +32,14 @@ export const CookieBanner = () => {
   return (
     <div
       role="region"
-      aria-label="Уведомление о файлах cookie"
+      aria-label="Уведомление об использовании файлов cookie"
       className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-xl rounded-2xl border border-[#30363d] bg-[#161b22]/95 p-4 shadow-2xl backdrop-blur-md sm:bottom-6 sm:p-5"
     >
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-start gap-3">
           <Cookie className="h-5 w-5 shrink-0 text-[#2ea043] mt-0.5" aria-hidden="true" />
           <p className="text-xs leading-relaxed text-[#c9d1d9]">
-            Мы используем только необходимые файлы cookie и локальное хранилище для безопасной авторизации и сохранения темы. Подробнее в{' '}
+            Мы используем только строго необходимые файлы cookie и локальное хранилище для авторизации и настроек темы. Подробнее в{' '}
             <Link
               href="/privacy"
               className="text-[#58a6ff] underline hover:text-white focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded"
@@ -54,7 +54,7 @@ export const CookieBanner = () => {
           type="button"
           className="shrink-0 rounded-lg bg-[#238636] px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-[#2ea043] focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none w-full sm:w-auto text-center"
         >
-          Понятно
+          Принять необходимые
         </button>
       </div>
     </div>

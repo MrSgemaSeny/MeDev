@@ -36,7 +36,7 @@ export default function PrivacyPage() {
                 Настоящая Политика конфиденциальности определяет порядок обработки и защиты персональной информации пользователей платформы <strong>MeDev</strong> (доступной по адресам <code>medev.mrsgemaseny.com</code> и <code>app.medev.mrsgemaseny.com</code>).
               </p>
               <p>
-                Оператором обработки персональных данных является MeDev / Murat Orynbasar. Сервис соблюдает нормы Закона Республики Казахстан от 21 мая 2013 года № 94-V «О персональных данных и их защите», а также общие принципы Общего регламента защиты данных ЕС (GDPR 2016/679).
+                Оператором обработки персональных данных является Индивидуальный предприниматель Орынбасар Мурат (ИП Орынбасар М., г. Алматы, Республика Казахстан). Сервис соблюдает нормы Закона Республики Казахстан от 21 мая 2013 года № 94-V «О персональных данных и их защите», а также общие принципы Общего регламента защиты данных ЕС (GDPR 2016/679).
               </p>
             </section>
 
@@ -59,7 +59,25 @@ export default function PrivacyPage() {
             </section>
 
             <section className="space-y-3">
-              <h2 className="text-xl font-bold text-[#f0f6fc]">3. Использование искусственного интеллекта (AI) и безопасность PII</h2>
+              <h2 className="text-xl font-bold text-[#f0f6fc]">3. Принцип минимизации данных (Data Minimization)</h2>
+              <p>
+                В соответствии со статьей 5(1)(c) GDPR и статьей 5 Закона РК № 94-V, платформа MeDev придерживается строгого принципа сбора данных в объеме, минимально необходимом для выполнения заявленных функций.
+              </p>
+              <p>
+                Мы обрабатываем только ту информацию, которая напрямую требуется для синхронизации проектов разработки, формирования резюме, ведения трекера откликов и отображения страницы-портфолио.
+              </p>
+              <p><strong>Мы категорически НЕ собираем и НЕ запрашиваем:</strong></p>
+              <ul className="list-disc pl-5 space-y-1.5 text-[#c9d1d9]">
+                <li>Национальные идентификаторы, номера паспортов, удостоверений личности или ИИН.</li>
+                <li>Точный домашний адрес (в профиле достаточно указать город и страну).</li>
+                <li>Сведения о расовой или национальной принадлежности, религиозных убеждениях, здоровье или биометрические данные.</li>
+                <li>Доступ к вашим приватным репозиториям или закрытому исходному коду.</li>
+                <li>Полные реквизиты банковских карт и CVV/CVC коды.</li>
+              </ul>
+            </section>
+
+            <section className="space-y-3">
+              <h2 className="text-xl font-bold text-[#f0f6fc]">4. Использование искусственного интеллекта (AI) и безопасность PII</h2>
               <p>
                 Для улучшения формулировок и адаптации резюме под вакансии используется Groq Cloud API (модель <code>openai/gpt-oss-20b</code>).
               </p>
@@ -73,7 +91,7 @@ export default function PrivacyPage() {
             </section>
 
             <section className="space-y-3">
-              <h2 className="text-xl font-bold text-[#f0f6fc]">4. Политика файлов cookie и локального хранилища</h2>
+              <h2 className="text-xl font-bold text-[#f0f6fc]">5. Политика файлов cookie и локального хранилища</h2>
               <p>
                 Мы используем только строго необходимые (Strictly Necessary) и функциональные файлы cookie и записи <code>localStorage</code>:
               </p>
@@ -81,12 +99,12 @@ export default function PrivacyPage() {
                 <li><code>refresh_token</code>: зашифрованный HttpOnly-cookie для безопасного поддержания авторизованной сессии.</li>
                 <li><code>theme</code> в localStorage: сохранение выбранной цветовой темы (темная/светлая).</li>
                 <li><code>cookie_consent</code> в localStorage: сохранение вашего подтверждения ознакомления с политикой.</li>
-                <li>Vercel Analytics: cookieless-сбор агрегированных метрик загрузки страниц. Рекламные сторонние трекеры (Meta Pixel, Google Ads) отсутствуют.</li>
+                <li>Vercel Analytics: cookieless-сбор агрегированных метрик загрузки страниц без отслеживания между сайтами. Рекламные сторонние трекеры (Meta Pixel, Google Ads) отсутствуют.</li>
               </ul>
             </section>
 
             <section className="space-y-3">
-              <h2 className="text-xl font-bold text-[#f0f6fc]">5. Права пользователя и удаление данных</h2>
+              <h2 className="text-xl font-bold text-[#f0f6fc]">6. Права пользователя и удаление данных</h2>
               <p>Вы имеете полное право в любой момент:</p>
               <ul className="list-disc pl-5 space-y-1.5 text-[#c9d1d9]">
                 <li>Запросить выгрузку ваших данных в машиночитаемом формате (JSON / Markdown).</li>
@@ -102,14 +120,15 @@ export default function PrivacyPage() {
             </section>
 
             <section className="space-y-3">
-              <h2 className="text-xl font-bold text-[#f0f6fc]">6. Контактная информация</h2>
-              <p>
-                По любым вопросам конфиденциальности и обработки персональных данных обращайтесь по адресу:{' '}
-                <a href="mailto:support@medev.mrsgemaseny.com" className="font-semibold text-[#58a6ff] hover:underline">
-                  support@medev.mrsgemaseny.com
-                </a>
-                .
-              </p>
+              <h2 className="text-xl font-bold text-[#f0f6fc]">7. Реквизиты оператора и контакты</h2>
+              <div className="rounded-xl border border-[#30363d] bg-[#161b22] p-5 space-y-2 text-xs">
+                <div><strong>Оператор данных:</strong> Индивидуальный предприниматель Орынбасар Мурат (ИП Орынбасар М.)</div>
+                <div><strong>Юрисдикция:</strong> г. Алматы, Республика Казахстан</div>
+                <div><strong>Email службы поддержки:</strong> <a href="mailto:support@medev.mrsgemaseny.com" className="text-[#58a6ff] hover:underline">support@medev.mrsgemaseny.com</a></div>
+                <div><strong>Email по вопросам приватности:</strong> <a href="mailto:privacy@medev.mrsgemaseny.com" className="text-[#58a6ff] hover:underline">privacy@medev.mrsgemaseny.com</a></div>
+                <div><strong>Telegram:</strong> <a href="https://t.me/MrSgemaSeny" target="_blank" rel="noreferrer" className="text-[#58a6ff] hover:underline">@MrSgemaSeny</a></div>
+                <div><strong>Регламент ответов:</strong> В течение 24–48 часов</div>
+              </div>
             </section>
           </div>
         </div>

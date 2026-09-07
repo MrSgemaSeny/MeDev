@@ -93,18 +93,18 @@ export default function RefundPage() {
             <section className="space-y-3 rounded-xl border border-[#30363d] bg-[#161b22] p-5">
               <div className="flex items-center gap-2 text-base font-semibold text-[#f0f6fc]">
                 <HelpCircle className="h-5 w-5 text-[#58a6ff]" aria-hidden="true" />
-                <span>Вопросы по платежам?</span>
+                <span>Вопросы по возвратам и платежам?</span>
               </div>
               <p className="text-xs text-[#8b949e]">
-                Если у вас возникли вопросы по тарифам или списаниям, напишите нам на{' '}
-                <a
-                  href="mailto:support@medev.mrsgemaseny.com"
-                  className="text-[#58a6ff] hover:underline"
-                >
-                  support@medev.mrsgemaseny.com
-                </a>
-                . Мы отвечаем в течение 24 часов.
+                Если у вас возникли вопросы по тарифам, списаниям или статусу возврата, свяжитесь с нами:
               </p>
+              <div className="space-y-1.5 text-xs text-[#c9d1d9] pt-1">
+                <div><strong>Исполнитель:</strong> Индивидуальный предприниматель Орынбасар Мурат (ИП Орынбасар М.)</div>
+                <div><strong>Юрисдикция:</strong> Республика Казахстан, г. Алматы</div>
+                <div><strong>Email:</strong> <a href="mailto:support@medev.mrsgemaseny.com" className="text-[#58a6ff] hover:underline">support@medev.mrsgemaseny.com</a></div>
+                <div><strong>Telegram:</strong> <a href="https://t.me/MrSgemaSeny" target="_blank" rel="noreferrer" className="text-[#58a6ff] hover:underline">@MrSgemaSeny</a></div>
+                <div><strong>Срок рассмотрения:</strong> 3 рабочих дня (ответ службы поддержки — до 24 часов)</div>
+              </div>
             </section>
           </div>
         </div>

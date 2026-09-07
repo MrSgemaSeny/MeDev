@@ -52,7 +52,16 @@ export const ImportResumePage = () => {
 
       <div className="w-full max-w-2xl mx-auto">
         <div 
-          className="group relative border-2 border-dashed border-[var(--color-border-default)] rounded-2xl p-12 flex flex-col items-center justify-center text-center cursor-pointer bg-[var(--color-bg-primary)] hover:bg-[var(--color-bg-secondary)] hover:border-[var(--color-success,auto)] transition-all duration-300 shadow-sm hover:shadow-[0_0_30px_rgba(35,134,54,0.1)]"
+          role="button"
+          tabIndex={0}
+          aria-label="Загрузить резюме в формате PDF (до 10 МБ)"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              fileInputRef.current?.click();
+            }
+          }}
+          className="group relative border-2 border-dashed border-[var(--color-border-default)] rounded-2xl p-12 flex flex-col items-center justify-center text-center cursor-pointer bg-[var(--color-bg-primary)] hover:bg-[var(--color-bg-secondary)] hover:border-[var(--color-success,auto)] focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none transition-all duration-300 shadow-sm hover:shadow-[0_0_30px_rgba(35,134,54,0.1)]"
           onClick={() => fileInputRef.current?.click()}
         >
           <input 
@@ -64,21 +73,21 @@ export const ImportResumePage = () => {
           />
           {isParsing ? (
             <div className="text-[var(--color-success,auto)] animate-pulse flex flex-col items-center">
-              <FileText size={64} className="mb-6 opacity-90" />
-              <h3 className="text-xl font-bold mb-2">AI is analyzing your resume...</h3>
-              <p className="text-sm opacity-80">Extracting skills, experience, and projects. Please wait.</p>
+              <FileText size={64} className="mb-6 opacity-90" aria-hidden="true" />
+              <h3 className="text-xl font-bold mb-2">AI анализирует ваше резюме...</h3>
+              <p className="text-sm opacity-80">Извлечение навыков, проектов и профессионального опыта. Пожалуйста, подождите.</p>
             </div>
           ) : (
             <>
               <div className="w-20 h-20 rounded-full bg-[var(--color-bg-inset)] border border-[var(--color-border-default)] flex items-center justify-center mb-6 group-hover:scale-110 group-hover:border-[var(--color-success,auto)] transition-all duration-300">
-                <UploadCloud size={32} className="text-secondary group-hover:text-[var(--color-success,auto)] transition-colors" />
+                <UploadCloud size={32} className="text-secondary group-hover:text-[var(--color-success,auto)] transition-colors" aria-hidden="true" />
               </div>
-              <h3 className="text-xl font-bold text-primary mb-2">Upload Resume or LinkedIn Export</h3>
+              <h3 className="text-xl font-bold text-primary mb-2">Загрузите резюме или экспорт профиля</h3>
               <p className="text-sm text-secondary mb-6 max-w-sm">
-                We support PDF files up to 10MB. Your data is processed securely.
+                Поддерживаются PDF-файлы размером до 10 МБ. Данные обрабатываются безопасно.
               </p>
               <Button variant="primary" size="lg" type="button" className="pointer-events-none rounded-xl px-8 shadow-md">
-                Select File
+                Выбрать PDF-файл резюме
               </Button>
             </>
           )}

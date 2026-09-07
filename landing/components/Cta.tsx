@@ -18,6 +18,7 @@ export const Cta = () => {
         <div className="mt-10 flex justify-center">
           <a
             href={`${APP_URL}/login`}
+            aria-label="Зарегистрироваться или войти через GitHub"
             className="flex items-center gap-3 rounded-xl bg-[#238636] px-10 py-5 text-lg font-bold text-white shadow-xl transition-all hover:bg-[#2ea043] focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
           >
             <GithubIcon className="h-6 w-6" />

@@ -54,11 +54,12 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
           </h2>
           <button
             onClick={onClose}
-            className="rounded p-1.5 cursor-pointer hover:bg-white/10 transition-colors"
+            type="button"
+            className="rounded p-1.5 cursor-pointer hover:bg-white/10 transition-colors focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
             style={{ color: 'var(--color-text-muted)' }}
-            aria-label="Close"
+            aria-label="Закрыть модальное окно"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
         <div className="flex-1 overflow-y-auto p-4">{children}</div>

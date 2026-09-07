@@ -46,6 +46,7 @@ export const Hero = () => {
             </a>
             <a
               href="#features"
+              aria-label="Перейти к разделу возможностей платформы"
               className="flex items-center gap-2 rounded-xl border border-[#30363d] bg-[#21262d] px-8 py-4 text-base font-semibold text-[#c9d1d9] transition-colors hover:bg-[#30363d] hover:text-white focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
             >
               <span>Возможности</span>
@@ -119,10 +120,11 @@ export const Hero = () => {
                   </span>
                   <a
                     href={`${APP_URL}/login`}
+                    aria-label="Скачать пример готового PDF-резюме"
                     className="flex items-center gap-2 rounded-lg bg-[#238636] px-4 py-2 text-sm font-bold text-white hover:bg-[#2ea043] focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
                   >
                     <Download className="h-4 w-4" aria-hidden="true" />
-                    <span>Скачать PDF</span>
+                    <span>Скачать образец PDF</span>
                   </a>
                 </div>
               </div>

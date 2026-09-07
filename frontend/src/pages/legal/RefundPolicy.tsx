@@ -56,18 +56,18 @@ export const RefundPolicy: React.FC = () => {
             </p>
           </section>
 
-          <section className="rounded-xl border border-[#30363d] bg-[#161b22] p-5 space-y-2">
+          <section className="rounded-xl border border-[#30363d] bg-[#161b22] p-5 space-y-3">
             <div className="flex items-center gap-2 text-base font-semibold text-[#f0f6fc]">
               <HelpCircle className="h-5 w-5 text-[#58a6ff]" aria-hidden="true" />
-              <span>Служба поддержки</span>
+              <span>Реквизиты исполнителя и служба поддержки</span>
             </div>
-            <p className="text-xs text-[#8b949e]">
-              По любым вопросам пишите на{' '}
-              <a href="mailto:support@medev.mrsgemaseny.com" className="text-[#58a6ff] hover:underline">
-                support@medev.mrsgemaseny.com
-              </a>
-              . Мы на связи 7 дней в неделю.
-            </p>
+            <div className="space-y-1.5 text-xs text-[#c9d1d9]">
+              <div><strong>Исполнитель:</strong> Индивидуальный предприниматель Орынбасар Мурат (ИП Орынбасар М.)</div>
+              <div><strong>Юрисдикция:</strong> Республика Казахстан, г. Алматы</div>
+              <div><strong>Email:</strong> <a href="mailto:support@medev.mrsgemaseny.com" className="text-[#58a6ff] hover:underline">support@medev.mrsgemaseny.com</a></div>
+              <div><strong>Telegram:</strong> <a href="https://t.me/MrSgemaSeny" target="_blank" rel="noreferrer" className="text-[#58a6ff] hover:underline">@MrSgemaSeny</a></div>
+              <div><strong>Регламент:</strong> Рассмотрение заявок в течение 3 рабочих дней, ответ поддержки до 24 часов</div>
+            </div>
           </section>
         </div>
       </div>

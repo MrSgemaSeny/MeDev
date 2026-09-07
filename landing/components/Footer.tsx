@@ -17,7 +17,7 @@ export const Footer = () => {
             </p>
             <div className="flex items-center gap-2 text-xs text-[#8b949e] pt-1">
               <span className="h-2 w-2 rounded-full bg-[#2ea043]" aria-hidden="true" />
-              <span>Все сервисы работают в штатном режиме</span>
+              <span>Все системы платформы стабильны</span>
             </div>
           </div>
 
@@ -89,10 +89,10 @@ export const Footer = () => {
         {/* Bottom Bar */}
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#8b949e] gap-4">
           <div>
-            © {new Date().getFullYear()} MeDev. Платформа для разработчиков.
+            © {new Date().getFullYear()} MeDev · ИП Орынбасар М. (г. Алматы, РК)
           </div>
           <div>
-            Сделано для разработчиков
+            Поддержка: <a href="mailto:support@medev.mrsgemaseny.com" className="hover:text-[#f0f6fc] text-[#58a6ff]">support@medev.mrsgemaseny.com</a>
           </div>
         </div>
       </div>
