@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { Code2 } from 'lucide-react';
 import { GithubIcon } from '../../shared/ui/GithubIcon';
 
 export const Footer = () => {
@@ -10,10 +9,10 @@ export const Footer = () => {
           {/* Brand */}
           <div className="md:col-span-2 space-y-3">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-md border border-[#30363d] bg-[#161b22]">
-                <Code2 className="h-4 w-4 text-[#2ea043]" />
-              </div>
-              <span className="text-base font-bold text-[#f0f6fc]">MeDev</span>
+              <span className="text-lg font-extrabold text-[#f0f6fc]">MeDev</span>
+              <span className="rounded border border-[#30363d] bg-[#161b22] px-1.5 py-0.5 text-[10px] font-mono text-[#8b949e]">
+                v1.0
+              </span>
             </div>
             <p className="max-w-sm text-xs leading-relaxed text-[#8b949e]">
               Data-first SaaS платформа для инженеров. Автоматическое портфолио, генерация ATS-резюме на базе Groq AI и трекер собеседований.
@@ -87,7 +86,7 @@ export const Footer = () => {
         {/* Bottom Bar */}
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#8b949e] gap-4">
           <div>
-            © {new Date().getFullYear()} MeDev (DevProfile). Разработано для сообщества инженеров.
+            © {new Date().getFullYear()} MeDev (DevProfile). Платформа для разработчиков.
           </div>
           <div className="flex items-center gap-1">
             <span>Production Live at</span>

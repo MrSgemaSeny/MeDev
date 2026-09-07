@@ -5,7 +5,6 @@ import {
   FileCode2,
   Lock,
   Zap,
-  Sparkles,
   Database,
 } from 'lucide-react';
 
@@ -72,11 +71,7 @@ export const Features = () => {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="mx-auto max-w-2xl text-center">
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-[#30363d] bg-[#161b22] px-3 py-1 text-xs font-semibold text-[#2ea043]">
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>Архитектура продукта</span>
-          </div>
-          <h2 className="mt-4 text-2xl font-bold tracking-tight text-[#f0f6fc] sm:text-4xl">
+          <h2 className="text-2xl font-bold tracking-tight text-[#f0f6fc] sm:text-4xl">
             Все инструменты инженера в одной платформе
           </h2>
           <p className="mt-4 text-sm text-[#8b949e] sm:text-base">

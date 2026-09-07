@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Code2, ArrowRight, LayoutDashboard } from 'lucide-react';
+import { ArrowRight, LayoutDashboard } from 'lucide-react';
 import { useAuthStore } from '../../entities/user/model/store';
 import { GithubIcon } from '../../shared/ui/GithubIcon';
 
@@ -7,19 +7,14 @@ export const Header = () => {
   const accessToken = useAuthStore((state) => state.accessToken);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-[#30363d] bg-[#0d1117]/85 backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-b border-[#30363d] bg-[#0d1117]/90 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-8">
-          <Link to="/" className="flex items-center gap-2.5 transition-opacity hover:opacity-90">
-            <div className="flex h-9 w-9 items-center justify-center rounded-md border border-[#30363d] bg-[#161b22]">
-              <Code2 className="h-5 w-5 text-[#2ea043]" />
-            </div>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-lg font-bold tracking-tight text-[#f0f6fc]">MeDev</span>
-              <span className="rounded border border-[#30363d] bg-[#21262d] px-1.5 py-0.5 text-[10px] font-medium text-[#8b949e]">
-                v1.0
-              </span>
-            </div>
+          <Link to="/" className="flex items-center gap-2 transition-opacity hover:opacity-90">
+            <span className="text-xl font-extrabold tracking-tight text-[#f0f6fc]">MeDev</span>
+            <span className="rounded border border-[#30363d] bg-[#161b22] px-1.5 py-0.5 text-[11px] font-mono font-medium text-[#8b949e]">
+              v1.0
+            </span>
           </Link>
 
           <nav className="hidden items-center gap-6 md:flex">

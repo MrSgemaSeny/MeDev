@@ -21,8 +21,8 @@ describe('LandingPage Component', () => {
     expect(screen.getByText(/Job Tracker ATS & Kanban/i)).toBeInTheDocument();
 
     // Templates Showcase
-    expect(screen.getByText(/6 инженерных PDF-дизайнов под любые цели/i)).toBeInTheDocument();
-    expect(screen.getByText(/Classic \(ATS Standard\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/6 инженерных форматов для любых требований/i)).toBeInTheDocument();
+    expect(screen.getByText(/Classic ATS/i)).toBeInTheDocument();
 
     // Pricing
     expect(screen.getByText(/Честные тарифы без скрытых платежей/i)).toBeInTheDocument();
