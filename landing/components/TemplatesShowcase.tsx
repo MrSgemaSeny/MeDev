@@ -5,40 +5,52 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://app.medev.mrsgemasen
 
 const templates = [
   {
-    id: 'classic',
-    name: 'Classic ATS',
-    description: 'Строгий, чистый, без лишнего. Идеально подходит для крупных компаний и банков.',
+    id: 'clean',
+    name: 'Clean ATS',
+    isPro: false,
+    badge: 'FREE',
+    description: 'Строгий, чистый классический одноколоночный макет. 100% считываемость любыми ATS-системами банков и корпораций.',
     layoutType: 'single-column',
   },
   {
-    id: 'modern',
-    name: 'Modern Split',
-    description: 'Двухколоночный макет с боковой панелью для навыков. Удобно умещает опыт на 1 странице.',
-    layoutType: 'two-column',
-  },
-  {
-    id: 'minimal',
-    name: 'Minimal Clean',
-    description: 'Лаконичный дизайн без визуального шума. Рекрутер считывает главное за 6 секунд.',
-    layoutType: 'minimal',
-  },
-  {
-    id: 'technical',
-    name: 'Technical GitHub',
-    description: 'Акцент на ключевой стек, подтвержденные репозитории и ссылки на кодовую базу.',
+    id: 'github',
+    name: 'GitHub',
+    isPro: false,
+    badge: 'FREE',
+    description: 'Инженерный стандарт с фирменным стилем GitHub: акцент на коммиты, проверенные репозитории и стек.',
     layoutType: 'technical',
   },
   {
-    id: 'executive',
-    name: 'Executive Lead',
-    description: 'Для опытных специалистов: упор на лидерство, результаты и управление проектами.',
-    layoutType: 'executive',
+    id: 'milky-soft',
+    name: 'Milky Soft',
+    isPro: true,
+    badge: 'PRO',
+    description: 'Теплый крафтовый дизайн с мягкими акцентами. Идеально подходит для Full-Stack и Indie-разработчиков.',
+    layoutType: 'two-column',
   },
   {
-    id: 'creative',
-    name: 'Creative UI',
-    description: 'Выразительный макет для frontend и full-stack разработчиков с упором на витрину проектов.',
-    layoutType: 'creative',
+    id: 'apple-modern',
+    name: 'Apple',
+    isPro: true,
+    badge: 'PRO',
+    description: 'Ультраминимализм в духе Купертино: выверенный воздух, строгая сетка и типографика для Senior и Lead инженеров.',
+    layoutType: 'minimal',
+  },
+  {
+    id: 'grok-monolith',
+    name: 'Grok',
+    isPro: false,
+    badge: 'FREE',
+    description: 'Бруталистский черно-белый монохром. Высокая плотность данных, терминальная эстетика и фокус на фактах.',
+    layoutType: 'single-column',
+  },
+  {
+    id: 'phub-orange',
+    name: 'PH Orange',
+    isPro: true,
+    badge: 'PRO',
+    description: 'Высококонтрастный темный стиль с ярким оранжевым акцентом. Максимальное привлечение внимания к ключевым достижениям.',
+    layoutType: 'two-column',
   },
 ];
 
@@ -63,7 +75,18 @@ export const TemplatesShowcase = () => {
               className="flex flex-col justify-between rounded-2xl border border-[#30363d] bg-[#161b22] p-8 transition-all hover:border-[#58a6ff]/60"
             >
               <div>
-                <h3 className="text-2xl font-bold text-[#f0f6fc]">{tpl.name}</h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-2xl font-bold text-[#f0f6fc]">{tpl.name}</h3>
+                  <span
+                    className={`text-[11px] font-bold px-2 py-0.5 rounded tracking-wider ${
+                      tpl.isPro
+                        ? 'bg-[#238636]/20 text-[#3fb950] border border-[#238636]/40'
+                        : 'bg-[#21262d] text-[#8b949e] border border-[#30363d]'
+                    }`}
+                  >
+                    {tpl.badge}
+                  </span>
+                </div>
                 <p className="mt-3 text-base leading-relaxed text-[#c9d1d9] min-h-[50px]">
                   {tpl.description}
                 </p>

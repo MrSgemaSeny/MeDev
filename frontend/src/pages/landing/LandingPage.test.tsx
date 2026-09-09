@@ -17,12 +17,12 @@ describe('LandingPage Component', () => {
 
     // Features Bento Grid
     expect(screen.getByText(/Автоматический GitHub Sync/i)).toBeInTheDocument();
-    expect(screen.getByText(/AI Resume Studio \(Groq GPT-20B\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/AI Job Match & Cover Letter/i)).toBeInTheDocument();
     expect(screen.getByText(/Job Tracker ATS & Kanban/i)).toBeInTheDocument();
 
     // Templates Showcase
     expect(screen.getByText(/6 инженерных форматов для любых требований/i)).toBeInTheDocument();
-    expect(screen.getByText(/Classic ATS/i)).toBeInTheDocument();
+    expect(screen.getByText(/Clean ATS/i)).toBeInTheDocument();
 
     // Pricing
     expect(screen.getByText(/Честные тарифы без скрытых платежей/i)).toBeInTheDocument();

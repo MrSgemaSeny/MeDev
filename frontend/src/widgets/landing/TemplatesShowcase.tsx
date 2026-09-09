@@ -3,58 +3,70 @@ import { Link } from 'react-router-dom';
 
 const templates = [
   {
-    id: 'classic',
-    name: 'Classic ATS',
+    id: 'clean',
+    name: 'Clean ATS',
     category: 'Enterprise & BigTech',
+    isPro: false,
+    badge: 'FREE',
     description: 'Одноколоночный строгий макет со стандартными секциями. Идеальная проходимость через любые корпоративные ATS-парсеры.',
     atsScore: 'ATS-Ready',
     layoutType: 'single-column',
     features: ['Строгая хронология', 'Стандартные заголовки', 'Без разрывов страниц'],
   },
   {
-    id: 'modern',
-    name: 'Modern Split',
-    category: 'Product & FinTech',
-    description: 'Двухколоночная структура с акцентным сайдбаром для навыков и языков. Позволяет компактно уместить опыт на 1 странице.',
+    id: 'github',
+    name: 'GitHub',
+    category: 'Backend & Systems',
+    isPro: false,
+    badge: 'FREE',
+    description: 'Фирменный стиль GitHub: акцент на ключевой стек, подтвержденные репозитории и ссылки на кодовую базу.',
+    atsScore: '99%',
+    layoutType: 'technical',
+    features: ['Блок репозиториев', 'Стек-матрица', 'Верифицированный код'],
+  },
+  {
+    id: 'milky-soft',
+    name: 'Milky Soft',
+    category: 'Product & Full-Stack',
+    isPro: true,
+    badge: 'PRO',
+    description: 'Теплый крафтовый двухколоночный дизайн с мягкой палитрой. Идеально для Full-Stack и Indie-разработчиков.',
     atsScore: '98%',
     layoutType: 'two-column',
     features: ['Сайдбар для навыков', 'Выделение ключевых метрик', 'Плотная верстка'],
   },
   {
-    id: 'minimal',
-    name: 'Minimal Clean',
-    category: 'Startups & Scaleups',
-    description: 'Лаконичный дизайн без визуального шума. Быстро сканируется рекрутером за 6 секунд, выделяя только факты и результаты.',
+    id: 'apple-modern',
+    name: 'Apple',
+    category: 'Tech Lead & Senior',
+    isPro: true,
+    badge: 'PRO',
+    description: 'Ультраминимализм в духе Купертино: выверенный воздух, строгая сетка и типографика для Senior и Lead инженеров.',
     atsScore: '99%',
     layoutType: 'minimal',
     features: ['Высокая плотность текста', 'Минималистичные буллеты', 'Фокус на результатах'],
   },
   {
-    id: 'technical',
-    name: 'Technical GitHub',
-    category: 'Backend & Systems',
-    description: 'Макет с акцентом на архитектуру, стек технологий, подтвержденные репозитории и ссылки на кодовую базу.',
-    atsScore: '97%',
-    layoutType: 'technical',
-    features: ['Блок репозиториев', 'Стек-матрица', 'Верифицированный код'],
-  },
-  {
-    id: 'executive',
-    name: 'Executive Lead',
-    category: 'Tech Lead & Architect',
-    description: 'Фокус на лидерство, архитектурные решения, управление командами и бизнес-эффект для руководящих позиций.',
+    id: 'grok-monolith',
+    name: 'Grok',
+    category: 'Startups & Scaleups',
+    isPro: false,
+    badge: 'FREE',
+    description: 'Бруталистский черно-белый монохром. Терминальная четкость, высокая контрастность и фокус на фактах.',
     atsScore: '98%',
-    layoutType: 'executive',
-    features: ['Блок архитектуры', 'Метрики команды', 'Бизнес-импакт'],
+    layoutType: 'single-column',
+    features: ['Терминальный стиль', 'Контрастные границы', 'Без визуального шума'],
   },
   {
-    id: 'creative',
-    name: 'Creative UI',
-    category: 'Frontend & Full-Stack',
-    description: 'Выразительная сетка для разработчиков с сильным визуальным портфолио, скриншотами проектов и дизайн-системами.',
-    atsScore: '96%',
-    layoutType: 'creative',
-    features: ['Витрина проектов', 'UI-акценты', 'Доступность WCAG'],
+    id: 'phub-orange',
+    name: 'PH Orange',
+    category: 'Frontend & Creative',
+    isPro: true,
+    badge: 'PRO',
+    description: 'Высококонтрастный темный стиль с оранжевым акцентом. Максимальное привлечение внимания к ключевым достижениям.',
+    atsScore: '97%',
+    layoutType: 'two-column',
+    features: ['Яркий акцент', 'Блок ключевых проектов', 'Визуальная иерархия'],
   },
 ];
 
@@ -88,9 +100,20 @@ export const TemplatesShowcase = () => {
                   <span className="rounded border border-[#30363d] bg-[#21262d] px-2 py-0.5 text-[11px] font-medium text-[#8b949e]">
                     {tpl.category}
                   </span>
-                  <span className="text-[11px] font-semibold text-[#2ea043] bg-[#238636]/10 border border-[#238636]/30 px-2 py-0.5 rounded">
-                    ATS {tpl.atsScore}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <span
+                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded tracking-wider ${
+                        tpl.isPro
+                          ? 'bg-[#238636]/20 text-[#3fb950] border border-[#238636]/40'
+                          : 'bg-[#21262d] text-[#8b949e] border border-[#30363d]'
+                      }`}
+                    >
+                      {tpl.badge}
+                    </span>
+                    <span className="text-[11px] font-semibold text-[#2ea043] bg-[#238636]/10 border border-[#238636]/30 px-2 py-0.5 rounded">
+                      ATS {tpl.atsScore}
+                    </span>
+                  </div>
                 </div>
 
                 <h3 className="mt-4 text-base font-bold text-[#f0f6fc]">{tpl.name}</h3>

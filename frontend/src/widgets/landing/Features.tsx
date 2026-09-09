@@ -19,12 +19,12 @@ const pillars = [
     highlight: 'border-[#30363d] bg-[#161b22]',
   },
   {
-    title: 'AI Resume Studio (Groq GPT-20B)',
-    tag: 'Smart Merge Core',
+    title: 'AI Job Match & Cover Letter (Groq GPT-20B)',
+    tag: 'Smart Match Core',
     description:
-      'Генерация резюме под конкретные вакансии. Наш алгоритм Smart Merge сверяет реальные коммиты с PDF-опытом, исключая галлюцинации LLM.',
+      'Оценка совместимости профиля с вакансией (Match Score) и генерация персональных сопроводительных писем под требования работодателя без выдуманных фактов.',
     icon: Bot,
-    metrics: ['Строгая модель openai/gpt-oss-20b', 'ATS-оптимизированный текст', '0% выдуманных технологий'],
+    metrics: ['Строгая модель openai/gpt-oss-20b', 'Расчет процента совпадения', '0% выдуманных технологий'],
     highlight: 'border-[#238636]/40 bg-[#161b22]',
   },
   {
