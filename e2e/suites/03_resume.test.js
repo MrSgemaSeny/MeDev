@@ -26,24 +26,38 @@ export async function runResumeSuite() {
 
   await client.post('/v1/profile/skills', generateSkill('Languages'), { expectedStatus: 201 });
 
-  // 1. GET /v1/resume/html/github?preview=true (200 OK, HTML)
-  const htmlRes = await client.get('/v1/resume/html/github?preview=true&singlePage=true', { expectedStatus: 200 });
-  assert.equal(htmlRes.status, 200);
-  assert.ok(typeof htmlRes.data === 'string', 'Resume HTML must be string');
-  assert.ok(htmlRes.data.includes('Resume Test Subject'), 'Rendered HTML must contain user full name');
-  console.log('  [PASS] GET /v1/resume/html/github?preview=true -> 200 OK (HTML verified)');
+  // 1. Test Markdown (README)
+  const mdRes = await client.get('/v1/profile/readme?template=full', { expectedStatus: 200 });
+  assert.equal(mdRes.status, 200);
+  assert.ok(typeof mdRes.data === 'string' && mdRes.data.length > 50, 'README Markdown must be valid non-empty string');
+  console.log('  [PASS] GET /v1/profile/readme?template=full -> 200 OK (Markdown verified)');
 
-  // 2. GET /v1/resume/generate/github?preview=true (200 OK, PDF)
-  const pdfRes = await client.get('/v1/resume/generate/github?preview=true&singlePage=true', { expectedStatus: 200 });
-  assert.equal(pdfRes.status, 200);
-  const contentType = pdfRes.headers.get('content-type') || '';
-  assert.ok(contentType.includes('application/pdf'), 'Content-Type must be application/pdf');
-  console.log('  [PASS] GET /v1/resume/generate/github?preview=true -> 200 OK (PDF verified)');
+  const templates = ['apple-modern', 'clean', 'github', 'grok-monolith', 'milky-soft', 'phub-orange'];
+  const modes = [true, false]; // singlePage=true (1-page) vs singlePage=false (multi-page)
 
-  // 3. GET /v1/resume/html/clean?preview=true (200 OK)
-  const cleanRes = await client.get('/v1/resume/html/clean?preview=true&singlePage=true', { expectedStatus: 200 });
-  assert.equal(cleanRes.status, 200);
-  console.log('  [PASS] GET /v1/resume/html/clean?preview=true -> 200 OK');
+  // 2. Test HTML for all 6 templates in both modes
+  for (const tpl of templates) {
+    for (const singlePage of modes) {
+      const modeName = singlePage ? 'singlePage' : 'multiPage';
+      const res = await client.get(`/v1/resume/html/${tpl}?preview=true&singlePage=${singlePage}`, { expectedStatus: 200 });
+      assert.equal(res.status, 200);
+      assert.ok(typeof res.data === 'string', `HTML for ${tpl} must be string`);
+      assert.ok(res.data.includes('Resume Test Subject'), `HTML for ${tpl} must contain user full name`);
+      console.log(`  [PASS] GET /v1/resume/html/${tpl} (${modeName}) -> 200 OK`);
+    }
+  }
+
+  // 3. Test PDF for all 6 templates in both modes
+  for (const tpl of templates) {
+    for (const singlePage of modes) {
+      const modeName = singlePage ? 'singlePage' : 'multiPage';
+      const res = await client.get(`/v1/resume/generate/${tpl}?preview=true&singlePage=${singlePage}`, { expectedStatus: 200 });
+      assert.equal(res.status, 200);
+      const ct = res.headers.get('content-type') || '';
+      assert.ok(ct.includes('application/pdf'), `Content-Type for ${tpl} PDF must be application/pdf`);
+      console.log(`  [PASS] GET /v1/resume/generate/${tpl} (${modeName}) -> 200 OK (PDF verified)`);
+    }
+  }
 
   // 4. Invalid template validation (400 Bad Request)
   const invalidTplRes = await client.get('/v1/resume/html/unknown-template-xyz?preview=true', { expectedStatus: 400 });

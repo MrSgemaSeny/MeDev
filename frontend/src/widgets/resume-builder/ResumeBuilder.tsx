@@ -76,6 +76,7 @@ export const ResumeBuilder = () => {
   const moveUp = (index: number) => { if (index > 0) reorderSections(index, index - 1); };
   const moveDown = (index: number) => { if (index < sections.length - 1) reorderSections(index, index + 1); };
 
+  const [htmlDoc, setHtmlDoc] = useState<string | null>(null);
   const [htmlUrl, setHtmlUrl] = useState<string | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
 
@@ -87,9 +88,11 @@ export const ResumeBuilder = () => {
     const loadPreview = async () => {
       setPreviewLoading(true);
       try {
-        const { data } = await api.get(`/resume/html/${selectedTemplate}?preview=true&singlePage=${isSinglePageMode}`, { responseType: 'blob' });
+        const { data } = await api.get(`/resume/html/${selectedTemplate}?preview=true&singlePage=${isSinglePageMode}`, { responseType: 'text' });
         if (active) {
-          const url = window.URL.createObjectURL(new Blob([data], { type: 'text/html' }));
+          setHtmlDoc(data);
+          const blob = new Blob([data], { type: 'text/html' });
+          const url = window.URL.createObjectURL(blob);
           urlToRevoke = url;
           setHtmlUrl(url);
         }
@@ -287,9 +290,10 @@ export const ResumeBuilder = () => {
               <div className="w-8 h-8 border-2 border-[#30363d] border-t-[#238636] rounded-full animate-spin"></div>
               <div className="text-sm">Rendering HTML Template...</div>
             </div>
-          ) : htmlUrl ? (
+          ) : (htmlDoc || htmlUrl) ? (
             <iframe 
-              src={htmlUrl} 
+              srcDoc={htmlDoc || undefined}
+              src={htmlUrl || undefined} 
               className="w-full h-full border-0 bg-white" 
               title="HTML Preview" 
             />
