@@ -28,6 +28,9 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private final RedisTemplate<String, String> redisTemplate;
     private final AuditService auditService;
 
+    @Value("${app.frontend-url:https://app.medev.mrsgemaseny.com}")
+    private String defaultFrontendUrl;
+
     @Value("${cors.allowed-origins:http://localhost:5173}")
     private String allowedOrigins;
 
@@ -57,7 +60,9 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         auditService.logAction(user.getId(), "AUTH_OAUTH_LOGIN_SUCCESS", String.valueOf(user.getId()), "OAuth2 login successful via " + user.getEmail(), null);
 
-        String frontendOrigin = allowedOrigins.split(",")[0].trim();
+        String frontendOrigin = (defaultFrontendUrl != null && !defaultFrontendUrl.isBlank())
+                ? defaultFrontendUrl.trim()
+                : allowedOrigins.split(",")[0].trim();
         jakarta.servlet.http.Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (jakarta.servlet.http.Cookie cookie : cookies) {

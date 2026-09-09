@@ -22,6 +22,10 @@
 - **Latest Hotfix (2026-09-09 CORS & CookieBanner Fix)**:
   - **CORS**: `https://app.medev.mrsgemaseny.com` добавлен в `cors.allowed-origins` (`application-prod.yml` и `application.yml`). В `SecurityConfig.java` разделена обработка exact origins и pattern origins (`setAllowedOriginPatterns`).
   - **Frontend Crash**: Устранена ошибка `TypeError: Cannot destructure property 'basename' of 'M.useContext(...)' as it is null` в `CookieBanner.tsx` путем замены `Link` (из `react-router-dom`) на нативный тег `<a>`, так как баннер рендерится в `App.tsx` вне дерева `RouterProvider`.
+- **Latest Milestone (2026-09-09 Production E2E API Test Suite — 100% COMPLETE)**:
+  - **E2E Suite**: Создан сквозной автоматизированный E2E API тестовый сьют в `e2e/` (9 модулей, 66 проверок) с поддержкой Cookie Jar, SSE-стримов, замера latency и retry при 502/503/504.
+  - **Verification**: 100% PASS на боевом контуре Render (`https://medev-backend.onrender.com/api`). Покрыты Auth, Profile CRUD, Resume HTML/PDF, Portfolio public, Job Tracker + IDOR (403), AI Groq proxy + SSE stream, GitHub unlinked (500 contract), Admin RBAC (401/403), Actuator health/metrics.
+  - **Runner**: Запуск через `npm run test:e2e` с выводом матрицы покрытия.
 
 ## Active Backlog
 - Setting up automated nightly DB backup jobs.

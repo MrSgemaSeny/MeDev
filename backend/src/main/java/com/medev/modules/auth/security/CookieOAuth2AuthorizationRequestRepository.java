@@ -30,22 +30,29 @@ public class CookieOAuth2AuthorizationRequestRepository implements Authorization
             return;
         }
 
+        boolean isHttps = request.isSecure() || "https".equalsIgnoreCase(request.getHeader("X-Forwarded-Proto"));
         String serialized = serialize(authorizationRequest);
-        Cookie cookie = new Cookie(OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME, serialized);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(COOKIE_EXPIRE_SECONDS);
-        cookie.setSecure(request.isSecure() || "https".equalsIgnoreCase(request.getHeader("X-Forwarded-Proto")));
-        response.addCookie(cookie);
+        org.springframework.http.ResponseCookie authCookie = org.springframework.http.ResponseCookie
+                .from(OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME, serialized)
+                .path("/")
+                .httpOnly(true)
+                .maxAge(COOKIE_EXPIRE_SECONDS)
+                .secure(isHttps)
+                .sameSite("Lax")
+                .build();
+        response.addHeader(org.springframework.http.HttpHeaders.SET_COOKIE, authCookie.toString());
 
         String redirectUriAfterLogin = request.getParameter(REDIRECT_URI_PARAM_COOKIE_NAME);
         if (redirectUriAfterLogin != null && !redirectUriAfterLogin.isBlank()) {
-            Cookie redirectCookie = new Cookie(REDIRECT_URI_PARAM_COOKIE_NAME, redirectUriAfterLogin.trim());
-            redirectCookie.setPath("/");
-            redirectCookie.setHttpOnly(true);
-            redirectCookie.setMaxAge(COOKIE_EXPIRE_SECONDS);
-            redirectCookie.setSecure(request.isSecure() || "https".equalsIgnoreCase(request.getHeader("X-Forwarded-Proto")));
-            response.addCookie(redirectCookie);
+            org.springframework.http.ResponseCookie redirectCookie = org.springframework.http.ResponseCookie
+                    .from(REDIRECT_URI_PARAM_COOKIE_NAME, redirectUriAfterLogin.trim())
+                    .path("/")
+                    .httpOnly(true)
+                    .maxAge(COOKIE_EXPIRE_SECONDS)
+                    .secure(isHttps)
+                    .sameSite("Lax")
+                    .build();
+            response.addHeader(org.springframework.http.HttpHeaders.SET_COOKIE, redirectCookie.toString());
         }
     }
 
@@ -57,18 +64,20 @@ public class CookieOAuth2AuthorizationRequestRepository implements Authorization
     }
 
     public void removeAuthorizationRequestCookies(HttpServletRequest request, HttpServletResponse response) {
-        fetchCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME).ifPresent(cookie -> {
-            cookie.setValue("");
-            cookie.setPath("/");
-            cookie.setMaxAge(0);
-            response.addCookie(cookie);
-        });
-        fetchCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME).ifPresent(cookie -> {
-            cookie.setValue("");
-            cookie.setPath("/");
-            cookie.setMaxAge(0);
-            response.addCookie(cookie);
-        });
+        boolean isHttps = request.isSecure() || "https".equalsIgnoreCase(request.getHeader("X-Forwarded-Proto"));
+        for (String name : new String[]{OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME, REDIRECT_URI_PARAM_COOKIE_NAME}) {
+            fetchCookie(request, name).ifPresent(cookie -> {
+                org.springframework.http.ResponseCookie clearCookie = org.springframework.http.ResponseCookie
+                        .from(name, "")
+                        .path("/")
+                        .httpOnly(true)
+                        .maxAge(0)
+                        .secure(isHttps)
+                        .sameSite("Lax")
+                        .build();
+                response.addHeader(org.springframework.http.HttpHeaders.SET_COOKIE, clearCookie.toString());
+            });
+        }
     }
 
     private String serialize(OAuth2AuthorizationRequest authorizationRequest) {

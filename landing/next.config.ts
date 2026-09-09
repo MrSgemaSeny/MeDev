@@ -7,6 +7,30 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
+  async redirects() {
+    return [
+      {
+        source: '/auth/callback',
+        destination: 'https://app.medev.mrsgemaseny.com/auth/callback',
+        permanent: false,
+      },
+      {
+        source: '/login',
+        destination: 'https://app.medev.mrsgemaseny.com/login',
+        permanent: false,
+      },
+      {
+        source: '/register',
+        destination: 'https://app.medev.mrsgemaseny.com/register',
+        permanent: false,
+      },
+      {
+        source: '/dashboard',
+        destination: 'https://app.medev.mrsgemaseny.com/dashboard',
+        permanent: false,
+      },
+    ];
+  },
   async headers() {
     return [
       {
