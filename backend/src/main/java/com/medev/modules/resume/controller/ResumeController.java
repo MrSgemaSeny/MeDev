@@ -28,7 +28,7 @@ public class ResumeController {
         if (!preview && PRO_TEMPLATES.contains(template)) {
             com.medev.modules.auth.entity.User user = userRepository.findById(userId)
                     .orElseThrow(() -> new com.medev.shared.exception.NotFoundException("User not found"));
-            if (user.getPlan() != com.medev.modules.auth.entity.User.Plan.PRO) {
+            if (user.getPlan() != com.medev.modules.auth.entity.User.Plan.PRO && user.getRole() != com.medev.modules.auth.entity.User.Role.ADMIN) {
                 throw new com.medev.shared.exception.ForbiddenException("PRO template requires PRO plan");
             }
         }
@@ -53,7 +53,7 @@ public class ResumeController {
         if (!preview && PRO_TEMPLATES.contains(template)) {
             com.medev.modules.auth.entity.User user = userRepository.findById(userId)
                     .orElseThrow(() -> new com.medev.shared.exception.NotFoundException("User not found"));
-            if (user.getPlan() != com.medev.modules.auth.entity.User.Plan.PRO) {
+            if (user.getPlan() != com.medev.modules.auth.entity.User.Plan.PRO && user.getRole() != com.medev.modules.auth.entity.User.Role.ADMIN) {
                 throw new com.medev.shared.exception.ForbiddenException("PRO template requires PRO plan");
             }
         }        

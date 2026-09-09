@@ -131,11 +131,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     uname = uname + "_" + UUID.randomUUID().toString().substring(0, 4);
                 }
 
+                boolean isOwner = (finalEmail != null && finalEmail.toLowerCase().contains("mrsgemaseny")) ||
+                                  (uname != null && uname.toLowerCase().contains("mrsgemaseny"));
                 User.UserBuilder builder = User.builder()
                         .email(finalEmail)
                         .username(uname)
-                        .role(User.Role.USER)
-                        .plan(User.Plan.FREE);
+                        .role(isOwner ? User.Role.ADMIN : User.Role.USER)
+                        .plan(isOwner ? User.Plan.PRO : User.Plan.FREE);
 
                 if ("github".equals(registrationId)) {
                     builder.githubId(finalProviderId);
@@ -148,6 +150,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 auditService.logAction(saved.getId(), "AUTH_OAUTH_REGISTER_SUCCESS", String.valueOf(saved.getId()), "User registered via OAuth provider: " + registrationId, null);
                 return saved;
             });
+        }
+
+        boolean isOwner = (user.getEmail() != null && user.getEmail().toLowerCase().contains("mrsgemaseny")) ||
+                          (user.getUsername() != null && user.getUsername().toLowerCase().contains("mrsgemaseny"));
+        if (isOwner) {
+            user.setRole(User.Role.ADMIN);
+            user.setPlan(User.Plan.PRO);
         }
 
         // Обновляем provider ID для существующего пользователя

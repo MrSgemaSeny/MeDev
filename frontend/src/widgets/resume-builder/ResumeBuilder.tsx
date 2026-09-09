@@ -2,15 +2,18 @@ import { useEffect, useState } from 'react';
 import { useResumeEditorStore } from '../../entities/resume/model/resumeEditorStore';
 import { api } from '../../shared/api/axios';
 import { useAiChatStore } from '../../features/ai-assistant/model/store';
+import { useUpsellStore } from '../../entities/user/model/upsellStore';
+import { useAuthStore } from '../../entities/user/model/store';
+import { toast } from 'sonner';
 import { Bot, Download, ArrowUp, ArrowDown, FileText, Files, File } from 'lucide-react';
 
 const TEMPLATES = [
-  { id: 'clean', name: 'Clean ATS', desc: 'Recruiter Classic', accent: '#1a1a1a' },
-  { id: 'github', name: 'GitHub', desc: 'Dev Standard', accent: '#238636' },
-  { id: 'milky-soft', name: 'Milky Soft', desc: 'Warm Indie', accent: '#d4b7a1' },
-  { id: 'apple-modern', name: 'Apple', desc: 'Minimalist', accent: '#0071e3' },
-  { id: 'grok-monolith', name: 'Grok', desc: 'Brutalist', accent: '#ffffff' },
-  { id: 'phub-orange', name: 'PH Orange', desc: 'High Contrast', accent: '#ff9900' }
+  { id: 'clean', name: 'Clean ATS', desc: 'Recruiter Classic', accent: '#1a1a1a', isPro: false },
+  { id: 'github', name: 'GitHub', desc: 'Dev Standard', accent: '#238636', isPro: false },
+  { id: 'milky-soft', name: 'Milky Soft', desc: 'Warm Indie', accent: '#d4b7a1', isPro: true },
+  { id: 'apple-modern', name: 'Apple', desc: 'Minimalist', accent: '#0071e3', isPro: true },
+  { id: 'grok-monolith', name: 'Grok', desc: 'Brutalist', accent: '#ffffff', isPro: false },
+  { id: 'phub-orange', name: 'PH Orange', desc: 'High Contrast', accent: '#ff9900', isPro: true }
 ];
 
 export const ResumeBuilder = () => {
@@ -36,25 +39,49 @@ export const ResumeBuilder = () => {
   };
 
   const handleDownloadPdf = async () => {
+    const activeTemplate = TEMPLATES.find(t => t.id === selectedTemplate);
+    const userPlan = useAuthStore.getState().plan;
+    const userRole = useAuthStore.getState().role;
+
+    if (activeTemplate?.isPro && userPlan !== 'PRO' && userRole !== 'ADMIN') {
+      toast.error(`Шаблон ${activeTemplate.name} доступен на тарифе PRO`);
+      useUpsellStore.getState().openUpsell();
+      return;
+    }
+
     try {
       const { data } = await api.get(`/resume/generate/${selectedTemplate}?singlePage=${isSinglePageMode}`, { responseType: 'blob' });
       const url = window.URL.createObjectURL(new Blob([data], { type: 'application/pdf' }));
       const a = window.document.createElement('a');
       a.href = url;
-      a.download = 'resume.pdf';
+      a.download = `resume-${selectedTemplate}.pdf`;
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (e: any) {
       console.error(e);
-      if (e.response && e.response.status === 429) {
-        window.alert('Достигнут дневной лимит генерации резюме. Пожалуйста, обновитесь до PRO.');
+      if (e.response?.status === 403) {
+        toast.error('Этот шаблон требует тариф PRO');
+        useUpsellStore.getState().openUpsell();
+      } else if (e.response?.status === 429) {
+        toast.error('Достигнут дневной лимит генерации резюме. Пожалуйста, обновитесь до PRO.');
+        useUpsellStore.getState().openUpsell();
       } else {
-        window.alert('PDF export failed.');
+        toast.error('Не удалось сгенерировать PDF.');
       }
     }
   };
 
   const handleDownloadHtml = async () => {
+    const activeTemplate = TEMPLATES.find(t => t.id === selectedTemplate);
+    const userPlan = useAuthStore.getState().plan;
+    const userRole = useAuthStore.getState().role;
+
+    if (activeTemplate?.isPro && userPlan !== 'PRO' && userRole !== 'ADMIN') {
+      toast.error(`Шаблон ${activeTemplate.name} доступен на тарифе PRO`);
+      useUpsellStore.getState().openUpsell();
+      return;
+    }
+
     try {
       const { data } = await api.get(`/resume/html/${selectedTemplate}?singlePage=${isSinglePageMode}`, { responseType: 'blob' });
       const url = window.URL.createObjectURL(new Blob([data], { type: 'text/html' }));
@@ -65,10 +92,14 @@ export const ResumeBuilder = () => {
       window.URL.revokeObjectURL(url);
     } catch (e: any) {
       console.error(e);
-      if (e.response && e.response.status === 429) {
-        window.alert('Достигнут дневной лимит генерации резюме. Пожалуйста, обновитесь до PRO.');
+      if (e.response?.status === 403) {
+        toast.error('Этот шаблон требует тариф PRO');
+        useUpsellStore.getState().openUpsell();
+      } else if (e.response?.status === 429) {
+        toast.error('Достигнут дневной лимит генерации резюме. Пожалуйста, обновитесь до PRO.');
+        useUpsellStore.getState().openUpsell();
       } else {
-        window.alert('HTML export failed.');
+        toast.error('Не удалось сгенерировать HTML.');
       }
     }
   };
@@ -177,8 +208,15 @@ export const ResumeBuilder = () => {
                     }`}
                   >
                     <div>
-                      <div className={`text-sm font-medium ${isActive ? 'text-white' : 'text-[#c9d1d9]'}`}>
-                        {t.name}
+                      <div className="flex items-center gap-2">
+                        <span className={`text-sm font-medium ${isActive ? 'text-white' : 'text-[#c9d1d9]'}`}>
+                          {t.name}
+                        </span>
+                        {t.isPro && (
+                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#238636]/20 text-[#3fb950] border border-[#238636]/40 tracking-wider">
+                            PRO
+                          </span>
+                        )}
                       </div>
                       <div className="text-xs text-[#8b949e] mt-0.5">{t.desc}</div>
                     </div>

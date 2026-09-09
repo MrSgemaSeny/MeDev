@@ -34,6 +34,11 @@
     6. **Global Error Handling**: Унифицирован ответ ошибок `{ status, error, message }` в `GlobalExceptionHandler.java`.
   - **Runner**: Запуск через `npm run test:e2e` с выводом матрицы покрытия.
 
+- **Latest Hotfixes (2026-09-09)**:
+  - **Auth & OAuth**: Устранена гонка авторизации в `App.tsx` vs `AuthCallback.tsx`. Исключен фантомный сетевой вызов `/auth/logout` при открытии сайта анонимными пользователями. Добавлена нормализация email в нижний регистр в `CustomOAuth2UserService`.
+  - **AI Chat Stream**: Устранена склейка слов и чисел ("в90дней", "на40%") за счет передачи структурированного JSON `{ "content": chunk }` в `AiController.java` и исключения `.trim()` / `substring(1)` на фронтенде. В `assistant_system_v1.txt` внедрен запрет галлюцинирования метрик и обязательные уточняющие вопросы по целям пользователя.
+  - **Resume PRO Gating**: Исправлен 403 Forbidden на шаблонах `apple-modern`, `milky-soft`, `phub-orange`. В `ResumeController.java` добавлен пропуск для пользователей с ролью `Role.ADMIN`. На фронтенде добавлен визуальный бейдж PRO и перехват 403 с автоматическим вызовом модалки апгрейда `openUpsell()`. Автоматический апгрейд аккаунта владельца (`mrsgemaseny`) до `ADMIN` и `PRO`.
+
 ## Active Backlog
 - Setting up automated nightly DB backup jobs.
 - Sentry and Prometheus/Grafana monitoring dashboards.
