@@ -40,6 +40,7 @@
   - **Resume PRO Gating**: Исправлен 403 Forbidden на шаблонах `apple-modern`, `milky-soft`, `phub-orange`. В `ResumeController.java` добавлен пропуск для пользователей с ролью `Role.ADMIN`. На фронтенде добавлен визуальный бейдж PRO и перехват 403 с автоматическим вызовом модалки апгрейда `openUpsell()`. Автоматический апгрейд аккаунта владельца (`mrsgemaseny`) до `ADMIN` и `PRO`.
   - **Landing Page Sync**: Синхронизированы шаблоны в `TemplatesShowcase.tsx` (`Clean ATS`, `GitHub`, `Milky Soft`, `Apple`, `Grok`, `PH Orange`) с бейджами FREE/PRO. Позиционирование фичи #2 уточнено до «AI Job Match & Cover Letter» без ложных обещаний. Базовая цена зафиксирована на уровне `$9 / месяц или 4 500 ₸`.
   - **AI Parser Hardening**: Устранены 500/400 ошибки в `/api/v1/ai/parse-resume`. Добавлен обработчик `LlmException` в `GlobalExceptionHandler.java` (429/503/502). Типизированные ошибки в `AiAnalysisService.java` и детальная валидация PDF на русском языке в `AiController.java`. Покрытие `GlobalExceptionHandlerTest`.
+  - **Comprehensive Technical & Architecture Audit**: Сформирован исчерпывающий эталонный документ `TECHNICAL_AUDIT.md` (соответствует Senior Architect стандартам, охватывает топологию C4, реестр 42 API эндпоинтов, 12 сущностей, 24 Flyway миграции, 6 шаблонов резюме, PII Masking, Smart Merge, Resilient SSE и дорожную карту развития).
 
 ## Active Backlog
 - Setting up automated nightly DB backup jobs.
