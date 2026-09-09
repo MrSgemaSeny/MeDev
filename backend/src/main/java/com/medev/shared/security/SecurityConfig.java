@@ -88,12 +88,30 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource(@org.springframework.beans.factory.annotation.Value("${cors.allowed-origins:http://localhost:5173}") String allowedOrigins) {
         CorsConfiguration configuration = new CorsConfiguration();
-        java.util.List<String> origins = java.util.Arrays.stream(allowedOrigins.split(","))
-                .map(String::trim)
-                .filter(s -> !s.isBlank())
-                .toList();
-        java.util.List<String> exactOrigins = origins.stream().filter(s -> !s.contains("*")).toList();
-        java.util.List<String> patternOrigins = origins.stream().filter(s -> s.contains("*")).toList();
+        java.util.Set<String> allOrigins = new java.util.LinkedHashSet<>();
+        allOrigins.add("https://app.medev.mrsgemaseny.com");
+        allOrigins.add("https://medev.mrsgemaseny.com");
+        allOrigins.add("https://me-dev-two.vercel.app");
+        allOrigins.add("https://mrsgemaseny.github.io");
+        allOrigins.add("http://localhost:5173");
+        allOrigins.add("http://localhost:3000");
+
+        if (allowedOrigins != null && !allowedOrigins.isBlank()) {
+            java.util.Arrays.stream(allowedOrigins.split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isBlank())
+                    .forEach(allOrigins::add);
+        }
+
+        java.util.List<String> exactOrigins = allOrigins.stream().filter(s -> !s.contains("*")).toList();
+        java.util.List<String> patternOrigins = new java.util.ArrayList<>(allOrigins.stream().filter(s -> s.contains("*")).toList());
+        if (!patternOrigins.contains("https://*.mrsgemaseny.com")) {
+            patternOrigins.add("https://*.mrsgemaseny.com");
+        }
+        if (!patternOrigins.contains("https://*.vercel.app")) {
+            patternOrigins.add("https://*.vercel.app");
+        }
+
         if (!exactOrigins.isEmpty()) {
             configuration.setAllowedOrigins(exactOrigins);
         }
@@ -101,7 +119,7 @@ public class SecurityConfig {
             configuration.setAllowedOriginPatterns(patternOrigins);
         }
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type", "Accept", "Origin", "X-Requested-With", "baggage", "sentry-trace"));
+        configuration.setAllowedHeaders(List.of("*"));
         configuration.setExposedHeaders(List.of("Authorization", "Set-Cookie"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);

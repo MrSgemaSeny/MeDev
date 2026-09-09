@@ -63,12 +63,22 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String frontendOrigin = (defaultFrontendUrl != null && !defaultFrontendUrl.isBlank())
                 ? defaultFrontendUrl.trim()
                 : allowedOrigins.split(",")[0].trim();
+        java.util.Set<String> validAllowedOrigins = new java.util.LinkedHashSet<>();
+        validAllowedOrigins.add("https://app.medev.mrsgemaseny.com");
+        validAllowedOrigins.add("https://medev.mrsgemaseny.com");
+        validAllowedOrigins.add("https://me-dev-two.vercel.app");
+        if (allowedOrigins != null) {
+            for (String allowed : allowedOrigins.split(",")) {
+                if (!allowed.isBlank()) validAllowedOrigins.add(allowed.trim());
+            }
+        }
+
         jakarta.servlet.http.Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (jakarta.servlet.http.Cookie cookie : cookies) {
                 if ("redirect_uri".equals(cookie.getName()) && cookie.getValue() != null && !cookie.getValue().isBlank()) {
                     String candidate = cookie.getValue().trim();
-                    for (String allowed : allowedOrigins.split(",")) {
+                    for (String allowed : validAllowedOrigins) {
                         String cleanAllowed = allowed.trim();
                         if (!cleanAllowed.isEmpty() && (candidate.equalsIgnoreCase(cleanAllowed) || candidate.startsWith(cleanAllowed + "/") || cleanAllowed.equals("*"))) {
                             frontendOrigin = cleanAllowed.equals("*") ? candidate : cleanAllowed;
