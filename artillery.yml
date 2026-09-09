@@ -1,20 +1,320 @@
 config:
-  target: 'https://medev-backend.onrender.com'
+  # Базовый URL API бэкенда MeDev (Render: https://medev-backend.onrender.com/api)
+  # Примечание: server.servlet.context-path в Spring Boot равен /api.
+  target: "https://medev-backend.onrender.com/api"
+  processor: "./processor.js"
+
+  # Ограничение виртуальных пользователей для предотвращения перегрузки инстанса 512MB RAM
+  maxVusers: 10
+
   phases:
-    - duration: 10
-      arrivalRate: 50
-      name: "Warmup (50 RPS)"
-    - duration: 20
-      arrivalRate: 50
-      rampTo: 200
-      name: "Ramp (200 RPS)"
-    - duration: 15
-      arrivalRate: 500
-      name: "Tsunami (500 RPS)"
+    # Фаза 1: Warmup (30s, 1 VU/s).
+    # Архитектурное обоснование: При первом сквозном прогоне Spring Boot компилирует Hibernate метамодели,
+    # CGLIB-прокси для @PreAuthorize и десериализаторы Jackson. Память Metaspace поднимается до ~130MB (плато).
+    # Плавный разогрев исключает ложные всплески задержек и алерты.
+    - duration: 30
+      arrivalRate: 1
+      name: "Warmup (JVM Metaspace & Connection Pool)"
+
+    # Фаза 2: Smoke (60s, 3 VU/s).
+    # Проверка устойчивости ключевых сценариев под непрерывной рабочей нагрузкой.
+    - duration: 60
+      arrivalRate: 3
+      name: "Smoke (Sustained Load)"
+
+  variables:
+    adminEmail: "{{ $processEnvironment.MEDEV_ADMIN_EMAIL }}"
+    adminPassword: "{{ $processEnvironment.MEDEV_ADMIN_PASSWORD }}"
+    userEmail: "{{ $processEnvironment.MEDEV_USER_EMAIL }}"
+    userPassword: "{{ $processEnvironment.MEDEV_USER_PASSWORD }}"
+
+  plugins:
+    # Детальная разбивка метрик по каждому эндпоинту
+    metrics-by-endpoint: {}
+    # Проверка кодов ответа и валидация заголовков
+    expect: {}
+
+  http:
+    headers:
+      Content-Type: "application/json"
+      Accept: "application/json"
+      # Заголовок X-Requested-With предотвращает блокировку CSRF на уровне бэкенда
+      X-Requested-With: "XMLHttpRequest"
+
+  ensure:
+    # SLA: 95-й перцентиль времени отклика не превышает 3000 мс (с учетом cold start и LLM)
+    p95: 3000
+    # Процент сетевых и серверных ошибок не более 1%
+    maxErrorRate: 1
+
 scenarios:
-  - name: 'Public Endpoints Load'
+  # ============================================================================
+  # Сценарий 1: Public & Monitoring Endpoints (Weight: 5%)
+  # Проверка общедоступного контура без передачи JWT.
+  # ============================================================================
+  - name: "Public / Health Flow"
+    weight: 5
     flow:
       - get:
-          url: '/api/actuator/health'
+          url: "/actuator/health"
+          expect:
+            - statusCode: 200
+      - think: 1
+      # В application-prod.yml включены health, metrics, prometheus (info может быть отключен -> 404)
       - get:
-          url: '/api/v1/portfolio/MrSgemaSeny'
+          url: "/actuator/metrics"
+          expect:
+            - statusCode: 200
+      - think: 1
+      # Публичный профиль портфолио (GET /v1/portfolio/{username})
+      - get:
+          url: "/v1/portfolio/mrsgemaseny"
+          expect:
+            - statusCode:
+                - 200
+                - 404
+
+  # ============================================================================
+  # Сценарий 2: User Full Flow (Weight: 50%)
+  # Ядро платформы: профиль, навыки, генерация резюме, трекер вакансий и квоты.
+  # ============================================================================
+  - name: "User Full Flow"
+    weight: 50
+    beforeScenario: "setUserAuth"
+    beforeRequest: "attachAuthHeader"
+    flow:
+      # Генерация уникальных учетных данных при отсутствии токена в кэше
+      - function: "generateUserData"
+
+      # Регистрация пользователя (если userToken не был предзагружен в processor.js)
+      - post:
+          ifFalse: "userToken"
+          url: "/v1/auth/register"
+          json:
+            email: "{{ dynamicUserEmail }}"
+            username: "{{ dynamicUsername }}"
+            password: "{{ dynamicUserPassword }}"
+          expect:
+            - statusCode: 201
+            - contentType: json
+      - think: 1
+
+      # Вход под созданным пользователем
+      - post:
+          ifFalse: "userToken"
+          url: "/v1/auth/login"
+          json:
+            email: "{{ dynamicUserEmail }}"
+            password: "{{ dynamicUserPassword }}"
+          capture:
+            # В MeDev AuthResponse возвращает accessToken прямо в корне объекта JSON
+            - json: "$.accessToken"
+              as: "authToken"
+          expect:
+            - statusCode: 200
+            - contentType: json
+      - think: 1
+
+      # 1. Чтение профиля текущего пользователя
+      - get:
+          url: "/v1/profile"
+          expect:
+            - statusCode: 200
+            - contentType: json
+      - think: 1
+
+      # 2. Обновление базовых полей профиля
+      - put:
+          url: "/v1/profile"
+          json:
+            headline: "Senior Full-Stack Engineer"
+            summary: "Automated smoke test profile updated via Artillery."
+            location: "Almaty, Kazakhstan"
+          expect:
+            - statusCode: 200
+            - contentType: json
+      - think: 1
+
+      # 3. Жизненный цикл навыка (Skills CRUD) с обязательной чисткой
+      - post:
+          url: "/v1/profile/skills"
+          json:
+            name: "Java 17 (Artillery {{ dynamicRand }})"
+            category: "Backend"
+            level: "Expert"
+          afterResponse: "extractSkillId"
+          expect:
+            - statusCode: 201
+            - contentType: json
+      - think: 1
+      - delete:
+          url: "/v1/profile/skills/{{ createdSkillId }}"
+          expect:
+            - statusCode: 204
+      - think: 1
+
+      # 4. Проверка легковесной генерации резюме (HTML / Preview)
+      # Параметр preview=true не требует PRO плана и не блокирует PDF-рендерер
+      - get:
+          url: "/v1/resume/html/clean?preview=true&singlePage=true"
+          expect:
+            - statusCode: 200
+      - think: 1
+
+      # 5. Жизненный цикл трекера откликов (Job Application Tracker CRUD)
+      - post:
+          url: "/v1/tracker/applications"
+          json:
+            companyName: "Artillery Corp {{ dynamicRand }}"
+            role: "Software Architect"
+            status: "APPLIED"
+            notes: "Created by automated integration test"
+          afterResponse: "extractApplicationId"
+          expect:
+            - statusCode: 201
+            - contentType: json
+      - think: 1
+
+      # Обновление статуса заявки (в JobApplicationController используется PUT /{id})
+      - put:
+          url: "/v1/tracker/applications/{{ currentAppId }}"
+          json:
+            companyName: "Artillery Corp {{ dynamicRand }}"
+            role: "Lead Software Architect"
+            status: "INTERVIEW"
+            notes: "Interview phase updated"
+          expect:
+            - statusCode: 200
+            - contentType: json
+      - think: 1
+
+      # Обязательное удаление созданного отклика для предотвращения разрастания БД
+      - delete:
+          url: "/v1/tracker/applications/{{ currentAppId }}"
+          expect:
+            - statusCode: 204
+      - think: 1
+
+      # 6. Проверка остатка AI квот пользователя (GET /v1/ai/quota)
+      - get:
+          url: "/v1/ai/quota"
+          expect:
+            - statusCode: 200
+            - contentType: json
+      - think: 1
+
+      # 7. Завершение пользовательской сессии
+      - post:
+          url: "/v1/auth/logout"
+          expect:
+            - statusCode: 204
+
+  # ============================================================================
+  # Сценарий 3: GitHub Integration Flow (Weight: 20%)
+  # Проверка синка репозиториев и профиля GitHub.
+  # ============================================================================
+  - name: "GitHub Integration Flow"
+    weight: 20
+    beforeScenario: "setUserAuth"
+    beforeRequest: "attachAuthHeader"
+    flow:
+      - get:
+          url: "/v1/profile"
+          expect:
+            - statusCode: 200
+      - think: 1
+      # GET /v1/github/fetch (чтение снапшота профиля)
+      - get:
+          url: "/v1/github/fetch"
+          expect:
+            - statusCode:
+                - 200
+                - 400 # 400 допустим, если аккаунт GitHub еще не связан с пользователем
+      - think: 1
+      # POST /v1/github/import (импорт выбранных репозиториев)
+      - post:
+          url: "/v1/github/import"
+          json:
+            token: "smoke_test_token"
+            selectedRepoIds: []
+          expect:
+            - statusCode:
+                - 204
+                - 400
+      - think: 1
+      - post:
+          url: "/v1/auth/logout"
+          expect:
+            - statusCode: 204
+
+  # ============================================================================
+  # Сценарий 4: AI Flow (Weight: 15%)
+  # Архитектурное ограничение: Bucket4j разрешает 5 req/min на пользователя.
+  # Выполняется строго 1 синхронный вызов генерации за прогон сценария.
+  # ============================================================================
+  - name: "AI Generation Flow"
+    weight: 15
+    beforeScenario: "setUserAuth"
+    beforeRequest: "attachAuthHeader"
+    flow:
+      # Проверка квоты до генерации
+      - get:
+          url: "/v1/ai/quota"
+          expect:
+            - statusCode: 200
+      - think: 1
+      # Синхронная генерация summary (POST /v1/ai/generate/summary) — НЕ SSE!
+      - post:
+          url: "/v1/ai/generate/summary"
+          json:
+            language: "ru"
+          expect:
+            - statusCode:
+                - 200
+                - 429 # Допустимо 429 при исчерпании глобального лимита Groq
+      - think: 2
+      # Проверка обновленной квоты после генерации
+      - get:
+          url: "/v1/ai/quota"
+          expect:
+            - statusCode: 200
+      - think: 1
+      - post:
+          url: "/v1/auth/logout"
+          expect:
+            - statusCode: 204
+
+  # ============================================================================
+  # Сценарий 5: Admin Flow (Weight: 10%)
+  # Административная аналитика, аудит и список пользователей платформы.
+  # ============================================================================
+  - name: "Admin Flow"
+    weight: 10
+    beforeScenario: "setAdminAuth"
+    beforeRequest: "attachAuthHeader"
+    flow:
+      # Дашборд администратора (включая статистику totalAiTokensUsedToday)
+      - get:
+          url: "/v1/admin/dashboard"
+          expect:
+            - statusCode: 200
+            - contentType: json
+      - think: 1
+      # Пагинация реестра пользователей
+      - get:
+          url: "/v1/admin/users?page=0&size=10"
+          expect:
+            - statusCode: 200
+            - contentType: json
+      - think: 1
+      # Аудит-логи платформы (в MeDev эндпоинт называется строго /v1/admin/audit)
+      - get:
+          url: "/v1/admin/audit?page=0&size=10"
+          expect:
+            - statusCode: 200
+            - contentType: json
+      - think: 1
+      - post:
+          url: "/v1/auth/logout"
+          expect:
+            - statusCode: 204
