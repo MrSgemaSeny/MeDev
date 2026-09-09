@@ -103,7 +103,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         final String finalEmail = email;
         final String finalUsername = username;
         final String finalProviderId = providerId;
-        final boolean linkingFlow = isLinking;
+        // Account linking via medev_link_jwt is strictly for GitHub integration.
+        // Google OAuth is for authentication only and must never link or hijack an existing session.
+        final boolean linkingFlow = isLinking && "github".equals(registrationId);
 
         User user;
         

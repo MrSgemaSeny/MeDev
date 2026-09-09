@@ -106,6 +106,16 @@ public class AuthController {
                 .secure(true)
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        ResponseCookie linkCookie = ResponseCookie.from("medev_link_jwt", "")
+                .httpOnly(true)
+                .path("/")
+                .maxAge(0)
+                .sameSite("None")
+                .secure(true)
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, linkCookie.toString());
+
         return ResponseEntity.noContent().build();
     }
 
@@ -120,15 +130,34 @@ public class AuthController {
                 } catch (Exception ignored) {}
             }
         }
-        if (allowedOrigins != null && origin != null && !origin.isBlank()) {
-            java.util.List<String> allowed = java.util.Arrays.stream(allowedOrigins.split(","))
-                    .map(String::trim)
-                    .map(String::toLowerCase)
-                    .toList();
-            if (!allowed.contains(origin.trim().toLowerCase()) && !allowed.contains("*")) {
-                throw new com.medev.shared.exception.ForbiddenException("Cross-origin request rejected");
+        if (origin == null || origin.isBlank()) {
+            return;
+        }
+
+        String cleanOrigin = origin.trim().toLowerCase();
+        // Trusted internal origins and subdomains
+        if (cleanOrigin.equals("https://app.medev.mrsgemaseny.com") ||
+            cleanOrigin.equals("https://medev.mrsgemaseny.com") ||
+            cleanOrigin.endsWith(".mrsgemaseny.com") ||
+            cleanOrigin.equals("https://me-dev-two.vercel.app") ||
+            cleanOrigin.endsWith(".vercel.app") ||
+            cleanOrigin.startsWith("http://localhost:") ||
+            cleanOrigin.startsWith("http://127.0.0.1:")) {
+            return;
+        }
+
+        if (allowedOrigins != null && !allowedOrigins.isBlank()) {
+            for (String allowed : allowedOrigins.split(",")) {
+                String cleanAllowed = allowed.trim().toLowerCase();
+                if (cleanAllowed.equals("*") || cleanAllowed.equals(cleanOrigin)) {
+                    return;
+                }
+                if (cleanAllowed.startsWith("*.") && cleanOrigin.endsWith(cleanAllowed.substring(1))) {
+                    return;
+                }
             }
         }
+        throw new com.medev.shared.exception.ForbiddenException("Cross-origin request rejected");
     }
 
     private void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {

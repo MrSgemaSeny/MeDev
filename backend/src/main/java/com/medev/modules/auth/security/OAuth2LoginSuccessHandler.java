@@ -91,17 +91,18 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         String frontendUrl = frontendOrigin + "/auth/callback?code=" + oauth2Code;
         
+        // Always purge any stale linking cookie on OAuth login
+        org.springframework.http.ResponseCookie clearCookie = org.springframework.http.ResponseCookie.from("medev_link_jwt", "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(0)
+                .sameSite("None")
+                .build();
+        response.addHeader(org.springframework.http.HttpHeaders.SET_COOKIE, clearCookie.toString());
+
         String action = (String) oAuth2User.getAttributes().get("_action");
         if ("LINK_ACCOUNT".equals(action)) {
-            org.springframework.http.ResponseCookie clearCookie = org.springframework.http.ResponseCookie.from("medev_link_jwt", "")
-                    .httpOnly(true)
-                    .secure(true)
-                    .path("/")
-                    .maxAge(0)
-                    .sameSite("Lax")
-                    .build();
-            response.addHeader(org.springframework.http.HttpHeaders.SET_COOKIE, clearCookie.toString());
-            
             frontendUrl = frontendOrigin + "/profile/edit?github_linked=true&code=" + oauth2Code;
         }
 
