@@ -90,9 +90,16 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         java.util.List<String> origins = java.util.Arrays.stream(allowedOrigins.split(","))
                 .map(String::trim)
-                .filter(s -> !s.isBlank() && !s.equals("*"))
+                .filter(s -> !s.isBlank())
                 .toList();
-        configuration.setAllowedOrigins(origins);
+        java.util.List<String> exactOrigins = origins.stream().filter(s -> !s.contains("*")).toList();
+        java.util.List<String> patternOrigins = origins.stream().filter(s -> s.contains("*")).toList();
+        if (!exactOrigins.isEmpty()) {
+            configuration.setAllowedOrigins(exactOrigins);
+        }
+        if (!patternOrigins.isEmpty()) {
+            configuration.setAllowedOriginPatterns(patternOrigins);
+        }
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type", "Accept", "Origin", "X-Requested-With", "baggage", "sentry-trace"));
         configuration.setExposedHeaders(List.of("Authorization", "Set-Cookie"));

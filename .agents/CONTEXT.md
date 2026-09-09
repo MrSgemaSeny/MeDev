@@ -19,6 +19,9 @@
   - **P1 Fixes**: `JwtFilter` (немедленный 401 на отозванные токены в Redis); `AuthController` (усиленная валидация CSRF по Origin/Referer); `AuthService` (15-сек Redis Grace Period при ротации refresh токенов); `KaspiPayService` (разрешено продление активного PRO тарифа); `StripeService` (синхронизация `subscriptionExpiresAt` с планировщиком).
   - **P2/P3 Fixes**: `ProfileService` (валидация списка секций в `updateSectionOrder` по белому списку и дубликатам); `@Valid` валидация во всех reorder-эндпоинтах `ProfileController`; `@Transactional` в `TokenAccountingService`.
   - **Test Baseline**: 262/262 backend tests green (100%), 38/38 frontend tests green (100%).
+- **Latest Hotfix (2026-09-09 CORS & CookieBanner Fix)**:
+  - **CORS**: `https://app.medev.mrsgemaseny.com` добавлен в `cors.allowed-origins` (`application-prod.yml` и `application.yml`). В `SecurityConfig.java` разделена обработка exact origins и pattern origins (`setAllowedOriginPatterns`).
+  - **Frontend Crash**: Устранена ошибка `TypeError: Cannot destructure property 'basename' of 'M.useContext(...)' as it is null` в `CookieBanner.tsx` путем замены `Link` (из `react-router-dom`) на нативный тег `<a>`, так как баннер рендерится в `App.tsx` вне дерева `RouterProvider`.
 
 ## Active Backlog
 - Setting up automated nightly DB backup jobs.

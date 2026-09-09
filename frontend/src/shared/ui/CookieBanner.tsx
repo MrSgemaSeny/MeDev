@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { Cookie } from 'lucide-react';
 
 export const CookieBanner = () => {
@@ -42,12 +41,12 @@ export const CookieBanner = () => {
           <Cookie className="h-5 w-5 shrink-0 text-[#2ea043] mt-0.5" aria-hidden="true" />
           <p className="text-xs leading-relaxed" style={{ color: 'var(--color-text-primary)' }}>
             Мы используем только строго необходимые файлы cookie и локальное хранилище для авторизации и сохранения темы. Подробнее в{' '}
-            <Link
-              to="/privacy"
+            <a
+              href="/privacy"
               className="text-[#58a6ff] underline hover:text-white focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded"
             >
               Политике конфиденциальности
-            </Link>
+            </a>
             .
           </p>
         </div>

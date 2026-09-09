@@ -70,7 +70,7 @@ kaspi:
   pro-price-amount: 15000
 
 cors:
-  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,https://medev.mrsgemaseny.com,https://me-dev-two.vercel.app,https://mrsgemaseny.github.io}
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,https://medev.mrsgemaseny.com,https://app.medev.mrsgemaseny.com,https://me-dev-two.vercel.app,https://mrsgemaseny.github.io}
 
 app:
   frontend-url: ${FRONTEND_URL:http://localhost:5173}
