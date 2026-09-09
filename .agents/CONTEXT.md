@@ -52,7 +52,12 @@
     - `.github/workflows/build-mobile-ios.yml`: Сборка xcarchive для iOS на macos-14.
   - **Scripts**: `build:web`, `cap:sync`, `build:mobile`. Тесты: 262 backend PASS, 41 frontend PASS.
 
+- **Mobile Strategy Decision (2026-09-09 — ARCHITECTURAL PIVOT)**:
+  - **Вердикт**: Отказ от Capacitor/WebView как целевой мобильной платформы (суррогат сайта в вебвью признан негодным для продакшн-уровня).
+  - **Решение**: Разработка полноценного нативного мобильного клиента на **React Native + Expo** (директория `mobile/`, Expo Router, TypeScript, Zustand/React Query, прямое взаимодействие с бэкендом Spring Boot `/api/v1/**`).
+
 ## Active Backlog
+- **Native Mobile App (Expo)**: Инициализация и разработка нативного приложения MeDev на React Native + Expo (авторизация, Job Tracker, AI ассистент, просмотр скора).
 - Setting up automated nightly DB backup jobs.
 - Sentry and Prometheus/Grafana monitoring dashboards.
 - **RAG Retrieval:** `VectorizationService` пишет векторы в pgvector при `ProfileUpdatedEvent`. Реализация semantic search: Job Tracker → AI Match по вакансии.
