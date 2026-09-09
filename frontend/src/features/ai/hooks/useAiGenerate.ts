@@ -58,14 +58,31 @@ export function useAiGenerate() {
         
         let newlineIndex;
         while ((newlineIndex = buffer.indexOf('\n')) >= 0) {
-          const line = buffer.slice(0, newlineIndex).trim();
+          let line = buffer.slice(0, newlineIndex);
           buffer = buffer.slice(newlineIndex + 1);
+          if (line.endsWith('\r')) {
+            line = line.slice(0, -1);
+          }
           
           if (line.startsWith('data:')) {
-            let token = line.substring(5);
-            if (token.startsWith(' ')) token = token.substring(1);
+            const raw = line.slice(5);
+            let token = '';
+            try {
+              const trimmed = raw.trim();
+              if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+                const parsed = JSON.parse(trimmed);
+                if (parsed && typeof parsed.content === 'string') {
+                  token = parsed.content;
+                }
+              }
+            } catch {
+              // Non-JSON fallback
+            }
+            if (!token && raw) {
+              token = raw;
+            }
             
-            if (token !== '[DONE]') {
+            if (token && token !== '[DONE]') {
               onToken(token);
             }
           }

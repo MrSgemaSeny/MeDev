@@ -86,7 +86,7 @@ public class AiController {
         Disposable disposable = stream.subscribe(
             chunk -> {
                 try {
-                    emitter.send(chunk);
+                    emitter.send(SseEmitter.event().data(java.util.Map.of("content", chunk)));
                 } catch (Exception e) {
                     emitter.complete();
                 }
