@@ -44,12 +44,26 @@ public class AiAnalysisService {
         String finalPrompt = "CURRENT PROFILE JSON (FROM GITHUB/DB):\n" + currentProfileJson + "\n\n" +
                              "<user_resume>\n" + maskedPdfText + "\n</user_resume>";
 
-        String jsonResponse = llmProvider.structuredCompletion(systemPrompt, finalPrompt);
+        String jsonResponse;
+        try {
+            jsonResponse = llmProvider.structuredCompletion(systemPrompt, finalPrompt);
+        } catch (com.medev.modules.ai.model.LlmException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("LLM provider call failed during resume parsing: {}", e.getMessage());
+            throw new com.medev.modules.ai.model.LlmException(
+                    com.medev.modules.ai.model.LlmException.Reason.PROVIDER_UNAVAILABLE,
+                    "AI generation failed: " + e.getMessage(), e);
+        }
+
         String cleaned = GroqClient.extractJson(jsonResponse);
         try {
             return objectMapper.readValue(cleaned, AiParsedResumeDto.class);
         } catch (Exception e) {
-            throw new RuntimeException("AI generation failed or returned invalid format: " + e.getMessage(), e);
+            log.error("Failed to parse JSON from AI resume parser: {}", e.getMessage());
+            throw new com.medev.modules.ai.model.LlmException(
+                    com.medev.modules.ai.model.LlmException.Reason.INVALID_RESPONSE,
+                    "AI generation returned invalid format: " + e.getMessage(), e);
         }
     }
 
@@ -60,29 +74,29 @@ public class AiAnalysisService {
         boolean isPdfExt = filename != null && filename.toLowerCase().endsWith(".pdf");
         
         if (!isPdfMime && !isPdfExt) {
-            throw new IllegalArgumentException("Only PDF files are allowed");
+            throw new IllegalArgumentException("Поддерживаются только файлы в формате PDF");
         }
         
         try {
             byte[] fileBytes = file.getBytes();
             if (fileBytes.length < 4 || fileBytes[0] != '%' || fileBytes[1] != 'P' || fileBytes[2] != 'D' || fileBytes[3] != 'F') {
-                throw new IllegalArgumentException("Invalid PDF magic bytes");
+                throw new IllegalArgumentException("Файл поврежден или не является корректным PDF");
             }
             try (PDDocument document = Loader.loadPDF(fileBytes)) {
                 if (document.getNumberOfPages() > 30) {
-                    throw new IllegalArgumentException("PDF exceeds maximum allowed page count (30 pages)");
+                    throw new IllegalArgumentException("PDF превышает максимально допустимый объем (30 страниц)");
                 }
                 PDFTextStripper stripper = new PDFTextStripper();
                 String text = stripper.getText(document);
                 if (text == null || text.trim().isEmpty()) {
-                    throw new IllegalArgumentException("The uploaded PDF does not contain extractable text (e.g. scanned image). Please upload a PDF with selectable text.");
+                    throw new IllegalArgumentException("Загруженный PDF не содержит текстового слоя (например, скан или картинка). Пожалуйста, загрузите PDF с выделяемым текстом.");
                 }
                 return text;
             }
         } catch (IllegalArgumentException e) {
             throw e;
         } catch (IOException e) {
-            throw new RuntimeException("Failed to read PDF file", e);
+            throw new IllegalArgumentException("Не удалось прочитать загруженный PDF файл", e);
         }
     }
 

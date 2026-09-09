@@ -233,8 +233,12 @@ public class AiController {
         Long userId = SecurityUtils.getCurrentUserId();
         aiRateLimiter.checkAndConsume(userId);
 
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("Файл не передан или пуст");
+        }
+
         if (file.getSize() > 10 * 1024 * 1024) { 
-            return ResponseEntity.badRequest().build();
+            throw new IllegalArgumentException("Размер файла превышает максимально допустимый (10 МБ)");
         }
 
         String contentType = file.getContentType();
@@ -242,16 +246,16 @@ public class AiController {
         boolean isPdfMime = contentType != null && (contentType.equalsIgnoreCase("application/pdf") || contentType.equalsIgnoreCase("application/x-pdf"));
         boolean isPdfExt = filename != null && filename.toLowerCase().endsWith(".pdf");
         if (!isPdfMime && !isPdfExt) {
-            return ResponseEntity.badRequest().build();
+            throw new IllegalArgumentException("Поддерживаются только файлы в формате PDF");
         }
 
         try {
             byte[] bytes = file.getBytes();
             if (bytes.length < 4 || bytes[0] != '%' || bytes[1] != 'P' || bytes[2] != 'D' || bytes[3] != 'F') {
-                return ResponseEntity.badRequest().build();
+                throw new IllegalArgumentException("Файл поврежден или не является корректным PDF");
             }
         } catch (java.io.IOException e) {
-            return ResponseEntity.badRequest().build();
+            throw new IllegalArgumentException("Не удалось прочитать загруженный файл", e);
         }
 
         ProfileDto currentProfile = profileService.getByUserId(userId);

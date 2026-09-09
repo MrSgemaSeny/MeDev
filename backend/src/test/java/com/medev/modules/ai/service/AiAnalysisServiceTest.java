@@ -96,8 +96,8 @@ public class AiAnalysisServiceTest {
         when(llmProvider.structuredCompletion(anyString(), anyString())).thenReturn("not json");
 
         assertThatThrownBy(() -> aiAnalysisService.parseResumePdf(file, new com.medev.modules.profile.dto.ProfileDto()))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("AI generation failed or returned invalid format");
+                .isInstanceOf(com.medev.modules.ai.model.LlmException.class)
+                .hasMessageContaining("AI generation returned invalid format");
     }
 
     @Test
@@ -106,7 +106,7 @@ public class AiAnalysisServiceTest {
 
         assertThatThrownBy(() -> aiAnalysisService.parseResumePdf(file, new com.medev.modules.profile.dto.ProfileDto()))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Invalid PDF magic bytes");
+                .hasMessageContaining("Файл поврежден или не является корректным PDF");
     }
 
     @Test
@@ -115,7 +115,7 @@ public class AiAnalysisServiceTest {
         when(llmProvider.structuredCompletion(anyString(), anyString())).thenThrow(new RuntimeException("Groq error"));
 
         assertThatThrownBy(() -> aiAnalysisService.parseResumePdf(file, new com.medev.modules.profile.dto.ProfileDto()))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessage("Groq error");
+                .isInstanceOf(com.medev.modules.ai.model.LlmException.class)
+                .hasMessageContaining("Groq error");
     }
 }

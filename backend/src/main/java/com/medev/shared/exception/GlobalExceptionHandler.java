@@ -94,6 +94,38 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorPayload(HttpStatus.CONFLICT, "Профиль обновляется другим процессом. Пожалуйста, обновите страницу и попробуйте снова."));
     }
 
+    @ExceptionHandler(com.medev.modules.ai.model.LlmException.class)
+    public ResponseEntity<Map<String, Object>> handleLlmException(com.medev.modules.ai.model.LlmException e) {
+        log.warn("LLM error occurred [{}]: {}", e.getReason(), e.getMessage());
+        HttpStatus status;
+        String userMessage;
+
+        switch (e.getReason()) {
+            case RATE_LIMITED -> {
+                status = HttpStatus.TOO_MANY_REQUESTS;
+                userMessage = "Превышен лимит запросов к AI. Пожалуйста, подождите минуту и повторите попытку.";
+            }
+            case PROVIDER_UNAVAILABLE, TIMEOUT, CIRCUIT_OPEN -> {
+                status = HttpStatus.SERVICE_UNAVAILABLE;
+                userMessage = "Сервис AI временно перегружен или недоступен. Пожалуйста, повторите попытку через 1-2 минуты.";
+            }
+            case INVALID_RESPONSE -> {
+                status = HttpStatus.BAD_GATEWAY;
+                userMessage = "AI вернул некорректный ответ. Пожалуйста, повторите попытку.";
+            }
+            case API_KEY_MISSING -> {
+                status = HttpStatus.SERVICE_UNAVAILABLE;
+                userMessage = "Сервис AI не настроен.";
+            }
+            default -> {
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+                userMessage = "Ошибка при обработке запроса AI.";
+            }
+        }
+
+        return ResponseEntity.status(status).body(errorPayload(status, userMessage));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneric(Exception e) {
         log.error("Unhandled exception occurred", e);
