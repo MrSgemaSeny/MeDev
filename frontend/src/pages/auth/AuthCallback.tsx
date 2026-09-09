@@ -15,6 +15,7 @@ export const AuthCallback = () => {
 
     if (code && !exchanged.current) {
       exchanged.current = true;
+      useAuthStore.setState({ accessToken: null, username: null, plan: null, role: null });
       api.post('/auth/oauth2/exchange', { code })
         .then((res) => {
           const { accessToken, refreshToken, username, plan, role } = res.data;

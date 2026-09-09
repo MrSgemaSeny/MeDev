@@ -58,6 +58,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             if (email == null) {
                 email = login + "@github.user.medev.com";
             }
+            email = email.trim().toLowerCase();
             username = login != null ? login.toLowerCase() : "github_user";
             nameAttributeKey = "login";
             avatarUrl = (String) attributes.get("avatar_url");
@@ -68,6 +69,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 throw new OAuth2AuthenticationException("Google email is not verified");
             }
             email = (String) attributes.get("email");
+            if (email != null) {
+                email = email.trim().toLowerCase();
+            }
             String rawUsername = email != null && email.contains("@")
                     ? email.substring(0, email.indexOf("@")).toLowerCase().replaceAll("[^a-z0-9._-]", "")
                     : "";

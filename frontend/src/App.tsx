@@ -13,21 +13,27 @@ const queryClient = new QueryClient();
 function App() {
   const [isInitializing, setIsInitializing] = useState(true);
   const setAuth = useAuthStore((state) => state.setAuth);
-  const logout = useAuthStore((state) => state.logout);
-
   useEffect(() => {
+    // If on OAuth callback page, AuthCallback handles code exchange directly
+    if (window.location.pathname.startsWith('/auth/callback')) {
+      setIsInitializing(false);
+      return;
+    }
+
     api.post('/auth/refresh')
       .then((res) => {
         const { accessToken, refreshToken, username, plan, role } = res.data;
         setAuth(accessToken, refreshToken, username, plan, role);
       })
       .catch(() => {
-        logout();
+        // Startup refresh failure means user is unauthenticated or cookie expired.
+        // Silently reset local state without triggering backend /auth/logout
+        useAuthStore.setState({ accessToken: null, username: null, plan: null, role: null });
       })
       .finally(() => {
         setIsInitializing(false);
       });
-  }, [setAuth, logout]);
+  }, [setAuth]);
 
   if (isInitializing) {
     return (
