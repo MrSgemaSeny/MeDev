@@ -5,6 +5,20 @@ import { useAuthStore } from '../../../entities/user/model/store';
 import { useUpsellStore } from '../../../entities/user/model/upsellStore';
 import { BASE_URL, api } from '../../../shared/api/axios';
 
+export function cleanContent(text: string): string {
+  if (!text) return text;
+  if (text.includes('{"content":')) {
+    return text.replace(/\{"content":"((?:[^"\\]|\\.)*)"\}/g, (_, content) => {
+      try {
+        return JSON.parse(`"${content}"`);
+      } catch {
+        return content;
+      }
+    });
+  }
+  return text;
+}
+
 export const AiChatWidget = () => {
   const { isOpen, messages, isLoading, pendingPrompt, toggleChat, addMessage, updateLastMessage, setLoading, clearChat, clearPendingPrompt } = useAiChatStore();
   const [input, setInput] = useState('');
@@ -101,7 +115,10 @@ export const AiChatWidget = () => {
           }
           
           if (line.startsWith('data:')) {
-            const raw = line.slice(5);
+            let raw = line.slice(5);
+            if (raw.startsWith(' ')) {
+              raw = raw.slice(1);
+            }
             let chunkText = '';
             try {
               const trimmed = raw.trim();
@@ -114,7 +131,9 @@ export const AiChatWidget = () => {
             } catch {
               // Non-JSON format fallback
             }
-            if (!chunkText && raw) {
+            if (!chunkText && raw.includes('{"content":')) {
+              chunkText = cleanContent(raw);
+            } else if (!chunkText && raw) {
               chunkText = raw;
             }
             if (chunkText) {
@@ -196,7 +215,7 @@ export const AiChatWidget = () => {
               }`}
               style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
             >
-              {msg.content}
+              {cleanContent(msg.content)}
             </div>
           </div>
         ))}

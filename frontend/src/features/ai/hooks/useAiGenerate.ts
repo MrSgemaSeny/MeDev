@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { useAuthStore } from '../../../entities/user/model/store';
 import { useUpsellStore } from '../../../entities/user/model/upsellStore';
 import { api, BASE_URL } from '../../../shared/api/axios';
+import { cleanContent } from '../../ai-assistant/ui/AiChatWidget';
 
 export function useAiGenerate() {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -78,7 +79,9 @@ export function useAiGenerate() {
             } catch {
               // Non-JSON fallback
             }
-            if (!token && raw) {
+            if (!token && raw.includes('{"content":')) {
+              token = cleanContent(raw);
+            } else if (!token && raw) {
               token = raw;
             }
             

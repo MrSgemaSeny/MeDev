@@ -29,3 +29,22 @@ describe('ChatStore', () => {
     expect(state.isOpen).toBe(true);
   });
 });
+
+import { cleanContent } from '../ui/AiChatWidget';
+
+describe('cleanContent', () => {
+  it('should return plain text as-is', () => {
+    expect(cleanContent('Привет мир')).toBe('Привет мир');
+  });
+
+  it('should unpack concatenated JSON content tokens', () => {
+    const raw = '{"content":"###"}{"content":" Что"}{"content":" уже"}';
+    expect(cleanContent(raw)).toBe('### Что уже');
+  });
+
+  it('should preserve newlines and special characters', () => {
+    const raw = '{"content":"\\n\\n"}{"content":"- "}{"content":"**Стек**"}';
+    expect(cleanContent(raw)).toBe('\n\n- **Стек**');
+  });
+});
+

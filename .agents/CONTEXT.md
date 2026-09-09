@@ -36,7 +36,7 @@
 
 - **Latest Hotfixes (2026-09-09)**:
   - **Auth & OAuth**: Устранена гонка авторизации в `App.tsx` vs `AuthCallback.tsx`. Исключен фантомный сетевой вызов `/auth/logout` при открытии сайта анонимными пользователями. Добавлена нормализация email в нижний регистр в `CustomOAuth2UserService`.
-  - **AI Chat Stream**: Устранена склейка слов и чисел ("в90дней", "на40%") за счет передачи структурированного JSON `{ "content": chunk }` в `AiController.java` и исключения `.trim()` / `substring(1)` на фронтенде. В `assistant_system_v1.txt` внедрен запрет галлюцинирования метрик и обязательные уточняющие вопросы по целям пользователя.
+  - **AI Chat Stream**: Устранена склейка слов и чисел ("в90дней", "на40%") за счет передачи структурированного JSON `{ "content": chunk }` в `AiController.java` и исключения `.trim()` / `substring(1)` на фронтенде. В `assistant_system_v1.txt` внедрен запрет галлюцинирования метрик и обязательные уточняющие вопросы по целям пользователя. Добавлена функция `cleanContent` в `AiChatWidget.tsx` и `useAiGenerate.ts` для бесшовного авто-декодирования склеенных JSON-токенов в UI.
   - **Resume PRO Gating**: Исправлен 403 Forbidden на шаблонах `apple-modern`, `milky-soft`, `phub-orange`. В `ResumeController.java` добавлен пропуск для пользователей с ролью `Role.ADMIN`. На фронтенде добавлен визуальный бейдж PRO и перехват 403 с автоматическим вызовом модалки апгрейда `openUpsell()`. Автоматический апгрейд аккаунта владельца (`mrsgemaseny`) до `ADMIN` и `PRO`.
 
 ## Active Backlog
