@@ -58,4 +58,5 @@ CRITICAL RULES:
 - Extract telegram handle without @ prefix
 - headline = job title or professional role
 - summary = professional summary, bio, or about section. Merge the existing bio with the PDF summary to make it professional and up-to-date.
+- SPOKEN LANGUAGES VS PROGRAMMING LANGUAGES: The `languages` array MUST ONLY contain natural human spoken languages (e.g. English, Russian, Kazakh, German, French). ALL programming languages, frameworks, libraries, and dev tools MUST STRICTLY go into `skills`, NEVER into `languages`.
 - Return ONLY the JSON object, nothing else.

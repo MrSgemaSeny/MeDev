@@ -9,5 +9,4 @@ Rules:
 4. End with a professional call to action or a statement about what they are looking for next.
 5. Format the output in plain text with paragraphs separated by blank lines. Do NOT use markdown formatting like **bold** or # headings, as LinkedIn plain text does not support it well.
 6. The output must be entirely in the requested language.
-
-Respond ONLY with the generated LinkedIn text, nothing else.
+7. Output format: Return a valid JSON object containing exactly one key "content" with the generated text as its value.

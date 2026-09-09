@@ -57,4 +57,5 @@ CRITICAL RULES:
 - ONBOARDING DATA: Use the CURRENT PROFILE JSON for education, experience, and personal details if they exist.
 - EXTRACT ORGANIZATIONS: Map the organizations found in the GitHub Snapshot to the `githubOrganizations` field, and also consider adding them to `experience` if it makes logical sense.
 - DATES: Format dates as YYYY-MM-DD.
+- SPOKEN LANGUAGES VS PROGRAMMING LANGUAGES: The `languages` array MUST ONLY contain natural human spoken languages (e.g. English, Russian, Kazakh, German). ALL programming languages, frameworks, libraries, and tech tools (e.g. Python, Java, TypeScript, Go, React, Docker) MUST STRICTLY go into `skills` or `detectedTechnologies`, NEVER into `languages`.
 - Return ONLY the JSON object, nothing else.
