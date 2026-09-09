@@ -5,12 +5,11 @@
  * 1. Защита от DoS на эндпоинты авторизации:
  *    Spring Boot использует Bucket4j AuthRateLimiter (10 req / 15 min per IP).
  *    Повторные вызовы /v1/auth/login приводят к блокировке с кодом 429.
- *    Кэширование токенов в памяти (in-memory token pool) гарантирует, что каждый
- *    виртуальный пользователь использует уже полученный валидный JWT.
+ *    Кэширование токена уровня сьюта (suite-level token) гарантирует, что все виртуальные
+ *    пользователи переиспользуют один валидный токен, а регистрация происходит ровно 1 раз.
  * 
  * 2. Двойная передача контекста аутентификации:
- *    MeDev поддерживает как заголовок Authorization: Bearer <token>,
- *    так и HttpOnly Cookie (accessToken), а также CSRF Origin валидацию.
+ *    MeDev поддерживает заголовок Authorization: Bearer <token> и Cookie: accessToken=<token>.
  * 
  * 3. Надежная экстракция ID:
  *    Поддержка как плоского JSON { id: 1 }, так и вложенных структур { data: { id: 1 } }.
@@ -24,39 +23,80 @@ const tokenCache = {
   user: null
 };
 
+// Блокировка от повторной параллельной регистрации сьюта
+let isRegisteringUser = false;
+let userInitPromise = null;
+
 /**
  * Инициализирует и возвращает валидные токены администратора и пользователя.
  */
 async function getTokens() {
-  // 1. Предзагрузка токена администратора
-  if (!tokenCache.admin) {
-    const adminEmail = process.env.MEDEV_ADMIN_EMAIL || 'admin@medev.internal';
-    const adminPassword = process.env.MEDEV_ADMIN_PASSWORD || 'AdminPass123!';
+  // 1. Авторизация или динамическая регистрация пользователя сьюта
+  if (!tokenCache.user) {
+    if (!userInitPromise) {
+      userInitPromise = (async () => {
+        // Попытка войти под существующим пользователем из env
+        if (process.env.MEDEV_USER_EMAIL && process.env.MEDEV_USER_PASSWORD) {
+          try {
+            const res = await fetch(`${BASE_URL}/v1/auth/login`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+              },
+              body: JSON.stringify({
+                email: process.env.MEDEV_USER_EMAIL,
+                password: process.env.MEDEV_USER_PASSWORD
+              })
+            });
 
-    try {
-      const res = await fetch(`${BASE_URL}/v1/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: JSON.stringify({ email: adminEmail, password: adminPassword })
-      });
+            if (res.ok) {
+              const body = await res.json();
+              tokenCache.user = body?.accessToken || body?.data?.accessToken || null;
+            }
+          } catch (err) {
+            console.warn(`[processor.js] Failed to login user: ${err.message}`);
+          }
+        }
 
-      if (res.ok) {
-        const body = await res.json();
-        // В AuthResponse токен находится в поле accessToken (без обертки data)
-        tokenCache.admin = body?.accessToken || body?.data?.accessToken || null;
-      } else {
-        console.warn(`[processor.js] Admin login returned status ${res.status}. Falling back to dynamic flows.`);
-      }
-    } catch (err) {
-      console.warn(`[processor.js] Failed to fetch admin token: ${err.message}`);
+        // Если пользователя нет в env или вход не удался — регистрируем 1 выделенного пользователя на сьют
+        if (!tokenCache.user) {
+          const rand = Math.floor(Math.random() * 900000) + 100000;
+          const suiteEmail = `artillery.suite.${rand}@testmail.com`;
+          const suiteUsername = `art_suite_${rand}`;
+          const suitePassword = `TestPass123!_${rand}`;
+
+          try {
+            const regRes = await fetch(`${BASE_URL}/v1/auth/register`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+              },
+              body: JSON.stringify({
+                email: suiteEmail,
+                username: suiteUsername,
+                password: suitePassword
+              })
+            });
+
+            if (regRes.ok) {
+              const body = await regRes.json();
+              tokenCache.user = body?.accessToken || body?.data?.accessToken || null;
+            } else {
+              console.warn(`[processor.js] Suite registration returned ${regRes.status}`);
+            }
+          } catch (err) {
+            console.warn(`[processor.js] Failed to register suite user: ${err.message}`);
+          }
+        }
+      })();
     }
+    await userInitPromise;
   }
 
-  // 2. Предзагрузка токена штатного пользователя (если заданы переменные окружения)
-  if (!tokenCache.user && process.env.MEDEV_USER_EMAIL && process.env.MEDEV_USER_PASSWORD) {
+  // 2. Предзагрузка токена администратора (если переданы учетные данные)
+  if (!tokenCache.admin && process.env.MEDEV_ADMIN_EMAIL && process.env.MEDEV_ADMIN_PASSWORD) {
     try {
       const res = await fetch(`${BASE_URL}/v1/auth/login`, {
         method: 'POST',
@@ -65,17 +105,17 @@ async function getTokens() {
           'X-Requested-With': 'XMLHttpRequest'
         },
         body: JSON.stringify({
-          email: process.env.MEDEV_USER_EMAIL,
-          password: process.env.MEDEV_USER_PASSWORD
+          email: process.env.MEDEV_ADMIN_EMAIL,
+          password: process.env.MEDEV_ADMIN_PASSWORD
         })
       });
 
       if (res.ok) {
         const body = await res.json();
-        tokenCache.user = body?.accessToken || body?.data?.accessToken || null;
+        tokenCache.admin = body?.accessToken || body?.data?.accessToken || null;
       }
     } catch (err) {
-      console.warn(`[processor.js] Failed to fetch user token: ${err.message}`);
+      console.warn(`[processor.js] Failed to fetch admin token: ${err.message}`);
     }
   }
 
@@ -85,7 +125,7 @@ async function getTokens() {
 module.exports = {
   /**
    * Hook: beforeScenario для сценария администратора.
-   * Наполняет контекст виртуального пользователя токеном ADMIN.
+   * Инжектирует adminToken только если учетные данные валидны.
    */
   setAdminAuth: function (context, ee, next) {
     const callback = typeof next === 'function' ? next : (typeof ee === 'function' ? ee : null);
@@ -102,8 +142,8 @@ module.exports = {
   },
 
   /**
-   * Hook: beforeScenario для пользовательских сценариев.
-   * Если пользовательский токен уже есть в пуле — инжектирует его, избавляя от повторной регистрации.
+   * Hook: beforeScenario для всех пользовательских сценариев.
+   * Инжектирует закэшированный токен сьюта, исключая спам в /auth/login.
    */
   setUserAuth: function (context, ee, next) {
     const callback = typeof next === 'function' ? next : (typeof ee === 'function' ? ee : null);
@@ -134,33 +174,12 @@ module.exports = {
   },
 
   /**
-   * Генератор уникальных учетных данных для динамической регистрации.
-   * Соответствует валидаторам MeDev:
-   * - username: ^[a-zA-Z0-9_.-]{3,50}$
-   * - password: длина >= 8 символов
-   */
-  generateUserData: function (contextOrParams, eeOrContext, nextOrEe, maybeNext) {
-    const next = typeof maybeNext === 'function' ? maybeNext : nextOrEe;
-    const context = (maybeNext ? eeOrContext : contextOrParams) || {};
-    context.vars = context.vars || {};
-
-    const rand = Math.floor(Math.random() * 900000) + 100000;
-    context.vars.dynamicRand = rand;
-    context.vars.dynamicUserEmail = `artillery.user.${rand}@testmail.com`;
-    context.vars.dynamicUsername = `art_usr_${rand}`;
-    context.vars.dynamicUserPassword = `TestPass123!_${rand}`;
-
-    if (typeof next === 'function') return next();
-  },
-
-  /**
    * Hook: afterResponse для POST /v1/tracker/applications.
    * Захватывает ID созданного отклика для последующего обновления и удаления (DELETE).
    */
   extractApplicationId: function (requestParams, response, context, ee, next) {
     try {
       const body = typeof response.body === 'string' ? JSON.parse(response.body) : response.body;
-      // Поддержка плоского формата DTO и вложенного data
       const id = body?.id || body?.data?.id;
       if (id) {
         context.vars.currentAppId = id;

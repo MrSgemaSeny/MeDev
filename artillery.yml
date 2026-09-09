@@ -51,18 +51,13 @@ scenarios:
   # ============================================================================
   # Сценарий 1: Public & Monitoring Endpoints (Weight: 5%)
   # Проверка общедоступного контура без передачи JWT.
+  # Примечание: /actuator/health открыт публично, а остальные /actuator/** требуют ROLE_ADMIN.
   # ============================================================================
   - name: "Public / Health Flow"
     weight: 5
     flow:
       - get:
           url: "/actuator/health"
-          expect:
-            - statusCode: 200
-      - think: 1
-      # В application-prod.yml включены health, metrics, prometheus (info может быть отключен -> 404)
-      - get:
-          url: "/actuator/metrics"
           expect:
             - statusCode: 200
       - think: 1
@@ -77,44 +72,13 @@ scenarios:
   # ============================================================================
   # Сценарий 2: User Full Flow (Weight: 50%)
   # Ядро платформы: профиль, навыки, генерация резюме, трекер вакансий и квоты.
+  # Токен авторизации автоматически инжектируется через хук setUserAuth.
   # ============================================================================
   - name: "User Full Flow"
     weight: 50
     beforeScenario: "setUserAuth"
     beforeRequest: "attachAuthHeader"
     flow:
-      # Генерация уникальных учетных данных при отсутствии токена в кэше
-      - function: "generateUserData"
-
-      # Регистрация пользователя (если userToken не был предзагружен в processor.js)
-      - post:
-          ifFalse: "userToken"
-          url: "/v1/auth/register"
-          json:
-            email: "{{ dynamicUserEmail }}"
-            username: "{{ dynamicUsername }}"
-            password: "{{ dynamicUserPassword }}"
-          expect:
-            - statusCode: 201
-            - contentType: json
-      - think: 1
-
-      # Вход под созданным пользователем
-      - post:
-          ifFalse: "userToken"
-          url: "/v1/auth/login"
-          json:
-            email: "{{ dynamicUserEmail }}"
-            password: "{{ dynamicUserPassword }}"
-          capture:
-            # В MeDev AuthResponse возвращает accessToken прямо в корне объекта JSON
-            - json: "$.accessToken"
-              as: "authToken"
-          expect:
-            - statusCode: 200
-            - contentType: json
-      - think: 1
-
       # 1. Чтение профиля текущего пользователя
       - get:
           url: "/v1/profile"
@@ -139,7 +103,7 @@ scenarios:
       - post:
           url: "/v1/profile/skills"
           json:
-            name: "Java 17 (Artillery {{ dynamicRand }})"
+            name: "Java 17 (Artillery {{ $randomNumber(1000, 9999) }})"
             category: "Backend"
             level: "Expert"
           afterResponse: "extractSkillId"
@@ -154,7 +118,7 @@ scenarios:
       - think: 1
 
       # 4. Проверка легковесной генерации резюме (HTML / Preview)
-      # Параметр preview=true не требует PRO плана и не блокирует PDF-рендерер
+      # Параметр preview=true не требует PRO плана и не блокирует тяжелый PDF-рендерер
       - get:
           url: "/v1/resume/html/clean?preview=true&singlePage=true"
           expect:
@@ -165,7 +129,7 @@ scenarios:
       - post:
           url: "/v1/tracker/applications"
           json:
-            companyName: "Artillery Corp {{ dynamicRand }}"
+            companyName: "Artillery Corp {{ $randomNumber(1000, 9999) }}"
             role: "Software Architect"
             status: "APPLIED"
             notes: "Created by automated integration test"
@@ -179,7 +143,7 @@ scenarios:
       - put:
           url: "/v1/tracker/applications/{{ currentAppId }}"
           json:
-            companyName: "Artillery Corp {{ dynamicRand }}"
+            companyName: "Artillery Corp {{ $randomNumber(1000, 9999) }}"
             role: "Lead Software Architect"
             status: "INTERVIEW"
             notes: "Interview phase updated"
@@ -201,13 +165,6 @@ scenarios:
           expect:
             - statusCode: 200
             - contentType: json
-      - think: 1
-
-      # 7. Завершение пользовательской сессии
-      - post:
-          url: "/v1/auth/logout"
-          expect:
-            - statusCode: 204
 
   # ============================================================================
   # Сценарий 3: GitHub Integration Flow (Weight: 20%)
@@ -241,11 +198,6 @@ scenarios:
             - statusCode:
                 - 204
                 - 400
-      - think: 1
-      - post:
-          url: "/v1/auth/logout"
-          expect:
-            - statusCode: 204
 
   # ============================================================================
   # Сценарий 4: AI Flow (Weight: 15%)
@@ -278,15 +230,11 @@ scenarios:
           url: "/v1/ai/quota"
           expect:
             - statusCode: 200
-      - think: 1
-      - post:
-          url: "/v1/auth/logout"
-          expect:
-            - statusCode: 204
 
   # ============================================================================
   # Сценарий 5: Admin Flow (Weight: 10%)
   # Административная аналитика, аудит и список пользователей платформы.
+  # Шаги выполняются только при наличии валидного adminToken в окружении.
   # ============================================================================
   - name: "Admin Flow"
     weight: 10
@@ -295,6 +243,7 @@ scenarios:
     flow:
       # Дашборд администратора (включая статистику totalAiTokensUsedToday)
       - get:
+          ifTrue: "adminToken"
           url: "/v1/admin/dashboard"
           expect:
             - statusCode: 200
@@ -302,6 +251,7 @@ scenarios:
       - think: 1
       # Пагинация реестра пользователей
       - get:
+          ifTrue: "adminToken"
           url: "/v1/admin/users?page=0&size=10"
           expect:
             - statusCode: 200
@@ -309,12 +259,8 @@ scenarios:
       - think: 1
       # Аудит-логи платформы (в MeDev эндпоинт называется строго /v1/admin/audit)
       - get:
+          ifTrue: "adminToken"
           url: "/v1/admin/audit?page=0&size=10"
           expect:
             - statusCode: 200
             - contentType: json
-      - think: 1
-      - post:
-          url: "/v1/auth/logout"
-          expect:
-            - statusCode: 204
