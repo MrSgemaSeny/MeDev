@@ -35,11 +35,11 @@ export function LoginPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-6"
+      className="min-h-[100dvh] flex items-center justify-center p-3 sm:p-6"
       style={{ backgroundColor: 'var(--color-bg-canvas)' }}
     >
       <div
-        className="w-full max-w-sm rounded-md p-8"
+        className="w-full max-w-sm rounded-md p-5 sm:p-8"
         style={{
           backgroundColor: 'var(--color-bg-primary)',
           border: '1px solid var(--color-border-default)',
@@ -55,7 +55,7 @@ export function LoginPage() {
         <a
           href={githubUrl}
           aria-label="Войти через учетную запись GitHub"
-          className="w-full flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors"
+          className="w-full flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors min-h-[44px]"
           style={{
             backgroundColor: 'var(--color-bg-secondary)',
             border: '1px solid var(--color-border-default)',
@@ -79,7 +79,7 @@ export function LoginPage() {
         <a
           href={googleUrl}
           aria-label="Войти через учетную запись Google"
-          className="w-full flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors mt-3"
+          className="w-full flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors mt-3 min-h-[44px]"
           style={{
             backgroundColor: 'var(--color-bg-secondary)',
             border: '1px solid var(--color-border-default)',
@@ -155,12 +155,12 @@ export function LoginPage() {
               {error}
             </div>
           )}
-          <Button type="submit" variant="primary" className="w-full" disabled={loading}>
+          <Button type="submit" variant="primary" className="w-full min-h-[44px]" disabled={loading}>
             {loading ? 'Signing in...' : 'Sign in'}
           </Button>
         </form>
 
-        <div className="flex items-center justify-between text-sm mt-6" style={{ color: 'var(--color-text-muted)' }}>
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-sm mt-6 text-center sm:text-left" style={{ color: 'var(--color-text-muted)' }}>
           <Link to="/reset-password" style={{ color: 'var(--color-link)' }}>
             Забыли пароль?
           </Link>

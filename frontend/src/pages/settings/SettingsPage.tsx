@@ -12,8 +12,8 @@ export const SettingsPage = () => {
   };
 
   return (
-    <div className="max-w-4xl w-full mx-auto p-4 md:p-6 lg:p-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
-      <div className="mb-8">
+    <div className="max-w-4xl w-full mx-auto p-0 sm:p-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
+      <div className="mb-6 sm:mb-8">
         <h1 className="text-2xl font-bold mb-2 text-primary">{t('settings.title', 'Settings')}</h1>
         <p className="text-secondary text-sm">
           {t('settings.subtitle', 'Manage your account settings and application preferences.')}
@@ -23,11 +23,11 @@ export const SettingsPage = () => {
       <div className="space-y-6">
         {/* Account Section */}
         <section className="rounded-2xl border border-default surface-primary overflow-hidden">
-          <div className="px-6 py-4 border-b border-default surface-secondary flex items-center gap-2">
+          <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-default surface-secondary flex items-center gap-2">
             <User size={18} className="text-muted" />
             <h2 className="font-semibold text-primary">{t('settings.account', 'Account')}</h2>
           </div>
-          <div className="p-6 space-y-6">
+          <div className="p-4 sm:p-6 space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <div className="text-sm font-medium text-primary mb-1">Username</div>
@@ -49,7 +49,7 @@ export const SettingsPage = () => {
               </div>
               <button
                 onClick={logout}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-[var(--color-bg-secondary)] border border-[var(--color-border-default)] text-secondary hover:text-primary hover:bg-[var(--color-bg-tertiary)]"
+                className="flex items-center justify-center gap-2 px-4 py-2 min-h-[44px] rounded-lg text-sm font-medium transition-colors bg-[var(--color-bg-secondary)] border border-[var(--color-border-default)] text-secondary hover:text-primary hover:bg-[var(--color-bg-tertiary)] cursor-pointer"
               >
                 <LogOut size={16} />
                 {t('settings.logout', 'Sign Out')}
@@ -60,11 +60,11 @@ export const SettingsPage = () => {
 
         {/* Preferences Section */}
         <section className="rounded-2xl border border-default surface-primary overflow-hidden">
-          <div className="px-6 py-4 border-b border-default surface-secondary flex items-center gap-2">
+          <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-default surface-secondary flex items-center gap-2">
             <Globe size={18} className="text-muted" />
             <h2 className="font-semibold text-primary">{t('settings.preferences', 'Preferences')}</h2>
           </div>
-          <div className="p-6 space-y-6">
+          <div className="p-4 sm:p-6 space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <div className="text-sm font-medium text-primary mb-1">{t('settings.language', 'Language')}</div>
@@ -73,7 +73,7 @@ export const SettingsPage = () => {
               <div className="flex bg-[var(--color-bg-secondary)] p-1 rounded-lg border border-default">
                 <button
                   onClick={() => handleLanguageChange('en')}
-                  className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+                  className={`px-4 py-2 min-h-[40px] sm:min-h-[36px] rounded-md text-sm font-medium transition-all cursor-pointer ${
                     i18n.language?.startsWith('en')
                       ? 'bg-[var(--color-accent)] text-white shadow-sm'
                       : 'text-secondary hover:text-primary'
@@ -83,7 +83,7 @@ export const SettingsPage = () => {
                 </button>
                 <button
                   onClick={() => handleLanguageChange('ru')}
-                  className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+                  className={`px-4 py-2 min-h-[40px] sm:min-h-[36px] rounded-md text-sm font-medium transition-all cursor-pointer ${
                     i18n.language?.startsWith('ru')
                       ? 'bg-[var(--color-accent)] text-white shadow-sm'
                       : 'text-secondary hover:text-primary'
@@ -102,7 +102,7 @@ export const SettingsPage = () => {
               <div className="flex bg-[var(--color-bg-secondary)] p-1 rounded-lg border border-default">
                 <button
                   onClick={() => setTheme(false)}
-                  className={`px-4 py-1.5 flex items-center gap-2 rounded-md text-sm font-medium transition-all ${
+                  className={`px-4 py-2 min-h-[40px] sm:min-h-[36px] flex items-center gap-2 rounded-md text-sm font-medium transition-all cursor-pointer ${
                     !document.documentElement.classList.contains('dark')
                       ? 'bg-[var(--color-accent)] text-white shadow-sm'
                       : 'text-secondary hover:text-primary'
@@ -113,7 +113,7 @@ export const SettingsPage = () => {
                 </button>
                 <button
                   onClick={() => setTheme(true)}
-                  className={`px-4 py-1.5 flex items-center gap-2 rounded-md text-sm font-medium transition-all ${
+                  className={`px-4 py-2 min-h-[40px] sm:min-h-[36px] flex items-center gap-2 rounded-md text-sm font-medium transition-all cursor-pointer ${
                     document.documentElement.classList.contains('dark')
                       ? 'bg-[var(--color-accent)] text-white shadow-sm'
                       : 'text-secondary hover:text-primary'
@@ -129,11 +129,11 @@ export const SettingsPage = () => {
 
         {/* Danger Zone */}
         <section className="rounded-2xl border border-red-900/30 surface-primary overflow-hidden">
-          <div className="px-6 py-4 border-b border-red-900/30 bg-red-950/10 flex items-center gap-2">
+          <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-red-900/30 bg-red-950/10 flex items-center gap-2">
             <ShieldAlert size={18} className="text-red-500" />
             <h2 className="font-semibold text-red-500">{t('settings.dangerZone', 'Danger Zone')}</h2>
           </div>
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <div className="text-sm font-medium text-primary mb-1">{t('settings.deleteAccount', 'Delete Account')}</div>
@@ -143,7 +143,7 @@ export const SettingsPage = () => {
               </div>
               <button
                 disabled
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-red-500/10 text-red-500 border border-red-500/20 opacity-50 cursor-not-allowed"
+                className="flex items-center justify-center gap-2 px-4 py-2 min-h-[44px] rounded-lg text-sm font-medium transition-colors bg-red-500/10 text-red-500 border border-red-500/20 opacity-50 cursor-not-allowed"
                 title="Please contact support to delete your account"
               >
                 <Trash2 size={16} />

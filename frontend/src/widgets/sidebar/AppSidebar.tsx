@@ -24,7 +24,7 @@ export const AppSidebar = () => {
   const isProfileActive = location.pathname.startsWith('/profile');
 
   return (
-    <aside className="w-[260px] shrink-0 border-r py-3 flex flex-col gap-1 surface-inset border-default">
+    <aside className="hidden md:flex w-[260px] shrink-0 border-r py-3 flex-col gap-1 surface-inset border-default">
       <div className="px-2">
         <div className="text-[11px] text-muted px-3 pt-2 pb-1 tracking-widest uppercase font-medium">Main</div>
         {MAIN_NAV.map((item) => (

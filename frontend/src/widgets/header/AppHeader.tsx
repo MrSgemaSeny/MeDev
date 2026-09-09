@@ -1,11 +1,13 @@
-import { Search, Globe, Moon, Sun } from 'lucide-react';
+import { Search, Globe, Moon, Sun, Menu } from 'lucide-react';
 import { UserProfileDropdown } from './UserProfileDropdown';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { toggleTheme } from '../../shared/lib/theme';
+import { useMobileNavStore } from '../sidebar/model/mobileNavStore';
 
 export const AppHeader = () => {
   const { i18n } = useTranslation();
+  const toggleMobileNav = useMobileNavStore((s) => s.toggle);
   
   const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
   
@@ -32,10 +34,21 @@ export const AppHeader = () => {
 
   return (
     <header
-      className="h-16 shrink-0 flex items-center gap-4 px-6 border-b"
+      className="h-16 shrink-0 flex items-center gap-2 sm:gap-4 px-3 sm:px-6 border-b"
       style={{ backgroundColor: 'var(--color-header-bg)', borderColor: 'var(--color-border-default)' }}
     >
-      <div className="flex-1 max-w-md">
+      {/* Mobile Hamburger Button */}
+      <button
+        type="button"
+        onClick={toggleMobileNav}
+        aria-label="Открыть меню навигации"
+        className="md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center rounded-md text-secondary hover:text-primary transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
+      >
+        <Menu size={22} />
+      </button>
+
+      {/* Search Input (collapsed on mobile) */}
+      <div className="hidden sm:block flex-1 max-w-md">
         <div className="relative">
           <Search
             size={14}
@@ -45,7 +58,7 @@ export const AppHeader = () => {
           <input
             type="text"
             placeholder="Search..."
-            className="w-full h-9 pl-8 pr-3 rounded-full text-sm outline-none transition-all focus:ring-2"
+            className="w-full h-9 pl-8 pr-3 rounded-full text-[16px] md:text-sm outline-none transition-all focus:ring-2"
             style={{
               backgroundColor: 'var(--color-bg-inset)',
               border: '1px solid var(--color-border-default)',
@@ -55,13 +68,12 @@ export const AppHeader = () => {
         </div>
       </div>
 
-      <div className="flex items-center gap-3 ml-auto">
-
-
+      <div className="flex items-center gap-1 sm:gap-3 ml-auto">
         {/* Theme Toggle */}
         <button
+          type="button"
           onClick={handleToggleTheme}
-          className="h-9 w-9 flex items-center justify-center rounded-full transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+          className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full transition-colors hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
           style={{ color: 'var(--color-text-secondary)' }}
           aria-label="Toggle Theme"
         >
@@ -70,8 +82,9 @@ export const AppHeader = () => {
 
         {/* Language Toggle */}
         <button
+          type="button"
           onClick={toggleLanguage}
-          className="h-9 w-9 flex items-center justify-center rounded-full transition-colors hover:bg-black/5 dark:hover:bg-white/5 mr-1"
+          className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full transition-colors hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none mr-0.5"
           style={{ color: 'var(--color-text-secondary)' }}
           aria-label="Toggle Language"
           title={i18n.language?.startsWith('ru') ? 'Switch to English' : 'Переключить на Русский'}

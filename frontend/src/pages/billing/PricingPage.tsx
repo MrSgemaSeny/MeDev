@@ -26,7 +26,7 @@ export const PricingPage = () => {
 
   return (
     <>
-      <div className="p-8 max-w-4xl mx-auto">
+      <div className="p-4 sm:p-8 max-w-4xl mx-auto">
         <h1 className="text-2xl font-semibold mb-1" style={{ color: 'var(--color-text-primary)' }}>
           Pricing
         </h1>
@@ -52,7 +52,7 @@ export const PricingPage = () => {
               <li className="flex items-center gap-2"><span style={{ color: 'var(--color-text-muted)' }}>✓</span> Публичное портфолио</li>
               <li className="flex items-center gap-2"><span style={{ color: 'var(--color-text-muted)' }}>✗</span> Без водяных знаков</li>
             </ul>
-            <Button variant="secondary" className="w-full mt-auto" disabled>Текущий план</Button>
+            <Button variant="secondary" className="w-full mt-auto min-h-[44px]" disabled>Текущий план</Button>
           </Card>
 
           {/* PRO Plan */}
@@ -75,7 +75,7 @@ export const PricingPage = () => {
               <li className="flex items-center gap-2"><span style={{ color: 'var(--color-text-muted)' }}>✓</span> Приоритетная поддержка</li>
             </ul>
             <div className="flex flex-col gap-2 mt-auto">
-              <Button variant="primary" className="w-full font-medium" onClick={() => setIsModalOpen(true)}>
+              <Button variant="primary" className="w-full font-medium min-h-[44px]" onClick={() => setIsModalOpen(true)}>
                 Upgrade to PRO
               </Button>
             </div>
@@ -102,12 +102,12 @@ export const PricingPage = () => {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-[100] flex flex-col" style={{ backgroundColor: 'var(--color-bg-primary)' }}>
+        <div className="fixed inset-0 z-[100] flex flex-col pt-[max(0rem,var(--sat))] pb-[max(0rem,var(--sab))]" style={{ backgroundColor: 'var(--color-bg-primary)' }}>
           {/* Header */}
-          <div className="flex items-center p-6 border-b" style={{ borderColor: 'var(--color-border-default)' }}>
+          <div className="flex items-center p-4 sm:p-6 border-b" style={{ borderColor: 'var(--color-border-default)' }}>
             <button 
               onClick={() => setIsModalOpen(false)} 
-              className="flex items-center gap-2 p-2 rounded-md transition-colors" 
+              className="min-h-[44px] min-w-[44px] flex items-center justify-center gap-2 p-2 rounded-md transition-colors cursor-pointer" 
               style={{ color: 'var(--color-text-muted)' }} 
               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--color-bg-inset)'}
               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
@@ -115,22 +115,22 @@ export const PricingPage = () => {
               <ArrowLeft className="w-5 h-5" />
               <span className="text-sm font-medium">Назад</span>
             </button>
-            <div className="text-xl font-semibold ml-4" style={{ color: 'var(--color-text-primary)' }}>Upgrade to PRO</div>
+            <div className="text-xl font-semibold ml-2 sm:ml-4" style={{ color: 'var(--color-text-primary)' }}>Upgrade to PRO</div>
           </div>
 
           {/* Content */}
-          <div className="flex-1 overflow-y-auto p-6 flex flex-col items-center justify-center">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ color: 'var(--color-text-primary)' }}>Выберите цикл оплаты</h2>
-              <p className="text-lg max-w-xl mx-auto" style={{ color: 'var(--color-text-secondary)' }}>
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col items-center justify-start sm:justify-center pt-[max(1rem,var(--sat))] pb-[max(1rem,var(--sab))]">
+            <div className="text-center mb-8 sm:mb-12">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4" style={{ color: 'var(--color-text-primary)' }}>Выберите цикл оплаты</h2>
+              <p className="text-base sm:text-lg max-w-xl mx-auto" style={{ color: 'var(--color-text-secondary)' }}>
                 Экономьте до 25% при оплате за несколько месяцев вперед. Все возможности PRO включены в каждый план.
               </p>
             </div>
 
             <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* 1 Month */}
-              <Card className="p-8 border flex flex-col relative" style={{ borderColor: 'var(--color-border-default)', backgroundColor: 'var(--color-bg-inset)' }}>
-                <div className="mb-8">
+              <Card className="p-6 sm:p-8 border flex flex-col relative" style={{ borderColor: 'var(--color-border-default)', backgroundColor: 'var(--color-bg-inset)' }}>
+                <div className="mb-6 sm:mb-8">
                   <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>1 месяц</h3>
                   <div className="flex items-end gap-1 mb-2">
                     <span className="text-4xl font-bold" style={{ color: 'var(--color-text-primary)' }}>$8.99</span>
@@ -147,7 +147,7 @@ export const PricingPage = () => {
 
                 <Button 
                   variant="secondary" 
-                  className="w-full text-base py-3" 
+                  className="w-full text-base py-3 min-h-[44px]" 
                   onClick={() => checkoutKaspi(1)} 
                   disabled={isKaspiPending}
                 >
@@ -156,11 +156,11 @@ export const PricingPage = () => {
               </Card>
 
               {/* 3 Months */}
-              <Card className="p-8 border flex flex-col relative" style={{ borderColor: 'var(--color-border-default)', backgroundColor: 'var(--color-bg-inset)' }}>
+              <Card className="p-6 sm:p-8 border flex flex-col relative" style={{ borderColor: 'var(--color-border-default)', backgroundColor: 'var(--color-bg-inset)' }}>
                 <div className="absolute top-0 right-0 px-4 py-1.5 text-xs font-semibold rounded-bl-lg rounded-tr-md" style={{ backgroundColor: 'var(--color-bg-primary)', color: 'var(--color-text-primary)', borderBottom: '1px solid var(--color-border-default)', borderLeft: '1px solid var(--color-border-default)' }}>
                   Выгода 7%
                 </div>
-                <div className="mb-8">
+                <div className="mb-6 sm:mb-8">
                   <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>3 месяца</h3>
                   <div className="flex items-end gap-1 mb-2">
                     <span className="text-4xl font-bold" style={{ color: 'var(--color-text-primary)' }}>$24.99</span>
@@ -176,7 +176,7 @@ export const PricingPage = () => {
 
                 <Button 
                   variant="secondary" 
-                  className="w-full text-base py-3" 
+                  className="w-full text-base py-3 min-h-[44px]" 
                   onClick={() => checkoutKaspi(3)} 
                   disabled={isKaspiPending}
                 >
@@ -185,11 +185,11 @@ export const PricingPage = () => {
               </Card>
 
               {/* 6 Months */}
-              <Card className="p-8 border-2 flex flex-col relative" style={{ borderColor: 'var(--color-text-primary)', backgroundColor: 'var(--color-bg-inset)' }}>
+              <Card className="p-6 sm:p-8 border-2 flex flex-col relative" style={{ borderColor: 'var(--color-text-primary)', backgroundColor: 'var(--color-bg-inset)' }}>
                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 text-sm font-bold rounded-full shadow-md" style={{ backgroundColor: 'var(--color-text-primary)', color: 'var(--color-bg-primary)' }}>
                   Самый выгодный
                 </div>
-                <div className="mb-8 mt-2">
+                <div className="mb-6 sm:mb-8 mt-2">
                   <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>6 месяцев</h3>
                   <div className="flex items-end gap-1 mb-2">
                     <span className="text-4xl font-bold" style={{ color: 'var(--color-text-primary)' }}>$39.99</span>
@@ -205,7 +205,7 @@ export const PricingPage = () => {
 
                 <Button 
                   variant="primary" 
-                  className="w-full text-base py-3 font-semibold" 
+                  className="w-full text-base py-3 font-semibold min-h-[44px]" 
                   onClick={() => checkoutKaspi(6)} 
                   disabled={isKaspiPending}
                 >

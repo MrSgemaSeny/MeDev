@@ -19,11 +19,11 @@ export const LanguagesSection = () => {
   const languages = profile?.languages || [];
 
   return (
-    <div className="max-w-2xl pl-6">
+    <div className="max-w-2xl pl-0 sm:pl-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>Languages</h2>
         {editingId === null && (
-          <Button size="sm" variant="secondary" onClick={() => setEditingId('new')}>Add language</Button>
+          <Button size="sm" variant="secondary" className="min-h-[44px]" onClick={() => setEditingId('new')}>Add language</Button>
         )}
       </div>
       <SortableList
@@ -40,9 +40,23 @@ export const LanguagesSection = () => {
                 <h3 className="font-medium text-sm" style={{ color: 'var(--color-text-primary)' }}>{lang.name}</h3>
                 <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>{lang.level}</p>
               </div>
-              <div className="flex gap-2">
-                <button onClick={() => setEditingId(lang.id)} className="text-sm hover:underline" style={{ color: 'var(--color-link)' }}>Edit</button>
-                <button onClick={() => deleteMutation.mutate(lang.id)} className="text-sm hover:underline" style={{ color: 'var(--color-danger)' }}>Delete</button>
+              <div className="flex items-center gap-1 shrink-0">
+                <button 
+                  onClick={() => setEditingId(lang.id)} 
+                  className="min-h-[44px] min-w-[44px] px-2 flex items-center justify-center text-sm font-medium hover:underline rounded" 
+                  style={{ color: 'var(--color-link)' }}
+                  aria-label="Edit language"
+                >
+                  Edit
+                </button>
+                <button 
+                  onClick={() => deleteMutation.mutate(lang.id)} 
+                  className="min-h-[44px] min-w-[44px] px-2 flex items-center justify-center text-sm font-medium hover:underline rounded" 
+                  style={{ color: 'var(--color-danger)' }}
+                  aria-label="Delete language"
+                >
+                  Delete
+                </button>
               </div>
             </Card>
           )
@@ -79,7 +93,7 @@ const LanguageForm: React.FC<LanguageFormProps> = ({ initialData, onSave, onCanc
   return (
     <Card className="p-4">
       <form onSubmit={handleSubmit} className="space-y-3">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div><Label htmlFor="name">Language</Label><Input id="name" required name="name" value={formData.name} onChange={handleChange} placeholder="e.g. English, Spanish" /></div>
           <div><Label htmlFor="level">Proficiency</Label>
             <Select id="level" name="level" value={formData.level} onChange={handleChange}>
@@ -88,8 +102,8 @@ const LanguageForm: React.FC<LanguageFormProps> = ({ initialData, onSave, onCanc
           </div>
         </div>
         <div className="flex gap-2 pt-1">
-          <Button type="submit" variant="primary" disabled={isPending}>{isPending ? 'Saving...' : 'Save'}</Button>
-          <Button type="button" variant="secondary" onClick={onCancel}>Cancel</Button>
+          <Button type="submit" variant="primary" className="min-h-[44px]" disabled={isPending}>{isPending ? 'Saving...' : 'Save'}</Button>
+          <Button type="button" variant="secondary" className="min-h-[44px]" onClick={onCancel}>Cancel</Button>
         </div>
       </form>
     </Card>

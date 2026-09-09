@@ -84,7 +84,7 @@ export const AboutSection = () => {
     <div className="flex flex-col gap-0 w-full max-w-[800px]">
       
       {/* Page header */}
-      <div className="flex items-start justify-between mb-6 pb-6 border-b border-[var(--color-border-default)]">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-6 pb-6 border-b border-[var(--color-border-default)]">
         <div>
           <h1 className="text-[17px] font-medium text-primary mb-1">About you</h1>
           <p className="text-[13px] text-secondary">Shown on your public profile and resume.</p>
@@ -96,7 +96,7 @@ export const AboutSection = () => {
             onClick={() => fileInputRef.current?.click()}
             disabled={parseResume.isPending}
             aria-label="Импортировать данные из PDF-файла"
-            className="inline-flex items-center gap-2 text-[12px] px-3 py-2 rounded-md border border-[var(--color-border-default)] surface-secondary text-secondary hover:surface-tertiary hover:text-primary focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none transition-colors whitespace-nowrap cursor-pointer disabled:opacity-50"
+            className="inline-flex items-center gap-2 text-[12px] min-h-[44px] px-3 py-2 rounded-md border border-[var(--color-border-default)] surface-secondary text-secondary hover:surface-tertiary hover:text-primary focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none transition-colors whitespace-nowrap cursor-pointer disabled:opacity-50"
           >
             <Upload size={14} aria-hidden="true" />
             {parseResume.isPending ? 'Импорт...' : 'Импортировать из PDF'}
@@ -129,7 +129,7 @@ export const AboutSection = () => {
         
         {/* Basic info */}
         <div className="text-[11px] font-semibold text-muted tracking-widest uppercase mb-3">Основная информация</div>
-        <div className="grid grid-cols-3 gap-3 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
           <div className="flex flex-col gap-1.5">
             <label htmlFor="about-fullname" className="text-[11px] text-muted font-medium tracking-wide uppercase">Полное имя</label>
             <input 
@@ -137,10 +137,10 @@ export const AboutSection = () => {
               name="fullName" 
               value={formData.fullName} 
               onChange={handleChange} 
-              className="surface-inset border border-default rounded-md py-2 px-3 text-[13px] text-primary w-full outline-none focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:border-transparent hover:border-[var(--color-border-muted)] transition-all placeholder:text-muted" 
+              className="surface-inset border border-default rounded-md py-2 px-3 text-[16px] md:text-[13px] min-h-[44px] md:min-h-[38px] text-primary w-full outline-none focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:border-transparent hover:border-[var(--color-border-muted)] transition-all placeholder:text-muted" 
             />
           </div>
-          <div className="flex flex-col gap-1.5 col-span-2">
+          <div className="flex flex-col gap-1.5 sm:col-span-2">
             <label htmlFor="about-headline" className="text-[11px] text-muted font-medium tracking-wide uppercase">Заголовок / Профессия</label>
             <input 
               id="about-headline" 
@@ -148,7 +148,7 @@ export const AboutSection = () => {
               value={formData.headline} 
               onChange={handleChange} 
               placeholder="например, Senior Full-Stack Engineer" 
-              className="surface-inset border border-default rounded-md py-2 px-3 text-[13px] text-primary w-full outline-none focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:border-transparent hover:border-[var(--color-border-muted)] transition-all placeholder:text-muted" 
+              className="surface-inset border border-default rounded-md py-2 px-3 text-[16px] md:text-[13px] min-h-[44px] md:min-h-[38px] text-primary w-full outline-none focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:border-transparent hover:border-[var(--color-border-muted)] transition-all placeholder:text-muted" 
             />
           </div>
           <div className="flex flex-col gap-1.5">
@@ -159,7 +159,7 @@ export const AboutSection = () => {
               value={formData.location} 
               onChange={handleChange} 
               placeholder="Алматы, Казахстан" 
-              className="surface-inset border border-default rounded-md py-2 px-3 text-[13px] text-primary w-full outline-none focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:border-transparent hover:border-[var(--color-border-muted)] transition-all placeholder:text-muted" 
+              className="surface-inset border border-default rounded-md py-2 px-3 text-[16px] md:text-[13px] min-h-[44px] md:min-h-[38px] text-primary w-full outline-none focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:border-transparent hover:border-[var(--color-border-muted)] transition-all placeholder:text-muted" 
             />
           </div>
           <div className="flex flex-col gap-1.5">
@@ -170,7 +170,7 @@ export const AboutSection = () => {
               value={formData.website} 
               onChange={handleChange} 
               placeholder="https://" 
-              className="surface-inset border border-default rounded-md py-2 px-3 text-[13px] text-primary w-full outline-none focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:border-transparent hover:border-[var(--color-border-muted)] transition-all placeholder:text-muted" 
+              className="surface-inset border border-default rounded-md py-2 px-3 text-[16px] md:text-[13px] min-h-[44px] md:min-h-[38px] text-primary w-full outline-none focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:border-transparent hover:border-[var(--color-border-muted)] transition-all placeholder:text-muted" 
             />
           </div>
           <div className="flex flex-col gap-1.5">
@@ -181,7 +181,7 @@ export const AboutSection = () => {
               value={formData.githubUsername} 
               onChange={handleChange} 
               placeholder="логин на github.com" 
-              className="surface-inset border border-default rounded-md py-2 px-3 text-[13px] text-primary w-full outline-none focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:border-transparent hover:border-[var(--color-border-muted)] transition-all placeholder:text-muted" 
+              className="surface-inset border border-default rounded-md py-2 px-3 text-[16px] md:text-[13px] min-h-[44px] md:min-h-[38px] text-primary w-full outline-none focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:border-transparent hover:border-[var(--color-border-muted)] transition-all placeholder:text-muted" 
             />
           </div>
         </div>
@@ -209,7 +209,7 @@ export const AboutSection = () => {
             value={formData.summary} 
             onChange={handleChange} 
             rows={3} 
-            className="surface-inset border border-default rounded-md py-2 px-3 text-[13px] text-primary w-full outline-none focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:border-transparent hover:border-[var(--color-border-muted)] transition-all placeholder:text-muted resize-none leading-relaxed"
+            className="surface-inset border border-default rounded-md py-2 px-3 text-[16px] md:text-[13px] text-primary w-full outline-none focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:border-transparent hover:border-[var(--color-border-muted)] transition-all placeholder:text-muted resize-none leading-relaxed"
           />
           <div className="text-[11px] text-muted text-right mt-1">
             <span style={{ color: formData.summary.length > 600 ? 'var(--color-danger)' : '' }}>{formData.summary.length}</span> / 600
@@ -219,11 +219,11 @@ export const AboutSection = () => {
         <hr className="border-t border-[var(--color-border-default)] my-6" />
 
         {/* Actions */}
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           <button 
             type="submit" 
             disabled={updateProfile.isPending}
-            className="py-2 px-4 rounded-md border-none bg-[var(--color-accent)] text-white text-[13px] font-medium cursor-pointer hover:bg-[var(--color-accent-hover)] focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none transition-colors disabled:opacity-50"
+            className="min-h-[44px] py-2 px-4 rounded-md border-none bg-[var(--color-accent)] text-white text-[14px] md:text-[13px] font-medium cursor-pointer hover:bg-[var(--color-accent-hover)] focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none transition-colors disabled:opacity-50 flex items-center justify-center"
           >
             {updateProfile.isPending ? 'Сохранение...' : 'Сохранить изменения профиля'}
           </button>
@@ -242,12 +242,12 @@ export const AboutSection = () => {
                 });
               }
             }}
-            className="py-2 px-4 rounded-md border border-[var(--color-border-default)] bg-transparent text-secondary text-[13px] cursor-pointer hover:surface-secondary hover:text-primary focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none transition-colors"
+            className="min-h-[44px] py-2 px-4 rounded-md border border-[var(--color-border-default)] bg-transparent text-secondary text-[14px] md:text-[13px] cursor-pointer hover:surface-secondary hover:text-primary focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none transition-colors flex items-center justify-center"
           >
             Отменить изменения
           </button>
           {toastVisible && (
-            <span className="inline-flex items-center gap-2 text-[12px] text-[#4ade80] ml-2">
+            <span className="inline-flex items-center gap-2 text-[12px] text-[#4ade80] sm:ml-2 justify-center">
               <Check size={14} aria-hidden="true" />
               Сохранено
             </span>

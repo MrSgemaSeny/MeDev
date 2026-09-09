@@ -5,7 +5,7 @@ import { Input } from './Input';
 export { Input };
 
 const fieldBase =
-  'flex w-full rounded-md px-3 py-1.5 text-sm transition-[border-color,box-shadow] ' +
+  'flex w-full rounded-md px-3 py-1.5 text-[16px] md:text-sm transition-[border-color,box-shadow] ' +
   'focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60';
 
 export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
@@ -46,7 +46,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <select
         ref={ref}
-        className={cn(fieldBase, 'h-9 cursor-pointer', className)}
+        className={cn(fieldBase, 'h-11 md:h-9 min-h-[44px] md:min-h-[36px] cursor-pointer', className)}
         style={{
           backgroundColor: 'var(--color-bg-primary)',
           color: 'var(--color-text-primary)',

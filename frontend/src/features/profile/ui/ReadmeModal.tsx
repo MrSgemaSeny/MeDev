@@ -99,7 +99,7 @@ export const ReadmeModal: React.FC<ReadmeModalProps> = ({ isOpen, onClose }) => 
             <textarea
               readOnly
               value={readmeContent}
-              className="w-full h-72 p-4 text-xs font-mono rounded-xl border border-[var(--color-border-default)] bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)] resize-none focus:outline-none select-all"
+              className="w-full h-72 p-4 text-[16px] sm:text-sm font-mono rounded-xl border border-[var(--color-border-default)] bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)] resize-none focus:outline-none select-all"
             />
           )}
         </div>

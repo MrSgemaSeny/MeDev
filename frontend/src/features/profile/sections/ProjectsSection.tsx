@@ -75,8 +75,8 @@ export const ProjectsSection = () => {
                   {proj.description && <p className="mt-2 text-sm whitespace-pre-wrap" style={{ color: 'var(--color-text-secondary)' }}>{proj.description}</p>}
                 </div>
                 <div className="flex gap-2 shrink-0">
-                  <button onClick={() => setEditingId(proj.id)} className="text-sm hover:underline" style={{ color: 'var(--color-link)' }}>Edit</button>
-                  <button onClick={() => deleteMutation.mutate(proj.id)} className="text-sm hover:underline" style={{ color: 'var(--color-danger)' }}>Delete</button>
+                  <button onClick={() => setEditingId(proj.id)} className="text-sm hover:underline min-w-[44px] min-h-[44px] flex items-center justify-center" style={{ color: 'var(--color-link)' }}>Edit</button>
+                  <button onClick={() => deleteMutation.mutate(proj.id)} className="text-sm hover:underline min-w-[44px] min-h-[44px] flex items-center justify-center" style={{ color: 'var(--color-danger)' }}>Delete</button>
                 </div>
               </div>
             </Card>
@@ -139,7 +139,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ initialData, onSave, onCancel
   return (
     <Card className="p-4">
       <form onSubmit={handleSubmit} className="space-y-3">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div><Label htmlFor="name">Project Name</Label><Input id="name" required name="name" value={formData.name} onChange={handleChange} /></div>
           <div><Label htmlFor="githubUrl">GitHub URL (Optional)</Label><Input id="githubUrl" type="url" name="githubUrl" value={formData.githubUrl} onChange={handleChange} placeholder="https://" /></div>
         </div>

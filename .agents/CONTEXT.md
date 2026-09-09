@@ -52,9 +52,11 @@
     - `.github/workflows/build-mobile-ios.yml`: Сборка xcarchive для iOS на macos-14.
   - **Scripts**: `build:web`, `cap:sync`, `build:mobile`. Тесты: 262 backend PASS, 41 frontend PASS.
 
-- **Mobile Strategy Decision (2026-09-09 — ARCHITECTURAL PIVOT)**:
-  - **Вердикт**: Отказ от Capacitor/WebView как целевой мобильной платформы (суррогат сайта в вебвью признан негодным для продакшн-уровня).
-  - **Решение**: Разработка полноценного нативного мобильного клиента на **React Native + Expo** (директория `mobile/`, Expo Router, TypeScript, Zustand/React Query, прямое взаимодействие с бэкендом Spring Boot `/api/v1/**`).
+- **Mobile Web Adaptation (2026-09-09 — 100% COMPLETE)**:
+  - **Landing (Next.js 15 App Router)**: Включен `viewportFit: 'cover'`, `--sat`/`--sab`, `overflow-x: hidden`, мобильное меню-drawer с гамбургером, затемнением и блокировкой скролла body, устранен перелив 322px в `Cta.tsx`, адаптивная шапка `Hero.tsx`, touch targets >= 44px. Сборка 9/9 статических страниц PASS.
+  - **Frontend Core & Navigation**: Сайдбар скрыт на экранах <768px (`hidden md:flex`), гамбургер в `AppHeader.tsx`, выезжающий `MobileNavDrawer.tsx` (Zustand `mobileNavStore`), адаптивный `AppLayout.tsx` (`100dvh`, `p-3 sm:p-4 md:p-6 lg:p-8`), защита от авто-зума на iOS Safari (`Input.tsx` и `Form.tsx` font-size 16px), кнопки `Button.tsx` touch target >= 44px.
+  - **Frontend Complex Modules**: `ResumeBuilder.tsx` перестроен в вертикальный стек на экранах <1024px (`flex-col lg:flex-row`), математическое масштабирование листа A4 через `ResizeObserver` и `transform: scale(scale)` с компенсацией высоты, алиас `/builder` -> `/resume`, кнопки действий `JobTrackerPage.tsx` и `KanbanBoard.tsx` видны на сенсорных устройствах без hover, `AiChatWidget.tsx` полноэкранный drawer `100dvh`, `ProfileEditor.tsx` горизонтальные табы секций, адаптивные сетки форм `grid-cols-1 sm:grid-cols-2`.
+  - **Quality Gates**: Vitest 41/41 PASS, Vite build 0 ошибок, Next.js build 0 ошибок, Reviewers APPROVE, Forensic Auditor CLEAN (0 emojis, 0 читов).
 
 ## Active Backlog
 - **Native Mobile App (Expo)**: Инициализация и разработка нативного приложения MeDev на React Native + Expo (авторизация, Job Tracker, AI ассистент, просмотр скора).

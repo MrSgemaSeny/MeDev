@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useResumeEditorStore } from '../../entities/resume/model/resumeEditorStore';
 import { api } from '../../shared/api/axios';
 import { useAiChatStore } from '../../features/ai-assistant/model/store';
@@ -7,6 +7,9 @@ import { useAuthStore } from '../../entities/user/model/store';
 import { toast } from 'sonner';
 import { Bot, Download, ArrowUp, ArrowDown, FileText, Files, File } from 'lucide-react';
 import { exportResumePdf } from '../../shared/lib/mobile/exportPdf';
+
+const A4_WIDTH = 794;
+const A4_HEIGHT = 1123;
 
 const TEMPLATES = [
   { id: 'clean', name: 'Clean ATS', desc: 'Recruiter Classic', accent: '#1a1a1a', isPro: false },
@@ -107,6 +110,34 @@ export const ResumeBuilder = () => {
   const [htmlUrl, setHtmlUrl] = useState<string | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
 
+  const previewWrapperRef = useRef<HTMLDivElement>(null);
+  const [previewScale, setPreviewScale] = useState(1);
+
+  useEffect(() => {
+    const updateScale = () => {
+      if (!previewWrapperRef.current) return;
+      const containerWidth = previewWrapperRef.current.clientWidth;
+      if (!containerWidth) return;
+      const availableWidth = Math.max(containerWidth - 32, 260);
+      const newScale = Math.min(1, availableWidth / A4_WIDTH);
+      setPreviewScale(newScale);
+    };
+
+    updateScale();
+
+    let ro: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined' && previewWrapperRef.current) {
+      ro = new ResizeObserver(updateScale);
+      ro.observe(previewWrapperRef.current);
+    }
+    window.addEventListener('resize', updateScale);
+
+    return () => {
+      if (ro) ro.disconnect();
+      window.removeEventListener('resize', updateScale);
+    };
+  }, []);
+
   useEffect(() => {
     let active = true;
     let urlToRevoke: string | null = null;
@@ -145,18 +176,18 @@ export const ResumeBuilder = () => {
   }, [selectedTemplate, isSinglePageMode]);
 
   return (
-    <div className="flex h-full bg-[#010409] text-[#c9d1d9] overflow-hidden font-sans">
+    <div className="flex flex-col lg:flex-row h-full bg-[#010409] text-[#c9d1d9] overflow-y-auto lg:overflow-hidden font-sans">
       
       {/* Left Sidebar - GitHub Dark Mode Style */}
-      <div className="w-[320px] bg-[#0d1117] border-r border-[#30363d] flex flex-col shrink-0">
+      <div className="w-full lg:w-[320px] bg-[#0d1117] border-b lg:border-b-0 lg:border-r border-[#30363d] flex flex-col shrink-0">
         
         {/* Header */}
-        <div className="p-5 border-b border-[#30363d]">
+        <div className="p-4 sm:p-5 border-b border-[#30363d]">
           <h1 className="text-lg font-semibold text-white">Resume Builder</h1>
           <p className="text-xs text-[#8b949e] mt-1">Configure layout & appearance</p>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-5 space-y-8">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-6 sm:space-y-8">
           
           {/* Layout Mode */}
           <section className="flex items-center justify-between mb-4">
@@ -247,20 +278,22 @@ export const ResumeBuilder = () => {
                     />
                     {section.label}
                   </label>
-                  <div className="flex gap-1 opacity-40 group-hover:opacity-100 transition-opacity">
+                  <div className="flex gap-1 opacity-100 sm:opacity-40 sm:group-hover:opacity-100 transition-opacity">
                     <button 
                       onClick={() => moveUp(index)} 
                       disabled={index === 0} 
-                      className="p-1 rounded hover:bg-[#30363d] hover:text-white disabled:opacity-30 disabled:hover:bg-transparent"
+                      aria-label={`Move ${section.label} up`}
+                      className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded hover:bg-[#30363d] text-[#8b949e] hover:text-white disabled:opacity-30 disabled:hover:bg-transparent"
                     >
-                      <ArrowUp size={14} />
+                      <ArrowUp size={16} />
                     </button>
                     <button 
                       onClick={() => moveDown(index)} 
                       disabled={index === sections.length - 1} 
-                      className="p-1 rounded hover:bg-[#30363d] hover:text-white disabled:opacity-30 disabled:hover:bg-transparent"
+                      aria-label={`Move ${section.label} down`}
+                      className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded hover:bg-[#30363d] text-[#8b949e] hover:text-white disabled:opacity-30 disabled:hover:bg-transparent"
                     >
-                      <ArrowDown size={14} />
+                      <ArrowDown size={16} />
                     </button>
                   </div>
                 </div>
@@ -270,10 +303,10 @@ export const ResumeBuilder = () => {
         </div>
 
         {/* Footer Actions */}
-        <div className="p-5 border-t border-[#30363d] bg-[#0d1117] space-y-3">
+        <div className="p-4 sm:p-5 border-t border-[#30363d] bg-[#0d1117] space-y-3">
           <button 
             onClick={handleAiAnalysis}
-            className="w-full flex items-center justify-center gap-2 bg-[#161b22] hover:bg-[#30363d] border border-[#30363d] text-[#c9d1d9] hover:text-white py-2 px-4 rounded-md text-sm font-medium transition-colors"
+            className="w-full min-h-[44px] flex items-center justify-center gap-2 bg-[#161b22] hover:bg-[#30363d] border border-[#30363d] text-[#c9d1d9] hover:text-white py-2.5 px-4 rounded-md text-sm font-medium transition-colors"
           >
             <Bot size={16} />
             AI Analysis
@@ -282,14 +315,14 @@ export const ResumeBuilder = () => {
           <div className="flex gap-2">
             <button 
               onClick={handleDownloadPdf}
-              className="flex-1 flex items-center justify-center gap-2 bg-[#238636] hover:bg-[#2ea043] border border-[rgba(240,246,252,0.1)] text-white py-2 px-3 rounded-md text-sm font-medium transition-colors shadow-sm"
+              className="flex-1 min-h-[44px] flex items-center justify-center gap-2 bg-[#238636] hover:bg-[#2ea043] border border-[rgba(240,246,252,0.1)] text-white py-2.5 px-3 rounded-md text-sm font-medium transition-colors shadow-sm"
             >
               <Download size={14} />
               PDF
             </button>
             <button 
               onClick={handleDownloadHtml}
-              className="flex-1 flex items-center justify-center gap-2 bg-[#1f6feb] hover:bg-[#388bfd] border border-[rgba(240,246,252,0.1)] text-white py-2 px-3 rounded-md text-sm font-medium transition-colors shadow-sm"
+              className="flex-1 min-h-[44px] flex items-center justify-center gap-2 bg-[#1f6feb] hover:bg-[#388bfd] border border-[rgba(240,246,252,0.1)] text-white py-2.5 px-3 rounded-md text-sm font-medium transition-colors shadow-sm"
             >
               <FileText size={14} />
               HTML
@@ -298,7 +331,7 @@ export const ResumeBuilder = () => {
 
           <button 
             onClick={handleDownload}
-            className="w-full flex items-center justify-center gap-2 bg-transparent hover:underline text-[#8b949e] hover:text-[#58a6ff] py-1.5 px-4 rounded-md text-xs font-medium transition-colors"
+            className="w-full min-h-[44px] flex items-center justify-center gap-2 bg-transparent hover:underline text-[#8b949e] hover:text-[#58a6ff] py-2 px-4 rounded-md text-xs font-medium transition-colors"
           >
             <FileText size={14} />
             Download Markdown (README)
@@ -306,36 +339,47 @@ export const ResumeBuilder = () => {
         </div>
       </div>
 
-      {/* Main Content - PDF Viewer */}
-      <div className="flex-1 flex flex-col p-8 overflow-hidden relative">
+      {/* Main Content - Scaled PDF Viewer */}
+      <div className="flex-1 flex flex-col p-4 sm:p-6 lg:p-8 overflow-visible lg:overflow-hidden relative">
         {/* Top bar for preview */}
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-medium text-white">Live PDF Preview</h2>
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <h2 className="text-base sm:text-lg font-medium text-white">Live PDF Preview</h2>
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#161b22] border border-[#30363d] text-xs text-[#8b949e]">
             <span className="w-2 h-2 rounded-full bg-[#238636] animate-pulse"></span>
             Real-time rendering
           </div>
         </div>
 
-        {/* Live Container */}
-        <div className="flex-1 w-full max-w-[900px] mx-auto bg-[#ffffff] border border-[#30363d] rounded-xl shadow-2xl overflow-hidden flex flex-col">
-          {previewLoading ? (
-            <div className="flex-1 flex items-center justify-center flex-col gap-4 text-[#8b949e] bg-[#0d1117]">
-              <div className="w-8 h-8 border-2 border-[#30363d] border-t-[#238636] rounded-full animate-spin"></div>
-              <div className="text-sm">Rendering HTML Template...</div>
-            </div>
-          ) : (htmlDoc || htmlUrl) ? (
-            <iframe 
-              srcDoc={htmlDoc || undefined}
-              src={htmlUrl || undefined} 
-              className="w-full h-full border-0 bg-white" 
-              title="HTML Preview" 
-            />
-          ) : (
-            <div className="flex-1 flex items-center justify-center text-[#8b949e] text-sm bg-[#0d1117]">
-              Failed to load preview
-            </div>
-          )}
+        {/* Live Scaled Container */}
+        <div ref={previewWrapperRef} className="w-full flex justify-center items-start overflow-hidden">
+          <div 
+            style={{
+              width: `${A4_WIDTH}px`,
+              height: `${A4_HEIGHT}px`,
+              transform: `scale(${previewScale})`,
+              transformOrigin: 'top center',
+              marginBottom: `-${(1 - previewScale) * A4_HEIGHT}px`,
+            }}
+            className="bg-white rounded-xl shadow-2xl overflow-hidden border border-[#30363d] shrink-0 transition-transform duration-150 ease-out flex flex-col"
+          >
+            {previewLoading ? (
+              <div className="flex-1 flex items-center justify-center flex-col gap-4 text-[#8b949e] bg-[#0d1117]">
+                <div className="w-8 h-8 border-2 border-[#30363d] border-t-[#238636] rounded-full animate-spin"></div>
+                <div className="text-sm">Rendering HTML Template...</div>
+              </div>
+            ) : (htmlDoc || htmlUrl) ? (
+              <iframe 
+                srcDoc={htmlDoc || undefined}
+                src={htmlUrl || undefined} 
+                className="w-full h-full border-0 bg-white" 
+                title="HTML Preview" 
+              />
+            ) : (
+              <div className="flex-1 flex items-center justify-center text-[#8b949e] text-sm bg-[#0d1117]">
+                Failed to load preview
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

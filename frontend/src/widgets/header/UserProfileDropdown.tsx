@@ -42,10 +42,12 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
 
   if (!username) {
     return (
-      <div
-        className="h-9 w-9 rounded-full animate-pulse"
-        style={{ backgroundColor: 'var(--color-bg-tertiary)' }}
-      />
+      <div className="min-w-[44px] min-h-[44px] flex items-center justify-center">
+        <div
+          className="h-9 w-9 rounded-full animate-pulse"
+          style={{ backgroundColor: 'var(--color-bg-tertiary)' }}
+        />
+      </div>
     );
   }
 
@@ -72,13 +74,17 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
         aria-haspopup="true"
         className={
           isHeader
-            ? 'h-9 w-9 rounded-full overflow-hidden shrink-0 hover:ring-2 transition-all focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none'
-            : 'w-full flex items-center justify-between gap-2 py-1.5 rounded-md hover:bg-surface-2 transition-colors focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none'
+            ? 'min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full shrink-0 cursor-pointer focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none'
+            : 'w-full flex items-center justify-between gap-2 py-1.5 px-2 min-h-[44px] rounded-md hover:bg-surface-2 transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none'
         }
-        style={isHeader ? ({ '--tw-ring-color': 'var(--color-border-default)' } as React.CSSProperties) : undefined}
       >
         {isHeader ? (
-          <img src={avatarUrl} alt={`${username || 'User'} — фото профиля`} className="w-full h-full object-cover" />
+          <img
+            src={avatarUrl}
+            alt={`${username || 'User'} — фото профиля`}
+            className="w-9 h-9 rounded-full object-cover hover:ring-2 transition-all"
+            style={{ '--tw-ring-color': 'var(--color-border-default)' } as React.CSSProperties}
+          />
         ) : (
           <div className="flex items-center gap-2">
             <img src={avatarUrl} alt={`${username || 'User'} — фото профиля`} className="w-7 h-7 shrink-0 rounded-full object-cover shadow-sm border border-default" style={{ backgroundColor: 'var(--color-bg-tertiary)' }} />

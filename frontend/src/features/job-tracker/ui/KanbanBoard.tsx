@@ -155,9 +155,9 @@ const KanbanCard: React.FC<KanbanCardProps> = ({ app, isOverlay, onCoverLetter, 
           {app.appliedDate || 'No date'}
         </div>
         {!isOverlay && (
-          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity" onPointerDown={(e) => e.stopPropagation()}>
+          <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity" onPointerDown={(e) => e.stopPropagation()}>
             {app.jobUrl && (
-              <a href={sanitizeUrl(app.jobUrl)} target="_blank" rel="noopener noreferrer" className="p-1 text-secondary hover:text-[var(--color-accent)] rounded" title="View Job Post">
+              <a href={sanitizeUrl(app.jobUrl)} target="_blank" rel="noopener noreferrer" className="p-1 min-w-[44px] min-h-[44px] flex items-center justify-center text-secondary hover:text-[var(--color-accent)] rounded" title="View Job Post">
                 <ExternalLink size={14} />
               </a>
             )}
@@ -165,7 +165,7 @@ const KanbanCard: React.FC<KanbanCardProps> = ({ app, isOverlay, onCoverLetter, 
               <button 
                 onClick={onCoverLetter} 
                 aria-label="AI Cover Letter"
-                className="p-1 text-secondary hover:text-purple-400 rounded focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none" 
+                className="p-1 min-w-[44px] min-h-[44px] flex items-center justify-center text-secondary hover:text-purple-400 rounded focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none" 
                 title="AI Cover Letter"
               >
                 <Wand2 size={14} aria-hidden="true" />
@@ -175,7 +175,7 @@ const KanbanCard: React.FC<KanbanCardProps> = ({ app, isOverlay, onCoverLetter, 
               <button 
                 onClick={onDelete} 
                 aria-label="Delete job application"
-                className="p-1 text-secondary hover:text-danger rounded focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none" 
+                className="p-1 min-w-[44px] min-h-[44px] flex items-center justify-center text-secondary hover:text-danger rounded focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none" 
                 title="Delete"
               >
                 <Trash2 size={14} aria-hidden="true" />

@@ -36,7 +36,7 @@ export const ImportResumePage = () => {
   };
 
   return (
-    <div className="min-h-full flex flex-col items-center justify-center p-6 animate-in fade-in slide-in-from-bottom-4 duration-700 bg-[var(--color-bg-inset)]">
+    <div className="min-h-full flex flex-col items-center justify-center p-3 sm:p-6 animate-in fade-in slide-in-from-bottom-4 duration-700 bg-[var(--color-bg-inset)]">
       <div className="text-center mb-10 max-w-2xl mx-auto">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--color-border-default)] bg-[var(--color-bg-primary)] mb-6 shadow-sm">
           <span className="w-2 h-2 rounded-full bg-[var(--color-success,auto)] shadow-[0_0_8px_var(--color-success,auto)] animate-pulse"></span>
@@ -61,7 +61,7 @@ export const ImportResumePage = () => {
               fileInputRef.current?.click();
             }
           }}
-          className="group relative border-2 border-dashed border-[var(--color-border-default)] rounded-2xl p-12 flex flex-col items-center justify-center text-center cursor-pointer bg-[var(--color-bg-primary)] hover:bg-[var(--color-bg-secondary)] hover:border-[var(--color-success,auto)] focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none transition-all duration-300 shadow-sm hover:shadow-[0_0_30px_rgba(35,134,54,0.1)]"
+          className="group relative border-2 border-dashed border-[var(--color-border-default)] rounded-2xl p-5 sm:p-8 md:p-12 flex flex-col items-center justify-center text-center cursor-pointer bg-[var(--color-bg-primary)] hover:bg-[var(--color-bg-secondary)] hover:border-[var(--color-success,auto)] focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none transition-all duration-300 shadow-sm hover:shadow-[0_0_30px_rgba(35,134,54,0.1)]"
           onClick={() => fileInputRef.current?.click()}
         >
           <input 
@@ -86,7 +86,7 @@ export const ImportResumePage = () => {
               <p className="text-sm text-secondary mb-6 max-w-sm">
                 Поддерживаются PDF-файлы размером до 10 МБ. Данные обрабатываются безопасно.
               </p>
-              <Button variant="primary" size="lg" type="button" className="pointer-events-none rounded-xl px-8 shadow-md">
+              <Button variant="primary" size="lg" type="button" className="pointer-events-none rounded-xl px-4 sm:px-8 w-full sm:w-auto text-sm sm:text-base shadow-md">
                 Выбрать PDF-файл резюме
               </Button>
             </>

@@ -154,7 +154,7 @@ export const AiChatWidget = () => {
     return (
       <button
         onClick={toggleChat}
-        className="fixed bottom-6 right-6 p-3.5 rounded-full shadow-2xl transition-all duration-200 hover:scale-105 bg-[#238636] hover:bg-[#2ea043] text-white border border-[#30363d] flex items-center justify-center z-50 group"
+        className="fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom,0px))] right-4 sm:right-6 w-12 h-12 min-w-[48px] min-h-[48px] rounded-full shadow-2xl transition-all duration-200 hover:scale-105 bg-[#238636] hover:bg-[#2ea043] text-white border border-[#30363d] flex items-center justify-center z-50 group"
         aria-label="Open AI Assistant"
       >
         <Bot size={22} className="group-hover:rotate-12 transition-transform duration-200" />
@@ -169,7 +169,7 @@ export const AiChatWidget = () => {
   ];
 
   return (
-    <div className="fixed bottom-6 right-6 w-[440px] h-[580px] max-h-[85vh] flex flex-col bg-[#161b22] rounded-2xl shadow-2xl border border-[#30363d] overflow-hidden z-50 animate-in fade-in slide-in-from-bottom-4 duration-200">
+    <div className="fixed inset-0 sm:inset-auto sm:bottom-6 sm:right-6 w-full h-[100dvh] sm:w-[440px] sm:h-[580px] sm:max-h-[85vh] flex flex-col bg-[#161b22] rounded-none sm:rounded-2xl shadow-2xl border-0 sm:border border-[#30363d] overflow-hidden z-50 pt-[var(--sat,0px)] pb-[var(--sab,0px)] sm:pt-0 sm:pb-0 animate-in fade-in slide-in-from-bottom-4 duration-200">
       {/* Header */}
       <div className="bg-[#0d1117] border-b border-[#30363d] px-4 py-3 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
@@ -188,7 +188,7 @@ export const AiChatWidget = () => {
           {messages.length > 0 && (
             <button 
               onClick={clearChat} 
-              className="text-[11px] px-2 py-1 rounded text-[#8b949e] hover:text-[#e6edf3] hover:bg-[#21262d] transition-colors"
+              className="text-[11px] min-h-[44px] px-2.5 py-1 flex items-center rounded text-[#8b949e] hover:text-[#e6edf3] hover:bg-[#21262d] transition-colors"
             >
               Clear
             </button>
@@ -196,9 +196,9 @@ export const AiChatWidget = () => {
           <button 
             onClick={toggleChat}
             aria-label="Закрыть чат"
-            className="p-1.5 rounded-lg text-[#8b949e] hover:text-[#e6edf3] hover:bg-[#21262d] transition-colors focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
+            className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg text-[#8b949e] hover:text-[#e6edf3] hover:bg-[#21262d] transition-colors focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
           >
-            <X size={18} aria-hidden="true" />
+            <X size={20} aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -238,7 +238,7 @@ export const AiChatWidget = () => {
               key={idx}
               disabled={isLoading}
               onClick={() => handleSend(qp.text)}
-              className="text-[11px] px-2.5 py-1 rounded-full bg-[#161b22] hover:bg-[#21262d] text-[#8b949e] hover:text-[#e6edf3] border border-[#30363d] whitespace-nowrap transition-colors"
+              className="text-[11px] min-h-[36px] px-3 py-1.5 rounded-full bg-[#161b22] hover:bg-[#21262d] text-[#8b949e] hover:text-[#e6edf3] border border-[#30363d] whitespace-nowrap transition-colors flex items-center"
             >
               {qp.label}
             </button>
@@ -262,16 +262,16 @@ export const AiChatWidget = () => {
               }
             }}
             placeholder="Спроси о резюме или подготовке к интервью..."
-            className="w-full bg-transparent px-3 py-1.5 text-sm text-[#e6edf3] placeholder-[#8b949e] focus:outline-none resize-none max-h-28 min-h-[38px] leading-relaxed"
+            className="w-full bg-transparent px-3 py-1.5 text-[16px] sm:text-sm text-[#e6edf3] placeholder-[#8b949e] focus:outline-none resize-none max-h-28 min-h-[38px] leading-relaxed"
             rows={1}
           />
           <button 
             type="submit" 
             aria-label="Отправить сообщение"
             disabled={!input.trim() || isLoading}
-            className="p-2 rounded-lg bg-[#238636] hover:bg-[#2ea043] text-white disabled:opacity-30 disabled:hover:bg-[#238636] transition-all shrink-0 ml-1 focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
+            className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg bg-[#238636] hover:bg-[#2ea043] text-white disabled:opacity-30 disabled:hover:bg-[#238636] transition-all shrink-0 ml-1 focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
           >
-            <Send size={15} aria-hidden="true" />
+            <Send size={16} aria-hidden="true" />
           </button>
         </form>
       </div>

@@ -30,7 +30,7 @@ export const CookieBanner = () => {
     <div
       role="region"
       aria-label="Уведомление об использовании файлов cookie"
-      className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-xl rounded-2xl border p-4 shadow-2xl backdrop-blur-md sm:bottom-6 sm:p-5"
+      className="fixed bottom-[calc(1rem+var(--sab))] left-4 right-4 z-50 mx-auto max-w-xl rounded-2xl border p-4 shadow-2xl backdrop-blur-md sm:bottom-[calc(1.5rem+var(--sab))] sm:p-5"
       style={{
         backgroundColor: 'rgba(22, 27, 34, 0.95)',
         borderColor: 'var(--color-border-default)',
@@ -53,7 +53,7 @@ export const CookieBanner = () => {
         <button
           onClick={acceptCookies}
           type="button"
-          className="shrink-0 rounded-lg bg-[#238636] px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-[#2ea043] focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none w-full sm:w-auto text-center"
+          className="shrink-0 rounded-lg bg-[#238636] px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-[#2ea043] focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none w-full sm:w-auto text-center min-h-[44px] flex items-center justify-center cursor-pointer"
         >
           Принять необходимые
         </button>

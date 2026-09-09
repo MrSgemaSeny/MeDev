@@ -10,10 +10,10 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 }
 
 const sizeClasses: Record<ButtonSize, string> = {
-  sm: 'h-8 px-3 text-xs gap-1.5',
-  md: 'h-9 px-3 text-sm gap-2',
-  lg: 'h-10 px-4 text-sm gap-2',
-  icon: 'h-8 w-8 p-0',
+  sm: 'min-h-[36px] md:min-h-[32px] h-9 md:h-8 px-3 text-xs gap-1.5',
+  md: 'min-h-[44px] md:min-h-[36px] h-11 md:h-9 px-3.5 md:px-3 text-sm gap-2',
+  lg: 'min-h-[48px] md:min-h-[40px] h-12 md:h-10 px-4 text-base md:text-sm gap-2',
+  icon: 'min-h-[44px] min-w-[44px] md:min-h-[32px] md:min-w-[32px] h-11 w-11 md:h-8 md:w-8 p-0',
 };
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(

@@ -47,9 +47,9 @@ export const DashboardPage = () => {
       `}</style>
 
       {/* Hero */}
-      <section className="pt-12 pb-10 px-6">
+      <section className="pt-8 sm:pt-12 pb-8 sm:pb-10 px-2 sm:px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight leading-[1.05] mb-6">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] sm:leading-[1.05] mb-6">
             {t('dashboard.welcomeBack', 'Welcome back')},<br/>
             <span className="text-muted">{displayName}.</span>
           </h1>
@@ -57,11 +57,11 @@ export const DashboardPage = () => {
             {t('dashboard.heroText', 'Your profile is currently {{completeness}}% complete. Edit your details, sync from GitHub, or generate a fresh PDF resume.', { completeness })}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <Link to="/profile/edit" className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold bg-[var(--color-text)] text-[var(--color-bg)] rounded-xl hover:opacity-85 transition-all">
+            <Link to="/profile/edit" className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold bg-[var(--color-text)] text-[var(--color-bg)] rounded-xl hover:opacity-85 transition-all min-h-[44px]">
               {t('dashboard.editProfileBtn', 'Edit Profile')}
             </Link>
             {username && (
-              <a href={`/portfolio/${username}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold border border-default rounded-xl hover:border-[var(--color-text)] transition-all">
+              <a href={`/portfolio/${username}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold border border-default rounded-xl hover:border-[var(--color-text)] transition-all min-h-[44px]">
                 {t('dashboard.viewPortfolioBtn', 'View Live Portfolio')}
               </a>
             )}
@@ -69,7 +69,7 @@ export const DashboardPage = () => {
         </div>
 
         {/* Stats */}
-        <div className="max-w-2xl mx-auto mt-16 grid grid-cols-3 gap-8 py-8 border-y border-default">
+        <div className="max-w-2xl mx-auto mt-10 sm:mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-8 py-6 sm:py-8 border-y border-default">
           <div className="text-center">
             <div className="text-3xl sm:text-4xl font-extrabold tabular-nums text-primary">{completeness}%</div>
             <div className="text-xs text-secondary mt-1 font-medium uppercase tracking-wider">{t('dashboard.profileStrength', 'Profile Strength')}</div>
@@ -92,7 +92,7 @@ export const DashboardPage = () => {
       </section>
 
       {/* Quick Actions (Style of Features) */}
-      <section className="py-10 px-6">
+      <section className="py-8 sm:py-10 px-2 sm:px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3">{t('dashboard.quickActions', 'Quick Actions')}</h2>
@@ -200,18 +200,18 @@ export const DashboardPage = () => {
       </section>
 
       {/* Live Preview Mock Window */}
-      <section className="py-10 px-6">
+      <section className="py-8 sm:py-10 px-2 sm:px-6">
         <div className="max-w-4xl mx-auto">
 
           <div className="mock-window rounded-2xl border border-default surface-primary overflow-hidden">
-            <div className="flex items-center gap-2 px-5 py-3 border-b border-default surface-secondary">
+            <div className="flex items-center gap-2 px-4 sm:px-5 py-3 border-b border-default surface-secondary">
               <div className="w-3 h-3 rounded-full bg-red-400"></div>
               <div className="w-3 h-3 rounded-full bg-amber-400"></div>
               <div className="w-3 h-3 rounded-full bg-green-400"></div>
-              <span className="ml-3 text-xs text-muted font-mono">medev.mrsgemaseny.com/{username || 'developer'}</span>
+              <span className="ml-3 text-xs text-muted font-mono truncate">medev.mrsgemaseny.com/{username || 'developer'}</span>
             </div>
-            <div className="p-6 sm:p-8">
-              <div className="flex items-center gap-5 mb-6">
+            <div className="p-4 sm:p-8">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 sm:gap-5 mb-6">
                 {profile?.avatarUrl ? (
                   <img src={profile.avatarUrl} alt={`${displayName} — фото профиля`} className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border border-default" />
                 ) : (

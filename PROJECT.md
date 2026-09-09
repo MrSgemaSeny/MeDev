@@ -41,10 +41,10 @@
 ## Milestones
 | # | Name | Scope | Dependencies | Status |
 |---|------|-------|-------------|--------|
-| M1 | Landing Mobile Adaptation | Complete mobile adaptation of `landing/` (Header drawer, Hero/CTA anti-overflow, layout safe-areas, footer touch targets) | none | IN_PROGRESS |
-| M2 | Frontend Core & Navigation | Mobile adaptation of `frontend/` shell, layout, `MobileNavDrawer`, `AppHeader`, `Input`/`Form` 16px auto-zoom guard, `Button` 44px touch targets, base pages | none | IN_PROGRESS |
-| M3 | Frontend Complex Modules | Resume Builder vertical stack & A4 scaling, Job Tracker touch hover fix, AI Chat Widget fullscreen, Profile Editor mobile tabs, Data Tables | M2 | PLANNED |
-| M4 | Quality Gates & Final Verification | Full build & test passes (`npm test`, `npm run build` on both landing and frontend), viewport integrity audit | M1, M2, M3 | PLANNED |
+| M1 | Landing Mobile Adaptation | Complete mobile adaptation of `landing/` (Header drawer, Hero/CTA anti-overflow, layout safe-areas, footer touch targets) | none | DONE |
+| M2 | Frontend Core & Navigation | Mobile adaptation of `frontend/` shell, layout, `MobileNavDrawer`, `AppHeader`, `Input`/`Form` 16px auto-zoom guard, `Button` 44px touch targets, base pages | none | DONE |
+| M3 | Frontend Complex Modules | Resume Builder vertical stack & A4 scaling, Job Tracker touch hover fix, AI Chat Widget fullscreen, Profile Editor mobile tabs, Data Tables | M2 | DONE |
+| M4 | Quality Gates & Final Verification | Full build & test passes (`npm test`, `npm run build` on both landing and frontend), viewport integrity audit | M1, M2, M3 | DONE |
 
 ---
 

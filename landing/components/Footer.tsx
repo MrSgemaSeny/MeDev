@@ -22,28 +22,40 @@ export const Footer = () => {
           </div>
 
           {/* Navigation */}
-          <div className="space-y-2.5">
+          <div className="space-y-3">
             <div className="text-xs font-semibold text-[#f0f6fc] uppercase tracking-wider">
               Навигация
             </div>
-            <ul className="space-y-1.5 text-xs">
+            <ul className="space-y-1 text-xs sm:text-sm">
               <li>
-                <a href="#features" className="hover:text-[#f0f6fc] transition-colors focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded">
+                <a
+                  href="#features"
+                  className="inline-flex min-h-[38px] items-center py-1.5 hover:text-[#f0f6fc] transition-colors focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded"
+                >
                   Возможности
                 </a>
               </li>
               <li>
-                <a href="#templates" className="hover:text-[#f0f6fc] transition-colors focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded">
+                <a
+                  href="#templates"
+                  className="inline-flex min-h-[38px] items-center py-1.5 hover:text-[#f0f6fc] transition-colors focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded"
+                >
                   Шаблоны резюме
                 </a>
               </li>
               <li>
-                <a href="#pricing" className="hover:text-[#f0f6fc] transition-colors focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded">
+                <a
+                  href="#pricing"
+                  className="inline-flex min-h-[38px] items-center py-1.5 hover:text-[#f0f6fc] transition-colors focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded"
+                >
                   Тарифы
                 </a>
               </li>
               <li>
-                <a href="#faq" className="hover:text-[#f0f6fc] transition-colors focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded">
+                <a
+                  href="#faq"
+                  className="inline-flex min-h-[38px] items-center py-1.5 hover:text-[#f0f6fc] transition-colors focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded"
+                >
                   Частые вопросы
                 </a>
               </li>
@@ -51,23 +63,32 @@ export const Footer = () => {
           </div>
 
           {/* Legal & Links */}
-          <div className="space-y-2.5">
+          <div className="space-y-3">
             <div className="text-xs font-semibold text-[#f0f6fc] uppercase tracking-wider">
               Юридическая информация
             </div>
-            <ul className="space-y-1.5 text-xs">
+            <ul className="space-y-1 text-xs sm:text-sm">
               <li>
-                <Link href="/privacy" className="hover:text-[#f0f6fc] transition-colors focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded">
+                <Link
+                  href="/privacy"
+                  className="inline-flex min-h-[38px] items-center py-1.5 hover:text-[#f0f6fc] transition-colors focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded"
+                >
                   Политика конфиденциальности
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="hover:text-[#f0f6fc] transition-colors focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded">
+                <Link
+                  href="/terms"
+                  className="inline-flex min-h-[38px] items-center py-1.5 hover:text-[#f0f6fc] transition-colors focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded"
+                >
                   Условия использования
                 </Link>
               </li>
               <li>
-                <Link href="/refund" className="hover:text-[#f0f6fc] transition-colors focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded">
+                <Link
+                  href="/refund"
+                  className="inline-flex min-h-[38px] items-center py-1.5 hover:text-[#f0f6fc] transition-colors focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded"
+                >
                   Политика возврата средств
                 </Link>
               </li>
@@ -76,9 +97,9 @@ export const Footer = () => {
                   href="https://github.com/MrSgemaSeny/MeDev"
                   target="_blank"
                   rel="noreferrer"
-                  className="hover:text-[#f0f6fc] transition-colors flex items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded"
+                  className="inline-flex min-h-[38px] items-center gap-1.5 py-1.5 hover:text-[#f0f6fc] transition-colors focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded"
                 >
-                  <GithubIcon className="h-3.5 w-3.5" />
+                  <GithubIcon className="h-4 w-4" />
                   <span>GitHub</span>
                 </a>
               </li>
@@ -87,12 +108,12 @@ export const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#8b949e] gap-4">
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#8b949e] gap-3 text-center sm:text-left">
           <div>
             © {new Date().getFullYear()} MeDev · ИП Орынбасар М. (г. Алматы, РК)
           </div>
           <div>
-            Поддержка: <a href="mailto:support@medev.mrsgemaseny.com" className="hover:text-[#f0f6fc] text-[#58a6ff]">support@medev.mrsgemaseny.com</a>
+            Поддержка: <a href="mailto:support@medev.mrsgemaseny.com" className="hover:text-[#f0f6fc] text-[#58a6ff] py-1 inline-block">support@medev.mrsgemaseny.com</a>
           </div>
         </div>
       </div>

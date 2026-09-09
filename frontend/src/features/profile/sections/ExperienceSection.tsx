@@ -18,11 +18,11 @@ export const ExperienceSection = () => {
   const experiences = profile?.experience || [];
 
   return (
-    <div className="max-w-2xl pl-6">
+    <div className="max-w-2xl pl-0 sm:pl-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>Experience</h2>
         {editingId === null && (
-          <Button size="sm" variant="secondary" onClick={() => setEditingId('new')}>Add experience</Button>
+          <Button size="sm" variant="secondary" className="min-h-[44px]" onClick={() => setEditingId('new')}>Add experience</Button>
         )}
       </div>
 
@@ -42,9 +42,23 @@ export const ExperienceSection = () => {
                   <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>{exp.startDate} — {exp.isCurrent ? 'Present' : exp.endDate}</p>
                   {exp.description && <p className="mt-2 text-sm whitespace-pre-wrap" style={{ color: 'var(--color-text-secondary)' }}>{exp.description}</p>}
                 </div>
-                <div className="flex gap-2 shrink-0">
-                  <button onClick={() => setEditingId(exp.id)} className="text-sm hover:underline" style={{ color: 'var(--color-link)' }}>Edit</button>
-                  <button onClick={() => deleteMutation.mutate(exp.id)} className="text-sm hover:underline" style={{ color: 'var(--color-danger)' }}>Delete</button>
+                <div className="flex items-center gap-1 shrink-0">
+                  <button 
+                    onClick={() => setEditingId(exp.id)} 
+                    className="min-h-[44px] min-w-[44px] px-2 flex items-center justify-center text-sm font-medium hover:underline rounded" 
+                    style={{ color: 'var(--color-link)' }}
+                    aria-label="Edit experience"
+                  >
+                    Edit
+                  </button>
+                  <button 
+                    onClick={() => deleteMutation.mutate(exp.id)} 
+                    className="min-h-[44px] min-w-[44px] px-2 flex items-center justify-center text-sm font-medium hover:underline rounded" 
+                    style={{ color: 'var(--color-danger)' }}
+                    aria-label="Delete experience"
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             </Card>
@@ -119,17 +133,17 @@ const ExperienceForm: React.FC<ExperienceFormProps> = ({ initialData, onSave, on
   return (
     <Card className="p-4">
       <form onSubmit={handleSubmit} className="space-y-3">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div><Label htmlFor="company">Company</Label><Input id="company" required name="company" value={formData.company} onChange={handleChange} /></div>
           <div><Label htmlFor="position">Position</Label><Input id="position" required name="position" value={formData.position} onChange={handleChange} /></div>
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div><Label htmlFor="startDate">Start Date</Label><Input id="startDate" type="date" required name="startDate" value={formData.startDate} onChange={handleChange} /></div>
           <div><Label htmlFor="endDate">End Date</Label><Input id="endDate" type="date" name="endDate" value={formData.endDate} onChange={handleChange} disabled={formData.isCurrent} /></div>
         </div>
-        <div className="flex items-center gap-2">
-          <input type="checkbox" id="isCurrent" name="isCurrent" checked={formData.isCurrent} onChange={(e) => setFormData(p => ({ ...p, isCurrent: e.target.checked, endDate: e.target.checked ? '' : p.endDate }))} className="rounded border-default text-accent focus:ring-accent" />
-          <Label htmlFor="isCurrent" className="mb-0">I currently work here</Label>
+        <div className="flex items-center gap-2 min-h-[44px]">
+          <input type="checkbox" id="isCurrent" name="isCurrent" checked={formData.isCurrent} onChange={(e) => setFormData(p => ({ ...p, isCurrent: e.target.checked, endDate: e.target.checked ? '' : p.endDate }))} className="w-4 h-4 rounded border-default text-accent focus:ring-accent cursor-pointer" />
+          <Label htmlFor="isCurrent" className="mb-0 cursor-pointer">I currently work here</Label>
         </div>
         <div>
           <div className="flex items-center justify-between mb-1">
@@ -148,8 +162,8 @@ const ExperienceForm: React.FC<ExperienceFormProps> = ({ initialData, onSave, on
           <Textarea id="description" name="description" value={formData.description} onChange={handleChange} rows={4} />
         </div>
         <div className="flex gap-2 pt-1">
-          <Button type="submit" variant="primary" disabled={isPending}>{isPending ? 'Saving...' : 'Save'}</Button>
-          <Button type="button" variant="secondary" onClick={onCancel}>Cancel</Button>
+          <Button type="submit" variant="primary" className="min-h-[44px]" disabled={isPending}>{isPending ? 'Saving...' : 'Save'}</Button>
+          <Button type="button" variant="secondary" className="min-h-[44px]" onClick={onCancel}>Cancel</Button>
         </div>
       </form>
     </Card>

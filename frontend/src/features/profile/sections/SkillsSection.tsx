@@ -19,11 +19,11 @@ export const SkillsSection = () => {
   const skills = profile?.skills || [];
 
   return (
-    <div className="max-w-2xl pl-6">
+    <div className="max-w-2xl pl-0 sm:pl-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>Skills</h2>
         {editingId === null && (
-          <Button size="sm" variant="secondary" onClick={() => setEditingId('new')}>Add skill</Button>
+          <Button size="sm" variant="secondary" className="min-h-[44px]" onClick={() => setEditingId('new')}>Add skill</Button>
         )}
       </div>
       <SortableList
@@ -40,9 +40,23 @@ export const SkillsSection = () => {
                 <h3 className="font-medium text-sm" style={{ color: 'var(--color-text-primary)' }}>{skill.name}</h3>
                 <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>{skill.level}</p>
               </div>
-              <div className="flex gap-2">
-                <button onClick={() => setEditingId(skill.id)} className="text-sm hover:underline" style={{ color: 'var(--color-link)' }}>Edit</button>
-                <button onClick={() => deleteMutation.mutate(skill.id)} className="text-sm hover:underline" style={{ color: 'var(--color-danger)' }}>Delete</button>
+              <div className="flex items-center gap-1 shrink-0">
+                <button 
+                  onClick={() => setEditingId(skill.id)} 
+                  className="min-h-[44px] min-w-[44px] px-2 flex items-center justify-center text-sm font-medium hover:underline rounded" 
+                  style={{ color: 'var(--color-link)' }}
+                  aria-label="Edit skill"
+                >
+                  Edit
+                </button>
+                <button 
+                  onClick={() => deleteMutation.mutate(skill.id)} 
+                  className="min-h-[44px] min-w-[44px] px-2 flex items-center justify-center text-sm font-medium hover:underline rounded" 
+                  style={{ color: 'var(--color-danger)' }}
+                  aria-label="Delete skill"
+                >
+                  Delete
+                </button>
               </div>
             </Card>
           )
@@ -79,7 +93,7 @@ const SkillForm: React.FC<SkillFormProps> = ({ initialData, onSave, onCancel, is
   return (
     <Card className="p-4">
       <form onSubmit={handleSubmit} className="space-y-3">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div><Label htmlFor="name">Skill Name</Label><Input id="name" required name="name" value={formData.name} onChange={handleChange} placeholder="e.g. React, Java, Docker" /></div>
           <div><Label htmlFor="level">Level</Label>
             <Select id="level" name="level" value={formData.level} onChange={handleChange}>
@@ -88,8 +102,8 @@ const SkillForm: React.FC<SkillFormProps> = ({ initialData, onSave, onCancel, is
           </div>
         </div>
         <div className="flex gap-2 pt-1">
-          <Button type="submit" variant="primary" disabled={isPending}>{isPending ? 'Saving...' : 'Save'}</Button>
-          <Button type="button" variant="secondary" onClick={onCancel}>Cancel</Button>
+          <Button type="submit" variant="primary" className="min-h-[44px]" disabled={isPending}>{isPending ? 'Saving...' : 'Save'}</Button>
+          <Button type="button" variant="secondary" className="min-h-[44px]" onClick={onCancel}>Cancel</Button>
         </div>
       </form>
     </Card>

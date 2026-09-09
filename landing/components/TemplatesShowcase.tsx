@@ -56,27 +56,27 @@ const templates = [
 
 export const TemplatesShowcase = () => {
   return (
-    <section id="templates" className="border-b border-[#30363d] bg-[#0d1117] py-24 sm:py-32">
+    <section id="templates" className="border-b border-[#30363d] bg-[#0d1117] py-14 sm:py-24 lg:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-3xl font-extrabold tracking-tight text-[#f0f6fc] sm:text-5xl">
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#f0f6fc] break-words">
             6 шаблонов резюме — выбери свой стиль
           </h2>
-          <p className="mt-5 text-lg leading-relaxed text-[#8b949e] sm:text-xl">
+          <p className="mt-4 sm:mt-5 text-base sm:text-xl leading-relaxed text-[#8b949e]">
             Скачай PDF в один клик. Шаблоны спроектированы в соответствии со стандартами ATS для безошибочного считывания текстовой структуры рекрутинговыми системами.
           </p>
         </div>
 
         {/* Templates 3x2 Grid */}
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="mt-10 sm:mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
           {templates.map((tpl) => (
             <div
               key={tpl.id}
-              className="flex flex-col justify-between rounded-2xl border border-[#30363d] bg-[#161b22] p-8 transition-all hover:border-[#58a6ff]/60"
+              className="flex flex-col justify-between rounded-2xl border border-[#30363d] bg-[#161b22] p-5 sm:p-8 transition-all hover:border-[#58a6ff]/60"
             >
               <div>
                 <div className="flex items-center justify-between">
-                  <h3 className="text-2xl font-bold text-[#f0f6fc]">{tpl.name}</h3>
+                  <h3 className="text-xl sm:text-2xl font-bold text-[#f0f6fc]">{tpl.name}</h3>
                   <span
                     className={`text-[11px] font-bold px-2 py-0.5 rounded tracking-wider ${
                       tpl.isPro
@@ -87,7 +87,7 @@ export const TemplatesShowcase = () => {
                     {tpl.badge}
                   </span>
                 </div>
-                <p className="mt-3 text-base leading-relaxed text-[#c9d1d9] min-h-[50px]">
+                <p className="mt-2.5 sm:mt-3 text-sm sm:text-base leading-relaxed text-[#c9d1d9] sm:min-h-[50px]">
                   {tpl.description}
                 </p>
 
@@ -135,10 +135,10 @@ export const TemplatesShowcase = () => {
               <div className="mt-8 pt-4 border-t border-[#30363d]">
                 <a
                   href={`${APP_URL}/login`}
-                  className="flex items-center justify-center gap-2 rounded-xl border border-[#30363d] bg-[#21262d] py-3 text-sm font-bold text-[#c9d1d9] transition-colors hover:bg-[#30363d] hover:text-white focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
+                  className="flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[#30363d] bg-[#21262d] px-4 py-3 text-sm font-bold text-[#c9d1d9] transition-colors hover:bg-[#30363d] hover:text-white focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
                 >
                   <span>Выбрать шаблон резюме</span>
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  <ArrowRight className="h-4 w-4 shrink-0" aria-hidden="true" />
                 </a>
               </div>
             </div>

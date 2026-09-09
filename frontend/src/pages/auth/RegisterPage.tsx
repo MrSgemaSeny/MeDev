@@ -33,11 +33,11 @@ export function RegisterPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-6"
+      className="min-h-[100dvh] flex items-center justify-center p-3 sm:p-6"
       style={{ backgroundColor: 'var(--color-bg-canvas)' }}
     >
       <div
-        className="w-full max-w-sm rounded-md p-8"
+        className="w-full max-w-sm rounded-md p-5 sm:p-8"
         style={{
           backgroundColor: 'var(--color-bg-primary)',
           border: '1px solid var(--color-border-default)',
@@ -53,7 +53,7 @@ export function RegisterPage() {
         <a
           href={githubUrl}
           aria-label="Зарегистрироваться через учетную запись GitHub"
-          className="w-full flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors"
+          className="w-full flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors min-h-[44px]"
           style={{
             backgroundColor: 'var(--color-bg-secondary)',
             border: '1px solid var(--color-border-default)',
@@ -77,7 +77,7 @@ export function RegisterPage() {
         <a
           href={googleUrl}
           aria-label="Зарегистрироваться через учетную запись Google"
-          className="w-full flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors mt-3"
+          className="w-full flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors mt-3 min-h-[44px]"
           style={{
             backgroundColor: 'var(--color-bg-secondary)',
             border: '1px solid var(--color-border-default)',
@@ -167,7 +167,7 @@ export function RegisterPage() {
               {error}
             </div>
           )}
-          <Button type="submit" variant="primary" className="w-full" disabled={loading}>
+          <Button type="submit" variant="primary" className="w-full min-h-[44px]" disabled={loading}>
             {loading ? 'Creating...' : 'Create account'}
           </Button>
           <p className="text-[11px] text-center leading-relaxed mt-3" style={{ color: 'var(--color-text-muted)' }}>

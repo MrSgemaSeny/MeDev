@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useUpsellStore } from '../../entities/user/model/upsellStore';
 import { Button } from './Button';
@@ -6,11 +7,37 @@ import { Rocket } from 'lucide-react';
 export const UpsellModal = () => {
   const { isOpen, closeUpsell } = useUpsellStore();
 
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeUpsell();
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen, closeUpsell]);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="bg-[#161b22] border border-[#30363d] rounded-lg max-w-sm w-full p-6 text-center shadow-2xl">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+      onClick={closeUpsell}
+    >
+      <div
+        className="rounded-lg max-w-sm w-full p-5 sm:p-6 text-center shadow-2xl max-h-[calc(100dvh-2rem)] overflow-y-auto"
+        style={{
+          backgroundColor: 'var(--color-bg-secondary)',
+          border: '1px solid var(--color-border-default)',
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="mb-4 flex justify-center text-[var(--color-accent)]">
           <Rocket size={40} strokeWidth={1.5} />
         </div>
@@ -22,11 +49,11 @@ export const UpsellModal = () => {
         </p>
         <div className="flex flex-col gap-3">
           <Link to="/billing" onClick={closeUpsell}>
-            <Button variant="primary" className="w-full">
+            <Button variant="primary" className="w-full min-h-[44px]">
               Upgrade to Pro
             </Button>
           </Link>
-          <Button variant="secondary" className="w-full" onClick={closeUpsell}>
+          <Button variant="secondary" className="w-full min-h-[44px]" onClick={closeUpsell}>
             Maybe later
           </Button>
         </div>

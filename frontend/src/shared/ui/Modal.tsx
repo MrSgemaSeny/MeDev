@@ -37,7 +37,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
-        className="relative w-full max-w-2xl max-h-[90vh] flex flex-col rounded-md"
+        className="relative w-full max-w-2xl max-h-[calc(100dvh-2rem)] flex flex-col rounded-md"
         onClick={(e) => e.stopPropagation()}
         style={{
           backgroundColor: 'var(--color-bg-primary)',
@@ -55,7 +55,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
           <button
             onClick={onClose}
             type="button"
-            className="rounded p-1.5 cursor-pointer hover:bg-white/10 transition-colors focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
+            className="rounded min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer hover:bg-white/10 transition-colors focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
             style={{ color: 'var(--color-text-muted)' }}
             aria-label="Закрыть модальное окно"
           >

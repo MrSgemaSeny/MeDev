@@ -113,6 +113,7 @@ const router = createBrowserRouter([
       { path: '/dashboard', element: <DashboardPage /> },
       { path: '/profile/edit', element: <ProfileEditPage /> },
       { path: '/resume', element: <ResumePage /> },
+      { path: '/builder', element: <Navigate to="/resume" replace /> },
       { path: '/tracker', element: <JobTrackerPage /> },
       { path: '/import', element: <ImportResumePage /> },
       { path: '/billing', element: <PricingPage /> },

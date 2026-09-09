@@ -61,11 +61,11 @@ export function ResetPasswordPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-6"
+      className="min-h-[100dvh] flex items-center justify-center p-3 sm:p-6"
       style={{ backgroundColor: 'var(--color-bg-canvas)' }}
     >
       <div
-        className="w-full max-w-sm rounded-md p-8"
+        className="w-full max-w-sm rounded-md p-5 sm:p-8"
         style={{
           backgroundColor: 'var(--color-bg-primary)',
           border: '1px solid var(--color-border-default)',

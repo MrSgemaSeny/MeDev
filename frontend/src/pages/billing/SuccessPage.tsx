@@ -37,7 +37,7 @@ export function SuccessPage() {
       style={{ backgroundColor: 'var(--color-bg-canvas)' }}
     >
       <div
-        className="rounded-md p-8 max-w-md w-full text-center"
+        className="rounded-md p-5 sm:p-8 max-w-md w-full text-center"
         style={{
           backgroundColor: 'var(--color-bg-primary)',
           border: '1px solid var(--color-border-default)',

@@ -46,17 +46,17 @@ export const JobTrackerPage = () => {
 
   return (
     <div className="flex flex-col h-full bg-[var(--color-bg-inset)]">
-      <header className="px-6 py-5 flex justify-between items-center border-b border-[var(--color-border-default)] bg-[var(--color-bg-primary)]">
+      <header className="px-4 py-4 sm:px-6 sm:py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-border-default)] bg-[var(--color-bg-primary)]">
         <div>
           <h1 className="text-xl font-bold text-primary">Job Tracker CRM</h1>
           <p className="text-sm text-secondary mt-1">Enterprise-grade pipeline management for your career.</p>
         </div>
-        <Button variant="primary" className="flex items-center gap-2" onClick={() => setIsModalOpen(true)}>
+        <Button variant="primary" className="flex items-center justify-center gap-2 min-h-[44px] w-full sm:w-auto" onClick={() => setIsModalOpen(true)}>
           <Plus size={16} /> New Application
         </Button>
       </header>
 
-      <div className="p-6 flex-1 overflow-auto max-w-6xl mx-auto w-full">
+      <div className="p-3 sm:p-6 flex-1 overflow-auto max-w-6xl mx-auto w-full">
         {/* Compact Stats Row */}
         <div className="flex flex-wrap items-center gap-3 mb-6 text-sm">
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--color-border-default)] bg-[var(--color-bg-primary)] shadow-sm">
@@ -90,7 +90,7 @@ export const JobTrackerPage = () => {
               <input 
                 type="text" 
                 placeholder="Search company or role..." 
-                className="w-full pl-9 pr-3 py-1.5 text-sm bg-[var(--color-bg-primary)] border border-[var(--color-border-default)] rounded-md focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] outline-none transition-shadow text-primary placeholder-muted"
+                className="w-full pl-9 pr-3 py-1.5 text-[16px] md:text-sm bg-[var(--color-bg-primary)] border border-[var(--color-border-default)] rounded-md focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] outline-none transition-shadow text-primary placeholder-muted"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
               />
@@ -110,7 +110,7 @@ export const JobTrackerPage = () => {
                 <div className="flex items-center gap-2">
                   <Filter size={14} className="text-secondary" />
                   <select 
-                    className="py-1.5 px-3 text-sm bg-[var(--color-bg-primary)] border border-[var(--color-border-default)] rounded-md outline-none text-primary hover:bg-[var(--color-bg-secondary)] transition-colors cursor-pointer"
+                    className="py-1.5 px-3 text-[16px] md:text-sm bg-[var(--color-bg-primary)] border border-[var(--color-border-default)] rounded-md outline-none text-primary hover:bg-[var(--color-bg-secondary)] transition-colors cursor-pointer"
                     value={statusFilter}
                     onChange={e => setStatusFilter(e.target.value as ApplicationStatus | 'ALL')}
                   >
@@ -186,16 +186,33 @@ export const JobTrackerPage = () => {
                     </div>
                     
                     {/* Actions */}
-                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center gap-1 sm:gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shrink-0">
                       {app.jobUrl && (
-                        <a href={app.jobUrl} target="_blank" rel="noreferrer" className="p-1.5 text-secondary hover:text-[var(--color-accent)] hover:bg-[var(--color-bg-tertiary)] rounded-md transition-colors" title="View Job Post">
+                        <a 
+                          href={app.jobUrl} 
+                          target="_blank" 
+                          rel="noreferrer" 
+                          className="min-w-[44px] min-h-[44px] flex items-center justify-center text-secondary hover:text-[var(--color-accent)] hover:bg-[var(--color-bg-tertiary)] rounded-md transition-colors" 
+                          title="View Job Post"
+                          aria-label="View Job Post"
+                        >
                           <ExternalLink size={16} />
                         </a>
                       )}
-                      <button onClick={() => setCoverLetterModalApp(app)} className="p-1.5 text-secondary hover:text-purple-400 hover:bg-purple-500/10 rounded-md transition-colors" title="AI Cover Letter">
+                      <button 
+                        onClick={() => setCoverLetterModalApp(app)} 
+                        className="min-w-[44px] min-h-[44px] flex items-center justify-center text-secondary hover:text-purple-400 hover:bg-purple-500/10 rounded-md transition-colors" 
+                        title="AI Cover Letter"
+                        aria-label="AI Cover Letter"
+                      >
                         <Wand2 size={16} />
                       </button>
-                      <button onClick={() => deleteApp.mutate(app.id)} className="p-1.5 text-secondary hover:text-danger hover:bg-red-500/10 rounded-md transition-colors" title="Delete Application">
+                      <button 
+                        onClick={() => deleteApp.mutate(app.id)} 
+                        className="min-w-[44px] min-h-[44px] flex items-center justify-center text-secondary hover:text-danger hover:bg-red-500/10 rounded-md transition-colors" 
+                        title="Delete Application"
+                        aria-label="Delete Application"
+                      >
                         <Trash2 size={16} />
                       </button>
                     </div>
@@ -308,7 +325,7 @@ const AddApplicationModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div><Label htmlFor="companyName">Company</Label><Input id="companyName" required value={formData.companyName} onChange={e => setFormData({...formData, companyName: e.target.value})} /></div>
             <div><Label htmlFor="role">Role</Label><Input id="role" required value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})} /></div>
           </div>
@@ -316,7 +333,7 @@ const AddApplicationModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
             <Label htmlFor="status">Pipeline Status</Label>
             <select 
               id="status" 
-              className="w-full h-10 px-3 rounded-md bg-[var(--color-bg-primary)] border border-default text-sm text-primary focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] outline-none"
+              className="w-full h-10 px-3 rounded-md bg-[var(--color-bg-primary)] border border-default text-[16px] md:text-sm text-primary focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] outline-none"
               value={formData.status} 
               onChange={e => setFormData({...formData, status: e.target.value as ApplicationStatus})}
             >
@@ -324,7 +341,7 @@ const AddApplicationModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
             </select>
           </div>
           <div><Label htmlFor="jobUrl">Job URL</Label><Input id="jobUrl" type="url" value={formData.jobUrl} onChange={e => setFormData({...formData, jobUrl: e.target.value})} /></div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div><Label htmlFor="location">Location</Label><Input id="location" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} /></div>
             <div><Label htmlFor="salaryRange">Salary Range</Label><Input id="salaryRange" value={formData.salaryRange} onChange={e => setFormData({...formData, salaryRange: e.target.value})} /></div>
           </div>
@@ -393,7 +410,7 @@ const AiCoverLetterModal = ({ app, isOpen, onClose }: { app: JobApplicationDto; 
             <div>
               <Label>Job Description</Label>
               <textarea 
-                className="w-full h-40 p-3 mt-1 rounded-md bg-[var(--color-bg-primary)] border border-default text-sm text-primary focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] outline-none resize-none"
+                className="w-full h-40 p-3 mt-1 rounded-md bg-[var(--color-bg-primary)] border border-default text-[16px] md:text-sm text-primary focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] outline-none resize-none"
                 placeholder="Paste the job description here..."
                 value={jobDescription}
                 onChange={e => setJobDescription(e.target.value)}
@@ -414,7 +431,7 @@ const AiCoverLetterModal = ({ app, isOpen, onClose }: { app: JobApplicationDto; 
             <div>
               <Label>Generated Cover Letter</Label>
               <textarea 
-                className="w-full h-64 p-3 mt-1 rounded-md bg-[var(--color-bg-primary)] border border-default text-sm text-primary focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] outline-none"
+                className="w-full h-64 p-3 mt-1 rounded-md bg-[var(--color-bg-primary)] border border-default text-[16px] md:text-sm text-primary focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] outline-none"
                 value={coverLetter}
                 onChange={e => setCoverLetter(e.target.value)}
               />
