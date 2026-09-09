@@ -53,6 +53,6 @@ public class GitHubRepoScorer {
                 + (sizeScore * WEIGHT_SIZE)
                 + (forkScore * WEIGHT_FORKS);
 
-        return (int) (total * 1000);
+        return (int) Math.round(total * 1000);
     }
 }

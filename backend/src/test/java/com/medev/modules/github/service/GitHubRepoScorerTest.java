@@ -38,34 +38,36 @@ class GitHubRepoScorerTest {
     @Test
     void calculateScore_WithSize_CalculatesCorrectly() {
         GitHubRepoDto repo1 = new GitHubRepoDto();
-        repo1.setSize(250_000); // 0.5 * 0.6 = 0.3 * 1000 = 300
-        assertEquals(300, GitHubRepoScorer.calculateScore(repo1));
+        repo1.setSize(100_000); // 0.5 * 0.20 = 0.10 * 1000 = 100
+        assertEquals(100, GitHubRepoScorer.calculateScore(repo1));
 
         GitHubRepoDto repo2 = new GitHubRepoDto();
-        repo2.setSize(1_000_000); // 1.0 (capped) * 0.6 = 0.6 * 1000 = 600
-        assertEquals(600, GitHubRepoScorer.calculateScore(repo2));
+        repo2.setSize(300_000); // 1.0 (capped) * 0.20 = 0.20 * 1000 = 200
+        assertEquals(200, GitHubRepoScorer.calculateScore(repo2));
     }
 
     @Test
     void calculateScore_WithRecency_CalculatesCorrectly() {
         GitHubRepoDto repoRecent = new GitHubRepoDto();
-        repoRecent.setUpdatedAt(Instant.now().toString()); // daysAgo = 0 -> 1.0 * 0.4 = 0.4 * 1000 = 400
-        assertEquals(400, GitHubRepoScorer.calculateScore(repoRecent));
+        repoRecent.setUpdatedAt(Instant.now().toString()); // daysAgo = 0 -> 1.0 * 0.30 = 0.30 * 1000 = 300
+        assertEquals(300, GitHubRepoScorer.calculateScore(repoRecent));
 
         GitHubRepoDto repoOld = new GitHubRepoDto();
-        repoOld.setUpdatedAt(Instant.now().minus(365, ChronoUnit.DAYS).toString()); // daysAgo = 365 -> 0.5 * 0.4 = 0.2 * 1000 = 200
-        assertEquals(200, GitHubRepoScorer.calculateScore(repoOld));
+        repoOld.setUpdatedAt(Instant.now().minus(365, ChronoUnit.DAYS).toString()); // daysAgo = 365/730 = 0.5 * 0.30 = 0.15 * 1000 = 150
+        assertEquals(150, GitHubRepoScorer.calculateScore(repoOld));
         
         GitHubRepoDto repoVeryOld = new GitHubRepoDto();
-        repoVeryOld.setUpdatedAt(Instant.now().minus(800, ChronoUnit.DAYS).toString()); // daysAgo = 800 -> 0 * 0.4 = 0
+        repoVeryOld.setUpdatedAt(Instant.now().minus(800, ChronoUnit.DAYS).toString()); // daysAgo = 800 -> 0 * 0.30 = 0
         assertEquals(0, GitHubRepoScorer.calculateScore(repoVeryOld));
     }
 
     @Test
     void calculateScore_Mixed_CalculatesCorrectly() {
         GitHubRepoDto repo = new GitHubRepoDto();
-        repo.setSize(500_000); // 1.0 -> 0.6
-        repo.setUpdatedAt(Instant.now().toString()); // 1.0 -> 0.4
+        repo.setStargazersCount(100); // 1.0 * 0.35 = 0.35
+        repo.setForksCount(30);       // 1.0 * 0.15 = 0.15
+        repo.setSize(200_000);        // 1.0 * 0.20 = 0.20
+        repo.setUpdatedAt(Instant.now().toString()); // 1.0 * 0.30 = 0.30
         // total = 1.0 * 1000 = 1000
         assertEquals(1000, GitHubRepoScorer.calculateScore(repo));
     }
