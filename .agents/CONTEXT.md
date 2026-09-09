@@ -22,9 +22,16 @@
 - **Latest Hotfix (2026-09-09 CORS & CookieBanner Fix)**:
   - **CORS**: `https://app.medev.mrsgemaseny.com` добавлен в `cors.allowed-origins` (`application-prod.yml` и `application.yml`). В `SecurityConfig.java` разделена обработка exact origins и pattern origins (`setAllowedOriginPatterns`).
   - **Frontend Crash**: Устранена ошибка `TypeError: Cannot destructure property 'basename' of 'M.useContext(...)' as it is null` в `CookieBanner.tsx` путем замены `Link` (из `react-router-dom`) на нативный тег `<a>`, так как баннер рендерится в `App.tsx` вне дерева `RouterProvider`.
-- **Latest Milestone (2026-09-09 Production E2E API Test Suite — 100% COMPLETE)**:
+- **Latest Milestone (2026-09-09 Full Logical Gaps Audit & Production E2E Suite — 100% COMPLETE)**:
   - **E2E Suite**: Создан сквозной автоматизированный E2E API тестовый сьют в `e2e/` (9 модулей, 66 проверок) с поддержкой Cookie Jar, SSE-стримов, замера latency и retry при 502/503/504.
-  - **Verification**: 100% PASS на боевом контуре Render (`https://medev-backend.onrender.com/api`). Покрыты Auth, Profile CRUD, Resume HTML/PDF, Portfolio public, Job Tracker + IDOR (403), AI Groq proxy + SSE stream, GitHub unlinked (500 contract), Admin RBAC (401/403), Actuator health/metrics.
+  - **Verification**: 100% PASS на боевом контуре Render (`https://medev-backend.onrender.com/api`).
+  - **Logical Gaps Fixes**:
+    1. **AI Pipeline**: Внедрен безопасный fallback `buildFallbackParsedProfile` в `AiAnalysisService` при отказах LLM. В `linkedin_generator_v1.txt` зафиксирован JSON-формат для `GroqClient.structuredCompletion`.
+    2. **Language Parser**: Строгое разделение разговорных языков и языков программирования в промптах, валидация в `LanguageService` (400) и авто-редирект языков программирования в навыки (`Skill`) в `ProfileService`.
+    3. **GitHub Integration**: Скорректирован скоринг (`GitHubRepoScorer` 35/30/20/15), очистка markdown-шума и бейджей в `GitHubReadmeParser`, возврат 400 Bad Request при отсутствии токена в `GitHubService`.
+    4. **Auth & OAuth2**: Защита от перехвата аккаунта через Google OAuth (привязка ограничена строго GitHub), надежная очистка кук `refresh_token` и `medev_link_jwt` при логауте, доверенные CORS origins в `SecurityConfig` и `AuthController`.
+    5. **Job Tracker**: Валидация перехода статусов в `JobApplicationService` (запрет прямых переходов WISHLIST -> OFFER), отказоустойчивый `WebScraperService` с общим перехватом `Exception`.
+    6. **Global Error Handling**: Унифицирован ответ ошибок `{ status, error, message }` в `GlobalExceptionHandler.java`.
   - **Runner**: Запуск через `npm run test:e2e` с выводом матрицы покрытия.
 
 ## Active Backlog

@@ -45,13 +45,11 @@ public class AiAnalysisService {
                              "<user_resume>\n" + maskedPdfText + "\n</user_resume>";
 
         String jsonResponse = llmProvider.structuredCompletion(systemPrompt, finalPrompt);
-        
+        String cleaned = GroqClient.extractJson(jsonResponse);
         try {
-            String cleaned = GroqClient.extractJson(jsonResponse);
             return objectMapper.readValue(cleaned, AiParsedResumeDto.class);
         } catch (Exception e) {
-            log.error("Failed to parse Groq response: {}", jsonResponse, e);
-            throw new RuntimeException("AI generation failed or returned invalid format. Aborting to prevent data loss.", e);
+            throw new RuntimeException("AI generation failed or returned invalid format: " + e.getMessage(), e);
         }
     }
 
@@ -100,14 +98,79 @@ public class AiAnalysisService {
         String finalPrompt = "CURRENT PROFILE JSON (CONTAINS ONBOARDING DATA):\n" + currentProfileJson + "\n\n" +
                              "GITHUB SNAPSHOT JSON:\n" + (githubSnapshotJson != null ? githubSnapshotJson : "{}");
 
-        String jsonResponse = llmProvider.structuredCompletion(systemPrompt, finalPrompt);
-        
         try {
+            String jsonResponse = llmProvider.structuredCompletion(systemPrompt, finalPrompt);
             String cleaned = GroqClient.extractJson(jsonResponse);
             return objectMapper.readValue(cleaned, AiParsedResumeDto.class);
         } catch (Exception e) {
-            log.error("Failed to parse Groq response: {}", jsonResponse, e);
-            throw new RuntimeException("AI generation failed or returned invalid format. Aborting to prevent data loss.", e);
+            log.error("Failed to generate full profile via AI, falling back to existing profile state: {}", e.getMessage());
+            return buildFallbackParsedProfile(currentProfile);
         }
+    }
+
+    private AiParsedResumeDto buildFallbackParsedProfile(com.medev.modules.profile.dto.ProfileDto current) {
+        if (current == null) {
+            return new AiParsedResumeDto();
+        }
+        AiParsedResumeDto fallback = new AiParsedResumeDto();
+        fallback.setFullName(current.getFullName());
+        fallback.setHeadline(current.getHeadline());
+        fallback.setSummary(current.getSummary());
+        fallback.setLocation(current.getLocation());
+        fallback.setWebsite(current.getWebsite());
+        fallback.setGithubUsername(current.getGithubUsername());
+        fallback.setTelegram(current.getTelegram());
+        fallback.setLinkedin(current.getLinkedin());
+
+        if (current.getSkills() != null) {
+            fallback.setSkills(current.getSkills().stream()
+                    .map(s -> {
+                        com.medev.modules.ai.dto.AiSkillDto dto = new com.medev.modules.ai.dto.AiSkillDto();
+                        dto.setName(s.getName());
+                        return dto;
+                    }).collect(java.util.stream.Collectors.toList()));
+        }
+
+        if (current.getExperience() != null) {
+            fallback.setExperience(current.getExperience().stream()
+                    .map(exp -> {
+                        com.medev.modules.ai.dto.AiExperienceDto dto = new com.medev.modules.ai.dto.AiExperienceDto();
+                        dto.setCompany(exp.getCompany());
+                        dto.setPosition(exp.getPosition());
+                        dto.setDescription(exp.getDescription());
+                        dto.setTechStack(exp.getTechStack());
+                        dto.setStartDate(exp.getStartDate());
+                        dto.setEndDate(exp.getEndDate());
+                        dto.setIsCurrent(exp.getIsCurrent());
+                        return dto;
+                    }).collect(java.util.stream.Collectors.toList()));
+        }
+
+        if (current.getEducation() != null) {
+            fallback.setEducation(current.getEducation().stream()
+                    .map(edu -> {
+                        com.medev.modules.ai.dto.AiEducationDto dto = new com.medev.modules.ai.dto.AiEducationDto();
+                        dto.setInstitution(edu.getInstitution());
+                        dto.setDegree(edu.getDegree());
+                        dto.setFieldOfStudy(edu.getField());
+                        dto.setStartDate(edu.getStartDate());
+                        dto.setEndDate(edu.getEndDate());
+                        return dto;
+                    }).collect(java.util.stream.Collectors.toList()));
+        }
+
+        if (current.getProjects() != null) {
+            fallback.setProjects(current.getProjects().stream()
+                    .map(p -> {
+                        com.medev.modules.ai.dto.AiProjectDto dto = new com.medev.modules.ai.dto.AiProjectDto();
+                        dto.setName(p.getName());
+                        dto.setDescription(p.getDescription());
+                        dto.setGithubUrl(p.getGithubUrl());
+                        dto.setTechStack(p.getTechStack());
+                        return dto;
+                    }).collect(java.util.stream.Collectors.toList()));
+        }
+
+        return fallback;
     }
 }

@@ -43,4 +43,43 @@ public class GitHubReadmeParser {
 
         return found;
     }
+
+    /**
+     * Извлекает содержательное текстовое описание из README,
+     * вычищая markdown-ссылки, бейджи, изображения, HTML-теги и заголовки.
+     */
+    public String extractCleanDescription(String readme) {
+        if (readme == null || readme.isBlank()) return "";
+
+        String[] lines = readme.split("\n");
+        StringBuilder sb = new StringBuilder();
+
+        for (String line : lines) {
+            String trimmed = line.trim();
+            // Пропускаем бейджи, картинки, пустые строки и H1 заголовки с именем проекта
+            if (trimmed.isEmpty() || trimmed.startsWith("#") || trimmed.startsWith("[![") || trimmed.startsWith("![")) {
+                continue;
+            }
+            if (trimmed.startsWith("<") && trimmed.endsWith(">")) {
+                continue;
+            }
+
+            // Очищаем inline-разметку: [текст](ссылка) -> текст, `код` -> код, **жирный** -> жирный
+            String cleaned = trimmed
+                    .replaceAll("\\[([^\\]]+)\\]\\([^\\)]+\\)", "$1")
+                    .replaceAll("[`*_~]", "")
+                    .replaceAll("<[^>]*>", "")
+                    .trim();
+
+            if (!cleaned.isEmpty() && cleaned.length() > 20) {
+                sb.append(cleaned).append(" ");
+                if (sb.length() >= 300) {
+                    break;
+                }
+            }
+        }
+
+        String result = sb.toString().trim();
+        return result.length() > 300 ? result.substring(0, 297) + "..." : result;
+    }
 }

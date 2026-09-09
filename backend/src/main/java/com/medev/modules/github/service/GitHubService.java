@@ -51,7 +51,7 @@ public class GitHubService {
 
         String githubToken = userRecord.getGithubAccessToken();
         if (githubToken == null || githubToken.isEmpty()) {
-            throw new RuntimeException("GitHub account is not connected.");
+            throw new IllegalArgumentException("GitHub account is not connected. Please connect your GitHub account in profile settings.");
         }
 
         WebClient webClient = webClientBuilder.baseUrl(GITHUB_API)

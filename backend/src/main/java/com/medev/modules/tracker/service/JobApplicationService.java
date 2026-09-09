@@ -5,6 +5,7 @@ import com.medev.modules.auth.repository.UserRepository;
 import com.medev.modules.tracker.dto.CreateJobApplicationRequest;
 import com.medev.modules.tracker.dto.JobApplicationDto;
 import com.medev.modules.tracker.dto.UpdateJobApplicationRequest;
+import com.medev.modules.tracker.entity.ApplicationStatus;
 import com.medev.modules.tracker.entity.JobApplication;
 import com.medev.modules.tracker.repository.JobApplicationRepository;
 import com.medev.shared.exception.ForbiddenException;
@@ -59,7 +60,10 @@ public class JobApplicationService {
 
         if (request.getCompanyName() != null) entity.setCompanyName(request.getCompanyName());
         if (request.getRole() != null) entity.setRole(request.getRole());
-        if (request.getStatus() != null) entity.setStatus(request.getStatus());
+        if (request.getStatus() != null) {
+            validateStatusTransition(entity.getStatus(), request.getStatus());
+            entity.setStatus(request.getStatus());
+        }
         if (request.getJobUrl() != null) entity.setJobUrl(request.getJobUrl());
         if (request.getLocation() != null) entity.setLocation(request.getLocation());
         if (request.getSalaryRange() != null) entity.setSalaryRange(request.getSalaryRange());
@@ -85,6 +89,16 @@ public class JobApplicationService {
             throw new ForbiddenException("Not your application");
         }
         return entity;
+    }
+
+    private void validateStatusTransition(ApplicationStatus current, ApplicationStatus next) {
+        if (current == null || next == null || current == next) {
+            return;
+        }
+        // Direct transition from WISHLIST to OFFER is invalid without applying or interviewing
+        if (current == ApplicationStatus.WISHLIST && next == ApplicationStatus.OFFER) {
+            throw new IllegalArgumentException("Cannot transition directly from WISHLIST to OFFER. Application must be APPLIED or in INTERVIEW first.");
+        }
     }
 
     private JobApplicationDto toDto(JobApplication entity) {

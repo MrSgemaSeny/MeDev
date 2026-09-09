@@ -17,29 +17,37 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private Map<String, Object> errorPayload(HttpStatus status, String message) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("status", status.value());
+        body.put("error", message != null ? message : status.getReasonPhrase());
+        body.put("message", message != null ? message : status.getReasonPhrase());
+        return body;
+    }
+
     @ExceptionHandler(ConflictException.class)
-    public ResponseEntity<Map<String, String>> handleConflict(ConflictException e) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", e.getMessage()));
+    public ResponseEntity<Map<String, Object>> handleConflict(ConflictException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorPayload(HttpStatus.CONFLICT, e.getMessage()));
     }
 
     @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<Map<String, String>> handleUnauthorized(UnauthorizedException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", e.getMessage()));
+    public ResponseEntity<Map<String, Object>> handleUnauthorized(UnauthorizedException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorPayload(HttpStatus.UNAUTHORIZED, e.getMessage()));
     }
     
     @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<Map<String, String>> handleForbidden(ForbiddenException e) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", e.getMessage()));
+    public ResponseEntity<Map<String, Object>> handleForbidden(ForbiddenException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorPayload(HttpStatus.FORBIDDEN, e.getMessage()));
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleNotFound(NotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+    public ResponseEntity<Map<String, Object>> handleNotFound(NotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorPayload(HttpStatus.NOT_FOUND, e.getMessage()));
     }
 
     @ExceptionHandler(TooManyRequestsException.class)
-    public ResponseEntity<Map<String, String>> handleTooManyRequests(TooManyRequestsException e) {
-        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(Map.of("error", e.getMessage()));
+    public ResponseEntity<Map<String, Object>> handleTooManyRequests(TooManyRequestsException e) {
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(errorPayload(HttpStatus.TOO_MANY_REQUESTS, e.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -48,43 +56,47 @@ public class GlobalExceptionHandler {
         e.getBindingResult().getFieldErrors().forEach(err ->
             errors.put(err.getField(), err.getDefaultMessage())
         );
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("errors", errors));
+        Map<String, Object> body = errorPayload(HttpStatus.BAD_REQUEST, "Validation failed");
+        body.put("errors", errors);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public ResponseEntity<Map<String, String>> handleMaxUploadSizeExceeded(MaxUploadSizeExceededException e) {
-        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(Map.of("error", "Файл слишком большой. Максимальный размер: 10MB"));
+    public ResponseEntity<Map<String, Object>> handleMaxUploadSizeExceeded(MaxUploadSizeExceededException e) {
+        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(errorPayload(HttpStatus.PAYLOAD_TOO_LARGE, "Файл слишком большой. Максимальный размер: 10MB"));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Map<String, String>> handleHttpMessageNotReadable(HttpMessageNotReadableException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Некорректный формат данных в запросе"));
+    public ResponseEntity<Map<String, Object>> handleHttpMessageNotReadable(HttpMessageNotReadableException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorPayload(HttpStatus.BAD_REQUEST, "Некорректный формат данных в запросе"));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
+    public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorPayload(HttpStatus.BAD_REQUEST, e.getMessage()));
     }
 
     @ExceptionHandler(org.springframework.web.server.ResponseStatusException.class)
-    public ResponseEntity<Map<String, String>> handleResponseStatus(org.springframework.web.server.ResponseStatusException e) {
-        return ResponseEntity.status(e.getStatusCode()).body(Map.of("error", e.getReason() != null ? e.getReason() : e.getMessage()));
+    public ResponseEntity<Map<String, Object>> handleResponseStatus(org.springframework.web.server.ResponseStatusException e) {
+        HttpStatus status = HttpStatus.valueOf(e.getStatusCode().value());
+        String msg = e.getReason() != null ? e.getReason() : e.getMessage();
+        return ResponseEntity.status(status).body(errorPayload(status, msg));
     }
 
     @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<Map<String, String>> handleIllegalState(IllegalStateException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
+    public ResponseEntity<Map<String, Object>> handleIllegalState(IllegalStateException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorPayload(HttpStatus.BAD_REQUEST, e.getMessage()));
     }
 
     @ExceptionHandler(org.springframework.dao.OptimisticLockingFailureException.class)
-    public ResponseEntity<Map<String, String>> handleOptimisticLocking(org.springframework.dao.OptimisticLockingFailureException e) {
+    public ResponseEntity<Map<String, Object>> handleOptimisticLocking(org.springframework.dao.OptimisticLockingFailureException e) {
         log.warn("Optimistic locking failure: {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "Профиль обновляется другим процессом. Пожалуйста, обновите страницу и попробуйте снова."));
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorPayload(HttpStatus.CONFLICT, "Профиль обновляется другим процессом. Пожалуйста, обновите страницу и попробуйте снова."));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, String>> handleGeneric(Exception e) {
+    public ResponseEntity<Map<String, Object>> handleGeneric(Exception e) {
         log.error("Unhandled exception occurred", e);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Internal server error"));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorPayload(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error"));
     }
 }

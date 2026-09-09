@@ -79,7 +79,7 @@ public class WebScraperService {
             if (request.getJobDescription() != null) {
                 request.setJobDescription(org.jsoup.Jsoup.clean(request.getJobDescription(), org.jsoup.safety.Safelist.none()));
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("Failed to scrape job url: {}", url, e);
             request.setRole("Manual Entry Required");
             request.setCompanyName("Failed to scrape");

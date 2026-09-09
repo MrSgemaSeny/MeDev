@@ -210,13 +210,36 @@ public class ProfileService {
 
         if (parsed.getLanguages() != null) {
             int order = 0;
+            java.util.Set<String> progLangs = java.util.Set.of(
+                    "java", "python", "javascript", "typescript", "c++", "c#", "c", "golang", "go",
+                    "rust", "php", "ruby", "kotlin", "swift", "scala", "dart", "sql", "html", "css",
+                    "shell", "bash", "powershell", "r", "perl", "elixir", "clojure", "haskell", "solidity"
+            );
             for (com.medev.modules.ai.dto.AiLanguageDto l : parsed.getLanguages()) {
                 if (l.getName() != null && !l.getName().isBlank()) {
+                    String cleanName = l.getName().trim();
+                    if (progLangs.contains(cleanName.toLowerCase())) {
+                        // Перенаправляем язык программирования в skills если его там еще нет
+                        boolean skillExists = profile.getSkills().stream()
+                                .anyMatch(s -> s.getName().equalsIgnoreCase(cleanName));
+                        if (!skillExists) {
+                            Skill fallbackSkill = Skill.builder()
+                                    .profile(profile)
+                                    .name(cleanName)
+                                    .category("Languages")
+                                    .sortOrder(profile.getSkills().size())
+                                    .build();
+                            skillRepository.save(fallbackSkill);
+                            profile.getSkills().add(fallbackSkill);
+                        }
+                        continue;
+                    }
+
                     String level = l.getProficiency();
                     if (level == null || level.isBlank()) {
                         level = "Not specified";
                     }
-                    Language lang = Language.builder().profile(profile).name(l.getName()).level(level).sortOrder(order++).build();
+                    Language lang = Language.builder().profile(profile).name(cleanName).level(level).sortOrder(order++).build();
                     languageRepository.save(lang);
                     profile.getLanguages().add(lang);
                 }

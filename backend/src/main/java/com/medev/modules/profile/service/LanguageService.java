@@ -22,8 +22,25 @@ public class LanguageService {
     private final ProfileMapper profileMapper;
     private final ProfileService profileService;
 
+    private static final java.util.Set<String> PROGRAMMING_LANGUAGES = java.util.Set.of(
+            "java", "python", "javascript", "typescript", "c++", "c#", "c", "golang", "go",
+            "rust", "php", "ruby", "kotlin", "swift", "scala", "dart", "sql", "html", "css",
+            "shell", "bash", "powershell", "r", "perl", "elixir", "clojure", "haskell", "solidity"
+    );
+
+    private void validateNotProgrammingLanguage(String name) {
+        if (name == null || name.isBlank()) return;
+        String normalized = name.trim().toLowerCase();
+        if (PROGRAMMING_LANGUAGES.contains(normalized)) {
+            throw new IllegalArgumentException(
+                    "Programming languages ('" + name + "') belong in Skills, not in spoken Languages."
+            );
+        }
+    }
+
     @Transactional
     public LanguageDto addLanguage(Long userId, LanguageRequest request) {
+        validateNotProgrammingLanguage(request.getName());
         Profile profile = profileService.getProfileEntityForUpdate(userId);
         Language lang = Language.builder()
                 .profile(profile)
@@ -36,6 +53,7 @@ public class LanguageService {
 
     @Transactional
     public LanguageDto updateLanguage(Long userId, Long id, LanguageRequest request) {
+        validateNotProgrammingLanguage(request.getName());
         Profile profile = profileService.getProfileEntityForUpdate(userId);
         Language lang = languageRepository.findById(id).orElseThrow(() -> new NotFoundException("Language not found"));
         if (!lang.getProfile().getId().equals(profile.getId())) throw new ForbiddenException("Access denied");
