@@ -95,6 +95,9 @@ public class SecurityConfig {
         allOrigins.add("https://mrsgemaseny.github.io");
         allOrigins.add("http://localhost:5173");
         allOrigins.add("http://localhost:3000");
+        allOrigins.add("capacitor://localhost");
+        allOrigins.add("http://localhost");
+        allOrigins.add("https://localhost");
 
         if (allowedOrigins != null && !allowedOrigins.isBlank()) {
             java.util.Arrays.stream(allowedOrigins.split(","))
@@ -119,7 +122,7 @@ public class SecurityConfig {
             configuration.setAllowedOriginPatterns(patternOrigins);
         }
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin", "*"));
         configuration.setExposedHeaders(List.of("Authorization", "Set-Cookie"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);

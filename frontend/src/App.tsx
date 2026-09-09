@@ -7,10 +7,12 @@ import { CookieBanner } from './shared/ui/CookieBanner';
 import { useEffect, useState } from 'react';
 import { useAuthStore } from './entities/user/model/store';
 import { api } from './shared/api/axios';
+import { useAndroidBackButton } from './shared/lib/mobile/useAndroidBackButton';
 
 const queryClient = new QueryClient();
 
 function App() {
+  useAndroidBackButton();
   const [isInitializing, setIsInitializing] = useState(true);
   const setAuth = useAuthStore((state) => state.setAuth);
   useEffect(() => {

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">MeDev</string>
+    <string name="title_activity_main">MeDev</string>
+    <string name="package_name">com.medev.app</string>
+    <string name="custom_url_scheme">com.medev.app</string>
+</resources>

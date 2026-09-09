@@ -6,6 +6,7 @@ import { useUpsellStore } from '../../entities/user/model/upsellStore';
 import { useAuthStore } from '../../entities/user/model/store';
 import { toast } from 'sonner';
 import { Bot, Download, ArrowUp, ArrowDown, FileText, Files, File } from 'lucide-react';
+import { exportResumePdf } from '../../shared/lib/mobile/exportPdf';
 
 const TEMPLATES = [
   { id: 'clean', name: 'Clean ATS', desc: 'Recruiter Classic', accent: '#1a1a1a', isPro: false },
@@ -51,12 +52,7 @@ export const ResumeBuilder = () => {
 
     try {
       const { data } = await api.get(`/resume/generate/${selectedTemplate}?singlePage=${isSinglePageMode}`, { responseType: 'blob' });
-      const url = window.URL.createObjectURL(new Blob([data], { type: 'application/pdf' }));
-      const a = window.document.createElement('a');
-      a.href = url;
-      a.download = `resume-${selectedTemplate}.pdf`;
-      a.click();
-      window.URL.revokeObjectURL(url);
+      await exportResumePdf(new Blob([data], { type: 'application/pdf' }), `resume-${selectedTemplate}.pdf`);
     } catch (e: any) {
       console.error(e);
       if (e.response?.status === 403) {

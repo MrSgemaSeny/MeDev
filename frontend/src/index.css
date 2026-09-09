@@ -194,3 +194,23 @@
   .slide-in-from-right-8 { animation: slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
   .zoom-in-95 { animation: zoomIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 }
+
+:root {
+  --sat: env(safe-area-inset-top);
+  --sab: env(safe-area-inset-bottom);
+  --sal: env(safe-area-inset-left);
+  --sar: env(safe-area-inset-right);
+}
+
+body {
+  padding-top: var(--sat);
+  padding-bottom: var(--sab);
+  overscroll-behavior-y: none;
+}
+
+/* только для элементов где копирование не нужно */
+.no-select {
+  -webkit-user-select: none;
+  user-select: none;
+}
+

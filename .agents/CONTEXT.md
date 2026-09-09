@@ -41,6 +41,16 @@
   - **Landing Page Sync**: Синхронизированы шаблоны в `TemplatesShowcase.tsx` (`Clean ATS`, `GitHub`, `Milky Soft`, `Apple`, `Grok`, `PH Orange`) с бейджами FREE/PRO. Позиционирование фичи #2 уточнено до «AI Job Match & Cover Letter» без ложных обещаний. Базовая цена зафиксирована на уровне `$9 / месяц или 4 500 ₸`.
   - **AI Parser Hardening**: Устранены 500/400 ошибки в `/api/v1/ai/parse-resume`. Добавлен обработчик `LlmException` в `GlobalExceptionHandler.java` (429/503/502). Типизированные ошибки в `AiAnalysisService.java` и детальная валидация PDF на русском языке в `AiController.java`. Покрытие `GlobalExceptionHandlerTest`.
   - **Comprehensive Technical & Architecture Audit**: Сформирован исчерпывающий эталонный документ `TECHNICAL_AUDIT.md` (соответствует Senior Architect стандартам, охватывает топологию C4, реестр 42 API эндпоинтов, 12 сущностей, 24 Flyway миграции, 6 шаблонов резюме, PII Masking, Smart Merge, Resilient SSE и дорожную карту развития).
+- **Mobile Capacitor & Android/iOS CI/CD (2026-09-09 — 100% COMPLETE)**:
+  - **Capacitor Integration**: Установлен Capacitor 8 (`@capacitor/core`, `@capacitor/app`, `@capacitor/filesystem`, `@capacitor/share`, `@capacitor/status-bar`, `@capacitor/android`, `@capacitor/ios`, `@capacitor/cli`). Создан `capacitor.config.ts` (appId: `com.medev.app`).
+  - **Backend CORS**: Добавлены мобильные origins (`capacitor://localhost`, `http://localhost`, `https://localhost`) в `SecurityConfig.java`.
+  - **Mobile UX/UI**: Safe-area CSS переменные (`--sat`, `--sab`), `overscroll-behavior-y: none`, запрет селекта `.no-select`, viewport-fit=cover в `index.html`.
+  - **Native Features**: Хук кнопки назад Android `useAndroidBackButton.ts` в `App.tsx`, нативный экспорт PDF через `exportResumePdf.ts` (Cache Filesystem + Share Sheet) в `ResumeBuilder.tsx`.
+  - **Android Project**: Инициализирован проект `frontend/android/`, настроены разрешения INTERNET, ACCESS_NETWORK_STATE и `windowSoftInputMode="adjustResize"`.
+  - **Cloud CI/CD Workflows**:
+    - `.github/workflows/build-mobile-android.yml`: Сборка debug APK и подпись release AAB для Google Play.
+    - `.github/workflows/build-mobile-ios.yml`: Сборка xcarchive для iOS на macos-14.
+  - **Scripts**: `build:web`, `cap:sync`, `build:mobile`. Тесты: 262 backend PASS, 41 frontend PASS.
 
 ## Active Backlog
 - Setting up automated nightly DB backup jobs.
