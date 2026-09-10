@@ -47,21 +47,21 @@ export const DashboardPage = () => {
       `}</style>
 
       {/* Hero */}
-      <section className="pt-8 sm:pt-12 pb-8 sm:pb-10 px-2 sm:px-6">
+      <section className="pt-6 sm:pt-12 pb-6 sm:pb-10 px-3 sm:px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] sm:leading-[1.05] mb-6">
+          <h1 className="text-2xl sm:text-4xl lg:text-6xl font-extrabold tracking-tight leading-[1.15] sm:leading-[1.05] mb-3 sm:mb-6 break-words">
             {t('dashboard.welcomeBack', 'Welcome back')},<br/>
             <span className="text-muted">{displayName}.</span>
           </h1>
-          <p className="text-lg text-secondary max-w-xl mx-auto mb-10 leading-relaxed">
+          <p className="text-xs sm:text-base text-secondary max-w-xl mx-auto mb-6 sm:mb-10 leading-relaxed break-words px-2">
             {t('dashboard.heroText', 'Your profile is currently {{completeness}}% complete. Edit your details, sync from GitHub, or generate a fresh PDF resume.', { completeness })}
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <Link to="/profile/edit" className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold bg-[var(--color-text)] text-[var(--color-bg)] rounded-xl hover:opacity-85 transition-all min-h-[44px]">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-4 w-full sm:w-auto">
+            <Link to="/profile/edit" className="inline-flex w-full sm:w-auto items-center justify-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 text-xs sm:text-sm font-semibold bg-[var(--color-text)] text-[var(--color-bg)] rounded-xl hover:opacity-85 transition-all min-h-[40px] sm:min-h-[44px]">
               {t('dashboard.editProfileBtn', 'Edit Profile')}
             </Link>
             {username && (
-              <a href={`/portfolio/${username}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold border border-default rounded-xl hover:border-[var(--color-text)] transition-all min-h-[44px]">
+              <a href={`/portfolio/${username}`} target="_blank" rel="noreferrer" className="inline-flex w-full sm:w-auto items-center justify-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 text-xs sm:text-sm font-semibold border border-default rounded-xl hover:border-[var(--color-text)] transition-all min-h-[40px] sm:min-h-[44px]">
                 {t('dashboard.viewPortfolioBtn', 'View Live Portfolio')}
               </a>
             )}
