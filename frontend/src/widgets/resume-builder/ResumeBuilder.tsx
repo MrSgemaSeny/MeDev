@@ -5,7 +5,7 @@ import { useAiChatStore } from '../../features/ai-assistant/model/store';
 import { useUpsellStore } from '../../entities/user/model/upsellStore';
 import { useAuthStore } from '../../entities/user/model/store';
 import { toast } from 'sonner';
-import { Bot, Download, ArrowUp, ArrowDown, FileText, Files, File } from 'lucide-react';
+import { Bot, Download, ArrowUp, ArrowDown, FileText, Files, File, Settings } from 'lucide-react';
 import { exportResumePdf } from '../../shared/lib/mobile/exportPdf';
 
 const A4_WIDTH = 794;
@@ -23,6 +23,7 @@ const TEMPLATES = [
 export const ResumeBuilder = () => {
   const { sections, selectedTemplate, isSinglePageMode, setTemplate, setSinglePageMode, toggleSection, reorderSections } = useResumeEditorStore();
   const { openWithPrompt } = useAiChatStore();
+  const [mobileTab, setMobileTab] = useState<'editor' | 'preview'>('editor');
 
   const handleAiAnalysis = () => {
     openWithPrompt("Проанализируй моё резюме: насколько оно привлекательно для работодателей? Чего не хватает?");
@@ -178,8 +179,37 @@ export const ResumeBuilder = () => {
   return (
     <div className="flex flex-col lg:flex-row h-full bg-[#010409] text-[#c9d1d9] overflow-y-auto lg:overflow-hidden font-sans">
       
+      {/* Mobile Tab Switcher */}
+      <div className="flex lg:hidden items-center border-b border-[#30363d] bg-[#0d1117] p-2 gap-2 sticky top-0 z-30 shrink-0">
+        <button
+          type="button"
+          onClick={() => setMobileTab('editor')}
+          className={`flex-1 min-h-[38px] flex items-center justify-center gap-2 py-1.5 px-3 text-xs font-semibold rounded-lg transition-colors ${
+            mobileTab === 'editor'
+              ? 'bg-[#21262d] text-white border border-[#30363d]'
+              : 'text-[#8b949e] hover:text-[#c9d1d9]'
+          }`}
+        >
+          <Settings size={14} />
+          Настройки
+        </button>
+        <button
+          type="button"
+          onClick={() => setMobileTab('preview')}
+          className={`flex-1 min-h-[38px] flex items-center justify-center gap-2 py-1.5 px-3 text-xs font-semibold rounded-lg transition-colors ${
+            mobileTab === 'preview'
+              ? 'bg-[#21262d] text-white border border-[#30363d]'
+              : 'text-[#8b949e] hover:text-[#c9d1d9]'
+          }`}
+        >
+          <FileText size={14} />
+          Предпросмотр
+          <span className="w-1.5 h-1.5 rounded-full bg-[#238636] animate-pulse"></span>
+        </button>
+      </div>
+
       {/* Left Sidebar - GitHub Dark Mode Style */}
-      <div className="w-full lg:w-[320px] bg-[#0d1117] border-b lg:border-b-0 lg:border-r border-[#30363d] flex flex-col shrink-0">
+      <div className={`w-full lg:w-[320px] bg-[#0d1117] border-b lg:border-b-0 lg:border-r border-[#30363d] flex-col shrink-0 ${mobileTab === 'editor' ? 'flex' : 'hidden lg:flex'}`}>
         
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-[#30363d]">
@@ -340,13 +370,30 @@ export const ResumeBuilder = () => {
       </div>
 
       {/* Main Content - Scaled PDF Viewer */}
-      <div className="flex-1 flex flex-col p-4 sm:p-6 lg:p-8 overflow-visible lg:overflow-hidden relative">
+      <div className={`flex-1 flex-col p-2.5 sm:p-6 lg:p-8 overflow-visible lg:overflow-hidden relative ${mobileTab === 'preview' ? 'flex' : 'hidden lg:flex'}`}>
         {/* Top bar for preview */}
-        <div className="flex items-center justify-between mb-4 sm:mb-6">
-          <h2 className="text-base sm:text-lg font-medium text-white">Live PDF Preview</h2>
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#161b22] border border-[#30363d] text-xs text-[#8b949e]">
-            <span className="w-2 h-2 rounded-full bg-[#238636] animate-pulse"></span>
-            Real-time rendering
+        <div className="flex items-center justify-between mb-3 sm:mb-6">
+          <div className="flex items-center gap-2">
+            <h2 className="text-sm sm:text-lg font-medium text-white">Live PDF Preview</h2>
+            <button
+              onClick={() => setMobileTab('editor')}
+              className="lg:hidden text-xs text-[#58a6ff] hover:underline cursor-pointer"
+            >
+              Настройки
+            </button>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleDownloadPdf}
+              className="lg:hidden flex items-center gap-1 bg-[#238636] hover:bg-[#2ea043] text-white py-1 px-2.5 rounded-md text-xs font-semibold shadow-sm cursor-pointer"
+            >
+              <Download size={13} />
+              Экспорт
+            </button>
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#161b22] border border-[#30363d] text-[11px] sm:text-xs text-[#8b949e]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#238636] animate-pulse"></span>
+              Live
+            </div>
           </div>
         </div>
 
