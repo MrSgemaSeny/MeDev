@@ -60,11 +60,11 @@
   - **Landing Compaction**: Устранен эффект "громоздких блоков" на мобильных экранах (320px–600px). Шапка `Header` уменьшена с 80px до 56px (`h-14`), в `Features` убраны раздутые вложенные карточки ("Как это работает"), компактные скелетоны A4 в `TemplatesShowcase`, вертикальные отступы секций уменьшены до `py-10 sm:py-20`.
   - **Dashboard Hero Responsive**: Заголовки снабжены `break-words` и уменьшены до `text-2xl sm:text-4xl`, центрирование имени пользователя (например, MURAT ORYNBAEV) не ломается на мобильных экранах.
   - **Resume Builder Mobile Tabs**: Добавлен мобильный таб-переключатель (`[ Настройки ]` / `[ Предпросмотр ]`) на экранах `< lg`. Устранена необходимость бесконечного скролла форм перед просмотром A4. В `AppLayout.tsx` для маршрутов резюме убраны двойные внешние отступы (`p-0` на мобильных), исключая зауживание рабочей зоны до узкой полосы.
-  - **Verification**: 41/41 frontend Vitest PASS, Vite production build clean, Next.js 15 build clean (9/9 static routes). Изменения отправлены в `origin main`.
+  - **Templates 2-Column Grid & Free Badges**: Сетка шаблонов перестроена в 2 столбца (`grid-cols-2`) на всех экранах, убраны длинные описания (заменены на 3-5 слов), полностью удалены бейджи FREE и PRO (все шаблоны представлены бесплатными), кнопки выбора адаптированы под мобильные карточки.
+  - **Verification**: 265 backend tests PASS, 41/41 frontend Vitest PASS, Vite production build clean, Next.js 15 build clean (9/9 static routes). Изменения отправлены в `origin main`.
 
 ## Active Backlog
 - **Native Mobile App (Expo)**: Инициализация и разработка нативного приложения MeDev на React Native + Expo (авторизация, Job Tracker, AI ассистент, просмотр скора).
 - Setting up automated nightly DB backup jobs.
 - Sentry and Prometheus/Grafana monitoring dashboards.
 - **RAG Retrieval:** `VectorizationService` пишет векторы в pgvector при `ProfileUpdatedEvent`. Реализация semantic search: Job Tracker → AI Match по вакансии.
-
