@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../entities/user/model/store';
-import { LogOut, User, Globe, Moon, Sun, ShieldAlert, Trash2 } from 'lucide-react';
-import { setTheme } from '../../shared/lib/theme';
+import { LogOut, User, Globe, Moon, ShieldAlert, Trash2 } from 'lucide-react';
 
 export const SettingsPage = () => {
   const { t, i18n } = useTranslation();
@@ -99,29 +98,9 @@ export const SettingsPage = () => {
                 <div className="text-sm font-medium text-primary mb-1">{t('settings.theme', 'Theme')}</div>
                 <div className="text-sm text-secondary">{t('settings.themeDesc', 'Application color theme')}</div>
               </div>
-              <div className="flex bg-[var(--color-bg-secondary)] p-1 rounded-lg border border-default">
-                <button
-                  onClick={() => setTheme(false)}
-                  className={`px-4 py-2 min-h-[40px] sm:min-h-[36px] flex items-center gap-2 rounded-md text-sm font-medium transition-all cursor-pointer ${
-                    !document.documentElement.classList.contains('dark')
-                      ? 'bg-[var(--color-accent)] text-white shadow-sm'
-                      : 'text-secondary hover:text-primary'
-                  }`}
-                >
-                  <Sun size={14} />
-                  Light
-                </button>
-                <button
-                  onClick={() => setTheme(true)}
-                  className={`px-4 py-2 min-h-[40px] sm:min-h-[36px] flex items-center gap-2 rounded-md text-sm font-medium transition-all cursor-pointer ${
-                    document.documentElement.classList.contains('dark')
-                      ? 'bg-[var(--color-accent)] text-white shadow-sm'
-                      : 'text-secondary hover:text-primary'
-                  }`}
-                >
-                  <Moon size={14} />
-                  Dark
-                </button>
+              <div className="flex items-center gap-2 px-3.5 py-2 rounded-lg border border-[#30363d] bg-[#161b22] text-xs">
+                <Moon size={14} className="text-[#2ea043]" />
+                <span className="font-semibold text-[#c9d1d9]">GitHub Dark</span>
               </div>
             </div>
           </div>

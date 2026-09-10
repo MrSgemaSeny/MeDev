@@ -1,15 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { LogOut, Bell, Globe, Mail, Moon, Sun, Shield } from 'lucide-react';
+import { LogOut, Bell, Globe, Mail, Shield } from 'lucide-react';
 import { useAuthStore } from '../../entities/user/model/store';
 import { useTranslation } from 'react-i18next';
 import { useProfile } from '../../shared/api/hooks/useProfile';
-// import removed
 
 interface UserProfileDropdownProps {
   variant?: 'sidebar' | 'header';
 }
-
-import { toggleTheme } from '../../shared/lib/theme';
 
 export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ variant = 'sidebar' }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,7 +19,6 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
   
   const avatarUrl = profile?.githubUsername ? `https://github.com/${profile.githubUsername}.png` : `https://github.com/${username}.png`;
 
-  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -52,10 +48,6 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
   }
 
   const toggleLanguage = (lang: string) => i18n.changeLanguage(lang);
-
-  const handleToggleTheme = () => {
-    toggleTheme(setIsDark);
-  };
 
   const formatterTime = new Intl.DateTimeFormat(i18n.language === 'ru' ? 'ru-RU' : 'en-US', {
     hour: '2-digit',
@@ -99,43 +91,27 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
       {/* Меню — открывается вниз и от правого края в хедере, вверх и от левого в сайдбаре */}
       {isOpen && (
         <div
-          className={`absolute w-64 rounded-xl shadow-lg border z-50 flex flex-col py-2 ${
+          className={`absolute w-64 rounded-xl shadow-2xl border border-[#30363d] bg-[#161b22] z-50 flex flex-col py-2 ${
             isHeader ? 'right-0 top-full mt-2' : 'left-0 bottom-full mb-2'
           }`}
           style={{
-            backgroundColor: 'var(--color-bg-primary)',
-            borderColor: 'var(--color-border-default)',
-            boxShadow: '0 10px 25px -5px var(--color-shadow)',
+            boxShadow: '0 10px 25px -5px rgba(1, 4, 9, 0.8)',
           }}
         >
-          <div className="px-4 py-3 border-b border-muted flex items-center gap-3">
-            <img src={avatarUrl} alt={`${username || 'User'} — фото профиля`} className="w-10 h-10 rounded-full object-cover border border-default shrink-0" style={{ backgroundColor: 'var(--color-bg-tertiary)' }} />
+          <div className="px-4 py-3 border-b border-[#30363d] flex items-center gap-3">
+            <img
+              src={avatarUrl}
+              alt={`${username || 'User'} — фото профиля`}
+              className="w-10 h-10 rounded-full object-cover border border-[#30363d] shrink-0 bg-[#21262d]"
+            />
             <div className="flex flex-col overflow-hidden">
-              <span className="font-semibold text-[15px] truncate text-primary">{username}</span>
+              <span className="font-semibold text-[15px] truncate text-white">{username}</span>
             </div>
           </div>
 
           <div className="py-2 flex flex-col">
-            <div
-              className="px-4 py-2.5 flex items-center justify-between hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
-              onClick={handleToggleTheme}
-            >
-              <div className="flex items-center gap-3 text-secondary">
-                {isDark ? <Moon size={18} /> : <Sun size={18} />}
-                <span className="text-sm font-medium">Тема</span>
-              </div>
-              <div className="flex bg-black/5 dark:bg-white/10 rounded-full p-0.5 text-xs font-semibold">
-                <div className={`px-2.5 py-1 rounded-full transition-colors ${!isDark ? 'bg-white shadow-sm text-accent' : 'text-muted'}`}>
-                  Светлая
-                </div>
-                <div className={`px-2.5 py-1 rounded-full transition-colors ${isDark ? 'shadow-sm text-white' : 'text-muted'}`} style={isDark ? { backgroundColor: 'var(--color-accent)' } : undefined}>
-                  Тёмная
-                </div>
-              </div>
-            </div>
-
-            <button className="w-full px-4 py-2.5 flex items-center justify-between hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-left">
-              <div className="flex items-center gap-3 text-secondary">
+            <button className="w-full px-4 py-2.5 flex items-center justify-between hover:bg-white/5 transition-colors text-left cursor-pointer">
+              <div className="flex items-center gap-3 text-[#8b949e] hover:text-[#c9d1d9]">
                 <Bell size={18} />
                 <span className="text-sm font-medium">Уведомления</span>
               </div>
@@ -144,44 +120,49 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
             {role === 'ADMIN' && (
               <button 
                 onClick={() => { setIsOpen(false); window.location.href = '/admin/dashboard'; }}
-                className="w-full px-4 py-2.5 flex items-center justify-between hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-left"
+                className="w-full px-4 py-2.5 flex items-center justify-between hover:bg-white/5 transition-colors text-left cursor-pointer"
               >
-                <div className="flex items-center gap-3 text-accent" style={{ color: 'var(--color-accent)' }}>
+                <div className="flex items-center gap-3 text-[#2ea043]">
                   <Shield size={18} />
                   <span className="text-sm font-medium">Админ-панель</span>
                 </div>
               </button>
             )}
 
+            <div className="h-px bg-[#30363d] my-1 mx-4" />
 
-            <div className="h-px bg-border-muted my-1 mx-4" style={{ backgroundColor: 'var(--color-border-muted)' }} />
-
-            <div className="px-4 py-2.5 flex items-center justify-between hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
-              <div className="flex items-center gap-3 text-secondary">
+            <div className="px-4 py-2.5 flex items-center justify-between">
+              <div className="flex items-center gap-3 text-[#8b949e]">
                 <Globe size={18} />
                 <span className="text-sm font-medium">Язык</span>
               </div>
-              <div className="flex bg-black/5 dark:bg-white/10 rounded-full p-0.5 text-xs font-bold">
+              <div className="flex bg-[#0d1117] border border-[#30363d] rounded-full p-0.5 text-xs font-bold">
                 <button
                   onClick={() => toggleLanguage('ru')}
-                  className={`px-3 py-1 rounded-full transition-colors ${i18n.language?.startsWith('ru') ? 'text-white shadow-sm' : 'text-secondary hover:text-primary'}`}
-                  style={i18n.language?.startsWith('ru') ? { backgroundColor: 'var(--color-accent)' } : undefined}
+                  className={`px-3 py-1 rounded-full transition-colors cursor-pointer ${
+                    i18n.language?.startsWith('ru')
+                      ? 'bg-[#238636] text-white shadow-sm'
+                      : 'text-[#8b949e] hover:text-[#c9d1d9]'
+                  }`}
                 >
                   RU
                 </button>
                 <button
                   onClick={() => toggleLanguage('en')}
-                  className={`px-3 py-1 rounded-full transition-colors ${i18n.language?.startsWith('en') ? 'text-white shadow-sm' : 'text-secondary hover:text-primary'}`}
-                  style={i18n.language?.startsWith('en') ? { backgroundColor: 'var(--color-accent)' } : undefined}
+                  className={`px-3 py-1 rounded-full transition-colors cursor-pointer ${
+                    i18n.language?.startsWith('en')
+                      ? 'bg-[#238636] text-white shadow-sm'
+                      : 'text-[#8b949e] hover:text-[#c9d1d9]'
+                  }`}
                 >
                   EN
                 </button>
               </div>
             </div>
 
-            <div className="h-px bg-border-muted my-1 mx-4" style={{ backgroundColor: 'var(--color-border-muted)' }} />
+            <div className="h-px bg-[#30363d] my-1 mx-4" />
 
-            <button className="w-full px-4 py-2.5 flex items-center gap-3 text-secondary hover:text-primary hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-left">
+            <button className="w-full px-4 py-2.5 flex items-center gap-3 text-[#8b949e] hover:text-[#c9d1d9] hover:bg-white/5 transition-colors text-left cursor-pointer">
               <Mail size={18} />
               <span className="text-sm font-medium">Поддержка</span>
             </button>
@@ -191,7 +172,7 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
                 logout();
                 setIsOpen(false);
               }}
-              className="w-full px-4 py-2.5 flex items-center gap-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors text-left mt-1"
+              className="w-full px-4 py-2.5 flex items-center gap-3 text-[#f85149] hover:bg-[#f85149]/10 transition-colors text-left mt-1 cursor-pointer"
             >
               <LogOut size={18} />
               <span className="text-sm font-medium">Выйти</span>

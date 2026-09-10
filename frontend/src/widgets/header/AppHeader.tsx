@@ -1,32 +1,11 @@
-import { Search, Globe, Moon, Sun, Menu } from 'lucide-react';
+import { Search, Globe, Menu } from 'lucide-react';
 import { UserProfileDropdown } from './UserProfileDropdown';
 import { useTranslation } from 'react-i18next';
-import { useState, useEffect } from 'react';
-import { toggleTheme } from '../../shared/lib/theme';
 import { useMobileNavStore } from '../sidebar/model/mobileNavStore';
 
 export const AppHeader = () => {
   const { i18n } = useTranslation();
   const toggleMobileNav = useMobileNavStore((s) => s.toggle);
-  
-  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
-  
-  // Keep theme in sync if changed from settings or elsewhere
-  useEffect(() => {
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.attributeName === 'class') {
-          setIsDark(document.documentElement.classList.contains('dark'));
-        }
-      });
-    });
-    observer.observe(document.documentElement, { attributes: true });
-    return () => observer.disconnect();
-  }, []);
-
-  const handleToggleTheme = () => {
-    toggleTheme(setIsDark);
-  };
 
   const toggleLanguage = () => {
     i18n.changeLanguage(i18n.language?.startsWith('ru') ? 'en' : 'ru');
@@ -34,15 +13,14 @@ export const AppHeader = () => {
 
   return (
     <header
-      className="h-16 shrink-0 flex items-center gap-2 sm:gap-4 px-3 sm:px-6 border-b"
-      style={{ backgroundColor: 'var(--color-header-bg)', borderColor: 'var(--color-border-default)' }}
+      className="h-14 sm:h-16 shrink-0 flex items-center gap-2 sm:gap-4 px-3 sm:px-6 border-b border-[#30363d] bg-[#0d1117]"
     >
       {/* Mobile Hamburger Button */}
       <button
         type="button"
         onClick={toggleMobileNav}
         aria-label="Открыть меню навигации"
-        className="md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center rounded-md text-secondary hover:text-primary transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
+        className="md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center rounded-md text-[#8b949e] hover:text-[#c9d1d9] transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
       >
         <Menu size={22} />
       </button>
@@ -52,40 +30,22 @@ export const AppHeader = () => {
         <div className="relative">
           <Search
             size={14}
-            className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-            style={{ color: 'var(--color-text-muted)' }}
+            className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#8b949e]"
           />
           <input
             type="text"
             placeholder="Search..."
-            className="w-full h-9 pl-8 pr-3 rounded-full text-[16px] md:text-sm outline-none transition-all focus:ring-2"
-            style={{
-              backgroundColor: 'var(--color-bg-inset)',
-              border: '1px solid var(--color-border-default)',
-              color: 'var(--color-text-primary)',
-            }}
+            className="w-full h-9 pl-8 pr-3 rounded-full text-[16px] md:text-sm outline-none transition-all focus:ring-2 focus:ring-[#2ea043] bg-[#010409] border border-[#30363d] text-[#c9d1d9] placeholder-[#8b949e]"
           />
         </div>
       </div>
 
       <div className="flex items-center gap-1 sm:gap-3 ml-auto">
-        {/* Theme Toggle */}
-        <button
-          type="button"
-          onClick={handleToggleTheme}
-          className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full transition-colors hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
-          style={{ color: 'var(--color-text-secondary)' }}
-          aria-label="Toggle Theme"
-        >
-          {isDark ? <Moon size={18} /> : <Sun size={18} />}
-        </button>
-
         {/* Language Toggle */}
         <button
           type="button"
           onClick={toggleLanguage}
-          className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full transition-colors hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none mr-0.5"
-          style={{ color: 'var(--color-text-secondary)' }}
+          className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full transition-colors hover:bg-white/5 cursor-pointer focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none text-[#8b949e] hover:text-[#c9d1d9] mr-0.5"
           aria-label="Toggle Language"
           title={i18n.language?.startsWith('ru') ? 'Switch to English' : 'Переключить на Русский'}
         >

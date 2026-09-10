@@ -1,49 +1,19 @@
 export const toggleTheme = (setDark?: (isDark: boolean) => void) => {
   const html = document.documentElement;
-  const isCurrentlyDark = html.classList.contains('dark');
-  const willBeDark = !isCurrentlyDark;
-
-  // Add transition class
-  html.classList.add('theme-transition');
-
-  if (willBeDark) {
-    html.classList.add('dark');
-    localStorage.setItem('theme', 'dark');
-  } else {
-    html.classList.remove('dark');
-    localStorage.setItem('theme', 'light');
-  }
+  html.classList.add('dark');
+  localStorage.setItem('theme', 'dark');
 
   if (setDark) {
-    setDark(willBeDark);
+    setDark(true);
   }
-
-  // Remove transition class after animation completes
-  setTimeout(() => {
-    html.classList.remove('theme-transition');
-  }, 300);
 };
 
-export const setTheme = (isDark: boolean, setDark?: (isDark: boolean) => void) => {
+export const setTheme = (_isDark: boolean, setDark?: (isDark: boolean) => void) => {
   const html = document.documentElement;
-  
-  if (html.classList.contains('dark') === isDark) return;
-
-  html.classList.add('theme-transition');
-
-  if (isDark) {
-    html.classList.add('dark');
-    localStorage.setItem('theme', 'dark');
-  } else {
-    html.classList.remove('dark');
-    localStorage.setItem('theme', 'light');
-  }
+  html.classList.add('dark');
+  localStorage.setItem('theme', 'dark');
 
   if (setDark) {
-    setDark(isDark);
+    setDark(true);
   }
-
-  setTimeout(() => {
-    html.classList.remove('theme-transition');
-  }, 300);
 };
