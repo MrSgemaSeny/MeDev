@@ -1,7 +1,5 @@
 package com.medev.modules.resume.controller;
 
-import com.medev.modules.auth.entity.User;
-import com.medev.modules.auth.repository.UserRepository;
 import com.medev.modules.resume.service.PdfGeneratorService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,8 +12,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
@@ -31,7 +27,7 @@ class ResumeControllerTest {
     private PdfGeneratorService pdfGeneratorService;
 
     @Mock
-    private UserRepository userRepository;
+    private com.medev.modules.auth.repository.UserRepository userRepository;
 
     @InjectMocks
     private ResumeController resumeController;
@@ -84,18 +80,7 @@ class ResumeControllerTest {
     }
 
     @Test
-    void generateHtml_proTemplate_withoutProPlan_throwsForbidden() throws Exception {
-        User freeUser = User.builder().id(1L).email("user@test.com").plan(User.Plan.FREE).build();
-        when(userRepository.findById(1L)).thenReturn(Optional.of(freeUser));
-
-        mockMvc.perform(get("/v1/resume/html/apple-modern"))
-                .andExpect(status().isForbidden());
-    }
-
-    @Test
-    void generateHtml_proTemplate_withProPlan_succeeds() throws Exception {
-        User proUser = User.builder().id(1L).email("user@test.com").plan(User.Plan.PRO).build();
-        when(userRepository.findById(1L)).thenReturn(Optional.of(proUser));
+    void generateHtml_appleModern_succeedsForAllUsers() throws Exception {
         when(pdfGeneratorService.generateHtml(eq(1L), eq("apple-modern"), anyBoolean(), anyBoolean()))
                 .thenReturn("<html><body>Apple Resume</body></html>");
 

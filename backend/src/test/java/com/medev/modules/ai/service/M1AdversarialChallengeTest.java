@@ -596,29 +596,19 @@ public class M1AdversarialChallengeTest {
         }
 
         @Test
-        @DisplayName("PRO Gate: ResumeController blocks FREE user on PRO templates when preview=false")
-        void testResumeControllerBlocksProTemplatesForFreeUser() throws Exception {
-            User freeUser = User.builder().id(10L).plan(User.Plan.FREE).build();
-            when(userRepository.findById(10L)).thenReturn(Optional.of(freeUser));
+        @DisplayName("ResumeController: permits all users on all templates for full download")
+        void testResumeControllerAllowsAllTemplatesForFreeUser() throws Exception {
+            when(pdfGeneratorService.generatePdf(eq(10L), anyString(), eq(false), anyBoolean()))
+                    .thenReturn(new byte[]{1, 2, 3});
 
-            // Pro templates: apple-modern, milky-soft, phub-orange
-            resumeMockMvc.perform(get("/v1/resume/generate/apple-modern").param("preview", "false"))
-                    .andExpect(status().isForbidden());
-
-            resumeMockMvc.perform(get("/v1/resume/generate/milky-soft").param("preview", "false"))
-                    .andExpect(status().isForbidden());
-
-            resumeMockMvc.perform(get("/v1/resume/generate/phub-orange").param("preview", "false"))
-                    .andExpect(status().isForbidden());
-
-            resumeMockMvc.perform(get("/v1/resume/html/apple-modern").param("preview", "false"))
-                    .andExpect(status().isForbidden());
-
-            verifyNoInteractions(pdfGeneratorService);
+            for (String template : List.of("apple-modern", "milky-soft", "phub-orange", "clean", "github", "grok-monolith")) {
+                resumeMockMvc.perform(get("/v1/resume/generate/" + template).param("preview", "false"))
+                        .andExpect(status().isOk());
+            }
         }
 
         @Test
-        @DisplayName("PRO Gate: ResumeController permits FREE user on PRO templates when preview=true")
+        @DisplayName("ResumeController: permits preview for all templates")
         void testResumeControllerAllowsPreviewForFreeUser() throws Exception {
             when(pdfGeneratorService.generatePdf(eq(10L), eq("apple-modern"), eq(true), anyBoolean()))
                     .thenReturn(new byte[]{1, 2, 3});
@@ -632,41 +622,6 @@ public class M1AdversarialChallengeTest {
             resumeMockMvc.perform(get("/v1/resume/html/apple-modern").param("preview", "true"))
                     .andExpect(status().isOk())
                     .andExpect(header().string("Content-Disposition", "inline; filename=resume.html"));
-        }
-
-        @Test
-        @DisplayName("PRO Gate: ResumeController permits FREE user on Free templates (clean, github, grok-monolith) for full download")
-        void testResumeControllerAllowsFreeTemplatesForFreeUser() throws Exception {
-            when(pdfGeneratorService.generatePdf(eq(10L), eq("clean"), eq(false), anyBoolean()))
-                    .thenReturn(new byte[]{1, 2, 3});
-            when(pdfGeneratorService.generatePdf(eq(10L), eq("github"), eq(false), anyBoolean()))
-                    .thenReturn(new byte[]{1, 2, 3});
-            when(pdfGeneratorService.generatePdf(eq(10L), eq("grok-monolith"), eq(false), anyBoolean()))
-                    .thenReturn(new byte[]{1, 2, 3});
-
-            resumeMockMvc.perform(get("/v1/resume/generate/clean").param("preview", "false"))
-                    .andExpect(status().isOk());
-
-            resumeMockMvc.perform(get("/v1/resume/generate/github").param("preview", "false"))
-                    .andExpect(status().isOk());
-
-            resumeMockMvc.perform(get("/v1/resume/generate/grok-monolith").param("preview", "false"))
-                    .andExpect(status().isOk());
-        }
-
-        @Test
-        @DisplayName("PRO Gate: ResumeController permits PRO user on all templates without restrictions")
-        void testResumeControllerAllowsProUserOnAllTemplates() throws Exception {
-            User proUser = User.builder().id(10L).plan(User.Plan.PRO).build();
-            when(userRepository.findById(10L)).thenReturn(Optional.of(proUser));
-
-            when(pdfGeneratorService.generatePdf(eq(10L), anyString(), eq(false), anyBoolean()))
-                    .thenReturn(new byte[]{1, 2, 3});
-
-            for (String template : List.of("apple-modern", "milky-soft", "phub-orange")) {
-                resumeMockMvc.perform(get("/v1/resume/generate/" + template).param("preview", "false"))
-                        .andExpect(status().isOk());
-            }
         }
     }
 }
