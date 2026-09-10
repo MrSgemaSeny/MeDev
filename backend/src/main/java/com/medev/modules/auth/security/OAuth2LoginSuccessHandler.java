@@ -63,10 +63,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String frontendOrigin = (defaultFrontendUrl != null && !defaultFrontendUrl.isBlank())
                 ? defaultFrontendUrl.trim()
                 : allowedOrigins.split(",")[0].trim();
-        java.util.Set<String> validAllowedOrigins = new java.util.LinkedHashSet<>();
-        validAllowedOrigins.add("https://app.medev.mrsgemaseny.com");
-        validAllowedOrigins.add("https://medev.mrsgemaseny.com");
-        validAllowedOrigins.add("https://me-dev-two.vercel.app");
+        java.util.Set<String> validAllowedOrigins = new java.util.LinkedHashSet<>(com.medev.shared.security.SecurityOrigins.DEFAULT_ALLOWED_ORIGINS);
         if (allowedOrigins != null) {
             for (String allowed : allowedOrigins.split(",")) {
                 if (!allowed.isBlank()) validAllowedOrigins.add(allowed.trim());

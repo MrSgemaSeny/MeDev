@@ -15,9 +15,11 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -209,6 +211,8 @@ public class AuthService {
             String token = sb.toString();
             redisTemplate.opsForValue().set("password_reset:token:" + token, String.valueOf(user.getId()), Duration.ofMinutes(15));
             auditService.logAction(user.getId(), "AUTH_PASSWORD_RESET_REQUESTED", String.valueOf(user.getId()), "Password reset requested for email: " + user.getEmail(), null);
+            // Email provider (SendGrid/Resend) integration placeholder
+            log.info("[AuthService] Password reset token created for user {}: token=[PROTECTED], valid for 15 minutes. Ready for email delivery dispatch.", user.getId());
         }
     }
 

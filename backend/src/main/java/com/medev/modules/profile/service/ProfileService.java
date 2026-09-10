@@ -358,9 +358,9 @@ public class ProfileService {
                 Experience exp = Experience.builder()
                         .profile(profile)
                         .company(org)
-                        .position("Software Engineer")
+                        .position("Open Source Contributor")
                         .isCurrent(true)
-                        .description("Contributor at " + org)
+                        .description("[Draft / GitHub Import] Contributor at " + org)
                         .startDate(java.time.LocalDate.now().minusMonths(1)) // fallback date
                         .build();
                 experienceRepository.save(exp);

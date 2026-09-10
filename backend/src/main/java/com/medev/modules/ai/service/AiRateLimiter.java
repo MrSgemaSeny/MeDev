@@ -72,13 +72,12 @@ public class AiRateLimiter {
         if (planStr == null) {
             User user = userRepository.findById(userId).orElse(null);
             if (user != null) {
-                if (user.getPlan() == User.Plan.PRO && user.getSubscriptionExpiresAt() != null 
-                        && user.getSubscriptionExpiresAt().isBefore(java.time.LocalDateTime.now())) {
-                    user.setPlan(User.Plan.FREE);
-                    userRepository.save(user);
+                boolean isExpired = user.getPlan() == User.Plan.PRO && user.getSubscriptionExpiresAt() != null 
+                        && user.getSubscriptionExpiresAt().isBefore(java.time.LocalDateTime.now());
+                if (isExpired) {
                     planStr = "FREE";
                 } else {
-                    planStr = user.getPlan().name();
+                    planStr = user.getPlan() != null ? user.getPlan().name() : "FREE";
                 }
             } else {
                 planStr = "FREE";

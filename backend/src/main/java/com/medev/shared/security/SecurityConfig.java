@@ -72,7 +72,7 @@ public class SecurityConfig {
                     // So the URI is /v1/..., not /api/v1/...
                     response.setStatus(jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED);
                     response.setContentType("application/json");
-                    response.getWriter().write("{\"error\":\"Unauthorized\",\"message\":\"" + authException.getMessage() + "\"}");
+                    response.getWriter().write("{\"error\":\"Unauthorized\",\"message\":\"Authentication required\"}");
                 })
             )
             .headers(headers -> headers
@@ -88,16 +88,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource(@org.springframework.beans.factory.annotation.Value("${cors.allowed-origins:http://localhost:5173}") String allowedOrigins) {
         CorsConfiguration configuration = new CorsConfiguration();
-        java.util.Set<String> allOrigins = new java.util.LinkedHashSet<>();
-        allOrigins.add("https://app.medev.mrsgemaseny.com");
-        allOrigins.add("https://medev.mrsgemaseny.com");
-        allOrigins.add("https://me-dev-two.vercel.app");
-        allOrigins.add("https://mrsgemaseny.github.io");
-        allOrigins.add("http://localhost:5173");
-        allOrigins.add("http://localhost:3000");
-        allOrigins.add("capacitor://localhost");
-        allOrigins.add("http://localhost");
-        allOrigins.add("https://localhost");
+        java.util.Set<String> allOrigins = new java.util.LinkedHashSet<>(SecurityOrigins.DEFAULT_ALLOWED_ORIGINS);
 
         if (allowedOrigins != null && !allowedOrigins.isBlank()) {
             java.util.Arrays.stream(allowedOrigins.split(","))
@@ -107,13 +98,12 @@ public class SecurityConfig {
         }
 
         java.util.List<String> exactOrigins = allOrigins.stream().filter(s -> !s.contains("*")).toList();
-        java.util.List<String> patternOrigins = new java.util.ArrayList<>(allOrigins.stream().filter(s -> s.contains("*")).toList());
-        if (!patternOrigins.contains("https://*.mrsgemaseny.com")) {
-            patternOrigins.add("https://*.mrsgemaseny.com");
-        }
-        if (!patternOrigins.contains("https://*.vercel.app")) {
-            patternOrigins.add("https://*.vercel.app");
-        }
+        java.util.List<String> patternOrigins = new java.util.ArrayList<>(SecurityOrigins.DEFAULT_PATTERN_ORIGINS);
+        allOrigins.stream().filter(s -> s.contains("*")).forEach(p -> {
+            if (!patternOrigins.contains(p)) {
+                patternOrigins.add(p);
+            }
+        });
 
         if (!exactOrigins.isEmpty()) {
             configuration.setAllowedOrigins(exactOrigins);
@@ -122,7 +112,7 @@ public class SecurityConfig {
             configuration.setAllowedOriginPatterns(patternOrigins);
         }
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin", "*"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin"));
         configuration.setExposedHeaders(List.of("Authorization", "Set-Cookie"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);

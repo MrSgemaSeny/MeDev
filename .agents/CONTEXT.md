@@ -15,9 +15,10 @@
   - `landing/`: Next.js 15 App Router SSG (`medev.mrsgemaseny.com`, Marketing, SEO, OpenGraph).
 
 ## Latest Milestones & Features (2026-09-10)
-1. **5-Axis Security and Architectural Audit (100% COMPLETE)**:
-   - **Backend Security**: Fixed OAuth2 Java Serialization RCE (using JSON + AES). Strengthened JWT claims to prevent bypasses. Cleared hardcoded fallback secrets.
-   - **Backend Architecture**: Eliminated `MultipleBagFetchException` and N+1 queries using `Set` collections and `@EntityGraph`. Fixed Redis rate limiter crashes by adding `StringRedisTemplate`.
+1. **5-Axis Security and Architectural Audit & Remediation (100% COMPLETE)**:
+   - **Backend Security & Hardening**: Fixed OAuth2 Java Serialization RCE (using JSON + AES). Strengthened JWT claims. Removed wildcard header `*` from CORS `allowedHeaders`. Sanitized `authenticationEntryPoint` JSON output against injection. Centralized origin whitelist in `SecurityOrigins`. Added `X-Forwarded-For` proxy IP extraction in `AuthController`.
+   - **Backend Architecture & Stability**: Eliminated N+1 queries using `Set` collections and `@EntityGraph`. Fixed Redis rate limiter crashes by adding `StringRedisTemplate`. Removed DB mutation side-effects from `AiRateLimiter` hot path. Updated GitHub org import to label roles as `Open Source Contributor (Draft)`.
+   - **Container & Runtime Optimization**: Added `-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0` to Dockerfile entrypoint.
    - **Frontend Architecture (FSD)**: Migrated `shared/api/hooks` to `entities/profile` and `entities/job-tracker`. Replaced Axios with native fetch (`ADR-005a`).
    - **Frontend Performance**: Implemented `LocalErrorBoundary` and wrapped `KanbanBoard` elements in `React.memo` to eliminate drag-and-drop re-renders.
 

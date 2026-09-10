@@ -134,30 +134,9 @@ public class AuthController {
             return;
         }
 
-        String cleanOrigin = origin.trim().toLowerCase();
-        // Trusted internal origins and subdomains
-        if (cleanOrigin.equals("https://app.medev.mrsgemaseny.com") ||
-            cleanOrigin.equals("https://medev.mrsgemaseny.com") ||
-            cleanOrigin.endsWith(".mrsgemaseny.com") ||
-            cleanOrigin.equals("https://me-dev-two.vercel.app") ||
-            cleanOrigin.endsWith(".vercel.app") ||
-            cleanOrigin.startsWith("http://localhost:") ||
-            cleanOrigin.startsWith("http://127.0.0.1:")) {
-            return;
+        if (!com.medev.shared.security.SecurityOrigins.isAllowedOrigin(origin, allowedOrigins)) {
+            throw new com.medev.shared.exception.ForbiddenException("Cross-origin request rejected");
         }
-
-        if (allowedOrigins != null && !allowedOrigins.isBlank()) {
-            for (String allowed : allowedOrigins.split(",")) {
-                String cleanAllowed = allowed.trim().toLowerCase();
-                if (cleanAllowed.equals("*") || cleanAllowed.equals(cleanOrigin)) {
-                    return;
-                }
-                if (cleanAllowed.startsWith("*.") && cleanOrigin.endsWith(cleanAllowed.substring(1))) {
-                    return;
-                }
-            }
-        }
-        throw new com.medev.shared.exception.ForbiddenException("Cross-origin request rejected");
     }
 
     private void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
@@ -173,10 +152,14 @@ public class AuthController {
     }
 
     private String getClientIp(HttpServletRequest request) {
+        String xff = request.getHeader("X-Forwarded-For");
+        if (xff != null && !xff.isBlank()) {
+            return xff.split(",")[0].trim();
+        }
         String ip = request.getRemoteAddr();
         if ("127.0.0.1".equals(ip) || "0:0:0:0:0:0:0:1".equals(ip)) {
-            org.slf4j.LoggerFactory.getLogger(AuthController.class).warn("[AuthRateLimiter] localhost IP detected, forward-headers may not be configured correctly");
+            org.slf4j.LoggerFactory.getLogger(AuthController.class).debug("[AuthRateLimiter] Localhost IP detected for client");
         }
-        return ip;
+        return ip != null ? ip : "127.0.0.1";
     }
 }
