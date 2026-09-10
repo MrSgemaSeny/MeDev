@@ -402,6 +402,7 @@ const InnerResumeBuilder = () => {
               </div>
             )}
           </div>
+        </div>
       </div>
     </div>
   );
