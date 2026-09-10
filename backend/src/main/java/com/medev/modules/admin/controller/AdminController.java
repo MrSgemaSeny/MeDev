@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import com.medev.shared.security.SecurityUtils;
 import com.medev.shared.exception.ForbiddenException;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/v1/admin")
 @RequiredArgsConstructor
@@ -44,6 +46,20 @@ public class AdminController {
         }
         adminService.updateUserRole(userId, role);
         return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/users/{userId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
+        if (userId.equals(SecurityUtils.getCurrentUserId())) {
+            throw new ForbiddenException("You cannot delete your own account via admin panel");
+        }
+        adminService.deleteUser(userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/cleanup-test-data")
+    public ResponseEntity<Map<String, Object>> cleanupTestData() {
+        return ResponseEntity.ok(adminService.cleanupTestData());
     }
 
     @GetMapping("/audit")

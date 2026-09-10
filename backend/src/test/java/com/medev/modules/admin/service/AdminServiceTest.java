@@ -48,6 +48,9 @@ class AdminServiceTest {
     @Mock
     private org.springframework.data.redis.core.RedisTemplate<String, Object> redisTemplate;
 
+    @Mock
+    private jakarta.persistence.EntityManager entityManager;
+
     @InjectMocks
     private AdminService adminService;
 
