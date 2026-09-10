@@ -5,6 +5,11 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import enTranslations from './locales/en.json';
 import ruTranslations from './locales/ru.json';
 
+const savedLng = typeof window !== 'undefined' ? localStorage.getItem('i18nextLng') : null;
+const initialLng = (savedLng && (savedLng.startsWith('ru') || savedLng.startsWith('en')))
+  ? (savedLng.startsWith('ru') ? 'ru' : 'en')
+  : 'ru';
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -13,10 +18,25 @@ i18n
       en: { translation: enTranslations },
       ru: { translation: ruTranslations }
     },
-    fallbackLng: 'en',
+    lng: initialLng,
+    fallbackLng: 'ru',
+    supportedLngs: ['ru', 'en'],
+    detection: {
+      order: ['localStorage', 'navigator'],
+      lookupLocalStorage: 'i18nextLng',
+      caches: ['localStorage']
+    },
     interpolation: {
       escapeValue: false
     }
   });
+
+i18n.on('languageChanged', (lng) => {
+  if (typeof window !== 'undefined') {
+    const normalized = lng?.startsWith('ru') ? 'ru' : 'en';
+    localStorage.setItem('i18nextLng', normalized);
+    document.documentElement.lang = normalized;
+  }
+});
 
 export default i18n;

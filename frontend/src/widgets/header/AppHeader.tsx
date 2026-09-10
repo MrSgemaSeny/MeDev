@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useMobileNavStore } from '../sidebar/model/mobileNavStore';
 
 export const AppHeader = () => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const toggleMobileNav = useMobileNavStore((s) => s.toggle);
 
   const toggleLanguage = () => {
@@ -19,7 +19,7 @@ export const AppHeader = () => {
       <button
         type="button"
         onClick={toggleMobileNav}
-        aria-label="Открыть меню навигации"
+        aria-label={t('header.openMenu', 'Открыть меню навигации')}
         className="md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center rounded-md text-[#8b949e] hover:text-[#c9d1d9] transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
       >
         <Menu size={22} />
@@ -34,7 +34,7 @@ export const AppHeader = () => {
           />
           <input
             type="text"
-            placeholder="Search..."
+            placeholder={t('header.search', 'Поиск...')}
             className="w-full h-9 pl-8 pr-3 rounded-full text-[16px] md:text-sm outline-none transition-all focus:ring-2 focus:ring-[#2ea043] bg-[#010409] border border-[#30363d] text-[#c9d1d9] placeholder-[#8b949e]"
           />
         </div>
@@ -46,7 +46,7 @@ export const AppHeader = () => {
           type="button"
           onClick={toggleLanguage}
           className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full transition-colors hover:bg-white/5 cursor-pointer focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none text-[#8b949e] hover:text-[#c9d1d9] mr-0.5"
-          aria-label="Toggle Language"
+          aria-label={t('header.toggleLanguage', 'Toggle Language')}
           title={i18n.language?.startsWith('ru') ? 'Switch to English' : 'Переключить на Русский'}
         >
           <Globe size={18} />

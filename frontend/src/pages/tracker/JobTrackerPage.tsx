@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useJobApplications, useAddJobApplication, useDeleteJobApplication, useUpdateJobApplication, useGenerateCoverLetter, useScrapeJob, useMatchJob } from '../../shared/api/hooks/useJobTracker';
 import { KanbanBoard } from '../../features/job-tracker/ui/KanbanBoard';
 import type { ApplicationStatus, JobApplicationDto, CreateJobApplicationRequest } from '../../entities/job-tracker/model/types';
@@ -16,6 +17,7 @@ const STATUS_CONFIG: Record<ApplicationStatus, { label: string; tone: 'default' 
 };
 
 export const JobTrackerPage = () => {
+  const { t } = useTranslation();
   const { data: applications = [], isLoading } = useJobApplications();
   const deleteApp = useDeleteJobApplication();
   
@@ -42,17 +44,17 @@ export const JobTrackerPage = () => {
     return { total, active, interviews, offers };
   }, [applications]);
 
-  if (isLoading) return <div className="p-8 text-secondary">Loading CRM...</div>;
+  if (isLoading) return <div className="p-8 text-secondary">{t('tracker.loading', 'Loading CRM...')}</div>;
 
   return (
     <div className="flex flex-col h-full bg-[var(--color-bg-inset)]">
       <header className="px-4 py-4 sm:px-6 sm:py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--color-border-default)] bg-[var(--color-bg-primary)]">
         <div>
-          <h1 className="text-xl font-bold text-primary">Job Tracker CRM</h1>
-          <p className="text-sm text-secondary mt-1">Enterprise-grade pipeline management for your career.</p>
+          <h1 className="text-xl font-bold text-primary">{t('tracker.title', 'Job Tracker CRM')}</h1>
+          <p className="text-sm text-secondary mt-1">{t('tracker.subtitle', 'Enterprise-grade pipeline management for your career.')}</p>
         </div>
         <Button variant="primary" className="flex items-center justify-center gap-2 min-h-[44px] w-full sm:w-auto" onClick={() => setIsModalOpen(true)}>
-          <Plus size={16} /> New Application
+          <Plus size={16} /> {t('tracker.newApplication', 'New Application')}
         </Button>
       </header>
 
@@ -61,22 +63,22 @@ export const JobTrackerPage = () => {
         <div className="flex flex-wrap items-center gap-3 mb-6 text-sm">
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--color-border-default)] bg-[var(--color-bg-primary)] shadow-sm">
             <Briefcase size={14} className="text-secondary" />
-            <span className="text-secondary font-medium">Total</span>
+            <span className="text-secondary font-medium">{t('tracker.stats.total', 'Total')}</span>
             <span className="font-semibold px-2 py-0.5 rounded-full bg-[var(--color-bg-inset)] text-primary text-xs">{stats.total}</span>
           </div>
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--color-border-default)] bg-[var(--color-bg-primary)] shadow-sm">
             <Target size={14} className="text-[var(--color-accent)]" />
-            <span className="text-[var(--color-accent)] font-medium">Active</span>
+            <span className="text-[var(--color-accent)] font-medium">{t('tracker.stats.active', 'Active')}</span>
             <span className="font-semibold px-2 py-0.5 rounded-full bg-[var(--color-bg-inset)] text-primary text-xs">{stats.active}</span>
           </div>
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--color-border-default)] bg-[var(--color-bg-primary)] shadow-sm">
             <TrendingUp size={14} className="text-yellow-500" />
-            <span className="text-yellow-500 font-medium">Interviews</span>
+            <span className="text-yellow-500 font-medium">{t('tracker.stats.interviews', 'Interviews')}</span>
             <span className="font-semibold px-2 py-0.5 rounded-full bg-[var(--color-bg-inset)] text-primary text-xs">{stats.interviews}</span>
           </div>
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--color-border-default)] bg-[var(--color-bg-primary)] shadow-sm">
             <CheckCircle2 size={14} className="text-green-500" />
-            <span className="text-green-500 font-medium">Offers</span>
+            <span className="text-green-500 font-medium">{t('tracker.stats.offers', 'Offers')}</span>
             <span className="font-semibold px-2 py-0.5 rounded-full bg-[var(--color-bg-inset)] text-primary text-xs">{stats.offers}</span>
           </div>
         </div>
@@ -89,7 +91,7 @@ export const JobTrackerPage = () => {
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary" />
               <input 
                 type="text" 
-                placeholder="Search company or role..." 
+                placeholder={t('tracker.searchPlaceholder', 'Search company or role...')} 
                 className="w-full pl-9 pr-3 py-1.5 text-[16px] md:text-sm bg-[var(--color-bg-primary)] border border-[var(--color-border-default)] rounded-md focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] outline-none transition-shadow text-primary placeholder-muted"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
@@ -100,11 +102,11 @@ export const JobTrackerPage = () => {
                 <button 
                   onClick={() => setViewMode('kanban')} 
                   className={`px-2 py-1 text-xs rounded ${viewMode === 'kanban' ? 'bg-[var(--color-bg-secondary)] text-primary font-medium' : 'text-secondary hover:text-primary'}`}
-                >Board</button>
+                >{t('tracker.board', 'Board')}</button>
                 <button 
                   onClick={() => setViewMode('list')} 
                   className={`px-2 py-1 text-xs rounded ${viewMode === 'list' ? 'bg-[var(--color-bg-secondary)] text-primary font-medium' : 'text-secondary hover:text-primary'}`}
-                >List</button>
+                >{t('tracker.list', 'List')}</button>
               </div>
               {viewMode === 'list' && (
                 <div className="flex items-center gap-2">
@@ -114,9 +116,9 @@ export const JobTrackerPage = () => {
                     value={statusFilter}
                     onChange={e => setStatusFilter(e.target.value as ApplicationStatus | 'ALL')}
                   >
-                    <option value="ALL">All Statuses</option>
+                    <option value="ALL">{t('tracker.allStatuses', 'All Statuses')}</option>
                     {Object.entries(STATUS_CONFIG).map(([k, v]) => (
-                      <option key={k} value={k}>{v.label}</option>
+                      <option key={k} value={k}>{t(`tracker.status.${k.toLowerCase()}`, v.label)}</option>
                     ))}
                   </select>
                 </div>

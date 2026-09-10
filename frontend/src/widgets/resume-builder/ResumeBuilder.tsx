@@ -6,6 +6,7 @@ import { useUpsellStore } from '../../entities/user/model/upsellStore';
 import { toast } from 'sonner';
 import { Bot, Download, ArrowUp, ArrowDown, FileText, Files, File, Settings } from 'lucide-react';
 import { exportResumePdf } from '../../shared/lib/mobile/exportPdf';
+import { useTranslation } from 'react-i18next';
 
 const A4_WIDTH = 794;
 const A4_HEIGHT = 1123;
@@ -20,12 +21,13 @@ const TEMPLATES = [
 ];
 
 export const ResumeBuilder = () => {
+  const { t } = useTranslation();
   const { sections, selectedTemplate, isSinglePageMode, setTemplate, setSinglePageMode, toggleSection, reorderSections } = useResumeEditorStore();
   const { openWithPrompt } = useAiChatStore();
   const [mobileTab, setMobileTab] = useState<'editor' | 'preview'>('editor');
 
   const handleAiAnalysis = () => {
-    openWithPrompt("Проанализируй моё резюме: насколько оно привлекательно для работодателей? Чего не хватает?");
+    openWithPrompt(t('builder.aiPrompt', "Проанализируй моё резюме: насколько оно привлекательно для работодателей? Чего не хватает?"));
   };
 
   const handleDownload = async () => {
@@ -164,7 +166,7 @@ export const ResumeBuilder = () => {
           }`}
         >
           <Settings size={14} />
-          Настройки
+          {t('builder.mobileTabs.settings', 'Настройки')}
         </button>
         <button
           type="button"
@@ -176,7 +178,7 @@ export const ResumeBuilder = () => {
           }`}
         >
           <FileText size={14} />
-          Предпросмотр
+          {t('builder.mobileTabs.preview', 'Предпросмотр')}
           <span className="w-1.5 h-1.5 rounded-full bg-[#238636] animate-pulse"></span>
         </button>
       </div>
@@ -186,8 +188,8 @@ export const ResumeBuilder = () => {
         
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-[#30363d]">
-          <h1 className="text-lg font-semibold text-white">Resume Builder</h1>
-          <p className="text-xs text-[#8b949e] mt-1">Configure layout & appearance</p>
+          <h1 className="text-lg font-semibold text-white">{t('builder.title', 'Resume Builder')}</h1>
+          <p className="text-xs text-[#8b949e] mt-1">{t('builder.subtitle', 'Configure layout & appearance')}</p>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-6 sm:space-y-8">
@@ -195,8 +197,8 @@ export const ResumeBuilder = () => {
           {/* Layout Mode */}
           <section className="flex items-center justify-between mb-4">
             <div className="flex flex-col">
-              <h2 className="text-xs font-bold text-[#8b949e] uppercase tracking-wider mb-1">PDF Layout Mode</h2>
-              <span className="text-[10px] text-[#8b949e]">Toggle compact view</span>
+              <h2 className="text-xs font-bold text-[#8b949e] uppercase tracking-wider mb-1">{t('builder.pdfLayoutMode', 'PDF Layout Mode')}</h2>
+              <span className="text-[10px] text-[#8b949e]">{t('builder.toggleCompact', 'Toggle compact view')}</span>
             </div>
             <button
               onClick={() => setSinglePageMode(!isSinglePageMode)}
@@ -223,14 +225,16 @@ export const ResumeBuilder = () => {
 
           {/* Templates Section */}
           <section>
-            <h2 className="text-xs font-bold text-[#8b949e] uppercase tracking-wider mb-4">Templates</h2>
+            <h2 className="text-xs font-bold text-[#8b949e] uppercase tracking-wider mb-4">{t('builder.templatesHeading', 'Templates')}</h2>
             <div className="flex flex-col gap-2">
-              {TEMPLATES.map((t) => {
-                const isActive = selectedTemplate === t.id;
+              {TEMPLATES.map((tmpl) => {
+                const isActive = selectedTemplate === tmpl.id;
+                const tmplName = t(`builder.templateNames.${tmpl.id}`, tmpl.name);
+                const tmplDesc = t(`builder.templateNames.${tmpl.id}Desc`, tmpl.desc);
                 return (
                   <button
-                    key={t.id}
-                    onClick={() => setTemplate(t.id)}
+                    key={tmpl.id}
+                    onClick={() => setTemplate(tmpl.id)}
                     className={`w-full flex items-center justify-between p-3 rounded-md border text-left transition-all duration-200 ${
                       isActive 
                         ? 'bg-[#161b22] border-[#238636]' 
@@ -240,13 +244,13 @@ export const ResumeBuilder = () => {
                     <div>
                       <div className="flex items-center gap-2">
                         <span className={`text-sm font-medium ${isActive ? 'text-white' : 'text-[#c9d1d9]'}`}>
-                          {t.name}
+                          {tmplName}
                         </span>
                       </div>
-                      <div className="text-xs text-[#8b949e] mt-0.5">{t.desc}</div>
+                      <div className="text-xs text-[#8b949e] mt-0.5">{tmplDesc}</div>
                     </div>
                     {isActive && (
-                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: t.accent }}></div>
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: tmpl.accent }}></div>
                     )}
                   </button>
                 );
@@ -254,48 +258,49 @@ export const ResumeBuilder = () => {
             </div>
           </section>
 
-
-
           {/* Sections Management */}
           <section>
-            <h2 className="text-xs font-bold text-[#8b949e] uppercase tracking-wider mb-4">Sections Content</h2>
+            <h2 className="text-xs font-bold text-[#8b949e] uppercase tracking-wider mb-4">{t('builder.sectionsManagement', 'Sections Content')}</h2>
             <div className="space-y-2">
-              {sections.map((section, index) => (
-                <div
-                  key={section.id}
-                  className="flex items-center justify-between p-2.5 rounded-md bg-[#161b22] border border-[#30363d] group"
-                >
-                  <label className="flex items-center gap-3 text-sm cursor-pointer select-none text-[#c9d1d9] group-hover:text-white transition-colors">
-                    <input 
-                      type="checkbox" 
-                      checked={section.visible} 
-                      onChange={() => toggleSection(section.id)} 
-                      className="w-4 h-4 rounded border-[#30363d] bg-[#0d1117] checked:bg-[#238636] checked:border-[#238636] focus:ring-0 focus:ring-offset-0 cursor-pointer appearance-none relative
-                        before:content-[''] before:absolute before:inset-0 before:bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwb2x5bGluZSBwb2ludHM9IjIwIDYgOSAxNyA0IDEyIi8+PC9zdmc+')] 
-                        before:bg-center before:bg-no-repeat before:scale-0 checked:before:scale-[0.6] before:transition-transform"
-                    />
-                    {section.label}
-                  </label>
-                  <div className="flex gap-1 opacity-100 sm:opacity-40 sm:group-hover:opacity-100 transition-opacity">
-                    <button 
-                      onClick={() => moveUp(index)} 
-                      disabled={index === 0} 
-                      aria-label={`Move ${section.label} up`}
-                      className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded hover:bg-[#30363d] text-[#8b949e] hover:text-white disabled:opacity-30 disabled:hover:bg-transparent"
-                    >
-                      <ArrowUp size={16} />
-                    </button>
-                    <button 
-                      onClick={() => moveDown(index)} 
-                      disabled={index === sections.length - 1} 
-                      aria-label={`Move ${section.label} down`}
-                      className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded hover:bg-[#30363d] text-[#8b949e] hover:text-white disabled:opacity-30 disabled:hover:bg-transparent"
-                    >
-                      <ArrowDown size={16} />
-                    </button>
+              {sections.map((section, index) => {
+                const sectionLabel = t(`builder.sectionNames.${section.id}`, section.label);
+                return (
+                  <div
+                    key={section.id}
+                    className="flex items-center justify-between p-2.5 rounded-md bg-[#161b22] border border-[#30363d] group"
+                  >
+                    <label className="flex items-center gap-3 text-sm cursor-pointer select-none text-[#c9d1d9] group-hover:text-white transition-colors">
+                      <input 
+                        type="checkbox" 
+                        checked={section.visible} 
+                        onChange={() => toggleSection(section.id)} 
+                        className="w-4 h-4 rounded border-[#30363d] bg-[#0d1117] checked:bg-[#238636] checked:border-[#238636] focus:ring-0 focus:ring-offset-0 cursor-pointer appearance-none relative
+                          before:content-[''] before:absolute before:inset-0 before:bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwb2x5bGluZSBwb2ludHM9IjIwIDYgOSAxNyA0IDEyIi8+PC9zdmc+')] 
+                          before:bg-center before:bg-no-repeat before:scale-0 checked:before:scale-[0.6] before:transition-transform"
+                      />
+                      {sectionLabel}
+                    </label>
+                    <div className="flex gap-1 opacity-100 sm:opacity-40 sm:group-hover:opacity-100 transition-opacity">
+                      <button 
+                        onClick={() => moveUp(index)} 
+                        disabled={index === 0} 
+                        aria-label={`Move ${sectionLabel} up`}
+                        className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded hover:bg-[#30363d] text-[#8b949e] hover:text-white disabled:opacity-30 disabled:hover:bg-transparent"
+                      >
+                        <ArrowUp size={16} />
+                      </button>
+                      <button 
+                        onClick={() => moveDown(index)} 
+                        disabled={index === sections.length - 1} 
+                        aria-label={`Move ${sectionLabel} down`}
+                        className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded hover:bg-[#30363d] text-[#8b949e] hover:text-white disabled:opacity-30 disabled:hover:bg-transparent"
+                      >
+                        <ArrowDown size={16} />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </section>
         </div>
@@ -307,7 +312,7 @@ export const ResumeBuilder = () => {
             className="w-full min-h-[44px] flex items-center justify-center gap-2 bg-[#161b22] hover:bg-[#30363d] border border-[#30363d] text-[#c9d1d9] hover:text-white py-2.5 px-4 rounded-md text-sm font-medium transition-colors"
           >
             <Bot size={16} />
-            AI Analysis
+            {t('builder.aiReview', 'AI Analysis')}
           </button>
           
           <div className="flex gap-2">
@@ -316,14 +321,14 @@ export const ResumeBuilder = () => {
               className="flex-1 min-h-[44px] flex items-center justify-center gap-2 bg-[#238636] hover:bg-[#2ea043] border border-[rgba(240,246,252,0.1)] text-white py-2.5 px-3 rounded-md text-sm font-medium transition-colors shadow-sm"
             >
               <Download size={14} />
-              PDF
+              {t('builder.downloadPdf', 'PDF')}
             </button>
             <button 
               onClick={handleDownloadHtml}
               className="flex-1 min-h-[44px] flex items-center justify-center gap-2 bg-[#1f6feb] hover:bg-[#388bfd] border border-[rgba(240,246,252,0.1)] text-white py-2.5 px-3 rounded-md text-sm font-medium transition-colors shadow-sm"
             >
               <FileText size={14} />
-              HTML
+              {t('builder.downloadHtml', 'HTML')}
             </button>
           </div>
 
@@ -332,7 +337,7 @@ export const ResumeBuilder = () => {
             className="w-full min-h-[44px] flex items-center justify-center gap-2 bg-transparent hover:underline text-[#8b949e] hover:text-[#58a6ff] py-2 px-4 rounded-md text-xs font-medium transition-colors"
           >
             <FileText size={14} />
-            Download Markdown (README)
+            {t('builder.downloadMarkdown', 'Download Markdown (README)')}
           </button>
         </div>
       </div>
@@ -342,12 +347,12 @@ export const ResumeBuilder = () => {
         {/* Top bar for preview */}
         <div className="flex items-center justify-between mb-3 sm:mb-6">
           <div className="flex items-center gap-2">
-            <h2 className="text-sm sm:text-lg font-medium text-white">Live PDF Preview</h2>
+            <h2 className="text-sm sm:text-lg font-medium text-white">{t('builder.livePreview', 'Live PDF Preview')}</h2>
             <button
               onClick={() => setMobileTab('editor')}
               className="lg:hidden text-xs text-[#58a6ff] hover:underline cursor-pointer"
             >
-              Настройки
+              {t('builder.mobileTabs.settings', 'Настройки')}
             </button>
           </div>
           <div className="flex items-center gap-2">
@@ -356,7 +361,7 @@ export const ResumeBuilder = () => {
               className="lg:hidden flex items-center gap-1 bg-[#238636] hover:bg-[#2ea043] text-white py-1 px-2.5 rounded-md text-xs font-semibold shadow-sm cursor-pointer"
             >
               <Download size={13} />
-              Экспорт
+              {t('builder.export', 'Экспорт')}
             </button>
             <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#161b22] border border-[#30363d] text-[11px] sm:text-xs text-[#8b949e]">
               <span className="w-1.5 h-1.5 rounded-full bg-[#238636] animate-pulse"></span>
@@ -380,18 +385,18 @@ export const ResumeBuilder = () => {
             {previewLoading ? (
               <div className="flex-1 flex items-center justify-center flex-col gap-4 text-[#8b949e] bg-[#0d1117]">
                 <div className="w-8 h-8 border-2 border-[#30363d] border-t-[#238636] rounded-full animate-spin"></div>
-                <div className="text-sm">Rendering HTML Template...</div>
+                <div className="text-sm">{t('builder.previewLoading', 'Rendering HTML Template...')}</div>
               </div>
             ) : (htmlDoc || htmlUrl) ? (
               <iframe 
-                srcDoc={htmlDoc || undefined}
+                srcDoc={htmlDoc || undefined} 
                 src={htmlUrl || undefined} 
                 className="w-full h-full border-0 bg-white" 
                 title="HTML Preview" 
               />
             ) : (
               <div className="flex-1 flex items-center justify-center text-[#8b949e] text-sm bg-[#0d1117]">
-                Failed to load preview
+                {t('builder.failedPreview', 'Failed to load preview')}
               </div>
             )}
           </div>

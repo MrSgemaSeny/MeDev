@@ -34,9 +34,15 @@
    - Устранена белая шапка и белый выпадающий список: в `:root` (`index.css`) зафиксированы тёмные переменные GitHub Dark Mode, исключающие дефолты светлой темы.
    - Из `AppHeader.tsx`, `UserProfileDropdown.tsx` и `SettingsPage.tsx` удалены половинчатые переключатели тем, ломавшие контраст интерфейса. Тёмная тема принудительно зафиксирована.
 
+5. **Full Production i18n Localization & Reactivity (100% COMPLETE)**:
+   - В `i18n.ts` исправлена конфигурация: `fallbackLng: 'ru'`, `lng: initialLng` с чтением `i18nextLng` из `localStorage` и событием `languageChanged`.
+   - Полные словари `ru.json` и `en.json` охватывают навигацию (`nav.*`), конструктор резюме (`builder.*`, секции, шаблоны, превью), хедер (`header.*`), трекер вакансий (`tracker.*`), дашборд и настройки.
+   - Хук `useTranslation()` и `t(...)` интегрированы в `AppSidebar.tsx`, `MobileNavDrawer.tsx`, `ResumeBuilder.tsx`, `AppHeader.tsx`, `UserProfileDropdown.tsx`, `JobTrackerPage.tsx`, `KanbanBoard.tsx`.
+   - Добавлен автоматический тест `i18n.test.ts`, верифицирующий 100% паритет ключей и полноту локализации.
+
 ## Verification
 - `backend`: 266/266 тестов успешно пройдены (`./gradlew test`).
-- `frontend`: 41/41 тест пройден (`npm test`).
+- `frontend`: 46/46 тестов пройдены (`npm test`).
 - `frontend`: сборка Vite прошла без ошибок (`npm run build`).
 - `landing`: сборка Next.js 15 прошла без ошибок (`npm run build`).
 

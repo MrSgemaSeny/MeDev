@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { DndContext, DragOverlay, closestCorners, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import type { DragStartEvent, DragEndEvent } from '@dnd-kit/core';
 import { useDroppable, useDraggable } from '@dnd-kit/core';
@@ -83,6 +84,7 @@ interface KanbanColumnProps {
 }
 
 const KanbanColumn: React.FC<KanbanColumnProps> = ({ status, applications, onCoverLetter, onDelete }) => {
+  const { t } = useTranslation();
   const { setNodeRef, isOver } = useDroppable({ id: status });
   const config = STATUS_CONFIG[status];
   const Icon = config.icon;
@@ -92,7 +94,7 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ status, applications, onCov
       <div className="p-3 border-b border-[var(--color-border-default)] flex items-center justify-between bg-[var(--color-bg-secondary)]">
         <div className="flex items-center gap-2 text-primary font-semibold text-sm">
           <Icon size={16} className={config.tone === 'accent' ? 'text-[var(--color-accent)]' : config.tone === 'danger' ? 'text-danger' : 'text-secondary'} />
-          {config.label}
+          {t(`tracker.status.${status.toLowerCase()}`, config.label)}
         </div>
         <Badge tone="default" className="text-xs px-2">{applications.length}</Badge>
       </div>

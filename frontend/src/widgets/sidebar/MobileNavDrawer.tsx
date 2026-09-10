@@ -18,28 +18,30 @@ import {
   Settings,
   Shield,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useMobileNavStore } from './model/mobileNavStore';
 import { useAuthStore } from '../../entities/user/model/store';
 
 const MAIN_NAV = [
-  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/profile/edit', label: 'Profile', icon: User },
-  { to: '/import', label: 'Import Data', icon: UploadCloud },
-  { to: '/resume', label: 'Resume', icon: FileText },
-  { to: '/tracker', label: 'Job Tracker', icon: ListTodo },
+  { to: '/dashboard', labelKey: 'nav.dashboard', defaultLabel: 'Dashboard', icon: LayoutDashboard },
+  { to: '/profile/edit', labelKey: 'nav.profile', defaultLabel: 'Profile', icon: User },
+  { to: '/import', labelKey: 'nav.importData', defaultLabel: 'Import Data', icon: UploadCloud },
+  { to: '/resume', labelKey: 'nav.resume', defaultLabel: 'Resume', icon: FileText },
+  { to: '/tracker', labelKey: 'nav.tracker', defaultLabel: 'Job Tracker', icon: ListTodo },
 ];
 
 const SECTIONS_NAV = [
-  { to: '/profile/edit#about', label: 'About', icon: Info },
-  { to: '/profile/edit#experience', label: 'Experience', icon: Briefcase },
-  { to: '/profile/edit#education', label: 'Education', icon: GraduationCap },
-  { to: '/profile/edit#skills', label: 'Skills', icon: Code },
-  { to: '/profile/edit#languages', label: 'Languages', icon: Globe },
-  { to: '/profile/edit#projects', label: 'Projects', icon: Box },
-  { to: '/profile/edit#github', label: 'GitHub', icon: GitBranch },
+  { to: '/profile/edit#about', labelKey: 'nav.about', defaultLabel: 'About', icon: Info },
+  { to: '/profile/edit#experience', labelKey: 'nav.experience', defaultLabel: 'Experience', icon: Briefcase },
+  { to: '/profile/edit#education', labelKey: 'nav.education', defaultLabel: 'Education', icon: GraduationCap },
+  { to: '/profile/edit#skills', labelKey: 'nav.skills', defaultLabel: 'Skills', icon: Code },
+  { to: '/profile/edit#languages', labelKey: 'nav.languages', defaultLabel: 'Languages', icon: Globe },
+  { to: '/profile/edit#projects', labelKey: 'nav.projects', defaultLabel: 'Projects', icon: Box },
+  { to: '/profile/edit#github', labelKey: 'nav.github', defaultLabel: 'GitHub', icon: GitBranch },
 ];
 
 export const MobileNavDrawer = () => {
+  const { t } = useTranslation();
   const { isOpen, close } = useMobileNavStore();
   const location = useLocation();
   const role = (useAuthStore as any)((s: any) => s.role);
@@ -68,7 +70,7 @@ export const MobileNavDrawer = () => {
       className="fixed inset-0 z-50 md:hidden"
       role="dialog"
       aria-modal="true"
-      aria-label="Мобильная навигация"
+      aria-label={t('nav.mobileNavAria', 'Мобильная навигация')}
     >
       {/* Backdrop */}
       <div
@@ -98,7 +100,7 @@ export const MobileNavDrawer = () => {
             type="button"
             onClick={close}
             className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-md text-secondary hover:text-primary transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
-            aria-label="Закрыть меню"
+            aria-label={t('nav.closeMenu', 'Закрыть меню')}
           >
             <X size={20} aria-hidden="true" />
           </button>
@@ -109,7 +111,7 @@ export const MobileNavDrawer = () => {
           {/* Main Links */}
           <div>
             <div className="text-[11px] text-muted px-3 pt-1 pb-1 tracking-widest uppercase font-medium">
-              Main
+              {t('nav.main', 'Main')}
             </div>
             {MAIN_NAV.map((item) => (
               <NavLink
@@ -125,7 +127,7 @@ export const MobileNavDrawer = () => {
                 }
               >
                 <item.icon size={18} />
-                <span>{item.label}</span>
+                <span>{t(item.labelKey, item.defaultLabel)}</span>
               </NavLink>
             ))}
           </div>
@@ -133,7 +135,7 @@ export const MobileNavDrawer = () => {
           {/* Profile Sections */}
           <div className="mt-2">
             <div className="text-[11px] text-muted px-3 pt-2 pb-1 tracking-widest uppercase font-medium">
-              Sections
+              {t('nav.sections', 'Sections')}
             </div>
             {SECTIONS_NAV.map((item) => {
               const currentHash = location.hash.replace('#', '') || 'about';
@@ -151,7 +153,7 @@ export const MobileNavDrawer = () => {
                   }`}
                 >
                   <item.icon size={18} />
-                  <span>{item.label}</span>
+                  <span>{t(item.labelKey, item.defaultLabel)}</span>
                 </NavLink>
               );
             })}
@@ -171,7 +173,7 @@ export const MobileNavDrawer = () => {
               }
             >
               <CreditCard size={18} />
-              <span>Billing</span>
+              <span>{t('nav.billing', 'Billing')}</span>
             </NavLink>
 
             <NavLink
@@ -186,7 +188,7 @@ export const MobileNavDrawer = () => {
               }
             >
               <Settings size={18} />
-              <span>Settings</span>
+              <span>{t('nav.settings', 'Settings')}</span>
             </NavLink>
 
             {role === 'ADMIN' && (
@@ -202,7 +204,7 @@ export const MobileNavDrawer = () => {
                 }
               >
                 <Shield size={18} />
-                <span>Admin Dashboard</span>
+                <span>{t('nav.adminPanel', 'Admin Panel')}</span>
               </NavLink>
             )}
           </div>

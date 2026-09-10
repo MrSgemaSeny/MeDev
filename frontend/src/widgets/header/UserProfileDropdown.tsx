@@ -14,7 +14,7 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
   const username = useAuthStore((s) => s.username);
   const role = (useAuthStore as any)((s: any) => s.role);
   const logout = useAuthStore((s) => s.logout);
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { data: profile } = useProfile();
   
   const avatarUrl = profile?.githubUsername ? `https://github.com/${profile.githubUsername}.png` : `https://github.com/${username}.png`;
@@ -61,7 +61,7 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
       {/* Триггер */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        aria-label="Профиль пользователя и настройки"
+        aria-label={t('header.profileAria', 'Профиль пользователя и настройки')}
         aria-expanded={isOpen}
         aria-haspopup="true"
         className={
@@ -113,7 +113,7 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
             <button className="w-full px-4 py-2.5 flex items-center justify-between hover:bg-white/5 transition-colors text-left cursor-pointer">
               <div className="flex items-center gap-3 text-[#8b949e] hover:text-[#c9d1d9]">
                 <Bell size={18} />
-                <span className="text-sm font-medium">Уведомления</span>
+                <span className="text-sm font-medium">{t('header.notifications', 'Уведомления')}</span>
               </div>
             </button>
 
@@ -124,7 +124,7 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
               >
                 <div className="flex items-center gap-3 text-[#2ea043]">
                   <Shield size={18} />
-                  <span className="text-sm font-medium">Админ-панель</span>
+                  <span className="text-sm font-medium">{t('header.adminPanel', 'Админ-панель')}</span>
                 </div>
               </button>
             )}
@@ -134,7 +134,7 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
             <div className="px-4 py-2.5 flex items-center justify-between">
               <div className="flex items-center gap-3 text-[#8b949e]">
                 <Globe size={18} />
-                <span className="text-sm font-medium">Язык</span>
+                <span className="text-sm font-medium">{t('header.language', 'Язык')}</span>
               </div>
               <div className="flex bg-[#0d1117] border border-[#30363d] rounded-full p-0.5 text-xs font-bold">
                 <button
@@ -164,7 +164,7 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
 
             <button className="w-full px-4 py-2.5 flex items-center gap-3 text-[#8b949e] hover:text-[#c9d1d9] hover:bg-white/5 transition-colors text-left cursor-pointer">
               <Mail size={18} />
-              <span className="text-sm font-medium">Поддержка</span>
+              <span className="text-sm font-medium">{t('header.support', 'Поддержка')}</span>
             </button>
 
             <button
@@ -175,7 +175,7 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
               className="w-full px-4 py-2.5 flex items-center gap-3 text-[#f85149] hover:bg-[#f85149]/10 transition-colors text-left mt-1 cursor-pointer"
             >
               <LogOut size={18} />
-              <span className="text-sm font-medium">Выйти</span>
+              <span className="text-sm font-medium">{t('header.logout', 'Выйти')}</span>
             </button>
           </div>
         </div>
