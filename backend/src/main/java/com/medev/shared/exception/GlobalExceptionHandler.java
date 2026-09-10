@@ -88,11 +88,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorPayload(HttpStatus.BAD_REQUEST, e.getMessage()));
     }
 
-    @ExceptionHandler(org.springframework.dao.OptimisticLockingFailureException.class)
-    public ResponseEntity<Map<String, Object>> handleOptimisticLocking(org.springframework.dao.OptimisticLockingFailureException e) {
-        log.warn("Optimistic locking failure: {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorPayload(HttpStatus.CONFLICT, "Профиль обновляется другим процессом. Пожалуйста, обновите страницу и попробуйте снова."));
-    }
 
     @ExceptionHandler(com.medev.modules.ai.model.LlmException.class)
     public ResponseEntity<Map<String, Object>> handleLlmException(com.medev.modules.ai.model.LlmException e) {

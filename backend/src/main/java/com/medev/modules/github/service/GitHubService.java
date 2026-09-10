@@ -233,9 +233,8 @@ public class GitHubService {
             );
         }
         
-        if (github.getOrganizations() != null && !github.getOrganizations().isEmpty()) {
-            profileService.importOrganizationsAsExperience(userId, github.getOrganizations());
-        }
+        // Do not fabricate job experience from GitHub organization memberships automatically.
+        // GitHub organizations are open-source affiliations/teams, not verified employment.
         
         if (github.getRepos() != null) {
             java.util.Map<String, java.time.LocalDate> oldestLangDate = new java.util.HashMap<>();

@@ -152,13 +152,17 @@ public class AuthController {
     }
 
     private String getClientIp(HttpServletRequest request) {
+        // With server.forward-headers-strategy: framework, request.getRemoteAddr() is 
+        // resolved by Spring's ForwardedHeaderFilter from trusted upstream headers.
+        String ip = request.getRemoteAddr();
+        if (ip != null && !ip.isBlank() && !ip.equals("127.0.0.1") && !ip.equals("0:0:0:0:0:0:0:1")) {
+            return ip;
+        }
+        // Fallback: use the rightmost IP in X-Forwarded-For (appended by closest proxy, immune to client spoofing)
         String xff = request.getHeader("X-Forwarded-For");
         if (xff != null && !xff.isBlank()) {
-            return xff.split(",")[0].trim();
-        }
-        String ip = request.getRemoteAddr();
-        if ("127.0.0.1".equals(ip) || "0:0:0:0:0:0:0:1".equals(ip)) {
-            org.slf4j.LoggerFactory.getLogger(AuthController.class).debug("[AuthRateLimiter] Localhost IP detected for client");
+            String[] parts = xff.split(",");
+            return parts[parts.length - 1].trim();
         }
         return ip != null ? ip : "127.0.0.1";
     }

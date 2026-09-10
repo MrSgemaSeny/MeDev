@@ -107,7 +107,7 @@ public class GitHubServiceTest {
         verify(profileService).addSkillIfNotExists(userId, "Spring Boot", "Technology");
         verify(profileService).addSkillIfNotExists(userId, "React", "Technology");
         verify(profileService).addSkillIfNotExists(userId, "Docker", "Technology");
-        verify(profileService).importOrganizationsAsExperience(userId, List.of("acme-corp"));
+        verify(profileService, never()).importOrganizationsAsExperience(any(), any());
         verify(profileService).importLanguageExperience(userId, "Java", LocalDate.of(2021, 6, 1));
         verify(profileService).importLanguageExperience(userId, "TypeScript", LocalDate.of(2022, 1, 15));
     }

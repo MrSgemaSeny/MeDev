@@ -16,8 +16,8 @@
 
 ## Latest Milestones & Features (2026-09-10)
 1. **5-Axis Security and Architectural Audit & Remediation (100% COMPLETE)**:
-   - **Backend Security & Hardening**: Fixed OAuth2 Java Serialization RCE (using JSON + AES). Strengthened JWT claims. Removed wildcard header `*` from CORS `allowedHeaders`. Sanitized `authenticationEntryPoint` JSON output against injection. Centralized origin whitelist in `SecurityOrigins`. Added `X-Forwarded-For` proxy IP extraction in `AuthController`.
-   - **Backend Architecture & Stability**: Eliminated N+1 queries using `Set` collections and `@EntityGraph`. Fixed Redis rate limiter crashes by adding `StringRedisTemplate`. Removed DB mutation side-effects from `AiRateLimiter` hot path. Updated GitHub org import to label roles as `Open Source Contributor (Draft)`.
+   - **Backend Security & Hardening**: Fixed OAuth2 Java Serialization RCE (using JSON + AES). Strengthened JWT claims. Removed wildcard header `*` from CORS `allowedHeaders`. Sanitized `authenticationEntryPoint` JSON output against injection. Centralized origin whitelist in `SecurityOrigins`. Purged reset token from application logs. Hardened `getClientIp` against spoofed `X-Forwarded-For` using rightmost hop.
+   - **Backend Architecture & Stability**: Eliminated N+1 queries using `Set` collections and `@EntityGraph`. Fixed Redis rate limiter crashes by adding `StringRedisTemplate`. Removed DB mutation side-effects from `AiRateLimiter` hot path. Enabled `@EnableScheduling` for hourly subscription expiration job. Removed automatic experience generation from GitHub organizations. Removed dead `OptimisticLockingFailureException` handler. Parameterized owner username in `AdminService`.
    - **Container & Runtime Optimization**: Added `-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0` to Dockerfile entrypoint.
    - **Frontend Architecture (FSD)**: Migrated `shared/api/hooks` to `entities/profile` and `entities/job-tracker`. Replaced Axios with native fetch (`ADR-005a`).
    - **Frontend Performance**: Implemented `LocalErrorBoundary` and wrapped `KanbanBoard` elements in `React.memo` to eliminate drag-and-drop re-renders.

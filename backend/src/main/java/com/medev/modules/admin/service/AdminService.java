@@ -64,25 +64,35 @@ public class AdminService {
         auditService.logAction(userId, "ADMIN_USER_DELETE", String.valueOf(userId), "Admin deleted user: " + user.getUsername(), null);
     }
 
+    @org.springframework.beans.factory.annotation.Value("${app.owner-username:mrsgemaseny}")
+    private String ownerUsername;
+
     @Transactional
     public Map<String, Object> cleanupTestData() {
+        String safeOwner = (ownerUsername != null && !ownerUsername.isBlank()) ? ownerUsername.trim() : "mrsgemaseny";
         String deleteAuditLogsSql = "DELETE FROM audit_logs WHERE user_id IN (" +
-                "SELECT id FROM users WHERE (username != 'mrsgemaseny' AND (email IS NULL OR LOWER(email) NOT LIKE '%mrsgemaseny%')) " +
+                "SELECT id FROM users WHERE (username != :owner AND (email IS NULL OR LOWER(email) NOT LIKE :ownerPattern)) " +
                 "AND (username LIKE 'art_%' OR username LIKE 'usr_%' OR username LIKE 'auth_%' " +
                 "OR username LIKE 'profile_%' OR username LIKE 'resume_%' OR username LIKE 'portfolio_%' " +
                 "OR username LIKE 'tracker_%' OR username LIKE 'ai_%' OR username LIKE 'github_%' " +
                 "OR username LIKE 'admin_%' OR username LIKE 'e2e_%' OR email LIKE '%artillery%' " +
                 "OR email LIKE '%medev-test.local%' OR email LIKE '%testmail.com%' OR email LIKE '%@github.user.medev.com')) " +
                 "OR details LIKE '%artillery%' OR details LIKE '%e2e_%' OR details LIKE '%testmail%' OR details LIKE '%medev-test.local%'";
-        int deletedLogs = entityManager.createNativeQuery(deleteAuditLogsSql).executeUpdate();
+        int deletedLogs = entityManager.createNativeQuery(deleteAuditLogsSql)
+                .setParameter("owner", safeOwner)
+                .setParameter("ownerPattern", "%" + safeOwner.toLowerCase() + "%")
+                .executeUpdate();
 
-        String deleteUsersSql = "DELETE FROM users WHERE (username != 'mrsgemaseny' AND (email IS NULL OR LOWER(email) NOT LIKE '%mrsgemaseny%')) " +
+        String deleteUsersSql = "DELETE FROM users WHERE (username != :owner AND (email IS NULL OR LOWER(email) NOT LIKE :ownerPattern)) " +
                 "AND (username LIKE 'art_%' OR username LIKE 'usr_%' OR username LIKE 'auth_%' " +
                 "OR username LIKE 'profile_%' OR username LIKE 'resume_%' OR username LIKE 'portfolio_%' " +
                 "OR username LIKE 'tracker_%' OR username LIKE 'ai_%' OR username LIKE 'github_%' " +
                 "OR username LIKE 'admin_%' OR username LIKE 'e2e_%' OR email LIKE '%artillery%' " +
                 "OR email LIKE '%medev-test.local%' OR email LIKE '%testmail.com%' OR email LIKE '%@github.user.medev.com')";
-        int deletedUsers = entityManager.createNativeQuery(deleteUsersSql).executeUpdate();
+        int deletedUsers = entityManager.createNativeQuery(deleteUsersSql)
+                .setParameter("owner", safeOwner)
+                .setParameter("ownerPattern", "%" + safeOwner.toLowerCase() + "%")
+                .executeUpdate();
 
         return Map.of("deletedUsers", deletedUsers, "deletedLogs", deletedLogs);
     }
