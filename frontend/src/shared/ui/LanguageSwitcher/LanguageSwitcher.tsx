@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 interface LanguageSwitcherProps {
   className?: string;
   variant?: 'pill' | 'segmented';
+  inactiveClassName?: string;
 }
 
 const LANGUAGES = [
@@ -10,7 +11,7 @@ const LANGUAGES = [
   { code: 'en', label: 'EN', fullLabel: 'English' },
 ] as const;
 
-export const LanguageSwitcher = ({ className = '', variant = 'pill' }: LanguageSwitcherProps) => {
+export const LanguageSwitcher = ({ className = '', variant = 'pill', inactiveClassName }: LanguageSwitcherProps) => {
   const { i18n } = useTranslation();
 
   const handleLanguageChange = (code: string) => {
@@ -76,7 +77,7 @@ export const LanguageSwitcher = ({ className = '', variant = 'pill' }: LanguageS
             className={`text-xs font-bold px-2.5 py-1 sm:px-3 sm:py-1 rounded-full transition-all cursor-pointer ${
               isActive
                 ? 'bg-[var(--color-accent)] text-white shadow-sm'
-                : 'text-secondary hover:text-primary hover:bg-black/5 dark:hover:bg-white/5'
+                : (inactiveClassName || 'text-secondary hover:text-primary hover:bg-black/5 dark:hover:bg-white/5')
             }`}
           >
             {label}
