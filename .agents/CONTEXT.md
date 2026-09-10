@@ -49,6 +49,11 @@
    - **ProfileRepository**: Убран 5-коллекционный `@EntityGraph`, заменен на чистый JPQL `@Query("SELECT p FROM Profile p WHERE p.user.id = :userId")`. Предотвращен взрыв Cartesian product и дублирование результатов.
    - **Hibernate Batch Fetching**: В `application.yml` добавлен `default_batch_fetch_size: 50` для защиты от N+1 при ленивой загрузке.
 
+9. **Desktop Sidebar Redesign, Universal Hamburger Menu & Desktop Responsiveness (100% COMPLETE)**:
+   - **Universal Hamburger Button**: Кнопка меню в `AppHeader` теперь доступна на всех устройствах (десктоп, планшет, мобильный). На мобильных открывает `MobileNavDrawer`, на десктопе сворачивает/разворачивает сайдбар.
+   - **Desktop Sidebar Overhaul**: Новый брендовый хедер `>_ MeDev`, компактный вид (68px) с tooltips и развернутый (260px) с изумрудным активным маркером, персистентное сохранение состояния в `localStorage`.
+   - **Desktop Responsiveness & Zoom Controls**: Адаптивная ширина панели в конструкторе резюме (`w-full lg:w-[300px] xl:w-[340px]`), интерактивный тулбар масштабирования превью (`Zoom Out`, `Fit %`, `Zoom In`) с авто-подгонкой при изменении размера экрана.
+
 ## Verification
 - `backend`: 272/272 тестов успешно пройдены (`./gradlew test`).
 - `frontend`: 53/53 тестов пройдены (`npm test`).

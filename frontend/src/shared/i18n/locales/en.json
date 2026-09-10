@@ -18,7 +18,10 @@
     "github": "GitHub",
     "adminPanel": "Admin Panel",
     "mobileNavAria": "Mobile Navigation",
-    "closeMenu": "Close menu"
+    "closeMenu": "Close menu",
+    "expandSidebar": "Expand sidebar",
+    "collapseSidebar": "Collapse sidebar",
+    "workspace": "Developer Hub"
   },
   "builder": {
     "title": "Resume Builder",
@@ -77,11 +80,15 @@
     "downloadMarkdown": "Download Markdown (README)",
     "previewLoading": "Rendering HTML Template...",
     "template": "Template",
-    "updatePreview": "Update Preview"
+    "updatePreview": "Update Preview",
+    "zoomIn": "Zoom In",
+    "zoomOut": "Zoom Out",
+    "zoomFit": "Fit to Screen"
   },
   "header": {
     "search": "Search...",
     "openMenu": "Open navigation menu",
+    "toggleSidebar": "Toggle sidebar",
     "toggleLanguage": "Toggle language",
     "notifications": "Notifications",
     "adminPanel": "Admin Panel",

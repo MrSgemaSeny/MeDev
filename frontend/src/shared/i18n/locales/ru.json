@@ -18,7 +18,10 @@
     "github": "GitHub",
     "adminPanel": "Админ-панель",
     "mobileNavAria": "Мобильная навигация",
-    "closeMenu": "Закрыть меню"
+    "closeMenu": "Закрыть меню",
+    "expandSidebar": "Развернуть меню",
+    "collapseSidebar": "Свернуть панель",
+    "workspace": "Developer Hub"
   },
   "builder": {
     "title": "Конструктор резюме",
@@ -77,11 +80,15 @@
     "downloadMarkdown": "Скачать Markdown (README)",
     "previewLoading": "Формирование превью...",
     "template": "Шаблон",
-    "updatePreview": "Обновить"
+    "updatePreview": "Обновить",
+    "zoomIn": "Увеличить",
+    "zoomOut": "Уменьшить",
+    "zoomFit": "По размеру экрана"
   },
   "header": {
     "search": "Поиск...",
     "openMenu": "Открыть меню навигации",
+    "toggleSidebar": "Переключить боковое меню",
     "toggleLanguage": "Переключить язык",
     "notifications": "Уведомления",
     "adminPanel": "Админ-панель",

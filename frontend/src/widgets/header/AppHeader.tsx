@@ -45,14 +45,15 @@ export const AppHeader = () => {
         borderColor: 'var(--color-border-default)',
       }}
     >
-      {/* Mobile Hamburger Button */}
+      {/* Universal Hamburger / Sidebar Toggle Button (Mobile drawer + Desktop collapse) */}
       <button
         type="button"
         onClick={toggleMobileNav}
-        aria-label={t('header.openMenu', 'Открыть меню навигации')}
-        className="md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center rounded-md text-secondary hover:text-primary transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
+        aria-label={t('header.toggleSidebar', 'Переключить боковое меню')}
+        title={t('header.toggleSidebar', 'Переключить боковое меню')}
+        className="min-w-[40px] min-h-[40px] flex items-center justify-center rounded-lg text-secondary hover:text-primary hover:surface-tertiary transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
       >
-        <Menu size={22} />
+        <Menu size={20} />
       </button>
 
       {/* Search Input (collapsed on mobile) */}

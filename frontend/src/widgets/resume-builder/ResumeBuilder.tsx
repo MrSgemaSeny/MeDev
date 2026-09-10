@@ -4,7 +4,7 @@ import { api } from '../../shared/api/api';
 import { useAiChatStore } from '../../features/ai-assistant/model/store';
 import { useUpsellStore } from '../../entities/user/model/upsellStore';
 import { toast } from 'sonner';
-import { Bot, Download, ArrowUp, ArrowDown, FileText, Files, File, Settings } from 'lucide-react';
+import { Bot, Download, ArrowUp, ArrowDown, FileText, Files, File, Settings, ZoomIn, ZoomOut } from 'lucide-react';
 import { exportResumePdf } from '../../shared/lib/mobile/exportPdf';
 import { useTranslation } from 'react-i18next';
 
@@ -90,15 +90,36 @@ const InnerResumeBuilder = () => {
 
   const previewWrapperRef = useRef<HTMLDivElement>(null);
   const [previewScale, setPreviewScale] = useState(1);
+  const [autoFit, setAutoFit] = useState(true);
+
+  const calculateFitScale = () => {
+    if (!previewWrapperRef.current) return 1;
+    const containerWidth = previewWrapperRef.current.clientWidth;
+    if (!containerWidth) return 1;
+    const availableWidth = Math.max(containerWidth - 32, 260);
+    return Math.min(1, availableWidth / A4_WIDTH);
+  };
+
+  const handleZoomIn = () => {
+    setAutoFit(false);
+    setPreviewScale((s) => Math.min(1.5, Number((s + 0.1).toFixed(2))));
+  };
+
+  const handleZoomOut = () => {
+    setAutoFit(false);
+    setPreviewScale((s) => Math.max(0.35, Number((s - 0.1).toFixed(2))));
+  };
+
+  const handleZoomFit = () => {
+    setAutoFit(true);
+    setPreviewScale(calculateFitScale());
+  };
 
   useEffect(() => {
     const updateScale = () => {
-      if (!previewWrapperRef.current) return;
-      const containerWidth = previewWrapperRef.current.clientWidth;
-      if (!containerWidth) return;
-      const availableWidth = Math.max(containerWidth - 32, 260);
-      const newScale = Math.min(1, availableWidth / A4_WIDTH);
-      setPreviewScale(newScale);
+      if (autoFit) {
+        setPreviewScale(calculateFitScale());
+      }
     };
 
     updateScale();
@@ -114,7 +135,7 @@ const InnerResumeBuilder = () => {
       if (ro) ro.disconnect();
       window.removeEventListener('resize', updateScale);
     };
-  }, []);
+  }, [autoFit]);
 
   useEffect(() => {
     let active = true;
@@ -186,7 +207,7 @@ const InnerResumeBuilder = () => {
       </div>
 
       {/* Left Sidebar */}
-      <div className={`w-full lg:w-[320px] surface-primary border-b lg:border-b-0 lg:border-r border-default flex-col shrink-0 ${mobileTab === 'editor' ? 'flex' : 'hidden lg:flex'}`}>
+      <div className={`w-full lg:w-[300px] xl:w-[340px] surface-primary border-b lg:border-b-0 lg:border-r border-default flex-col shrink-0 ${mobileTab === 'editor' ? 'flex' : 'hidden lg:flex'}`}>
         
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-default">
@@ -358,6 +379,38 @@ const InnerResumeBuilder = () => {
             </button>
           </div>
           <div className="flex items-center gap-2">
+            {/* Desktop Zoom Controls */}
+            <div className="hidden sm:flex items-center gap-1 surface-secondary border border-default p-0.5 rounded-lg text-xs">
+              <button
+                type="button"
+                onClick={handleZoomOut}
+                aria-label={t('builder.zoomOut', 'Уменьшить')}
+                title={t('builder.zoomOut', 'Уменьшить')}
+                className="p-1.5 rounded hover:surface-tertiary text-muted hover:text-primary transition-colors cursor-pointer"
+              >
+                <ZoomOut size={14} />
+              </button>
+              <button
+                type="button"
+                onClick={handleZoomFit}
+                title={t('builder.zoomFit', 'По размеру экрана')}
+                className={`px-2 py-0.5 rounded font-mono text-[11px] transition-colors cursor-pointer ${
+                  autoFit ? 'surface-tertiary text-[var(--color-accent)] font-semibold' : 'text-muted hover:text-primary'
+                }`}
+              >
+                {Math.round(previewScale * 100)}%
+              </button>
+              <button
+                type="button"
+                onClick={handleZoomIn}
+                aria-label={t('builder.zoomIn', 'Увеличить')}
+                title={t('builder.zoomIn', 'Увеличить')}
+                className="p-1.5 rounded hover:surface-tertiary text-muted hover:text-primary transition-colors cursor-pointer"
+              >
+                <ZoomIn size={14} />
+              </button>
+            </div>
+
             <button
               onClick={handleDownloadPdf}
               className="lg:hidden flex items-center gap-1 bg-[#238636] hover:bg-[#2ea043] text-white py-1 px-2.5 rounded-md text-xs font-semibold shadow-sm cursor-pointer"
