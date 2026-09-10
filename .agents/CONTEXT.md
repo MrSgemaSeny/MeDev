@@ -55,14 +55,16 @@
 - **Mobile Web Adaptation (2026-09-09 — 100% COMPLETE)**:
   - **Landing (Next.js 15 App Router)**: Включен `viewportFit: 'cover'`, `--sat`/`--sab`, `overflow-x: hidden`, мобильное меню-drawer с гамбургером, затемнением и блокировкой скролла body, устранен перелив 322px в `Cta.tsx`, адаптивная шапка `Hero.tsx`, touch targets >= 44px. Сборка 9/9 статических страниц PASS.
   - **Frontend Core & Navigation**: Сайдбар скрыт на экранах <768px (`hidden md:flex`), гамбургер в `AppHeader.tsx`, выезжающий `MobileNavDrawer.tsx` (Zustand `mobileNavStore`), адаптивный `AppLayout.tsx` (`100dvh`, `p-3 sm:p-4 md:p-6 lg:p-8`), защита от авто-зума на iOS Safari (`Input.tsx` и `Form.tsx` font-size 16px), кнопки `Button.tsx` touch target >= 44px.
-  - **Frontend Complex Modules**: `ResumeBuilder.tsx` перестроен в вертикальный стек на экранах <1024px (`flex-col lg:flex-row`), математическое масштабирование листа A4 через `ResizeObserver` и `transform: scale(scale)` с компенсацией высоты, алиас `/builder` -> `/resume`, кнопки действий `JobTrackerPage.tsx` и `KanbanBoard.tsx` видны на сенсорных устройствах без hover, `AiChatWidget.tsx` полноэкранный drawer `100dvh`, `ProfileEditor.tsx` горизонтальные табы секций, адаптивные сетки форм `grid-cols-1 sm:grid-cols-2`.
   - **Quality Gates**: Vitest 41/41 PASS, Vite build 0 ошибок, Next.js build 0 ошибок, Reviewers APPROVE, Forensic Auditor CLEAN (0 emojis, 0 читов).
+- **Mobile UI Compaction & ResumeBuilder Mobile UX (2026-09-10 — 100% COMPLETE)**:
+  - **Landing Compaction**: Устранен эффект "громоздких блоков" на мобильных экранах (320px–600px). Шапка `Header` уменьшена с 80px до 56px (`h-14`), в `Features` убраны раздутые вложенные карточки ("Как это работает"), компактные скелетоны A4 в `TemplatesShowcase`, вертикальные отступы секций уменьшены до `py-10 sm:py-20`.
+  - **Dashboard Hero Responsive**: Заголовки снабжены `break-words` и уменьшены до `text-2xl sm:text-4xl`, центрирование имени пользователя (например, MURAT ORYNBAEV) не ломается на мобильных экранах.
+  - **Resume Builder Mobile Tabs**: Добавлен мобильный таб-переключатель (`[ Настройки ]` / `[ Предпросмотр ]`) на экранах `< lg`. Устранена необходимость бесконечного скролла форм перед просмотром A4. В `AppLayout.tsx` для маршрутов резюме убраны двойные внешние отступы (`p-0` на мобильных), исключая зауживание рабочей зоны до узкой полосы.
+  - **Verification**: 41/41 frontend Vitest PASS, Vite production build clean, Next.js 15 build clean (9/9 static routes). Изменения отправлены в `origin main`.
 
 ## Active Backlog
 - **Native Mobile App (Expo)**: Инициализация и разработка нативного приложения MeDev на React Native + Expo (авторизация, Job Tracker, AI ассистент, просмотр скора).
 - Setting up automated nightly DB backup jobs.
 - Sentry and Prometheus/Grafana monitoring dashboards.
 - **RAG Retrieval:** `VectorizationService` пишет векторы в pgvector при `ProfileUpdatedEvent`. Реализация semantic search: Job Tracker → AI Match по вакансии.
-- **Async PDF:** Перевод тяжелой генерации PDF на `ThreadPoolTaskExecutor(core=1, max=2)` + 202 Accepted паттерн при росте нагрузки.
-
 
