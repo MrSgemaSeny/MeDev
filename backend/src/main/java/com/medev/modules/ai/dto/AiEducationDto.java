@@ -10,6 +10,6 @@ public class AiEducationDto {
     private String institution;
     private String degree;
     private String fieldOfStudy;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private String startDate;
+    private String endDate;
 }

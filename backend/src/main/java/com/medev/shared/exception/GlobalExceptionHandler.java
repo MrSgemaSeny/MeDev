@@ -88,6 +88,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorPayload(HttpStatus.BAD_REQUEST, e.getMessage()));
     }
 
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, Object>> handleDataIntegrityViolation(org.springframework.dao.DataIntegrityViolationException e) {
+        log.warn("Database constraint violation: {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(errorPayload(HttpStatus.BAD_REQUEST, "Некорректные данные или нарушение ограничений базы данных"));
+    }
+
 
     @ExceptionHandler(com.medev.modules.ai.model.LlmException.class)
     public ResponseEntity<Map<String, Object>> handleLlmException(com.medev.modules.ai.model.LlmException e) {

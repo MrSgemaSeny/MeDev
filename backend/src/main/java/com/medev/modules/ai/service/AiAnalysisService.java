@@ -95,8 +95,9 @@ public class AiAnalysisService {
             }
         } catch (IllegalArgumentException e) {
             throw e;
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Не удалось прочитать загруженный PDF файл", e);
+        } catch (Exception e) {
+            log.error("Failed to parse PDF document: {}", e.getMessage());
+            throw new IllegalArgumentException("Не удалось прочитать загруженный PDF файл. Убедитесь, что файл не защищен паролем и содержит текстовый слой.", e);
         }
     }
 
@@ -153,8 +154,8 @@ public class AiAnalysisService {
                         dto.setPosition(exp.getPosition());
                         dto.setDescription(exp.getDescription());
                         dto.setTechStack(exp.getTechStack());
-                        dto.setStartDate(exp.getStartDate());
-                        dto.setEndDate(exp.getEndDate());
+                        dto.setStartDate(exp.getStartDate() != null ? exp.getStartDate().toString() : null);
+                        dto.setEndDate(exp.getEndDate() != null ? exp.getEndDate().toString() : null);
                         dto.setIsCurrent(exp.getIsCurrent());
                         return dto;
                     }).collect(java.util.stream.Collectors.toList()));
@@ -167,8 +168,8 @@ public class AiAnalysisService {
                         dto.setInstitution(edu.getInstitution());
                         dto.setDegree(edu.getDegree());
                         dto.setFieldOfStudy(edu.getField());
-                        dto.setStartDate(edu.getStartDate());
-                        dto.setEndDate(edu.getEndDate());
+                        dto.setStartDate(edu.getStartDate() != null ? edu.getStartDate().toString() : null);
+                        dto.setEndDate(edu.getEndDate() != null ? edu.getEndDate().toString() : null);
                         return dto;
                     }).collect(java.util.stream.Collectors.toList()));
         }

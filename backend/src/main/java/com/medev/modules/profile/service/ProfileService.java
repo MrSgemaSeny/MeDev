@@ -156,8 +156,9 @@ public class ProfileService {
         if (parsed.getSkills() != null) {
             int order = 0;
             for (com.medev.modules.ai.dto.AiSkillDto s : parsed.getSkills()) {
-                if (s.getName() != null && !s.getName().isBlank()) {
-                    Skill skill = Skill.builder().profile(profile).name(s.getName()).sortOrder(order++).build();
+                String skillName = truncate(s.getName(), 100);
+                if (skillName != null && !skillName.isBlank()) {
+                    Skill skill = Skill.builder().profile(profile).name(skillName).sortOrder(order++).build();
                     skillRepository.save(skill);
                     profile.getSkills().add(skill);
                 }
@@ -167,18 +168,28 @@ public class ProfileService {
         if (parsed.getExperience() != null) {
             int order = 0;
             for (com.medev.modules.ai.dto.AiExperienceDto e : parsed.getExperience()) {
-                LocalDate start = e.getStartDate();
+                String company = truncate(e.getCompany(), 255);
+                if (company == null || company.isBlank()) {
+                    company = "Company";
+                }
+                String position = truncate(e.getPosition(), 255);
+                if (position == null || position.isBlank()) {
+                    position = "Software Engineer";
+                }
+                LocalDate start = parseDateSafe(e.getStartDate());
                 if (start == null) {
                     start = LocalDate.now();
                 }
+                LocalDate end = parseDateSafe(e.getEndDate());
+
                 Experience exp = Experience.builder()
                         .profile(profile)
-                        .company(e.getCompany())
-                        .position(e.getPosition())
+                        .company(company)
+                        .position(position)
                         .description(e.getDescription())
-                        .techStack(e.getTechStack())
+                        .techStack(truncate(e.getTechStack(), 500))
                         .startDate(start)
-                        .endDate(e.getEndDate())
+                        .endDate(end)
                         .isCurrent(e.getIsCurrent() != null ? e.getIsCurrent() : false)
                         .sortOrder(order++)
                         .build();
@@ -190,17 +201,24 @@ public class ProfileService {
         if (parsed.getEducation() != null) {
             int order = 0;
             for (com.medev.modules.ai.dto.AiEducationDto ed : parsed.getEducation()) {
-                LocalDate start = ed.getStartDate();
+                String institution = truncate(ed.getInstitution(), 255);
+                if (institution == null || institution.isBlank()) {
+                    institution = "University";
+                }
+                LocalDate start = parseDateSafe(ed.getStartDate());
                 if (start == null) {
                     start = LocalDate.now();
                 }
+                LocalDate end = parseDateSafe(ed.getEndDate());
+
                 Education edu = Education.builder()
                         .profile(profile)
-                        .institution(ed.getInstitution())
-                        .degree(ed.getDegree())
-                        .field(ed.getFieldOfStudy())
+                        .institution(institution)
+                        .degree(truncate(ed.getDegree(), 255))
+                        .field(truncate(ed.getFieldOfStudy(), 255))
                         .startDate(start)
-                        .endDate(ed.getEndDate())
+                        .endDate(end)
+                        .isCurrent(false)
                         .sortOrder(order++)
                         .build();
                 educationRepository.save(edu);
@@ -211,8 +229,8 @@ public class ProfileService {
         if (parsed.getLanguages() != null) {
             int order = 0;
             for (com.medev.modules.ai.dto.AiLanguageDto l : parsed.getLanguages()) {
-                if (l.getName() != null && !l.getName().isBlank()) {
-                    String cleanName = l.getName().trim();
+                String cleanName = truncate(l.getName(), 100);
+                if (cleanName != null && !cleanName.isBlank()) {
                     if (LanguageService.isProgrammingLanguage(cleanName)) {
                         // Перенаправляем язык программирования в skills если его там еще нет
                         boolean skillExists = profile.getSkills().stream()
@@ -230,7 +248,7 @@ public class ProfileService {
                         continue;
                     }
 
-                    String level = l.getProficiency();
+                    String level = truncate(l.getProficiency(), 50);
                     if (level == null || level.isBlank()) {
                         level = "Not specified";
                     }
@@ -244,13 +262,14 @@ public class ProfileService {
         if (parsed.getProjects() != null) {
             int order = 0;
             for (com.medev.modules.ai.dto.AiProjectDto p : parsed.getProjects()) {
-                if (p.getName() != null && !p.getName().isBlank()) {
+                String name = truncate(p.getName(), 255);
+                if (name != null && !name.isBlank()) {
                     Project proj = Project.builder()
                             .profile(profile)
-                            .name(p.getName())
+                            .name(name)
                             .description(p.getDescription())
-                            .githubUrl(p.getGithubUrl())
-                            .techStack(p.getTechStack())
+                            .githubUrl(truncate(p.getGithubUrl(), 500))
+                            .techStack(truncate(p.getTechStack(), 500))
                             .sortOrder(order++)
                             .build();
                     projectRepository.save(proj);
@@ -261,6 +280,12 @@ public class ProfileService {
 
         publishAfterCommit(userId);
         return mapToProfileDto(profile);
+    }
+
+    private String truncate(String val, int max) {
+        if (val == null) return null;
+        String trimmed = val.trim();
+        return trimmed.length() <= max ? trimmed : trimmed.substring(0, max);
     }
 
     // ==========================================
@@ -401,17 +426,23 @@ public class ProfileService {
         }
         String trimmed = dateStr.trim();
         try {
-            if (trimmed.length() == 10) { // yyyy-MM-dd
+            if (trimmed.matches("^\\d{4}-\\d{2}-\\d{2}$")) {
                 return LocalDate.parse(trimmed);
-            } else if (trimmed.length() == 7) { // yyyy-MM
+            } else if (trimmed.matches("^\\d{4}-\\d{2}$")) {
                 return LocalDate.parse(trimmed + "-01");
-            } else if (trimmed.length() == 4) { // yyyy
+            } else if (trimmed.matches("^\\d{4}$")) {
                 return LocalDate.parse(trimmed + "-01-01");
+            } else if (trimmed.matches("^\\d{2}\\.\\d{4}$")) {
+                String[] parts = trimmed.split("\\.");
+                return LocalDate.parse(parts[1] + "-" + parts[0] + "-01");
+            } else if (trimmed.matches("^\\d{2}/\\d{4}$")) {
+                String[] parts = trimmed.split("/");
+                return LocalDate.parse(parts[1] + "-" + parts[0] + "-01");
             } else {
                 return LocalDate.parse(trimmed);
             }
         } catch (Exception e) {
-            log.warn("Failed to parse date string '{}'", dateStr);
+            log.warn("Failed to parse date string '{}': {}", dateStr, e.getMessage());
             return null;
         }
     }

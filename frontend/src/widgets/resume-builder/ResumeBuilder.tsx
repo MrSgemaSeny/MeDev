@@ -202,7 +202,6 @@ const InnerResumeBuilder = () => {
         >
           <FileText size={14} />
           {t('builder.mobileTabs.preview', 'Предпросмотр')}
-          <span className="w-1.5 h-1.5 rounded-full bg-[#238636] animate-pulse"></span>
         </button>
       </div>
 
@@ -212,17 +211,13 @@ const InnerResumeBuilder = () => {
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-default">
           <h1 className="text-lg font-semibold text-primary">{t('builder.title', 'Resume Builder')}</h1>
-          <p className="text-xs text-muted mt-1">{t('builder.subtitle', 'Configure layout & appearance')}</p>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-6 sm:space-y-8">
           
           {/* Layout Mode */}
           <section className="flex items-center justify-between mb-4">
-            <div className="flex flex-col">
-              <h2 className="text-xs font-bold text-muted uppercase tracking-wider mb-1">{t('builder.pdfLayoutMode', 'PDF Layout Mode')}</h2>
-              <span className="text-[10px] text-muted">{t('builder.toggleCompact', 'Toggle compact view')}</span>
-            </div>
+            <h2 className="text-xs font-bold text-muted uppercase tracking-wider">{t('builder.pdfLayoutMode', 'PDF Layout Mode')}</h2>
             <button
               onClick={() => setSinglePageMode(!isSinglePageMode)}
               className="relative flex items-center w-[72px] h-8 p-1 rounded-full bg-[#238636] cursor-pointer shadow-inner focus:outline-none transition-all duration-300 border border-[#2ea043]"
@@ -253,28 +248,19 @@ const InnerResumeBuilder = () => {
               {TEMPLATES.map((tmpl) => {
                 const isActive = selectedTemplate === tmpl.id;
                 const tmplName = t(`builder.templateNames.${tmpl.id}`, tmpl.name);
-                const tmplDesc = t(`builder.templateNames.${tmpl.id}Desc`, tmpl.desc);
                 return (
                   <button
                     key={tmpl.id}
                     onClick={() => setTemplate(tmpl.id)}
                     className={`w-full flex items-center justify-between p-3 rounded-md border text-left transition-all duration-200 cursor-pointer ${
                       isActive 
-                        ? 'surface-secondary border-[var(--color-accent)]' 
+                        ? 'surface-secondary border-[var(--color-accent)] font-semibold' 
                         : 'surface-primary border-default hover:surface-secondary'
                     }`}
                   >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className={`text-sm font-medium ${isActive ? 'text-primary' : 'text-secondary'}`}>
-                          {tmplName}
-                        </span>
-                      </div>
-                      <div className="text-xs text-muted mt-0.5">{tmplDesc}</div>
-                    </div>
-                    {isActive && (
-                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: tmpl.accent }}></div>
-                    )}
+                    <span className={`text-sm ${isActive ? 'text-primary font-semibold' : 'text-secondary font-medium'}`}>
+                      {tmplName}
+                    </span>
                   </button>
                 );
               })}

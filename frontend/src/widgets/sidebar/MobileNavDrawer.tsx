@@ -7,7 +7,6 @@ import {
   UploadCloud,
   FileText,
   ListTodo,
-  Info,
   Briefcase,
   GraduationCap,
   Code,
@@ -32,7 +31,6 @@ const MAIN_NAV = [
 ];
 
 const SECTIONS_NAV = [
-  { to: '/profile/edit#about', labelKey: 'nav.about', defaultLabel: 'About', icon: Info },
   { to: '/profile/edit#experience', labelKey: 'nav.experience', defaultLabel: 'Experience', icon: Briefcase },
   { to: '/profile/edit#education', labelKey: 'nav.education', defaultLabel: 'Education', icon: GraduationCap },
   { to: '/profile/edit#skills', labelKey: 'nav.skills', defaultLabel: 'Skills', icon: Code },
@@ -91,12 +89,7 @@ export const MobileNavDrawer = () => {
       >
         {/* Drawer Header */}
         <div className="flex items-center justify-between px-2 pb-3 mb-2 border-b border-default">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-base tracking-tight text-primary">MeDev</span>
-            <span className="text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-[var(--color-accent-muted)] text-[var(--color-accent)]">
-              Menu
-            </span>
-          </div>
+          <span className="font-bold text-base tracking-tight text-primary">MeDev</span>
           <button
             type="button"
             onClick={close}

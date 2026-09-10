@@ -54,6 +54,10 @@
    - **Desktop Sidebar Overhaul**: Новый брендовый хедер `>_ MeDev`, компактный вид (68px) с tooltips и развернутый (260px) с изумрудным активным маркером, персистентное сохранение состояния в `localStorage`.
    - **Desktop Responsiveness & Zoom Controls**: Адаптивная ширина панели в конструкторе резюме (`w-full lg:w-[300px] xl:w-[340px]`), интерактивный тулбар масштабирования превью (`Zoom Out`, `Fit %`, `Zoom In`) с авто-подгонкой при изменении размера экрана.
 
+10. **AI Resume Parser 500 Remediation & UI De-cluttering (100% COMPLETE)**:
+    - **Backend (500 Root Cause Eliminated)**: `AiExperienceDto` и `AiEducationDto` переведены с `LocalDate` на `String` (Jackson больше не падает при текстовых датах от Groq). В `ProfileService` внедрен безопасный парсер дат `parseDateSafe` и санитизация строк `truncate(str, max)`. `AiAnalysisService` ловит все PDFBox рантайм-сбои. В `GlobalExceptionHandler` добавлен перехват `DataIntegrityViolationException`.
+    - **Frontend (UI Clean-up)**: Убран SVG-квадрат с терминалом и мигающая точка у логотипа `MeDev`. Убрана подпись `DEVELOPER HUB`. Удален пункт "О себе". Удалены кнопки закрытия внутри сайдбара — сайдбар открывается/закрывается только гамбургером в хедере. Из конструктора резюме вычищены все лишние описания и индикаторы.
+
 ## Verification
 - `backend`: 272/272 тестов успешно пройдены (`./gradlew test`).
 - `frontend`: 53/53 тестов пройдены (`npm test`).

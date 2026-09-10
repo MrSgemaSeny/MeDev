@@ -11,7 +11,7 @@ public class AiExperienceDto {
     private String position;
     private String description;
     private String techStack;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private String startDate;
+    private String endDate;
     private Boolean isCurrent;
 }
