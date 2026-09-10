@@ -66,6 +66,10 @@
     - **Segmented Theme Switcher**: Внедрен переключатель тем `[ 🌙 Тёмная | ☀️ Светлая ]` в едином стиле с тумблером языка.
     - **Monochromatic White Typography**: Все тексты в сайдбаре переведены на чистый белый цвет (`text-white`, `text-white/80`, `text-white/70`, `text-white/50`). Полностью удалены зеленые тексты (логотип `MeDev`, кнопка темы, пункт "Админ-панель").
 
+13. **PostgreSQL Column Bounds Hardening (100% COMPLETE)**:
+    - `languages.level`: исправлено усечение до `VARCHAR(20)` (ранее стояло 50).
+    - `profiles`: добавлены усечения `truncate` для всех строковых полей (fullName, headline, location, website, githubUsername, telegram, linkedin).
+
 ## Verification
 - `backend`: 272/272 тестов успешно пройдены (`./gradlew test`).
 - `frontend`: 53/53 тестов пройдены (`npm test`).

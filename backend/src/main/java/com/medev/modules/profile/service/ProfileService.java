@@ -134,14 +134,14 @@ public class ProfileService {
     public ProfileDto importParsedResume(Long userId, AiParsedResumeDto parsed) {
         Profile profile = getProfileEntityForUpdate(userId);
         
-        if (parsed.getFullName() != null) profile.setFullName(parsed.getFullName());
-        if (parsed.getHeadline() != null) profile.setHeadline(parsed.getHeadline());
+        if (parsed.getFullName() != null) profile.setFullName(truncate(parsed.getFullName(), 255));
+        if (parsed.getHeadline() != null) profile.setHeadline(truncate(parsed.getHeadline(), 500));
         if (parsed.getSummary() != null) profile.setSummary(parsed.getSummary());
-        if (parsed.getLocation() != null) profile.setLocation(parsed.getLocation());
-        if (parsed.getWebsite() != null) profile.setWebsite(parsed.getWebsite());
-        if (parsed.getGithubUsername() != null) profile.setGithubUsername(parsed.getGithubUsername());
-        if (parsed.getTelegram() != null) profile.setTelegram(parsed.getTelegram());
-        if (parsed.getLinkedin() != null) profile.setLinkedin(parsed.getLinkedin());
+        if (parsed.getLocation() != null) profile.setLocation(truncate(parsed.getLocation(), 255));
+        if (parsed.getWebsite() != null) profile.setWebsite(truncate(parsed.getWebsite(), 500));
+        if (parsed.getGithubUsername() != null) profile.setGithubUsername(truncate(parsed.getGithubUsername(), 100));
+        if (parsed.getTelegram() != null) profile.setTelegram(truncate(parsed.getTelegram(), 100));
+        if (parsed.getLinkedin() != null) profile.setLinkedin(truncate(parsed.getLinkedin(), 255));
         
         // Smart Merge guarantees the DTO has the FINAL state, so we overwrite collections
         // ONLY if the parsed object explicitly provided items for that section
@@ -248,9 +248,9 @@ public class ProfileService {
                         continue;
                     }
 
-                    String level = truncate(l.getProficiency(), 50);
+                    String level = truncate(l.getProficiency(), 20);
                     if (level == null || level.isBlank()) {
-                        level = "Not specified";
+                        level = "intermediate";
                     }
                     Language lang = Language.builder().profile(profile).name(cleanName).level(level).sortOrder(order++).build();
                     languageRepository.save(lang);
