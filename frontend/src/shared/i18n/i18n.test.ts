@@ -69,4 +69,18 @@ describe('i18n locales parity & completeness', () => {
     expect(ru.header.logout).toBe('Выйти');
     expect(en.header.logout).toBe('Sign Out');
   });
+
+  it('contains essential settings keys in both languages', () => {
+    expect(ru.settings.title).toBe('Настройки');
+    expect(en.settings.title).toBe('Settings');
+    expect(ru.settings.username).toBe('Имя пользователя');
+    expect(en.settings.username).toBe('Username');
+    expect(ru.settings.session).toBe('Сессия');
+    expect(en.settings.session).toBe('Session');
+    expect(ru.settings.language).toBe('Язык');
+    expect(en.settings.language).toBe('Language');
+    expect(ru.settings.theme).toBe('Тема');
+    expect(en.settings.theme).toBe('Theme');
+  });
 });
+

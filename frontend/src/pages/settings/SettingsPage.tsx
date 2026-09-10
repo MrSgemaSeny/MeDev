@@ -3,10 +3,11 @@ import { useAuthStore } from '../../entities/user/model/store';
 import { LogOut, User, Globe, Moon, Sun, ShieldAlert, Trash2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { setTheme, isDarkMode } from '../../shared/lib/theme';
+import { LanguageSwitcher } from '../../shared/ui/LanguageSwitcher';
 
 export const SettingsPage = () => {
-  const { t, i18n } = useTranslation();
-  const { username, plan, logout } = useAuthStore();
+  const { t } = useTranslation();
+  const { username, logout } = useAuthStore();
   const [isDark, setIsDark] = useState(isDarkMode);
 
   useEffect(() => {
@@ -31,10 +32,6 @@ export const SettingsPage = () => {
     };
   }, []);
 
-  const handleLanguageChange = (lang: string) => {
-    i18n.changeLanguage(lang);
-  };
-
   return (
     <div className="max-w-4xl w-full mx-auto p-0 sm:p-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
       <div className="mb-6 sm:mb-8">
@@ -54,22 +51,15 @@ export const SettingsPage = () => {
           <div className="p-4 sm:p-6 space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <div className="text-sm font-medium text-primary mb-1">Username</div>
+                <div className="text-sm font-medium text-primary mb-1">{t('settings.username', 'Username')}</div>
                 <div className="text-sm text-secondary">@{username || 'Guest'}</div>
-              </div>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <div className="text-sm font-medium text-primary mb-1">Current Plan</div>
-                <div className="text-sm text-secondary capitalize">{plan || 'Free'} Plan</div>
               </div>
             </div>
             
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-[var(--color-border-default)] pt-4 mt-2">
               <div>
-                <div className="text-sm font-medium text-primary mb-1">Session</div>
-                <div className="text-sm text-secondary">Sign out of your account on this device</div>
+                <div className="text-sm font-medium text-primary mb-1">{t('settings.session', 'Session')}</div>
+                <div className="text-sm text-secondary">{t('settings.sessionDesc', 'Sign out of your account on this device')}</div>
               </div>
               <button
                 onClick={logout}
@@ -94,28 +84,7 @@ export const SettingsPage = () => {
                 <div className="text-sm font-medium text-primary mb-1">{t('settings.language', 'Language')}</div>
                 <div className="text-sm text-secondary">{t('settings.languageDesc', 'Choose your preferred language')}</div>
               </div>
-              <div className="flex bg-[var(--color-bg-secondary)] p-1 rounded-lg border border-default">
-                <button
-                  onClick={() => handleLanguageChange('en')}
-                  className={`px-4 py-2 min-h-[40px] sm:min-h-[36px] rounded-md text-sm font-medium transition-all cursor-pointer ${
-                    i18n.language?.startsWith('en')
-                      ? 'bg-[var(--color-accent)] text-white shadow-sm'
-                      : 'text-secondary hover:text-primary'
-                  }`}
-                >
-                  English
-                </button>
-                <button
-                  onClick={() => handleLanguageChange('ru')}
-                  className={`px-4 py-2 min-h-[40px] sm:min-h-[36px] rounded-md text-sm font-medium transition-all cursor-pointer ${
-                    i18n.language?.startsWith('ru')
-                      ? 'bg-[var(--color-accent)] text-white shadow-sm'
-                      : 'text-secondary hover:text-primary'
-                  }`}
-                >
-                  Русский
-                </button>
-              </div>
+              <LanguageSwitcher variant="segmented" />
             </div>
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

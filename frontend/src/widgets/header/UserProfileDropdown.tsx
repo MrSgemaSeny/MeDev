@@ -4,6 +4,7 @@ import { useAuthStore } from '../../entities/user/model/store';
 import { useTranslation } from 'react-i18next';
 import { useProfile } from '../../shared/api/hooks/useProfile';
 import { toggleTheme, setTheme, isDarkMode } from '../../shared/lib/theme';
+import { LanguageSwitcher } from '../../shared/ui/LanguageSwitcher';
 
 interface UserProfileDropdownProps {
   variant?: 'sidebar' | 'header';
@@ -75,7 +76,6 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
     );
   }
 
-  const toggleLanguage = (lang: string) => i18n.changeLanguage(lang);
 
   const formatterTime = new Intl.DateTimeFormat(i18n.language === 'ru' ? 'ru-RU' : 'en-US', {
     hour: '2-digit',
@@ -205,31 +205,7 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
                 <Globe size={18} />
                 <span className="text-sm font-medium">{t('header.language', 'Язык')}</span>
               </div>
-              <div
-                className="flex border rounded-full p-0.5 text-xs font-bold"
-                style={{ backgroundColor: 'var(--color-bg-inset)', borderColor: 'var(--color-border-default)' }}
-              >
-                <button
-                  onClick={() => toggleLanguage('ru')}
-                  className={`px-3 py-1 rounded-full transition-colors cursor-pointer ${
-                    i18n.language?.startsWith('ru')
-                      ? 'bg-[var(--color-accent)] text-white shadow-sm'
-                      : 'text-secondary hover:text-primary'
-                  }`}
-                >
-                  RU
-                </button>
-                <button
-                  onClick={() => toggleLanguage('en')}
-                  className={`px-3 py-1 rounded-full transition-colors cursor-pointer ${
-                    i18n.language?.startsWith('en')
-                      ? 'bg-[var(--color-accent)] text-white shadow-sm'
-                      : 'text-secondary hover:text-primary'
-                  }`}
-                >
-                  EN
-                </button>
-              </div>
+              <LanguageSwitcher />
             </div>
 
             <div className="h-px my-1 mx-4" style={{ backgroundColor: 'var(--color-border-default)' }} />

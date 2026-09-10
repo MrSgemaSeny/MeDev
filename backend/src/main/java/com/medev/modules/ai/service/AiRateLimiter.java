@@ -20,19 +20,19 @@ public class AiRateLimiter {
     private static final int PRO_DAILY_LIMIT  = 100;
 
     private final UserRepository userRepository;
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final org.springframework.data.redis.core.StringRedisTemplate stringRedisTemplate;
 
     public void checkAndConsume(Long userId) {
         int limit = getUserDailyLimit(userId);
         String key = getRedisKey(userId);
         
-        Long current = redisTemplate.opsForValue().increment(key);
+        Long current = stringRedisTemplate.opsForValue().increment(key);
         if (current != null && current == 1L) {
-            redisTemplate.expire(key, Duration.ofDays(1));
+            stringRedisTemplate.expire(key, Duration.ofDays(1));
         } else if (current != null) {
-            Long expire = redisTemplate.getExpire(key);
+            Long expire = stringRedisTemplate.getExpire(key);
             if (expire != null && expire == -1L) {
-                redisTemplate.expire(key, Duration.ofDays(1));
+                stringRedisTemplate.expire(key, Duration.ofDays(1));
             }
         }
 
@@ -45,14 +45,15 @@ public class AiRateLimiter {
         }
 
         log.debug("[AiRateLimiter] User {} consumed 1 token, remaining: {}",
-                userId, limit - current);
+                userId, limit - (current != null ? current : 0));
     }
 
     public long getRemainingRequests(Long userId) {
         int limit = getUserDailyLimit(userId);
         String key = getRedisKey(userId);
-        Integer current = (Integer) redisTemplate.opsForValue().get(key);
-        if (current == null) return limit;
+        String currentStr = stringRedisTemplate.opsForValue().get(key);
+        if (currentStr == null) return limit;
+        int current = Integer.parseInt(currentStr);
         return Math.max(0, limit - current);
     }
 
@@ -66,7 +67,7 @@ public class AiRateLimiter {
 
     private int getUserDailyLimit(Long userId) {
         String planKey = "user_plan:" + userId;
-        String planStr = (String) redisTemplate.opsForValue().get(planKey);
+        String planStr = stringRedisTemplate.opsForValue().get(planKey);
         
         if (planStr == null) {
             User user = userRepository.findById(userId).orElse(null);
@@ -82,7 +83,7 @@ public class AiRateLimiter {
             } else {
                 planStr = "FREE";
             }
-            redisTemplate.opsForValue().set(planKey, planStr, Duration.ofMinutes(15));
+            stringRedisTemplate.opsForValue().set(planKey, planStr, Duration.ofMinutes(15));
         }
         
         return "PRO".equals(planStr) ? PRO_DAILY_LIMIT : FREE_DAILY_LIMIT;

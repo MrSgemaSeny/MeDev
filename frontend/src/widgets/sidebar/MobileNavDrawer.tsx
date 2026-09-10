@@ -21,6 +21,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useMobileNavStore } from './model/mobileNavStore';
 import { useAuthStore } from '../../entities/user/model/store';
+import { LanguageSwitcher } from '../../shared/ui/LanguageSwitcher';
 
 const MAIN_NAV = [
   { to: '/dashboard', labelKey: 'nav.dashboard', defaultLabel: 'Dashboard', icon: LayoutDashboard },
@@ -207,6 +208,12 @@ export const MobileNavDrawer = () => {
                 <span>{t('nav.adminPanel', 'Admin Panel')}</span>
               </NavLink>
             )}
+          </div>
+
+          {/* Language Switcher in Mobile Drawer */}
+          <div className="pt-3 mt-auto border-t border-default flex items-center justify-between px-2">
+            <span className="text-xs text-muted font-medium">{t('header.language', 'Language')}</span>
+            <LanguageSwitcher />
           </div>
         </div>
       </aside>

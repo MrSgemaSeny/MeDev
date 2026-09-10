@@ -80,10 +80,24 @@ public class CookieOAuth2AuthorizationRequestRepository implements Authorization
         }
     }
 
+    private static final com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
+
     private String serialize(OAuth2AuthorizationRequest authorizationRequest) {
         try {
-            byte[] bytes = org.springframework.util.SerializationUtils.serialize(authorizationRequest);
-            return Base64.getUrlEncoder().encodeToString(bytes);
+            OAuth2RequestDto dto = new OAuth2RequestDto();
+            dto.authorizationUri = authorizationRequest.getAuthorizationUri();
+            dto.grantType = authorizationRequest.getGrantType().getValue();
+            dto.responseType = authorizationRequest.getResponseType().getValue();
+            dto.clientId = authorizationRequest.getClientId();
+            dto.redirectUri = authorizationRequest.getRedirectUri();
+            dto.scopes = authorizationRequest.getScopes();
+            dto.state = authorizationRequest.getState();
+            dto.additionalParameters = authorizationRequest.getAdditionalParameters();
+            dto.attributes = authorizationRequest.getAttributes();
+            dto.authorizationRequestUri = authorizationRequest.getAuthorizationRequestUri();
+            
+            String json = objectMapper.writeValueAsString(dto);
+            return com.medev.shared.security.EncryptionUtils.encrypt(json);
         } catch (Exception e) {
             throw new RuntimeException("Failed to serialize OAuth2AuthorizationRequest", e);
         }
@@ -91,12 +105,34 @@ public class CookieOAuth2AuthorizationRequestRepository implements Authorization
 
     private OAuth2AuthorizationRequest deserialize(String cookieValue) {
         try {
-            byte[] bytes = Base64.getUrlDecoder().decode(cookieValue);
-            Object obj = org.springframework.util.SerializationUtils.deserialize(bytes);
-            return (OAuth2AuthorizationRequest) obj;
+            String json = com.medev.shared.security.EncryptionUtils.decrypt(cookieValue);
+            OAuth2RequestDto dto = objectMapper.readValue(json, OAuth2RequestDto.class);
+            
+            return OAuth2AuthorizationRequest.authorizationCode()
+                    .authorizationUri(dto.authorizationUri)
+                    .clientId(dto.clientId)
+                    .redirectUri(dto.redirectUri)
+                    .scopes(dto.scopes)
+                    .state(dto.state)
+                    .additionalParameters(dto.additionalParameters)
+                    .attributes(dto.attributes)
+                    .build();
         } catch (Exception e) {
             return null;
         }
+    }
+
+    private static class OAuth2RequestDto {
+        public String authorizationUri;
+        public String grantType;
+        public String responseType;
+        public String clientId;
+        public String redirectUri;
+        public java.util.Set<String> scopes;
+        public String state;
+        public java.util.Map<String, Object> additionalParameters;
+        public java.util.Map<String, Object> attributes;
+        public String authorizationRequestUri;
     }
 
     private java.util.Optional<Cookie> fetchCookie(HttpServletRequest request, String name) {

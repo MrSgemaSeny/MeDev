@@ -1,12 +1,13 @@
-import { Search, Globe, Moon, Sun, Menu } from 'lucide-react';
+import { Search, Moon, Sun, Menu } from 'lucide-react';
 import { UserProfileDropdown } from './UserProfileDropdown';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { toggleTheme, isDarkMode } from '../../shared/lib/theme';
 import { useMobileNavStore } from '../sidebar/model/mobileNavStore';
+import { LanguageSwitcher } from '../../shared/ui/LanguageSwitcher';
 
 export const AppHeader = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const toggleMobileNav = useMobileNavStore((s) => s.toggle);
   const [isDark, setIsDark] = useState(isDarkMode);
 
@@ -34,10 +35,6 @@ export const AppHeader = () => {
 
   const handleToggleTheme = () => {
     toggleTheme(setIsDark);
-  };
-
-  const toggleLanguage = () => {
-    i18n.changeLanguage(i18n.language?.startsWith('ru') ? 'en' : 'ru');
   };
 
   return (
@@ -94,17 +91,10 @@ export const AppHeader = () => {
           {isDark ? <Moon size={18} /> : <Sun size={18} />}
         </button>
 
-        {/* Language Toggle */}
-        <button
-          type="button"
-          onClick={toggleLanguage}
-          className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full transition-colors hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none mr-0.5"
-          style={{ color: 'var(--color-text-secondary)' }}
-          aria-label={t('header.toggleLanguage', 'Toggle Language')}
-          title={i18n.language?.startsWith('ru') ? 'Switch to English' : 'Переключить на Русский'}
-        >
-          <Globe size={18} />
-        </button>
+        {/* Language Switcher */}
+        <div className="flex items-center">
+          <LanguageSwitcher />
+        </div>
 
         {/* Profile Avatar */}
         <UserProfileDropdown variant="header" />

@@ -12,13 +12,13 @@ import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 
 const SECTIONS = [
-  { id: 'about', label: 'About' },
-  { id: 'experience', label: 'Experience' },
-  { id: 'education', label: 'Education' },
-  { id: 'skills', label: 'Skills' },
-  { id: 'languages', label: 'Languages' },
-  { id: 'projects', label: 'Projects' },
-  { id: 'github', label: 'GitHub' },
+  { id: 'about', labelKey: 'nav.about', defaultLabel: 'About' },
+  { id: 'experience', labelKey: 'nav.experience', defaultLabel: 'Experience' },
+  { id: 'education', labelKey: 'nav.education', defaultLabel: 'Education' },
+  { id: 'skills', labelKey: 'nav.skills', defaultLabel: 'Skills' },
+  { id: 'languages', labelKey: 'nav.languages', defaultLabel: 'Languages' },
+  { id: 'projects', labelKey: 'nav.projects', defaultLabel: 'Projects' },
+  { id: 'github', labelKey: 'nav.github', defaultLabel: 'GitHub' },
 ];
 
 export const ProfileEditor = () => {
@@ -66,14 +66,14 @@ export const ProfileEditor = () => {
                   : 'bg-[var(--color-bg-secondary)] text-secondary hover:text-primary hover:bg-[var(--color-bg-tertiary)] border border-[var(--color-border-default)]'
               }`}
             >
-              {sec.label}
+              {t(sec.labelKey, sec.defaultLabel)}
             </a>
           );
         })}
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
-        <h1 className="text-xl font-bold text-primary md:hidden">Profile Editor</h1>
+        <h1 className="text-xl font-bold text-primary md:hidden">{t('dashboard.editProfile', 'Edit Profile')}</h1>
         <div className="flex justify-end w-full sm:w-auto">
           <Button 
             variant="primary" 

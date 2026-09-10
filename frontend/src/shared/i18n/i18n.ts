@@ -5,37 +5,41 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import enTranslations from './locales/en.json';
 import ruTranslations from './locales/ru.json';
 
-const savedLng = typeof window !== 'undefined' ? localStorage.getItem('i18nextLng') : null;
-const initialLng = (savedLng && (savedLng.startsWith('ru') || savedLng.startsWith('en')))
-  ? (savedLng.startsWith('ru') ? 'ru' : 'en')
-  : 'ru';
-
 i18n
-  .use(LanguageDetector)
   .use(initReactI18next)
+  .use(LanguageDetector)
   .init({
-    resources: {
-      en: { translation: enTranslations },
-      ru: { translation: ruTranslations }
-    },
-    lng: initialLng,
     fallbackLng: 'ru',
+    defaultNS: 'common',
+    ns: ['common', 'translation'],
     supportedLngs: ['ru', 'en'],
+    interpolation: {
+      escapeValue: false,
+    },
     detection: {
       order: ['localStorage', 'navigator'],
-      lookupLocalStorage: 'i18nextLng',
-      caches: ['localStorage']
+      caches: ['localStorage'],
+      lookupLocalStorage: 'medev_lang',
     },
-    interpolation: {
-      escapeValue: false
-    }
+    resources: {
+      ru: {
+        common: ruTranslations,
+        translation: ruTranslations,
+      },
+      en: {
+        common: enTranslations,
+        translation: enTranslations,
+      },
+    },
   });
 
 i18n.on('languageChanged', (lng) => {
   if (typeof window !== 'undefined') {
     const normalized = lng?.startsWith('ru') ? 'ru' : 'en';
+    localStorage.setItem('medev_lang', normalized);
     localStorage.setItem('i18nextLng', normalized);
     document.documentElement.lang = normalized;
+    window.dispatchEvent(new CustomEvent('medev-language-changed', { detail: { lang: normalized } }));
   }
 });
 

@@ -10,7 +10,6 @@ import { ReadmeModal } from '../../features/profile/ui/ReadmeModal';
 export const DashboardPage = () => {
   const { data: profile, isLoading } = useProfile();
   const username = useAuthStore((state) => state.username);
-  const plan = useAuthStore((state) => state.plan);
   const [showReadmeModal, setShowReadmeModal] = useState(false);
   const { t } = useTranslation();
 
@@ -85,8 +84,8 @@ export const DashboardPage = () => {
             <div className="text-xs text-secondary mt-1 font-medium uppercase tracking-wider">{t('dashboard.github', 'GitHub')}</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl sm:text-4xl font-extrabold tabular-nums text-primary">{plan}</div>
-            <div className="text-xs text-secondary mt-1 font-medium uppercase tracking-wider">{t('dashboard.currentPlan', 'Current Plan')}</div>
+            <div className="text-3xl sm:text-4xl font-extrabold tabular-nums text-primary">{t('dashboard.planFree', '100% Free')}</div>
+            <div className="text-xs text-secondary mt-1 font-medium uppercase tracking-wider">{t('dashboard.currentPlan', 'Status')}</div>
           </div>
         </div>
       </section>
@@ -127,8 +126,8 @@ export const DashboardPage = () => {
               <div className="w-10 h-10 rounded-lg surface-tertiary flex items-center justify-center mb-4">
                 <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"/></svg>
               </div>
-              <h3 className="font-bold mb-1.5 text-primary">{t('dashboard.pricingPlans', 'Pricing & Plans')}</h3>
-              <p className="text-sm text-secondary leading-relaxed">{t('dashboard.pricingPlansDesc', 'Upgrade to PRO for unlimited AI resume tailoring and cover letters.')}</p>
+              <h3 className="font-bold mb-1.5 text-primary">{t('dashboard.pricingPlans', 'Plan & Features')}</h3>
+              <p className="text-sm text-secondary leading-relaxed">{t('dashboard.pricingPlansDesc', 'All templates, PDF exports, and AI tools are 100% free with no limits.')}</p>
             </Link>
           </div>
 

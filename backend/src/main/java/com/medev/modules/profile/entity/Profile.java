@@ -53,27 +53,27 @@ public class Profile {
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("sortOrder ASC")
     @Builder.Default
-    private java.util.List<Experience> experiences = new java.util.ArrayList<>();
+    private java.util.Set<Experience> experiences = new java.util.LinkedHashSet<>();
 
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("sortOrder ASC")
     @Builder.Default
-    private java.util.List<Education> educations = new java.util.ArrayList<>();
+    private java.util.Set<Education> educations = new java.util.LinkedHashSet<>();
 
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("sortOrder ASC")
     @Builder.Default
-    private java.util.List<Skill> skills = new java.util.ArrayList<>();
+    private java.util.Set<Skill> skills = new java.util.LinkedHashSet<>();
 
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("sortOrder ASC")
     @Builder.Default
-    private java.util.List<Language> languages = new java.util.ArrayList<>();
+    private java.util.Set<Language> languages = new java.util.LinkedHashSet<>();
 
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("sortOrder ASC")
     @Builder.Default
-    private java.util.List<Project> projects = new java.util.ArrayList<>();
+    private java.util.Set<Project> projects = new java.util.LinkedHashSet<>();
 
     @Column(nullable = false)
     private LocalDateTime createdAt;

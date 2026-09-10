@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface ProfileRepository extends JpaRepository<Profile, Long> {
+    @org.springframework.data.jpa.repository.EntityGraph(attributePaths = {"experiences", "educations", "skills", "languages", "projects"})
     Optional<Profile> findByUserId(Long userId);
 
     @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)

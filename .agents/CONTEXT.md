@@ -37,15 +37,16 @@
    - `ResumeBuilder.tsx` и компоненты интерфейса переведены на семантические токены (`surface-primary`, `surface-secondary`, `surface-inset`, `border-default`, `text-primary`, `text-secondary`, `text-muted`).
    - Добавлен автоматический тест `theme.test.ts` (3 теста).
 
-5. **Full Production i18n Localization & Reactivity (100% COMPLETE)**:
-   - В `i18n.ts` исправлена конфигурация: `fallbackLng: 'ru'`, `lng: initialLng` с чтением `i18nextLng` из `localStorage` и событием `languageChanged`.
-   - Полные словари `ru.json` и `en.json` охватывают навигацию (`nav.*`), конструктор резюме (`builder.*`, секции, шаблоны, превью), хедер (`header.*`), трекер вакансий (`tracker.*`), дашборд и настройки.
-   - Хук `useTranslation()` и `t(...)` интегрированы в `AppSidebar.tsx`, `MobileNavDrawer.tsx`, `ResumeBuilder.tsx`, `AppHeader.tsx`, `UserProfileDropdown.tsx`, `JobTrackerPage.tsx`, `KanbanBoard.tsx`.
-   - Добавлен автоматический тест `i18n.test.ts`, верифицирующий 100% паритет ключей и полноту локализации.
+5. **JF-1C i18n Architecture Adoption & Localization Overhaul (100% COMPLETE)**:
+   - В `src/shared/i18n/i18n.ts` архитектура выровнена по стандарту JF-1C (`.use(initReactI18next).use(LanguageDetector)`, `defaultNS: 'common'`, `fallbackLng: 'ru'`, `lookupLocalStorage: 'medev_lang'`). Убран жесткий `lng` в `.init()`, разблокирован автоматический детектор языка.
+   - Создан переиспользуемый компонент `src/shared/ui/LanguageSwitcher/` с вариантами `pill` и `segmented`, кнопками RU / EN.
+   - Компонент интегрирован в `AppHeader.tsx`, `UserProfileDropdown.tsx`, `SettingsPage.tsx` и `MobileNavDrawer.tsx`.
+   - Полностью устранены захардкоженные строки: в `SettingsPage.tsx` переведены `Username`, `Session`, `Sign out...`, удалено устаревшее отображение "Current Plan: PRO Plan". В `DashboardPage.tsx` статус переведен на `100% Free`. В `ProfileEditor.tsx` переведены мобильные табы секций.
+   - Добавлены тесты `LanguageSwitcher.test.tsx` (3 теста), расширен `i18n.test.ts` (6 тестов), актуализирован `DashboardPage.test.tsx`.
 
 ## Verification
 - `backend`: 266/266 тестов успешно пройдены (`./gradlew test`).
-- `frontend`: 49/49 тестов пройдены (`npm test`).
+- `frontend`: 53/53 тестов пройдены (`npm test`).
 - `frontend`: сборка Vite прошла без ошибок (`npm run build`).
 - `landing`: сборка Next.js 15 прошла без ошибок (`npm run build`).
 

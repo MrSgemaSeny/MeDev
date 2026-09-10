@@ -48,7 +48,7 @@ jwt:
   refresh-expiration: 2592000000  # 30 дней
 
 encryption:
-  secret: ${ENCRYPTION_SECRET:super_secret_encryption_key_that_is_at_least_32_bytes_long_12345}
+  secret: ${ENCRYPTION_SECRET:}
   secret-old: ${ENCRYPTION_SECRET_OLD:}
 
 github:
@@ -60,13 +60,13 @@ groq:
   model: ${GROQ_MODEL:openai/gpt-oss-20b}
 
 stripe:
-  secret-key: ${STRIPE_SECRET_KEY:sk_test_12345}
-  webhook-secret: ${STRIPE_WEBHOOK_SECRET:whsec_12345}
-  pro-price-id: ${STRIPE_PRO_PRICE_ID:price_12345}
+  secret-key: ${STRIPE_SECRET_KEY:}
+  webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
+  pro-price-id: ${STRIPE_PRO_PRICE_ID:}
 
 kaspi:
-  merchant-id: ${KASPI_MERCHANT_ID:dummy-merchant}
-  secret-key: ${KASPI_SECRET_KEY:dummy-secret-key}
+  merchant-id: ${KASPI_MERCHANT_ID:}
+  secret-key: ${KASPI_SECRET_KEY:}
   pro-price-amount: 15000
 
 cors:
