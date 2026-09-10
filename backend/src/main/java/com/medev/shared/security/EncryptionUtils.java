@@ -96,6 +96,7 @@ public class EncryptionUtils {
 
     public static String decrypt(String value) {
         if (value == null) return null;
+        if (value.isBlank()) return value;
         if (primaryKey == null) throw new IllegalStateException("Encryption key not initialized");
         
         try {

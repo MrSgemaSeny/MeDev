@@ -44,9 +44,14 @@
    - **Flyway V26**: `V26__clean_spoken_languages_and_update_profile.sql`.
    - **Desktop UX**: Восстановлена полноценная прокрутка листа А4 на мониторах ПК.
 
+8. **Production 500 Error Remediation (EncryptedStringConverter & EntityGraph Cartesian Product)**:
+   - **EncryptedStringConverter**: Обернуты вызовы шифрования/дешифрования в try-catch с логгированием и безопасным фоллбэком на исходное строковое значение. Это полностью устраняет 500 ошибку при чтении legacy незашифрованных (`gho_...`) или пустых токенов из production PostgreSQL.
+   - **ProfileRepository**: Убран 5-коллекционный `@EntityGraph`, заменен на чистый JPQL `@Query("SELECT p FROM Profile p WHERE p.user.id = :userId")`. Предотвращен взрыв Cartesian product и дублирование результатов.
+   - **Hibernate Batch Fetching**: В `application.yml` добавлен `default_batch_fetch_size: 50` для защиты от N+1 при ленивой загрузке.
+
 ## Verification
-- `backend`: 266/266 тестов успешно пройдены (`./gradlew test`).
-- `frontend`: сборка Vite прошла без ошибок (`npm run build`).
+- `backend`: 272/272 тестов успешно пройдены (`./gradlew test`).
+- `frontend`: 53/53 тестов пройдены (`npm test`).
 - `landing`: сборка Next.js 15 прошла без ошибок (`npm run build`).
 
 ## Active Backlog
