@@ -34,14 +34,14 @@ export const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[#30363d] bg-[#0d1117]/95 backdrop-blur-md">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-10">
+      <div className="mx-auto flex h-14 sm:h-16 lg:h-20 max-w-7xl items-center justify-between px-3.5 sm:px-6 lg:px-8">
+        <div className="flex items-center gap-6 sm:gap-10">
           <Link
             href="/"
             onClick={closeMenu}
             className="flex items-center gap-2 rounded transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
           >
-            <span className="text-2xl font-black tracking-tight text-[#f0f6fc]">MeDev</span>
+            <span className="text-xl sm:text-2xl font-black tracking-tight text-[#f0f6fc]">MeDev</span>
           </Link>
 
           <nav className="hidden items-center gap-8 md:flex">
@@ -92,12 +92,12 @@ export const Header = () => {
           <button
             type="button"
             onClick={() => setIsOpen((prev) => !prev)}
-            className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#30363d] bg-[#21262d] text-[#c9d1d9] transition-colors hover:border-[#8b949e] hover:text-white focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none md:hidden"
+            className="flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-lg sm:rounded-xl border border-[#30363d] bg-[#21262d] text-[#c9d1d9] transition-colors hover:border-[#8b949e] hover:text-white focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none md:hidden"
             aria-expanded={isOpen}
             aria-controls="mobile-menu"
             aria-label={isOpen ? 'Закрыть меню' : 'Открыть меню'}
           >
-            {isOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
+            {isOpen ? <X className="h-5 w-5 sm:h-6 sm:w-6" aria-hidden="true" /> : <Menu className="h-5 w-5 sm:h-6 sm:w-6" aria-hidden="true" />}
           </button>
         </div>
       </div>

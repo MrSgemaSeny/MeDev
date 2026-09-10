@@ -62,38 +62,38 @@ const steps = [
 
 export const Features = () => {
   return (
-    <section id="features" className="border-b border-[#30363d] bg-[#0d1117] py-14 sm:py-24 lg:py-32">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section id="features" className="border-b border-[#30363d] bg-[#0d1117] py-10 sm:py-20 lg:py-28">
+      <div className="mx-auto max-w-7xl px-3.5 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#f0f6fc] break-words">
+          <h2 className="text-xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-[#f0f6fc] break-words">
             Всё что нужно чтобы найти работу быстрее
           </h2>
-          <p className="mt-4 sm:mt-5 text-base sm:text-xl leading-relaxed text-[#8b949e]">
+          <p className="mt-2.5 sm:mt-4 text-xs sm:text-base leading-relaxed text-[#8b949e]">
             От пустого резюме до оффера — один инструмент.
           </p>
         </div>
 
         {/* 4 Major Pillars */}
-        <div className="mt-10 sm:mt-16 grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8">
+        <div className="mt-6 sm:mt-12 grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6">
           {pillars.map((pillar) => (
             <div
               key={pillar.title}
-              className="rounded-2xl border border-[#30363d] bg-[#161b22] p-5 sm:p-8 lg:p-10 transition-all hover:border-[#58a6ff]/50"
+              className="rounded-xl sm:rounded-2xl border border-[#30363d] bg-[#161b22] p-3.5 sm:p-6 lg:p-8 transition-all hover:border-[#58a6ff]/50"
             >
-              <div className="flex items-center justify-between mb-5 sm:mb-6">
-                <div className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-xl border border-[#30363d] bg-[#21262d]">
-                  <pillar.icon className="h-6 w-6 sm:h-7 sm:w-7 text-[#2ea043]" />
+              <div className="flex items-center justify-between mb-3 sm:mb-5">
+                <div className="flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-lg sm:rounded-xl border border-[#30363d] bg-[#21262d]">
+                  <pillar.icon className="h-4.5 w-4.5 sm:h-6 sm:w-6 text-[#2ea043]" />
                 </div>
-                <span className="font-mono text-lg sm:text-xl font-bold text-[#8b949e]">
+                <span className="font-mono text-sm sm:text-lg font-bold text-[#8b949e]">
                   {pillar.num}
                 </span>
               </div>
 
-              <h3 className="text-xl sm:text-2xl font-bold text-[#f0f6fc]">
+              <h3 className="text-base sm:text-xl lg:text-2xl font-bold text-[#f0f6fc]">
                 {pillar.title}
               </h3>
-              <p className="mt-3 sm:mt-4 text-sm sm:text-base leading-relaxed text-[#c9d1d9]">
+              <p className="mt-1.5 sm:mt-3 text-xs sm:text-sm lg:text-base leading-relaxed text-[#c9d1d9]">
                 {pillar.description}
               </p>
             </div>
@@ -101,27 +101,27 @@ export const Features = () => {
         </div>
 
         {/* How It Works (3 Steps) */}
-        <div className="mt-12 sm:mt-20 rounded-2xl border border-[#30363d] bg-[#161b22] p-5 sm:p-8 lg:p-12">
-          <div className="text-center mb-8 sm:mb-12">
-            <h3 className="text-xl sm:text-3xl font-bold text-[#f0f6fc]">
+        <div className="mt-8 sm:mt-16 rounded-xl sm:rounded-2xl border border-[#30363d] bg-[#161b22] p-3.5 sm:p-6 lg:p-10">
+          <div className="text-center mb-4 sm:mb-8">
+            <h3 className="text-lg sm:text-2xl lg:text-3xl font-bold text-[#f0f6fc]">
               Как это работает
             </h3>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 sm:gap-5">
             {steps.map((s) => (
               <div
                 key={s.step}
-                className="rounded-xl border border-[#30363d]/70 bg-[#0d1117] p-5 sm:p-8 transition-all hover:border-[#58a6ff]/40"
+                className="rounded-lg sm:rounded-xl border border-[#30363d]/70 bg-[#0d1117] p-3 sm:p-5 transition-all hover:border-[#58a6ff]/40"
               >
-                <div className="flex items-center justify-between mb-4 sm:mb-6">
-                  <div className="flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-xl border border-[#30363d] bg-[#21262d]">
-                    <s.icon className="h-5 w-5 sm:h-6 sm:w-6 text-[#58a6ff]" />
+                <div className="flex items-center justify-between mb-2 sm:mb-4">
+                  <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg border border-[#30363d] bg-[#21262d]">
+                    <s.icon className="h-4 w-4 sm:h-5 sm:w-5 text-[#58a6ff]" />
                   </div>
-                  <span className="font-mono text-sm sm:text-base font-bold text-[#8b949e]">{s.step}</span>
+                  <span className="font-mono text-xs sm:text-sm font-bold text-[#8b949e]">{s.step}</span>
                 </div>
-                <h4 className="text-lg sm:text-xl font-bold text-[#f0f6fc]">{s.title}</h4>
-                <p className="mt-2.5 sm:mt-3 text-sm sm:text-base leading-relaxed text-[#8b949e]">{s.description}</p>
+                <h4 className="text-sm sm:text-lg font-bold text-[#f0f6fc]">{s.title}</h4>
+                <p className="mt-1 sm:mt-2 text-xs sm:text-sm leading-relaxed text-[#8b949e]">{s.description}</p>
               </div>
             ))}
           </div>

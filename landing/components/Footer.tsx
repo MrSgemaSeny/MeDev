@@ -4,9 +4,9 @@ import { GithubIcon } from './GithubIcon';
 
 export const Footer = () => {
   return (
-    <footer className="border-t border-[#30363d] bg-[#0d1117] py-12 text-[#8b949e]">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-10 border-b border-[#30363d]">
+    <footer className="border-t border-[#30363d] bg-[#0d1117] py-8 sm:py-12 text-[#8b949e]">
+      <div className="mx-auto max-w-7xl px-3.5 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 pb-6 sm:gap-8 sm:pb-10 border-b border-[#30363d]">
           {/* Brand */}
           <div className="md:col-span-2 space-y-3">
             <div className="flex items-center gap-2">

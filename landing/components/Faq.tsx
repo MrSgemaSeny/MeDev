@@ -44,18 +44,18 @@ export const Faq = () => {
   };
 
   return (
-    <section id="faq" className="border-b border-[#30363d] bg-[#0d1117] py-14 sm:py-24 lg:py-32">
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+    <section id="faq" className="border-b border-[#30363d] bg-[#0d1117] py-10 sm:py-20 lg:py-28">
+      <div className="mx-auto max-w-5xl px-3.5 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-[#f0f6fc] break-words">
+          <h2 className="text-xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-[#f0f6fc] break-words">
             Ответы на ключевые вопросы
           </h2>
-          <p className="mt-4 sm:mt-5 text-base sm:text-xl leading-relaxed text-[#8b949e]">
+          <p className="mt-2.5 sm:mt-4 text-xs sm:text-base leading-relaxed text-[#8b949e]">
             Если остались вопросы — здесь ответы.
           </p>
         </div>
 
-        <div className="mt-10 sm:mt-16 space-y-3 sm:space-y-4">
+        <div className="mt-6 sm:mt-12 space-y-2.5 sm:space-y-4">
           {faqs.map((faq, idx) => {
             const isOpen = openIndex === idx;
             const btnId = `faq-btn-${idx}`;
@@ -63,7 +63,7 @@ export const Faq = () => {
             return (
               <div
                 key={faq.question}
-                className="rounded-2xl border border-[#30363d] bg-[#161b22] transition-colors"
+                className="rounded-xl sm:rounded-2xl border border-[#30363d] bg-[#161b22] transition-colors"
               >
                 <button
                   id={btnId}
@@ -71,14 +71,14 @@ export const Faq = () => {
                   aria-expanded={isOpen}
                   aria-controls={panelId}
                   onClick={() => toggle(idx)}
-                  className="flex w-full min-h-[44px] items-center justify-between p-4 sm:p-6 lg:p-8 text-left transition-colors hover:text-[#58a6ff] focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded-2xl"
+                  className="flex w-full min-h-[40px] sm:min-h-[44px] items-center justify-between p-3 sm:p-5 lg:p-6 text-left transition-colors hover:text-[#58a6ff] focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none rounded-xl sm:rounded-2xl"
                 >
-                  <span className="text-base sm:text-xl font-bold text-[#f0f6fc] pr-2">
+                  <span className="text-sm sm:text-lg font-bold text-[#f0f6fc] pr-2">
                     {faq.question}
                   </span>
                   <ChevronDown
                     aria-hidden="true"
-                    className={`h-5 w-5 sm:h-6 sm:w-6 shrink-0 text-[#8b949e] transition-transform duration-200 ${
+                    className={`h-4 w-4 sm:h-5 sm:w-5 shrink-0 text-[#8b949e] transition-transform duration-200 ${
                       isOpen ? 'rotate-180 text-[#2ea043]' : ''
                     }`}
                   />
@@ -88,7 +88,7 @@ export const Faq = () => {
                     id={panelId}
                     role="region"
                     aria-labelledby={btnId}
-                    className="px-4 sm:px-6 lg:px-8 pb-5 sm:pb-8 pt-3 text-sm sm:text-base leading-relaxed text-[#c9d1d9] border-t border-[#30363d]"
+                    className="px-3 sm:px-5 lg:px-6 pb-3.5 sm:pb-6 pt-2 text-xs sm:text-sm leading-relaxed text-[#c9d1d9] border-t border-[#30363d]"
                   >
                     {faq.answer}
                   </div>
