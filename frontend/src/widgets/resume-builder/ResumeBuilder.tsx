@@ -152,17 +152,17 @@ export const ResumeBuilder = () => {
   }, [selectedTemplate, isSinglePageMode]);
 
   return (
-    <div className="flex flex-col lg:flex-row h-full bg-[#010409] text-[#c9d1d9] overflow-y-auto lg:overflow-hidden font-sans">
+    <div className="flex flex-col lg:flex-row h-full surface-inset text-primary overflow-y-auto lg:overflow-hidden font-sans">
       
       {/* Mobile Tab Switcher */}
-      <div className="flex lg:hidden items-center border-b border-[#30363d] bg-[#0d1117] p-2 gap-2 sticky top-0 z-30 shrink-0">
+      <div className="flex lg:hidden items-center border-b border-default surface-primary p-2 gap-2 sticky top-0 z-30 shrink-0">
         <button
           type="button"
           onClick={() => setMobileTab('editor')}
           className={`flex-1 min-h-[38px] flex items-center justify-center gap-2 py-1.5 px-3 text-xs font-semibold rounded-lg transition-colors ${
             mobileTab === 'editor'
-              ? 'bg-[#21262d] text-white border border-[#30363d]'
-              : 'text-[#8b949e] hover:text-[#c9d1d9]'
+              ? 'surface-tertiary text-primary border border-default'
+              : 'text-muted hover:text-primary'
           }`}
         >
           <Settings size={14} />
@@ -173,8 +173,8 @@ export const ResumeBuilder = () => {
           onClick={() => setMobileTab('preview')}
           className={`flex-1 min-h-[38px] flex items-center justify-center gap-2 py-1.5 px-3 text-xs font-semibold rounded-lg transition-colors ${
             mobileTab === 'preview'
-              ? 'bg-[#21262d] text-white border border-[#30363d]'
-              : 'text-[#8b949e] hover:text-[#c9d1d9]'
+              ? 'surface-tertiary text-primary border border-default'
+              : 'text-muted hover:text-primary'
           }`}
         >
           <FileText size={14} />
@@ -183,13 +183,13 @@ export const ResumeBuilder = () => {
         </button>
       </div>
 
-      {/* Left Sidebar - GitHub Dark Mode Style */}
-      <div className={`w-full lg:w-[320px] bg-[#0d1117] border-b lg:border-b-0 lg:border-r border-[#30363d] flex-col shrink-0 ${mobileTab === 'editor' ? 'flex' : 'hidden lg:flex'}`}>
+      {/* Left Sidebar */}
+      <div className={`w-full lg:w-[320px] surface-primary border-b lg:border-b-0 lg:border-r border-default flex-col shrink-0 ${mobileTab === 'editor' ? 'flex' : 'hidden lg:flex'}`}>
         
         {/* Header */}
-        <div className="p-4 sm:p-5 border-b border-[#30363d]">
-          <h1 className="text-lg font-semibold text-white">{t('builder.title', 'Resume Builder')}</h1>
-          <p className="text-xs text-[#8b949e] mt-1">{t('builder.subtitle', 'Configure layout & appearance')}</p>
+        <div className="p-4 sm:p-5 border-b border-default">
+          <h1 className="text-lg font-semibold text-primary">{t('builder.title', 'Resume Builder')}</h1>
+          <p className="text-xs text-muted mt-1">{t('builder.subtitle', 'Configure layout & appearance')}</p>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-6 sm:space-y-8">
@@ -197,8 +197,8 @@ export const ResumeBuilder = () => {
           {/* Layout Mode */}
           <section className="flex items-center justify-between mb-4">
             <div className="flex flex-col">
-              <h2 className="text-xs font-bold text-[#8b949e] uppercase tracking-wider mb-1">{t('builder.pdfLayoutMode', 'PDF Layout Mode')}</h2>
-              <span className="text-[10px] text-[#8b949e]">{t('builder.toggleCompact', 'Toggle compact view')}</span>
+              <h2 className="text-xs font-bold text-muted uppercase tracking-wider mb-1">{t('builder.pdfLayoutMode', 'PDF Layout Mode')}</h2>
+              <span className="text-[10px] text-muted">{t('builder.toggleCompact', 'Toggle compact view')}</span>
             </div>
             <button
               onClick={() => setSinglePageMode(!isSinglePageMode)}
@@ -225,7 +225,7 @@ export const ResumeBuilder = () => {
 
           {/* Templates Section */}
           <section>
-            <h2 className="text-xs font-bold text-[#8b949e] uppercase tracking-wider mb-4">{t('builder.templatesHeading', 'Templates')}</h2>
+            <h2 className="text-xs font-bold text-muted uppercase tracking-wider mb-4">{t('builder.templatesHeading', 'Templates')}</h2>
             <div className="flex flex-col gap-2">
               {TEMPLATES.map((tmpl) => {
                 const isActive = selectedTemplate === tmpl.id;
@@ -235,19 +235,19 @@ export const ResumeBuilder = () => {
                   <button
                     key={tmpl.id}
                     onClick={() => setTemplate(tmpl.id)}
-                    className={`w-full flex items-center justify-between p-3 rounded-md border text-left transition-all duration-200 ${
+                    className={`w-full flex items-center justify-between p-3 rounded-md border text-left transition-all duration-200 cursor-pointer ${
                       isActive 
-                        ? 'bg-[#161b22] border-[#238636]' 
-                        : 'bg-[#0d1117] border-[#30363d] hover:border-[#8b949e] hover:bg-[#161b22]'
+                        ? 'surface-secondary border-[var(--color-accent)]' 
+                        : 'surface-primary border-default hover:surface-secondary'
                     }`}
                   >
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className={`text-sm font-medium ${isActive ? 'text-white' : 'text-[#c9d1d9]'}`}>
+                        <span className={`text-sm font-medium ${isActive ? 'text-primary' : 'text-secondary'}`}>
                           {tmplName}
                         </span>
                       </div>
-                      <div className="text-xs text-[#8b949e] mt-0.5">{tmplDesc}</div>
+                      <div className="text-xs text-muted mt-0.5">{tmplDesc}</div>
                     </div>
                     {isActive && (
                       <div className="w-2 h-2 rounded-full" style={{ backgroundColor: tmpl.accent }}></div>
@@ -260,21 +260,21 @@ export const ResumeBuilder = () => {
 
           {/* Sections Management */}
           <section>
-            <h2 className="text-xs font-bold text-[#8b949e] uppercase tracking-wider mb-4">{t('builder.sectionsManagement', 'Sections Content')}</h2>
+            <h2 className="text-xs font-bold text-muted uppercase tracking-wider mb-4">{t('builder.sectionsManagement', 'Sections Content')}</h2>
             <div className="space-y-2">
               {sections.map((section, index) => {
                 const sectionLabel = t(`builder.sectionNames.${section.id}`, section.label);
                 return (
                   <div
                     key={section.id}
-                    className="flex items-center justify-between p-2.5 rounded-md bg-[#161b22] border border-[#30363d] group"
+                    className="flex items-center justify-between p-2.5 rounded-md surface-secondary border border-default group"
                   >
-                    <label className="flex items-center gap-3 text-sm cursor-pointer select-none text-[#c9d1d9] group-hover:text-white transition-colors">
+                    <label className="flex items-center gap-3 text-sm cursor-pointer select-none text-secondary group-hover:text-primary transition-colors">
                       <input 
                         type="checkbox" 
                         checked={section.visible} 
                         onChange={() => toggleSection(section.id)} 
-                        className="w-4 h-4 rounded border-[#30363d] bg-[#0d1117] checked:bg-[#238636] checked:border-[#238636] focus:ring-0 focus:ring-offset-0 cursor-pointer appearance-none relative
+                        className="w-4 h-4 rounded border-default bg-[var(--color-bg-primary)] checked:bg-[#238636] checked:border-[#238636] focus:ring-0 focus:ring-offset-0 cursor-pointer appearance-none relative
                           before:content-[''] before:absolute before:inset-0 before:bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwb2x5bGluZSBwb2ludHM9IjIwIDYgOSAxNyA0IDEyIi8+PC9zdmc+')] 
                           before:bg-center before:bg-no-repeat before:scale-0 checked:before:scale-[0.6] before:transition-transform"
                       />
@@ -285,7 +285,7 @@ export const ResumeBuilder = () => {
                         onClick={() => moveUp(index)} 
                         disabled={index === 0} 
                         aria-label={`Move ${sectionLabel} up`}
-                        className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded hover:bg-[#30363d] text-[#8b949e] hover:text-white disabled:opacity-30 disabled:hover:bg-transparent"
+                        className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded hover:surface-tertiary text-muted hover:text-primary disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer"
                       >
                         <ArrowUp size={16} />
                       </button>
@@ -293,7 +293,7 @@ export const ResumeBuilder = () => {
                         onClick={() => moveDown(index)} 
                         disabled={index === sections.length - 1} 
                         aria-label={`Move ${sectionLabel} down`}
-                        className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded hover:bg-[#30363d] text-[#8b949e] hover:text-white disabled:opacity-30 disabled:hover:bg-transparent"
+                        className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded hover:surface-tertiary text-muted hover:text-primary disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer"
                       >
                         <ArrowDown size={16} />
                       </button>
@@ -306,10 +306,10 @@ export const ResumeBuilder = () => {
         </div>
 
         {/* Footer Actions */}
-        <div className="p-4 sm:p-5 border-t border-[#30363d] bg-[#0d1117] space-y-3">
+        <div className="p-4 sm:p-5 border-t border-default surface-primary space-y-3">
           <button 
             onClick={handleAiAnalysis}
-            className="w-full min-h-[44px] flex items-center justify-center gap-2 bg-[#161b22] hover:bg-[#30363d] border border-[#30363d] text-[#c9d1d9] hover:text-white py-2.5 px-4 rounded-md text-sm font-medium transition-colors"
+            className="w-full min-h-[44px] flex items-center justify-center gap-2 surface-secondary hover:surface-tertiary border border-default text-secondary hover:text-primary py-2.5 px-4 rounded-md text-sm font-medium transition-colors cursor-pointer"
           >
             <Bot size={16} />
             {t('builder.aiReview', 'AI Analysis')}
@@ -318,14 +318,14 @@ export const ResumeBuilder = () => {
           <div className="flex gap-2">
             <button 
               onClick={handleDownloadPdf}
-              className="flex-1 min-h-[44px] flex items-center justify-center gap-2 bg-[#238636] hover:bg-[#2ea043] border border-[rgba(240,246,252,0.1)] text-white py-2.5 px-3 rounded-md text-sm font-medium transition-colors shadow-sm"
+              className="flex-1 min-h-[44px] flex items-center justify-center gap-2 bg-[#238636] hover:bg-[#2ea043] text-white py-2.5 px-3 rounded-md text-sm font-medium transition-colors shadow-sm cursor-pointer"
             >
               <Download size={14} />
               {t('builder.downloadPdf', 'PDF')}
             </button>
             <button 
               onClick={handleDownloadHtml}
-              className="flex-1 min-h-[44px] flex items-center justify-center gap-2 bg-[#1f6feb] hover:bg-[#388bfd] border border-[rgba(240,246,252,0.1)] text-white py-2.5 px-3 rounded-md text-sm font-medium transition-colors shadow-sm"
+              className="flex-1 min-h-[44px] flex items-center justify-center gap-2 bg-[#1f6feb] hover:bg-[#388bfd] text-white py-2.5 px-3 rounded-md text-sm font-medium transition-colors shadow-sm cursor-pointer"
             >
               <FileText size={14} />
               {t('builder.downloadHtml', 'HTML')}
@@ -334,7 +334,7 @@ export const ResumeBuilder = () => {
 
           <button 
             onClick={handleDownload}
-            className="w-full min-h-[44px] flex items-center justify-center gap-2 bg-transparent hover:underline text-[#8b949e] hover:text-[#58a6ff] py-2 px-4 rounded-md text-xs font-medium transition-colors"
+            className="w-full min-h-[44px] flex items-center justify-center gap-2 bg-transparent hover:underline text-muted hover:text-[var(--color-accent)] py-2 px-4 rounded-md text-xs font-medium transition-colors cursor-pointer"
           >
             <FileText size={14} />
             {t('builder.downloadMarkdown', 'Download Markdown (README)')}
@@ -347,10 +347,10 @@ export const ResumeBuilder = () => {
         {/* Top bar for preview */}
         <div className="flex items-center justify-between mb-3 sm:mb-6">
           <div className="flex items-center gap-2">
-            <h2 className="text-sm sm:text-lg font-medium text-white">{t('builder.livePreview', 'Live PDF Preview')}</h2>
+            <h2 className="text-sm sm:text-lg font-medium text-primary">{t('builder.livePreview', 'Live PDF Preview')}</h2>
             <button
               onClick={() => setMobileTab('editor')}
-              className="lg:hidden text-xs text-[#58a6ff] hover:underline cursor-pointer"
+              className="lg:hidden text-xs text-[var(--color-accent)] hover:underline cursor-pointer"
             >
               {t('builder.mobileTabs.settings', 'Настройки')}
             </button>
@@ -363,7 +363,7 @@ export const ResumeBuilder = () => {
               <Download size={13} />
               {t('builder.export', 'Экспорт')}
             </button>
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#161b22] border border-[#30363d] text-[11px] sm:text-xs text-[#8b949e]">
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full surface-secondary border border-default text-[11px] sm:text-xs text-muted">
               <span className="w-1.5 h-1.5 rounded-full bg-[#238636] animate-pulse"></span>
               Live
             </div>
@@ -380,11 +380,11 @@ export const ResumeBuilder = () => {
               transformOrigin: 'top center',
               marginBottom: `-${(1 - previewScale) * A4_HEIGHT}px`,
             }}
-            className="bg-white rounded-xl shadow-2xl overflow-hidden border border-[#30363d] shrink-0 transition-transform duration-150 ease-out flex flex-col"
+            className="bg-white rounded-xl shadow-2xl overflow-hidden border border-default shrink-0 transition-transform duration-150 ease-out flex flex-col"
           >
             {previewLoading ? (
-              <div className="flex-1 flex items-center justify-center flex-col gap-4 text-[#8b949e] bg-[#0d1117]">
-                <div className="w-8 h-8 border-2 border-[#30363d] border-t-[#238636] rounded-full animate-spin"></div>
+              <div className="flex-1 flex items-center justify-center flex-col gap-4 text-muted surface-primary">
+                <div className="w-8 h-8 border-2 border-default border-t-[#238636] rounded-full animate-spin"></div>
                 <div className="text-sm">{t('builder.previewLoading', 'Rendering HTML Template...')}</div>
               </div>
             ) : (htmlDoc || htmlUrl) ? (
@@ -395,7 +395,7 @@ export const ResumeBuilder = () => {
                 title="HTML Preview" 
               />
             ) : (
-              <div className="flex-1 flex items-center justify-center text-[#8b949e] text-sm bg-[#0d1117]">
+              <div className="flex-1 flex items-center justify-center text-muted text-sm surface-primary">
                 {t('builder.failedPreview', 'Failed to load preview')}
               </div>
             )}

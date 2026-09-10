@@ -30,9 +30,12 @@
    - Редактор резюме снабжен табами `[ Настройки ]` / `[ Предпросмотр ]` на мобильных экранах.
    - Устранен эффект гигантских блоков на мобильных экранах лендинга и дашборда.
 
-4. **Strict GitHub Dark Mode Enforcement**:
-   - Устранена белая шапка и белый выпадающий список: в `:root` (`index.css`) зафиксированы тёмные переменные GitHub Dark Mode, исключающие дефолты светлой темы.
-   - Из `AppHeader.tsx`, `UserProfileDropdown.tsx` и `SettingsPage.tsx` удалены половинчатые переключатели тем, ломавшие контраст интерфейса. Тёмная тема принудительно зафиксирована.
+4. **Complete Light & Dark Mode Architecture (100% COMPLETE)**:
+   - В `:root` восстановлена полноценная светлая палитра GitHub Light, в `.dark` — строгая тёмная палитра GitHub Dark.
+   - В `theme.ts` и `index.html` реализовано переключение и сохранение темы (`theme: 'light' | 'dark'`), добавлено событие `medev-theme-changed`.
+   - В `AppHeader.tsx`, `UserProfileDropdown.tsx` и `SettingsPage.tsx` возвращены полнофункциональные переключатели темы (Sun / Moon, Светлая / Тёмная) с синхронизацией состояния.
+   - `ResumeBuilder.tsx` и компоненты интерфейса переведены на семантические токены (`surface-primary`, `surface-secondary`, `surface-inset`, `border-default`, `text-primary`, `text-secondary`, `text-muted`).
+   - Добавлен автоматический тест `theme.test.ts` (3 теста).
 
 5. **Full Production i18n Localization & Reactivity (100% COMPLETE)**:
    - В `i18n.ts` исправлена конфигурация: `fallbackLng: 'ru'`, `lng: initialLng` с чтением `i18nextLng` из `localStorage` и событием `languageChanged`.
@@ -42,7 +45,7 @@
 
 ## Verification
 - `backend`: 266/266 тестов успешно пройдены (`./gradlew test`).
-- `frontend`: 46/46 тестов пройдены (`npm test`).
+- `frontend`: 49/49 тестов пройдены (`npm test`).
 - `frontend`: сборка Vite прошла без ошибок (`npm run build`).
 - `landing`: сборка Next.js 15 прошла без ошибок (`npm run build`).
 

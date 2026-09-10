@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { LogOut, Bell, Globe, Mail, Shield } from 'lucide-react';
+import { LogOut, Bell, Globe, Mail, Shield, Sun, Moon } from 'lucide-react';
 import { useAuthStore } from '../../entities/user/model/store';
 import { useTranslation } from 'react-i18next';
 import { useProfile } from '../../shared/api/hooks/useProfile';
+import { toggleTheme, setTheme, isDarkMode } from '../../shared/lib/theme';
 
 interface UserProfileDropdownProps {
   variant?: 'sidebar' | 'header';
@@ -16,6 +17,33 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
   const logout = useAuthStore((s) => s.logout);
   const { t, i18n } = useTranslation();
   const { data: profile } = useProfile();
+  const [isDark, setIsDark] = useState(isDarkMode);
+
+  useEffect(() => {
+    const handleThemeChange = (e: any) => {
+      if (e.detail?.isDark !== undefined) {
+        setIsDark(e.detail.isDark);
+      } else {
+        setIsDark(isDarkMode());
+      }
+    };
+
+    window.addEventListener('medev-theme-changed', handleThemeChange);
+
+    const observer = new MutationObserver(() => {
+      setIsDark(isDarkMode());
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+    return () => {
+      window.removeEventListener('medev-theme-changed', handleThemeChange);
+      observer.disconnect();
+    };
+  }, []);
+
+  const handleToggleTheme = () => {
+    toggleTheme(setIsDark);
+  };
   
   const avatarUrl = profile?.githubUsername ? `https://github.com/${profile.githubUsername}.png` : `https://github.com/${username}.png`;
 
@@ -88,30 +116,71 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
         )}
       </button>
 
-      {/* Меню — открывается вниз и от правого края в хедере, вверх и от левого в сайдбаре */}
+      {/* Меню */}
       {isOpen && (
         <div
-          className={`absolute w-64 rounded-xl shadow-2xl border border-[#30363d] bg-[#161b22] z-50 flex flex-col py-2 ${
+          className={`absolute w-64 rounded-xl shadow-2xl border z-50 flex flex-col py-2 ${
             isHeader ? 'right-0 top-full mt-2' : 'left-0 bottom-full mb-2'
           }`}
           style={{
-            boxShadow: '0 10px 25px -5px rgba(1, 4, 9, 0.8)',
+            backgroundColor: 'var(--color-bg-primary)',
+            borderColor: 'var(--color-border-default)',
+            boxShadow: '0 10px 25px -5px var(--color-shadow)',
           }}
         >
-          <div className="px-4 py-3 border-b border-[#30363d] flex items-center gap-3">
+          <div className="px-4 py-3 border-b flex items-center gap-3" style={{ borderColor: 'var(--color-border-default)' }}>
             <img
               src={avatarUrl}
               alt={`${username || 'User'} — фото профиля`}
-              className="w-10 h-10 rounded-full object-cover border border-[#30363d] shrink-0 bg-[#21262d]"
+              className="w-10 h-10 rounded-full object-cover border shrink-0"
+              style={{ borderColor: 'var(--color-border-default)', backgroundColor: 'var(--color-bg-tertiary)' }}
             />
             <div className="flex flex-col overflow-hidden">
-              <span className="font-semibold text-[15px] truncate text-white">{username}</span>
+              <span className="font-semibold text-[15px] truncate text-primary">{username}</span>
             </div>
           </div>
 
           <div className="py-2 flex flex-col">
-            <button className="w-full px-4 py-2.5 flex items-center justify-between hover:bg-white/5 transition-colors text-left cursor-pointer">
-              <div className="flex items-center gap-3 text-[#8b949e] hover:text-[#c9d1d9]">
+            {/* Тема */}
+            <div
+              className="px-4 py-2.5 flex items-center justify-between hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
+              onClick={handleToggleTheme}
+            >
+              <div className="flex items-center gap-3 text-secondary">
+                {isDark ? <Moon size={18} /> : <Sun size={18} />}
+                <span className="text-sm font-medium">{t('settings.theme', 'Тема')}</span>
+              </div>
+              <div
+                className="flex rounded-full p-0.5 text-xs font-semibold border"
+                style={{ backgroundColor: 'var(--color-bg-inset)', borderColor: 'var(--color-border-default)' }}
+              >
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); setTheme(false, setIsDark); }}
+                  className={`px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
+                    !isDark
+                      ? 'bg-[var(--color-accent)] text-white shadow-sm'
+                      : 'text-secondary hover:text-primary'
+                  }`}
+                >
+                  {t('settings.light', 'Светлая')}
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); setTheme(true, setIsDark); }}
+                  className={`px-2.5 py-1 rounded-full transition-colors cursor-pointer ${
+                    isDark
+                      ? 'bg-[var(--color-accent)] text-white shadow-sm'
+                      : 'text-secondary hover:text-primary'
+                  }`}
+                >
+                  {t('settings.dark', 'Тёмная')}
+                </button>
+              </div>
+            </div>
+
+            <button className="w-full px-4 py-2.5 flex items-center justify-between hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-left cursor-pointer">
+              <div className="flex items-center gap-3 text-secondary hover:text-primary">
                 <Bell size={18} />
                 <span className="text-sm font-medium">{t('header.notifications', 'Уведомления')}</span>
               </div>
@@ -120,29 +189,32 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
             {role === 'ADMIN' && (
               <button 
                 onClick={() => { setIsOpen(false); window.location.href = '/admin/dashboard'; }}
-                className="w-full px-4 py-2.5 flex items-center justify-between hover:bg-white/5 transition-colors text-left cursor-pointer"
+                className="w-full px-4 py-2.5 flex items-center justify-between hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-left cursor-pointer"
               >
-                <div className="flex items-center gap-3 text-[#2ea043]">
+                <div className="flex items-center gap-3 text-[var(--color-accent)]">
                   <Shield size={18} />
                   <span className="text-sm font-medium">{t('header.adminPanel', 'Админ-панель')}</span>
                 </div>
               </button>
             )}
 
-            <div className="h-px bg-[#30363d] my-1 mx-4" />
+            <div className="h-px my-1 mx-4" style={{ backgroundColor: 'var(--color-border-default)' }} />
 
             <div className="px-4 py-2.5 flex items-center justify-between">
-              <div className="flex items-center gap-3 text-[#8b949e]">
+              <div className="flex items-center gap-3 text-secondary">
                 <Globe size={18} />
                 <span className="text-sm font-medium">{t('header.language', 'Язык')}</span>
               </div>
-              <div className="flex bg-[#0d1117] border border-[#30363d] rounded-full p-0.5 text-xs font-bold">
+              <div
+                className="flex border rounded-full p-0.5 text-xs font-bold"
+                style={{ backgroundColor: 'var(--color-bg-inset)', borderColor: 'var(--color-border-default)' }}
+              >
                 <button
                   onClick={() => toggleLanguage('ru')}
                   className={`px-3 py-1 rounded-full transition-colors cursor-pointer ${
                     i18n.language?.startsWith('ru')
-                      ? 'bg-[#238636] text-white shadow-sm'
-                      : 'text-[#8b949e] hover:text-[#c9d1d9]'
+                      ? 'bg-[var(--color-accent)] text-white shadow-sm'
+                      : 'text-secondary hover:text-primary'
                   }`}
                 >
                   RU
@@ -151,8 +223,8 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
                   onClick={() => toggleLanguage('en')}
                   className={`px-3 py-1 rounded-full transition-colors cursor-pointer ${
                     i18n.language?.startsWith('en')
-                      ? 'bg-[#238636] text-white shadow-sm'
-                      : 'text-[#8b949e] hover:text-[#c9d1d9]'
+                      ? 'bg-[var(--color-accent)] text-white shadow-sm'
+                      : 'text-secondary hover:text-primary'
                   }`}
                 >
                   EN
@@ -160,9 +232,9 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
               </div>
             </div>
 
-            <div className="h-px bg-[#30363d] my-1 mx-4" />
+            <div className="h-px my-1 mx-4" style={{ backgroundColor: 'var(--color-border-default)' }} />
 
-            <button className="w-full px-4 py-2.5 flex items-center gap-3 text-[#8b949e] hover:text-[#c9d1d9] hover:bg-white/5 transition-colors text-left cursor-pointer">
+            <button className="w-full px-4 py-2.5 flex items-center gap-3 text-secondary hover:text-primary hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-left cursor-pointer">
               <Mail size={18} />
               <span className="text-sm font-medium">{t('header.support', 'Поддержка')}</span>
             </button>
@@ -172,7 +244,7 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
                 logout();
                 setIsOpen(false);
               }}
-              className="w-full px-4 py-2.5 flex items-center gap-3 text-[#f85149] hover:bg-[#f85149]/10 transition-colors text-left mt-1 cursor-pointer"
+              className="w-full px-4 py-2.5 flex items-center gap-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors text-left mt-1 cursor-pointer"
             >
               <LogOut size={18} />
               <span className="text-sm font-medium">{t('header.logout', 'Выйти')}</span>

@@ -169,6 +169,8 @@
     "languageDesc": "Choose your preferred language",
     "theme": "Theme",
     "themeDesc": "Application color theme",
+    "light": "Light",
+    "dark": "Dark",
     "dangerZone": "Danger Zone",
     "deleteAccount": "Delete Account",
     "deleteAccountDesc": "Permanently delete your account and all associated data. This action cannot be undone.",
