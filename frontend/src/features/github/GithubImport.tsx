@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { api, BASE_URL } from '../../shared/api/axios';
-import { useProfile, useGenerateProfile } from '../../shared/api/hooks/useProfile';
+import { api, BASE_URL } from '../../shared/api/api';
+import { useProfile, useGenerateProfile } from '../../entities/profile/api/hooks';
 import { Button } from '../../shared/ui/Button';
 import { Card } from '../../shared/ui/Form';
 import { CheckCircle2, DownloadCloud, RefreshCw, Star } from 'lucide-react';
@@ -55,8 +55,8 @@ export const GithubImport = () => {
     try {
       const { data } = await api.get<GitHubProfileDto>('/github/fetch');
       setProfile(data);
-      const ownedRepos = (data.repos || []).filter((r) => !r.name.includes('.github'));
-      setSelected(new Set(ownedRepos.map((r) => r.id)));
+      const ownedRepos = (data.repos || []).filter((r: any) => !r.name.includes('.github'));
+      setSelected(new Set(ownedRepos.map((r: any) => r.id)));
       setStage('selecting');
     } catch (err: any) {
       const msg =

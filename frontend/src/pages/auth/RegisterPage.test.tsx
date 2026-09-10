@@ -2,11 +2,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { RegisterPage } from './RegisterPage';
 import { BrowserRouter } from 'react-router-dom';
-import { api } from '../../shared/api/axios';
+import { api } from '../../shared/api/api';
 import { useAuthStore } from '../../entities/user/model/store';
 
 // Mock API
-vi.mock('../../shared/api/axios', () => ({
+vi.mock('../../shared/api/api', () => ({
   BASE_URL: 'http://localhost:8080/api/v1',
   api: {
     post: vi.fn(),

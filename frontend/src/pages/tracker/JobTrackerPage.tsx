@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useJobApplications, useAddJobApplication, useDeleteJobApplication, useUpdateJobApplication, useGenerateCoverLetter, useScrapeJob, useMatchJob } from '../../shared/api/hooks/useJobTracker';
+import { useJobApplications, useAddJobApplication, useDeleteJobApplication, useUpdateJobApplication, useGenerateCoverLetter, useScrapeJob, useMatchJob } from '../../entities/job-tracker/api/hooks';
 import { KanbanBoard } from '../../features/job-tracker/ui/KanbanBoard';
 import type { ApplicationStatus, JobApplicationDto, CreateJobApplicationRequest } from '../../entities/job-tracker/model/types';
 import { Button } from '../../shared/ui/Button';

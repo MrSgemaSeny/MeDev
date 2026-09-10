@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useProfile, useAddExperience, useUpdateExperience, useDeleteExperience, useReorderSection } from '../../../shared/api/hooks/useProfile';
+import { useProfile, useAddExperience, useUpdateExperience, useDeleteExperience, useReorderSection } from '../../../entities/profile/api/hooks';
 import type { ExperienceDto } from '../../../entities/profile/model/types';
 import { Button } from '../../../shared/ui/Button';
 import { Input, Textarea, Label, Card } from '../../../shared/ui/Form';

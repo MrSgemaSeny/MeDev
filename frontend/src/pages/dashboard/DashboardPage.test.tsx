@@ -2,12 +2,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { DashboardPage } from './DashboardPage';
 import { MemoryRouter } from 'react-router-dom';
-import { useProfile } from '../../shared/api/hooks/useProfile';
+import { useProfile } from '../../entities/profile/api/hooks';
 import { useAuthStore } from '../../entities/user/model/store';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // Mock dependencies
-vi.mock('../../shared/api/hooks/useProfile');
+vi.mock('../../entities/profile/api/hooks');
 vi.mock('../../entities/user/model/store');
 
 const queryClient = new QueryClient();

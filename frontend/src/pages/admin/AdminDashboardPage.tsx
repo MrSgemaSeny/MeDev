@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { api } from '../../shared/api/axios';
+import { api } from '../../shared/api/api';
 import { toast } from 'sonner';
 import { Trash2, RefreshCw } from 'lucide-react';
 

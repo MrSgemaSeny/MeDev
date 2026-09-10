@@ -1,5 +1,5 @@
 import { GithubImport } from '../../github/GithubImport';
-import { useProfile } from '../../../shared/api/hooks/useProfile';
+import { useProfile } from '../../../entities/profile/api/hooks';
 
 export const GithubSection = () => {
   const { isLoading } = useProfile();

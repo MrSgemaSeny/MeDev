@@ -3,7 +3,7 @@ import { Bot, Send, X, Loader2 } from 'lucide-react';
 import { useAiChatStore } from '../model/store';
 import { useAuthStore } from '../../../entities/user/model/store';
 import { useUpsellStore } from '../../../entities/user/model/upsellStore';
-import { BASE_URL, api } from '../../../shared/api/axios';
+import { BASE_URL, api } from '../../../shared/api/api';
 
 export function cleanContent(text: string): string {
   if (!text) return text;

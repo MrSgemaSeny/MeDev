@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Button } from '../../shared/ui/Button';
 import { Input } from '../../shared/ui/Input';
-import { api } from '../../shared/api/axios';
+import { api } from '../../shared/api/api';
 
 export function ResetPasswordPage() {
   const [searchParams] = useSearchParams();

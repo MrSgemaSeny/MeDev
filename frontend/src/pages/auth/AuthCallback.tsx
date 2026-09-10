@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../../entities/user/model/store';
-import { api } from '../../shared/api/axios';
+import { api } from '../../shared/api/api';
 import { toast } from 'sonner';
 
 export const AuthCallback = () => {

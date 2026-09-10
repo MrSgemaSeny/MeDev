@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { toast } from 'sonner';
-import { api } from '../../shared/api/axios';
+import { api } from '../../shared/api/api';
 import type { ProfileDto } from '../../entities/profile/model/types';
 import { Card } from '../../shared/ui/Form';
 import { ProfileSkeleton } from '../../shared/ui/Skeleton';

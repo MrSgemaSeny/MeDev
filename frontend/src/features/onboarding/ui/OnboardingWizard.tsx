@@ -3,7 +3,7 @@ import { useOnboarding } from '../api/useOnboarding';
 import { Button } from '../../../shared/ui/Button';
 import { Input, Textarea, Label } from '../../../shared/ui/Form';
 import { Modal } from '../../../shared/ui/Modal';
-import { useProfile } from '../../../shared/api/hooks/useProfile';
+import { useProfile } from '../../../entities/profile/api/hooks';
 
 export const OnboardingWizard = () => {
   const { data: profile, isLoading } = useProfile();

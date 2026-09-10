@@ -3,10 +3,10 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ResumeBuilder } from './ResumeBuilder';
 import { useResumeEditorStore } from '../../entities/resume/model/resumeEditorStore';
 import { useAiChatStore } from '../../features/ai-assistant/model/store';
-import { api } from '../../shared/api/axios';
+import { api } from '../../shared/api/api';
 
 // Mock API
-vi.mock('../../shared/api/axios', () => ({
+vi.mock('../../shared/api/api', () => ({
   api: {
     get: vi.fn(),
   }

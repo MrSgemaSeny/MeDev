@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '../../../shared/api/axios';
+import { api } from '../../../shared/api/api';
 
 interface OnboardingRequest {
   role: string;

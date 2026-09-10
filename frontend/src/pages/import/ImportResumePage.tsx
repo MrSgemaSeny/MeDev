@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { useParseResume } from '../../shared/api/hooks/useProfile';
+import { useParseResume } from '../../entities/profile/api/hooks';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../shared/ui/Button';
 import { UploadCloud, FileText } from 'lucide-react';

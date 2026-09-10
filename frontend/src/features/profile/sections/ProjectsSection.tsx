@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useProfile, useAddProject, useUpdateProject, useDeleteProject, useReorderSection } from '../../../shared/api/hooks/useProfile';
+import { useProfile, useAddProject, useUpdateProject, useDeleteProject, useReorderSection } from '../../../entities/profile/api/hooks';
 import type { ProjectDto } from '../../../entities/profile/model/types';
 import { Button } from '../../../shared/ui/Button';
 import { Input, Textarea, Label, Card } from '../../../shared/ui/Form';

@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { api } from '../axios';
-import type { ProfileDto } from '../../../entities/profile/model/types';
+import { api } from '../../../shared/api/api';
+import type { ProfileDto } from '../../profile/model/types';
 
 export const useProfile = () => {
   return useQuery<ProfileDto>({
@@ -168,7 +168,7 @@ const createCrudHooks = <T,>(sectionName: string) => {
   };
 };
 
-import type { ExperienceDto, EducationDto, SkillDto, LanguageDto, ProjectDto } from '../../../entities/profile/model/types';
+import type { ExperienceDto, EducationDto, SkillDto, LanguageDto, ProjectDto } from '../../profile/model/types';
 
 export const { useAdd: useAddExperience, useUpdate: useUpdateExperience, useDelete: useDeleteExperience } = createCrudHooks<ExperienceDto>('experience');
 export const { useAdd: useAddEducation, useUpdate: useUpdateEducation, useDelete: useDeleteEducation } = createCrudHooks<EducationDto>('education');

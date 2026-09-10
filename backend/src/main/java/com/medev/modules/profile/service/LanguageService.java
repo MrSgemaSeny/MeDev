@@ -22,16 +22,20 @@ public class LanguageService {
     private final ProfileMapper profileMapper;
     private final ProfileService profileService;
 
-    private static final java.util.Set<String> PROGRAMMING_LANGUAGES = java.util.Set.of(
-            "java", "python", "javascript", "typescript", "c++", "c#", "c", "golang", "go",
-            "rust", "php", "ruby", "kotlin", "swift", "scala", "dart", "sql", "html", "css",
-            "shell", "bash", "powershell", "r", "perl", "elixir", "clojure", "haskell", "solidity"
+    public static final java.util.Set<String> PROGRAMMING_LANGUAGES = java.util.Set.of(
+            "java", "python", "javascript", "typescript", "c++", "cpp", "c#", "csharp", "c", "golang", "go",
+            "rust", "php", "ruby", "kotlin", "swift", "scala", "dart", "sql", "html", "css", "scss", "less",
+            "shell", "bash", "sh", "zsh", "powershell", "r", "perl", "elixir", "clojure", "haskell", "solidity",
+            "dockerfile", "docker", "yaml", "yml", "json", "xml", "markdown", "md", "makefile"
     );
 
+    public static boolean isProgrammingLanguage(String name) {
+        if (name == null || name.isBlank()) return false;
+        return PROGRAMMING_LANGUAGES.contains(name.trim().toLowerCase());
+    }
+
     private void validateNotProgrammingLanguage(String name) {
-        if (name == null || name.isBlank()) return;
-        String normalized = name.trim().toLowerCase();
-        if (PROGRAMMING_LANGUAGES.contains(normalized)) {
+        if (isProgrammingLanguage(name)) {
             throw new IllegalArgumentException(
                     "Programming languages ('" + name + "') belong in Skills, not in spoken Languages."
             );

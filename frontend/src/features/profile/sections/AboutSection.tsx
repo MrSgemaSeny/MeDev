@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { useProfile, useUpdateProfile, useParseResume } from '../../../shared/api/hooks/useProfile';
+import { useProfile, useUpdateProfile, useParseResume } from '../../../entities/profile/api/hooks';
 import { useGenerateSummary } from '../../ai/hooks/useAiGenerate';
 import { Upload, Sparkles, Check } from 'lucide-react';
 import { useAuthStore } from '../../../entities/user/model/store';
@@ -100,7 +100,6 @@ export const AboutSection = () => {
           >
             <Upload size={14} aria-hidden="true" />
             {parseResume.isPending ? 'Импорт...' : 'Импортировать из PDF'}
-            <span className="text-[10px] py-0.5 px-1 bg-[var(--bg-pro)] text-[var(--text-pro)] border border-[var(--border-pro)] rounded font-medium tracking-wide ml-1">Pro</span>
           </button>
         </div>
       </div>
@@ -147,7 +146,7 @@ export const AboutSection = () => {
               name="headline" 
               value={formData.headline} 
               onChange={handleChange} 
-              placeholder="например, Senior Full-Stack Engineer" 
+              placeholder="например, Full Stack Engineer | Java · Spring Boot · React" 
               className="surface-inset border border-default rounded-md py-2 px-3 text-[16px] md:text-[13px] min-h-[44px] md:min-h-[38px] text-primary w-full outline-none focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:border-transparent hover:border-[var(--color-border-muted)] transition-all placeholder:text-muted" 
             />
           </div>
@@ -158,7 +157,7 @@ export const AboutSection = () => {
               name="location" 
               value={formData.location} 
               onChange={handleChange} 
-              placeholder="Алматы, Казахстан" 
+              placeholder="например, Shymkent, Kazakhstan · Remote" 
               className="surface-inset border border-default rounded-md py-2 px-3 text-[16px] md:text-[13px] min-h-[44px] md:min-h-[38px] text-primary w-full outline-none focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:border-transparent hover:border-[var(--color-border-muted)] transition-all placeholder:text-muted" 
             />
           </div>
@@ -169,7 +168,7 @@ export const AboutSection = () => {
               name="website" 
               value={formData.website} 
               onChange={handleChange} 
-              placeholder="https://" 
+              placeholder="https://medev.mrsgemaseny.com" 
               className="surface-inset border border-default rounded-md py-2 px-3 text-[16px] md:text-[13px] min-h-[44px] md:min-h-[38px] text-primary w-full outline-none focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:border-transparent hover:border-[var(--color-border-muted)] transition-all placeholder:text-muted" 
             />
           </div>

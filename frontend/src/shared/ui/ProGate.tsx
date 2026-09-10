@@ -1,5 +1,4 @@
 import React from 'react';
-import { useAuthStore } from '../../entities/user/model/store';
 import { Lock } from 'lucide-react';
 import { Button } from './Button';
 
@@ -7,11 +6,10 @@ interface ProGateProps {
   children: React.ReactNode;
   fallback?: React.ReactNode;
   blur?: boolean;
+  isPro: boolean;
 }
 
-export const ProGate: React.FC<ProGateProps> = ({ children, fallback, blur = true }) => {
-  const { plan } = useAuthStore();
-  const isPro = plan === 'PRO';
+export const ProGate: React.FC<ProGateProps> = ({ children, fallback, blur = true, isPro }) => {
 
   if (isPro) {
     return <>{children}</>;

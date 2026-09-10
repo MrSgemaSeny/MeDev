@@ -6,7 +6,7 @@
 - **Live Infrastructure**:
   - **Frontend**: Custom Domain (`https://medev.mrsgemaseny.com`) + Vercel (`https://me-dev-two.vercel.app`) + GitHub Pages (`https://mrsgemaseny.github.io/MeDev/`), `@vercel/analytics`, `vercel.json` SPA rewrites.
   - **Backend API**: Render Web Service (`https://medev-backend.onrender.com/api`), Docker, Java 17, Spring Boot 3.3.0.
-  - **Database**: Render PostgreSQL 17 (`medev-postgres`, Flyway V25).
+  - **Database**: Render PostgreSQL 17 (`medev-postgres`, Flyway V26).
   - **Cache & Redis**: Render Redis (`medev-redis`, Valkey 8.1.4) + In-Memory Caffeine L1 (`profiles`, `public-profiles`).
   - **AI Model**: `openai/gpt-oss-20b` (GPT-20B) via Groq API. СТРОГО: Модели Llama НЕ РАБОТАЮТ и запрещены. Работает ТОЛЬКО `openai/gpt-oss-20b`.
 - **Monorepo Structure**:
@@ -42,7 +42,10 @@
    - Создан переиспользуемый компонент `src/shared/ui/LanguageSwitcher/` с вариантами `pill` и `segmented`, кнопками RU / EN.
    - Компонент интегрирован в `AppHeader.tsx`, `UserProfileDropdown.tsx`, `SettingsPage.tsx` и `MobileNavDrawer.tsx`.
    - Полностью устранены захардкоженные строки: в `SettingsPage.tsx` переведены `Username`, `Session`, `Sign out...`, удалено устаревшее отображение "Current Plan: PRO Plan". В `DashboardPage.tsx` статус переведен на `100% Free`. В `ProfileEditor.tsx` переведены мобильные табы секций.
-   - Добавлены тесты `LanguageSwitcher.test.tsx` (3 теста), расширен `i18n.test.ts` (6 тестов), актуализирован `DashboardPage.test.tsx`.
+6. **Profile Data Overhaul & Desktop UX Polish (100% COMPLETE)**:
+   - **Flyway V26**: `V26__clean_spoken_languages_and_update_profile.sql` удаляет языки программирования из таблицы `languages`, гарантирует разговорные языки (Kazakh, Russian, English), обновляет заголовок на `Full Stack Engineer | Java · Spring Boot · React`, summary с коммерческим опытом, локацию на `Shymkent, Kazakhstan · Remote`, веб-сайт на `https://medev.mrsgemaseny.com`, буллеты опыта работы в ZhanFinance CRM, степень бакалавра и стек MeDev (Java/React вместо HTML).
+   - **Backend Validation**: `LanguageService` и `ProfileService` блокируют добавление языков программирования в `languages`, а `PdfGeneratorService` фильтрует их при сборке HTML/PDF резюме.
+   - **Desktop UX ("комп - хуйня")**: В `ResumeBuilder.tsx` заменен `lg:overflow-hidden` на `overflow-y-auto` с паддингом `pb-16 lg:pb-24`, восстановив полноценную прокрутку и просмотр листа А4 на мониторах ПК. В `AboutSection.tsx` удален бейдж `Pro` и обновлены плейсхолдеры. В `api.ts` добавлена строгая типизация дженериков.
 
 ## Verification
 - `backend`: 266/266 тестов успешно пройдены (`./gradlew test`).

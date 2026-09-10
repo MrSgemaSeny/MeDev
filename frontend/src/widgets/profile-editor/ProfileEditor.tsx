@@ -7,7 +7,7 @@ import { LanguagesSection } from '../../features/profile/sections/LanguagesSecti
 import { ProjectsSection } from '../../features/profile/sections/ProjectsSection';
 import { GithubSection } from '../../features/profile/sections/GithubSection';
 import { Button } from '../../shared/ui/Button';
-import { useGenerateProfile } from '../../shared/api/hooks/useProfile';
+import { useGenerateProfile } from '../../entities/profile/api/hooks';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 

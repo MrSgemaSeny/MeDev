@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useAuthStore } from '../../../entities/user/model/store';
 import { useUpsellStore } from '../../../entities/user/model/upsellStore';
-import { api, BASE_URL } from '../../../shared/api/axios';
+import { api, BASE_URL } from '../../../shared/api/api';
 import { cleanContent } from '../../ai-assistant/ui/AiChatWidget';
 
 export function useAiGenerate() {

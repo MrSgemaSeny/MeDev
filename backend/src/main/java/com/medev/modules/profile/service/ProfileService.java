@@ -210,15 +210,10 @@ public class ProfileService {
 
         if (parsed.getLanguages() != null) {
             int order = 0;
-            java.util.Set<String> progLangs = java.util.Set.of(
-                    "java", "python", "javascript", "typescript", "c++", "c#", "c", "golang", "go",
-                    "rust", "php", "ruby", "kotlin", "swift", "scala", "dart", "sql", "html", "css",
-                    "shell", "bash", "powershell", "r", "perl", "elixir", "clojure", "haskell", "solidity"
-            );
             for (com.medev.modules.ai.dto.AiLanguageDto l : parsed.getLanguages()) {
                 if (l.getName() != null && !l.getName().isBlank()) {
                     String cleanName = l.getName().trim();
-                    if (progLangs.contains(cleanName.toLowerCase())) {
+                    if (LanguageService.isProgrammingLanguage(cleanName)) {
                         // Перенаправляем язык программирования в skills если его там еще нет
                         boolean skillExists = profile.getSkills().stream()
                                 .anyMatch(s -> s.getName().equalsIgnoreCase(cleanName));

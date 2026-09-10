@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { api } from '../../../shared/api/axios';
+import { api } from '../../../shared/api/api';
 
 export const useCheckout = () => {
   const [isPending, setIsPending] = useState(false);

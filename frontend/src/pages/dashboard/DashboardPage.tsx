@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useProfile } from '../../shared/api/hooks/useProfile';
+import { useProfile } from '../../entities/profile/api/hooks';
 import { useAuthStore } from '../../entities/user/model/store';
 import { Link } from 'react-router-dom';
 import { GitBranch, Link as LinkIcon, Send, Globe, Briefcase, GraduationCap, FolderGit2 } from 'lucide-react';
@@ -149,7 +149,7 @@ export const DashboardPage = () => {
             <button
               onClick={async () => {
                 try {
-                  const { api } = await import('../../shared/api/axios');
+                  const { api } = await import('../../shared/api/api');
                   const { toast } = await import('sonner');
                   const res = await api.get('/ai/export/linkedin');
                   await navigator.clipboard.writeText(res.data);
@@ -175,7 +175,7 @@ export const DashboardPage = () => {
                 try {
                   const { toast } = await import('sonner');
                   toast.loading(t('dashboard.aiRewriting', 'AI is rewriting your entire profile...'), { id: 'ai-sync' });
-                  const { api } = await import('../../shared/api/axios');
+                  const { api } = await import('../../shared/api/api');
                   await api.post('/ai/generate-profile');
                   toast.success('Profile synced with AI!');
                   window.location.reload();

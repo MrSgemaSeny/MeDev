@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useProfile, useAddSkill, useUpdateSkill, useDeleteSkill, useReorderSection } from '../../../shared/api/hooks/useProfile';
+import { useProfile, useAddSkill, useUpdateSkill, useDeleteSkill, useReorderSection } from '../../../entities/profile/api/hooks';
 import type { SkillDto } from '../../../entities/profile/model/types';
 import { Button } from '../../../shared/ui/Button';
 import { Input, Select, Label, Card } from '../../../shared/ui/Form';

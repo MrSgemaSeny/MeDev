@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '../../../entities/user/model/store';
-import { api } from '../../../shared/api/axios';
+import { api } from '../../../shared/api/api';
 
 interface QuotaResponse {
   remainingRequests: number;

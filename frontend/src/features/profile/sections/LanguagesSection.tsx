@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useProfile, useAddLanguage, useUpdateLanguage, useDeleteLanguage, useReorderSection } from '../../../shared/api/hooks/useProfile';
+import { useProfile, useAddLanguage, useUpdateLanguage, useDeleteLanguage, useReorderSection } from '../../../entities/profile/api/hooks';
 import type { LanguageDto } from '../../../entities/profile/model/types';
 import { Button } from '../../../shared/ui/Button';
 import { Input, Select, Label, Card } from '../../../shared/ui/Form';

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '../../shared/ui/Button';
 import { Input } from '../../shared/ui/Input';
-import { api, BASE_URL } from '../../shared/api/axios';
+import { api, BASE_URL } from '../../shared/api/api';
 import { useAuthStore } from '../../entities/user/model/store';
 import { useState } from 'react';
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { api } from '../../../shared/api/axios';
+import { api } from '../../../shared/api/api';
 import { Modal } from '../../../shared/ui/Modal';
 import { Button } from '../../../shared/ui/Button';
 

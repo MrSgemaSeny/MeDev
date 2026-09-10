@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '../axios';
-import type { JobApplicationDto, CreateJobApplicationRequest, UpdateJobApplicationRequest } from '../../../entities/job-tracker/model/types';
+import { api } from '../../../shared/api/api';
+import type { JobApplicationDto, CreateJobApplicationRequest, UpdateJobApplicationRequest } from '../../job-tracker/model/types';
 
 const QUERY_KEY = ['job-applications'];
 

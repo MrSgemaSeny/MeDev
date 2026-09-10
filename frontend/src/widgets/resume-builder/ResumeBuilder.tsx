@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useResumeEditorStore } from '../../entities/resume/model/resumeEditorStore';
-import { api } from '../../shared/api/axios';
+import { api } from '../../shared/api/api';
 import { useAiChatStore } from '../../features/ai-assistant/model/store';
 import { useUpsellStore } from '../../entities/user/model/upsellStore';
 import { toast } from 'sonner';
@@ -20,7 +20,9 @@ const TEMPLATES = [
   { id: 'phub-orange', name: 'PH Orange', desc: 'High Contrast', accent: '#ff9900', isPro: false }
 ];
 
-export const ResumeBuilder = () => {
+import { LocalErrorBoundary } from '../../shared/ui/LocalErrorBoundary';
+
+const InnerResumeBuilder = () => {
   const { t } = useTranslation();
   const { sections, selectedTemplate, isSinglePageMode, setTemplate, setSinglePageMode, toggleSection, reorderSections } = useResumeEditorStore();
   const { openWithPrompt } = useAiChatStore();
@@ -343,7 +345,7 @@ export const ResumeBuilder = () => {
       </div>
 
       {/* Main Content - Scaled PDF Viewer */}
-      <div className={`flex-1 flex-col p-2.5 sm:p-6 lg:p-8 overflow-visible lg:overflow-hidden relative ${mobileTab === 'preview' ? 'flex' : 'hidden lg:flex'}`}>
+      <div className={`flex-1 flex-col p-2.5 sm:p-6 lg:p-8 overflow-y-auto relative ${mobileTab === 'preview' ? 'flex' : 'hidden lg:flex'}`}>
         {/* Top bar for preview */}
         <div className="flex items-center justify-between mb-3 sm:mb-6">
           <div className="flex items-center gap-2">
@@ -370,8 +372,8 @@ export const ResumeBuilder = () => {
           </div>
         </div>
 
-        {/* Live Scaled Container */}
-        <div ref={previewWrapperRef} className="w-full flex justify-center items-start overflow-hidden">
+        {/* Live Scaled Container with scroll support */}
+        <div ref={previewWrapperRef} className="w-full flex justify-center items-start pb-16 lg:pb-24">
           <div 
             style={{
               width: `${A4_WIDTH}px`,
@@ -400,9 +402,13 @@ export const ResumeBuilder = () => {
               </div>
             )}
           </div>
-        </div>
       </div>
-
     </div>
   );
 };
+
+export const ResumeBuilder = () => (
+  <LocalErrorBoundary>
+    <InnerResumeBuilder />
+  </LocalErrorBoundary>
+);

@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useAuthStore } from './store';
 
 // Mock API to prevent actual network calls during logout
-vi.mock('../../../shared/api/axios', () => ({
+vi.mock('../../../shared/api/api', () => ({
   api: {
     post: vi.fn().mockResolvedValue({}),
   }

@@ -6,7 +6,7 @@ import { CookieBanner } from './shared/ui/CookieBanner';
 
 import { useEffect, useState } from 'react';
 import { useAuthStore } from './entities/user/model/store';
-import { api } from './shared/api/axios';
+import { api } from './shared/api/api';
 import { useAndroidBackButton } from './shared/lib/mobile/useAndroidBackButton';
 
 const queryClient = new QueryClient();

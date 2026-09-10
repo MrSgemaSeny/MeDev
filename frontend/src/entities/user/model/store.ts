@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import axios from 'axios';
-import { BASE_URL } from '../../../shared/api/axios';
+import { BASE_URL } from '../../../shared/api/api';
 
 interface AuthState {
   accessToken: string | null;
@@ -31,17 +30,14 @@ export const useAuthStore = create<AuthState>()(
       logout: async () => {
         const token = useAuthStore.getState().accessToken;
         try {
-          await axios.post(
-            `${BASE_URL}/auth/logout`,
-            {},
-            {
-              withCredentials: true,
-              headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                ...(token ? { Authorization: `Bearer ${token}` } : {}),
-              },
-            }
-          );
+          await fetch(`${BASE_URL}/auth/logout`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest',
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+          });
         } catch (e) {
           // Backend logout failure should not prevent local session clearance
         } finally {

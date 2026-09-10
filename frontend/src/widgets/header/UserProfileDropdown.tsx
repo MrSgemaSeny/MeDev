@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { LogOut, Bell, Globe, Mail, Shield, Sun, Moon } from 'lucide-react';
 import { useAuthStore } from '../../entities/user/model/store';
 import { useTranslation } from 'react-i18next';
-import { useProfile } from '../../shared/api/hooks/useProfile';
+import { useProfile } from '../../entities/profile/api/hooks';
 import { toggleTheme, setTheme, isDarkMode } from '../../shared/lib/theme';
 import { LanguageSwitcher } from '../../shared/ui/LanguageSwitcher';
 

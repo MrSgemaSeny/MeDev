@@ -111,6 +111,7 @@ public class PdfGeneratorService {
 
         if (profile.getLanguages() != null) {
             String languagesStr = profile.getLanguages().stream()
+                    .filter(l -> !com.medev.modules.profile.service.LanguageService.isProgrammingLanguage(l.getName()))
                     .map(l -> l.getName() + (l.getLevel() != null && !l.getLevel().isBlank() && !l.getLevel().equalsIgnoreCase("not specified") ? " (" + l.getLevel() + ")" : ""))
                     .collect(java.util.stream.Collectors.joining(", "));
             context.setVariable("languagesStr", languagesStr);
@@ -191,6 +192,7 @@ public class PdfGeneratorService {
 
         if (profile.getLanguages() != null) {
             String languagesStr = profile.getLanguages().stream()
+                    .filter(l -> !com.medev.modules.profile.service.LanguageService.isProgrammingLanguage(l.getName()))
                     .map(l -> l.getName() + (l.getLevel() != null && !l.getLevel().isBlank() && !l.getLevel().equalsIgnoreCase("not specified") ? " (" + l.getLevel() + ")" : ""))
                     .collect(java.util.stream.Collectors.joining(", "));
             context.setVariable("languagesStr", languagesStr);

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { api } from '../../shared/api/axios';
+import { api } from '../../shared/api/api';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useProfile, useAddEducation, useUpdateEducation, useDeleteEducation, useReorderSection } from '../../../shared/api/hooks/useProfile';
+import { useProfile, useAddEducation, useUpdateEducation, useDeleteEducation, useReorderSection } from '../../../entities/profile/api/hooks';
 import type { EducationDto } from '../../../entities/profile/model/types';
 import { Button } from '../../../shared/ui/Button';
 import { Input, Label, Card } from '../../../shared/ui/Form';

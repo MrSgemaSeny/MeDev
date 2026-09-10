@@ -83,7 +83,7 @@ interface KanbanColumnProps {
   onDelete: (id: number) => void;
 }
 
-const KanbanColumn: React.FC<KanbanColumnProps> = ({ status, applications, onCoverLetter, onDelete }) => {
+const KanbanColumn: React.FC<KanbanColumnProps> = React.memo(({ status, applications, onCoverLetter, onDelete }) => {
   const { t } = useTranslation();
   const { setNodeRef, isOver } = useDroppable({ id: status });
   const config = STATUS_CONFIG[status];
@@ -108,7 +108,7 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ status, applications, onCov
       </div>
     </div>
   );
-};
+});
 
 interface KanbanCardProps {
   app: JobApplicationDto;
@@ -117,7 +117,7 @@ interface KanbanCardProps {
   onDelete?: () => void;
 }
 
-const KanbanCard: React.FC<KanbanCardProps> = ({ app, isOverlay, onCoverLetter, onDelete }) => {
+const KanbanCard: React.FC<KanbanCardProps> = React.memo(({ app, isOverlay, onCoverLetter, onDelete }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: app.id });
 
   const style = transform ? {
@@ -188,4 +188,4 @@ const KanbanCard: React.FC<KanbanCardProps> = ({ app, isOverlay, onCoverLetter, 
       </div>
     </div>
   );
-};
+});
