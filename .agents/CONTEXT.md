@@ -58,9 +58,14 @@
     - **Backend (500 Root Cause Eliminated)**: `AiExperienceDto` и `AiEducationDto` переведены с `LocalDate` на `String` (Jackson больше не падает при текстовых датах от Groq). В `ProfileService` внедрен безопасный парсер дат `parseDateSafe` и санитизация строк `truncate(str, max)`. `AiAnalysisService` ловит все PDFBox рантайм-сбои. В `GlobalExceptionHandler` добавлен перехват `DataIntegrityViolationException`.
     - **Frontend (UI Clean-up)**: Убран SVG-квадрат с терминалом и мигающая точка у логотипа `MeDev`. Убрана подпись `DEVELOPER HUB`. Удален пункт "О себе". Удалены кнопки закрытия внутри сайдбара — сайдбар открывается/закрывается только гамбургером в хедере. Из конструктора резюме вычищены все лишние описания и индикаторы.
 
+11. **Kitapall-Style Island Drawer & Universal Header (100% COMPLETE)**:
+    - **AppHeader**: Добавлен стильный логотип `MeDev` рядом с кнопкой меню `☰`, минималистичный капсульный инпут поиска `rounded-full`.
+    - **Universal Island Drawer (`MobileNavDrawer`)**: Реализован дизайн со скругленными карточками-островками (`rounded-2xl`): блок главного меню со встроенным переключателем языка и темы, блок разделов резюме с подсказками, блок сервиса с тарифами, настройками и выходом. Контент приложения получил 100% ширины экрана.
+
 ## Verification
 - `backend`: 272/272 тестов успешно пройдены (`./gradlew test`).
 - `frontend`: 53/53 тестов пройдены (`npm test`).
+- `frontend`: сборка Vite прошла успешно (`npm run build`).
 - `landing`: сборка Next.js 15 прошла без ошибок (`npm run build`).
 
 ## Active Backlog

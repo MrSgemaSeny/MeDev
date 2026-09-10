@@ -46,19 +46,5 @@ export const useMobileNavStore = create<MobileNavState>((set) => ({
     set({ isDesktopCollapsed: collapsed });
   },
 
-  toggle: () => {
-    if (typeof window !== 'undefined' && window.innerWidth >= 768) {
-      set((state) => {
-        const next = !state.isDesktopCollapsed;
-        try {
-          localStorage.setItem('medev_sidebar_collapsed', String(next));
-        } catch {
-          // ignore
-        }
-        return { isDesktopCollapsed: next };
-      });
-    } else {
-      set((state) => ({ isOpen: !state.isOpen }));
-    }
-  },
+  toggle: () => set((state) => ({ isOpen: !state.isOpen })),
 }));

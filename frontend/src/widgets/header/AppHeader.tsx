@@ -1,4 +1,5 @@
 import { Search, Moon, Sun, Menu } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { UserProfileDropdown } from './UserProfileDropdown';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
@@ -8,7 +9,7 @@ import { LanguageSwitcher } from '../../shared/ui/LanguageSwitcher';
 
 export const AppHeader = () => {
   const { t } = useTranslation();
-  const toggleMobileNav = useMobileNavStore((s) => s.toggle);
+  const toggleNav = useMobileNavStore((s) => s.toggle);
   const [isDark, setIsDark] = useState(isDarkMode);
 
   useEffect(() => {
@@ -39,42 +40,44 @@ export const AppHeader = () => {
 
   return (
     <header
-      className="h-14 sm:h-16 shrink-0 flex items-center gap-2 sm:gap-4 px-3 sm:px-6 border-b transition-colors"
+      className="h-14 sm:h-16 shrink-0 flex items-center justify-between gap-3 px-3 sm:px-6 border-b transition-colors select-none"
       style={{
         backgroundColor: 'var(--color-header-bg)',
         borderColor: 'var(--color-border-default)',
       }}
     >
-      {/* Universal Hamburger / Sidebar Toggle Button (Mobile drawer + Desktop collapse) */}
-      <button
-        type="button"
-        onClick={toggleMobileNav}
-        aria-label={t('header.toggleSidebar', 'Переключить боковое меню')}
-        title={t('header.toggleSidebar', 'Переключить боковое меню')}
-        className="min-w-[40px] min-h-[40px] flex items-center justify-center rounded-lg text-secondary hover:text-primary hover:surface-tertiary transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
-      >
-        <Menu size={20} />
-      </button>
+      {/* Hamburger Menu & Brand Logo */}
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={toggleNav}
+          aria-label={t('header.toggleSidebar', 'Открыть меню')}
+          title={t('header.toggleSidebar', 'Открыть меню')}
+          className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-primary transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
+        >
+          <Menu size={20} strokeWidth={2.2} />
+        </button>
 
-      {/* Search Input (collapsed on mobile) */}
-      <div className="hidden sm:block flex-1 max-w-md">
-        <div className="relative">
+        <Link
+          to="/dashboard"
+          className="flex items-center text-lg sm:text-xl font-black tracking-tight text-primary select-none hover:opacity-90 transition-opacity"
+        >
+          <span>Me</span>
+          <span className="text-[#238636]">Dev</span>
+        </Link>
+      </div>
+
+      {/* Pill Search Input */}
+      <div className="hidden md:block flex-1 max-w-md mx-2">
+        <div className="relative flex items-center">
           <Search
-            size={14}
-            className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-            style={{ color: 'var(--color-text-muted)' }}
+            size={15}
+            className="absolute left-3.5 pointer-events-none text-muted"
           />
           <input
             type="text"
-            placeholder={t('header.search', 'Поиск...')}
-            className="w-full h-9 pl-8 pr-3 rounded-full text-[16px] md:text-sm outline-none transition-all focus:ring-2 focus:ring-[#2ea043]"
-            style={{
-              backgroundColor: 'var(--color-bg-inset)',
-              borderColor: 'var(--color-border-default)',
-              borderWidth: '1px',
-              borderStyle: 'solid',
-              color: 'var(--color-text-primary)',
-            }}
+            placeholder={t('header.search', 'Поиск по резюме, проектам и вакансиям...')}
+            className="w-full h-9 pl-9 pr-4 rounded-full text-xs outline-none transition-all surface-inset border border-default focus:ring-2 focus:ring-[#2ea043] text-primary placeholder:text-muted"
           />
         </div>
       </div>
