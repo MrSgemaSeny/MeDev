@@ -28,11 +28,14 @@ public class SubscriptionServiceTest {
     @Mock
     private AuditService auditService;
 
+    @Mock
+    private org.springframework.data.redis.core.StringRedisTemplate stringRedisTemplate;
+
     private SubscriptionService subscriptionService;
 
     @BeforeEach
     void setUp() {
-        subscriptionService = new SubscriptionService(userRepository, auditService);
+        subscriptionService = new SubscriptionService(userRepository, auditService, stringRedisTemplate);
     }
 
     @Test

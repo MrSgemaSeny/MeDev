@@ -4,6 +4,7 @@ import com.medev.modules.audit.service.AuditService;
 import com.medev.modules.auth.entity.User;
 import com.medev.modules.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,6 +17,7 @@ public class SubscriptionService {
 
     private final UserRepository userRepository;
     private final AuditService auditService;
+    private final StringRedisTemplate stringRedisTemplate;
 
     /**
      * Asserts that the given user has a PRO plan.
@@ -35,6 +37,7 @@ public class SubscriptionService {
         if (user.getSubscriptionExpiresAt() != null && user.getSubscriptionExpiresAt().isBefore(LocalDateTime.now())) {
             user.setPlan(User.Plan.FREE);
             userRepository.save(user);
+            evictPlanCache(user.getId());
             auditService.logAction(user.getId(), "BILLING_SUBSCRIPTION_EXPIRED", String.valueOf(user.getId()), "PRO subscription expired upon access check", null);
             throw new AccessDeniedException("Your PRO subscription has expired.");
         }
@@ -52,7 +55,17 @@ public class SubscriptionService {
                 .forEach(user -> {
                     user.setPlan(User.Plan.FREE);
                     userRepository.save(user);
+                    evictPlanCache(user.getId());
                     auditService.logAction(user.getId(), "BILLING_SUBSCRIPTION_EXPIRED", String.valueOf(user.getId()), "PRO subscription expired and downgraded to FREE by scheduler", null);
                 });
+    }
+
+    private void evictPlanCache(Long userId) {
+        if (stringRedisTemplate != null && userId != null) {
+            try {
+                stringRedisTemplate.delete("user_plan:" + userId);
+            } catch (Exception ignored) {
+            }
+        }
     }
 }

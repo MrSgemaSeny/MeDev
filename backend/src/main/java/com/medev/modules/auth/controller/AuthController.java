@@ -152,18 +152,23 @@ public class AuthController {
     }
 
     private String getClientIp(HttpServletRequest request) {
-        // With server.forward-headers-strategy: framework, request.getRemoteAddr() is 
-        // resolved by Spring's ForwardedHeaderFilter from trusted upstream headers.
         String ip = request.getRemoteAddr();
-        if (ip != null && !ip.isBlank() && !ip.equals("127.0.0.1") && !ip.equals("0:0:0:0:0:0:0:1")) {
-            return ip;
-        }
-        // Fallback: use the rightmost IP in X-Forwarded-For (appended by closest proxy, immune to client spoofing)
         String xff = request.getHeader("X-Forwarded-For");
-        if (xff != null && !xff.isBlank()) {
+        org.slf4j.LoggerFactory.getLogger(AuthController.class).debug("[IP] remoteAddr={}, X-Forwarded-For={}", ip, xff);
+
+        // If request is from loopback or internal private network (Render/Fly.io/Docker),
+        // extract the rightmost client IP appended by the trusted reverse proxy.
+        if (isPrivateOrLoopback(ip) && xff != null && !xff.isBlank()) {
             String[] parts = xff.split(",");
             return parts[parts.length - 1].trim();
         }
-        return ip != null ? ip : "127.0.0.1";
+        return ip != null && !ip.isBlank() ? ip : "127.0.0.1";
+    }
+
+    private static boolean isPrivateOrLoopback(String ip) {
+        if (ip == null || ip.isBlank()) return true;
+        return ip.equals("127.0.0.1") || ip.equals("0:0:0:0:0:0:0:1")
+                || ip.startsWith("10.") || ip.startsWith("192.168.")
+                || ip.matches("^172\\.(1[6-9]|2[0-9]|3[0-1])\\..*");
     }
 }

@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -143,5 +144,22 @@ class AdminServiceTest {
 
         assertThat(page.getTotalElements()).isEqualTo(1);
         assertThat(page.getContent().get(0).getAction()).isEqualTo("TEST_ACTION");
+    }
+
+    @Test
+    @DisplayName("cleanupTestData executes native queries with bound positional parameters")
+    void testCleanupTestData() {
+        jakarta.persistence.Query mockQuery = mock(jakarta.persistence.Query.class);
+        when(entityManager.createNativeQuery(anyString())).thenReturn(mockQuery);
+        when(mockQuery.setParameter(anyInt(), any())).thenReturn(mockQuery);
+        when(mockQuery.executeUpdate()).thenReturn(5);
+
+        Map<String, Object> result = adminService.cleanupTestData();
+
+        assertThat(result).containsEntry("deletedUsers", 5);
+        assertThat(result).containsEntry("deletedLogs", 5);
+        verify(entityManager, times(2)).createNativeQuery(anyString());
+        verify(mockQuery, times(4)).setParameter(anyInt(), any());
+        verify(mockQuery, times(2)).executeUpdate();
     }
 }
