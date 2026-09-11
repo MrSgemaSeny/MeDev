@@ -7,6 +7,7 @@ import { Modal } from '../../../shared/ui/Modal';
 import { sanitizeUrl } from '../../../shared/lib/utils';
 import { SortableList } from '../../../shared/ui/SortableList';
 import { GithubImport, GithubIcon } from '../../github/GithubImport';
+import { ConfirmDialog } from '../../../shared/ui/ConfirmDialog';
 
 import { useAiChatStore } from '../../ai-assistant/model/store';
 import { useGenerateProjectDescription } from '../../ai/hooks/useAiGenerate';
@@ -20,6 +21,7 @@ export const ProjectsSection = () => {
   const reorderMutation = useReorderSection('projects');
   const [editingId, setEditingId] = useState<number | 'new' | null>(null);
   const [showGithubSync, setShowGithubSync] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<number | null>(null);
 
   const { openWithPrompt } = useAiChatStore();
 
@@ -76,7 +78,7 @@ export const ProjectsSection = () => {
                 </div>
                 <div className="flex gap-2 shrink-0">
                   <button onClick={() => setEditingId(proj.id)} className="text-sm hover:underline min-w-[44px] min-h-[44px] flex items-center justify-center" style={{ color: 'var(--color-link)' }}>Edit</button>
-                  <button onClick={() => deleteMutation.mutate(proj.id)} className="text-sm hover:underline min-w-[44px] min-h-[44px] flex items-center justify-center" style={{ color: 'var(--color-danger)' }}>Delete</button>
+                  <button onClick={() => setItemToDelete(proj.id)} className="text-sm hover:underline min-w-[44px] min-h-[44px] flex items-center justify-center" style={{ color: 'var(--color-danger)' }}>Delete</button>
                 </div>
               </div>
             </Card>
@@ -99,6 +101,20 @@ export const ProjectsSection = () => {
             onCancel={() => setEditingId(null)} isPending={addMutation.isPending} />
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={itemToDelete !== null}
+        onClose={() => setItemToDelete(null)}
+        onConfirm={() => {
+          if (itemToDelete !== null) {
+            deleteMutation.mutate(itemToDelete);
+          }
+        }}
+        title="Delete Project"
+        description="Are you sure you want to delete this project? This action cannot be undone."
+        confirmText="Delete"
+        isDestructive={true}
+      />
     </div>
   );
 };

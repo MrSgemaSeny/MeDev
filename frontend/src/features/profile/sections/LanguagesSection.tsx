@@ -4,6 +4,7 @@ import type { LanguageDto } from '../../../entities/profile/model/types';
 import { Button } from '../../../shared/ui/Button';
 import { Input, Select, Label, Card } from '../../../shared/ui/Form';
 import { SortableList } from '../../../shared/ui/SortableList';
+import { ConfirmDialog } from '../../../shared/ui/ConfirmDialog';
 
 const PROFICIENCIES = ['Elementary', 'Limited Working', 'Professional Working', 'Full Professional', 'Native'];
 
@@ -14,6 +15,7 @@ export const LanguagesSection = () => {
   const deleteMutation = useDeleteLanguage();
   const reorderMutation = useReorderSection('languages');
   const [editingId, setEditingId] = useState<number | 'new' | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<number | null>(null);
 
   if (isLoading) return <div className="text-secondary">Loading...</div>;
   const languages = profile?.languages || [];
@@ -50,7 +52,7 @@ export const LanguagesSection = () => {
                   Edit
                 </button>
                 <button 
-                  onClick={() => deleteMutation.mutate(lang.id)} 
+                  onClick={() => setItemToDelete(lang.id)} 
                   className="min-h-[44px] min-w-[44px] px-2 flex items-center justify-center text-sm font-medium hover:underline rounded" 
                   style={{ color: 'var(--color-danger)' }}
                   aria-label="Delete language"
@@ -68,6 +70,20 @@ export const LanguagesSection = () => {
             onCancel={() => setEditingId(null)} isPending={addMutation.isPending} />
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={itemToDelete !== null}
+        onClose={() => setItemToDelete(null)}
+        onConfirm={() => {
+          if (itemToDelete !== null) {
+            deleteMutation.mutate(itemToDelete);
+          }
+        }}
+        title="Delete Language"
+        description="Are you sure you want to delete this language? This action cannot be undone."
+        confirmText="Delete"
+        isDestructive={true}
+      />
     </div>
   );
 };

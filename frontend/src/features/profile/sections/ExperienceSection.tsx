@@ -5,6 +5,7 @@ import { Button } from '../../../shared/ui/Button';
 import { Input, Textarea, Label, Card } from '../../../shared/ui/Form';
 import { useAiGenerate } from '../../ai/hooks/useAiGenerate';
 import { SortableList } from '../../../shared/ui/SortableList';
+import { ConfirmDialog } from '../../../shared/ui/ConfirmDialog';
 
 export const ExperienceSection = () => {
   const { data: profile, isLoading } = useProfile();
@@ -13,6 +14,7 @@ export const ExperienceSection = () => {
   const deleteMutation = useDeleteExperience();
   const reorderMutation = useReorderSection('experience');
   const [editingId, setEditingId] = useState<number | 'new' | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<number | null>(null);
 
   if (isLoading) return <div className="text-secondary">Loading...</div>;
   const experiences = profile?.experience || [];
@@ -52,7 +54,7 @@ export const ExperienceSection = () => {
                     Edit
                   </button>
                   <button 
-                    onClick={() => deleteMutation.mutate(exp.id)} 
+                    onClick={() => setItemToDelete(exp.id)} 
                     className="min-h-[44px] min-w-[44px] px-2 flex items-center justify-center text-sm font-medium hover:underline rounded" 
                     style={{ color: 'var(--color-danger)' }}
                     aria-label="Delete experience"
@@ -79,6 +81,20 @@ export const ExperienceSection = () => {
             onCancel={() => setEditingId(null)} isPending={addMutation.isPending} />
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={itemToDelete !== null}
+        onClose={() => setItemToDelete(null)}
+        onConfirm={() => {
+          if (itemToDelete !== null) {
+            deleteMutation.mutate(itemToDelete);
+          }
+        }}
+        title="Delete Experience"
+        description="Are you sure you want to delete this experience entry? This action cannot be undone."
+        confirmText="Delete"
+        isDestructive={true}
+      />
     </div>
   );
 };

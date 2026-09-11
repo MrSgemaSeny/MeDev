@@ -4,6 +4,7 @@ import type { EducationDto } from '../../../entities/profile/model/types';
 import { Button } from '../../../shared/ui/Button';
 import { Input, Label, Card } from '../../../shared/ui/Form';
 import { SortableList } from '../../../shared/ui/SortableList';
+import { ConfirmDialog } from '../../../shared/ui/ConfirmDialog';
 
 export const EducationSection = () => {
   const { data: profile, isLoading } = useProfile();
@@ -12,6 +13,7 @@ export const EducationSection = () => {
   const deleteMutation = useDeleteEducation();
   const reorderMutation = useReorderSection('education');
   const [editingId, setEditingId] = useState<number | 'new' | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<number | null>(null);
 
   if (isLoading) return <div className="text-secondary">Loading...</div>;
   const educationList = profile?.education || [];
@@ -50,7 +52,7 @@ export const EducationSection = () => {
                     Edit
                   </button>
                   <button 
-                    onClick={() => deleteMutation.mutate(edu.id)} 
+                    onClick={() => setItemToDelete(edu.id)} 
                     className="min-h-[44px] min-w-[44px] px-2 flex items-center justify-center text-sm font-medium hover:underline rounded" 
                     style={{ color: 'var(--color-danger)' }}
                     aria-label="Delete education"
@@ -69,6 +71,20 @@ export const EducationSection = () => {
             onCancel={() => setEditingId(null)} isPending={addMutation.isPending} />
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={itemToDelete !== null}
+        onClose={() => setItemToDelete(null)}
+        onConfirm={() => {
+          if (itemToDelete !== null) {
+            deleteMutation.mutate(itemToDelete);
+          }
+        }}
+        title="Delete Education"
+        description="Are you sure you want to delete this education entry? This action cannot be undone."
+        confirmText="Delete"
+        isDestructive={true}
+      />
     </div>
   );
 };
