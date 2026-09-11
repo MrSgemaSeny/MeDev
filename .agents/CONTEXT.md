@@ -6,7 +6,7 @@
 - **Live Infrastructure**:
   - **Frontend**: Custom Domain (`https://medev.mrsgemaseny.com`) + Vercel (`https://me-dev-two.vercel.app`) + GitHub Pages (`https://mrsgemaseny.github.io/MeDev/`), `@vercel/analytics`, `vercel.json` SPA rewrites.
   - **Backend API**: Render Web Service (`https://medev-backend.onrender.com/api`), Docker, Java 17, Spring Boot 3.3.0.
-  - **Database**: Render PostgreSQL 17 (`medev-postgres`, Flyway V26).
+  - **Database**: Render PostgreSQL 17 (`medev-postgres`, Flyway V27).
   - **Cache & Redis**: Render Redis (`medev-redis`, Valkey 8.1.4) + In-Memory Caffeine L1 (`profiles`, `public-profiles`).
   - **AI Model**: `openai/gpt-oss-20b` (GPT-20B) via Groq API. СТРОГО: Модели Llama НЕ РАБОТАЮТ и запрещены. Работает ТОЛЬКО `openai/gpt-oss-20b`.
 - **Monorepo Structure**:
@@ -77,8 +77,14 @@
     - **Kanban & List Quick Actions**: В карточки KanbanBoard и строки списка Job Tracker добавлены кнопки быстрого вызова адаптации резюме (`Sparkles`) с доступностью по WCAG AA.
     - **Bugfix**: Исправлена автоподстановка распарсенного `jobDescription` в `AiCoverLetterModal`.
 
+15. **RAG Embedding Pipeline Activation via Jina AI & PgVectorRepository (100% COMPLETE)**:
+    - **Flyway V27**: `V27__update_vector_dimensions.sql` обновляет размерность `vector(384)` -> `vector(768)` с пересозданием индекса HNSW.
+    - **JinaEmbeddingClient**: Высокопроизводительный WebClient HTTP-клиент к Jina AI (`jina-embeddings-v2-base-en`), исключающий OOM на JVM.
+    - **PgVectorRepository**: Нативный репозиторий на чистом JdbcTemplate для batch upsert и косинусного поиска (`<=>`).
+    - **Service Refactoring**: `VectorizationService` и `AiApplicationService` переведены на реальный RAG-ретривал, удалена заглушка `MockVectorStoreConfig.java`.
+
 ## Verification
-- `backend`: 272/272 тестов успешно пройдены (`./gradlew test`).
+- `backend`: 273/273 тестов успешно пройдены (`./gradlew test`).
 - `frontend`: 55/55 тестов пройдены (`npm test`).
 - `frontend`: сборка Vite прошла успешно (`npm run build`).
 - `landing`: сборка Next.js 15 прошла без ошибок (`npm run build`).
@@ -87,5 +93,6 @@
 - **Native Mobile App (Expo)**: Инициализация и разработка нативного приложения MeDev на React Native + Expo.
 - Setting up automated nightly DB backup jobs.
 - Sentry and Prometheus/Grafana monitoring dashboards.
-- **RAG Retrieval:** `VectorizationService` пишет векторы в pgvector при `ProfileUpdatedEvent`. Реализация semantic search: Job Tracker → AI Match по вакансии.
+- **RAG Semantic Vacancy Match (Plan B):** Векторизация вакансий из Job Tracker и автоматический двусторонний поиск под профиль пользователя.
+
 

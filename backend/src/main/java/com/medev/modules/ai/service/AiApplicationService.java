@@ -4,12 +4,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medev.modules.ai.dto.AiApplicationRequest;
 import com.medev.modules.ai.dto.AiApplicationResponse;
+import com.medev.modules.ai.dto.AiMatchResponse;
+import com.medev.modules.ai.embedding.JinaEmbeddingClient;
+import com.medev.modules.ai.embedding.PgVectorRepository;
 import com.medev.modules.billing.service.SubscriptionService;
 import com.medev.modules.profile.dto.ProfileDto;
 import com.medev.modules.profile.service.ProfileService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -17,18 +21,21 @@ public class AiApplicationService extends AbstractAiStructuredService {
 
     private final SubscriptionService subscriptionService;
     private final ProfileService profileService;
-    private final org.springframework.ai.vectorstore.VectorStore vectorStore;
+    private final JinaEmbeddingClient jinaEmbeddingClient;
+    private final PgVectorRepository pgVectorRepository;
 
     public AiApplicationService(
             LlmProvider llmProvider,
             ObjectMapper objectMapper,
             SubscriptionService subscriptionService,
             ProfileService profileService,
-            org.springframework.ai.vectorstore.VectorStore vectorStore) {
+            JinaEmbeddingClient jinaEmbeddingClient,
+            PgVectorRepository pgVectorRepository) {
         super(llmProvider, objectMapper);
         this.subscriptionService = subscriptionService;
         this.profileService = profileService;
-        this.vectorStore = vectorStore;
+        this.jinaEmbeddingClient = jinaEmbeddingClient;
+        this.pgVectorRepository = pgVectorRepository;
     }
 
     public AiApplicationResponse generateCoverLetter(Long userId, AiApplicationRequest request) {
@@ -44,14 +51,18 @@ public class AiApplicationService extends AbstractAiStructuredService {
         }
 
         // RAG: Retrieve top 4 most relevant experiences/projects for this job description
-        org.springframework.ai.vectorstore.SearchRequest searchRequest = org.springframework.ai.vectorstore.SearchRequest.query(request.getJobDescription())
-                .withTopK(4)
-                .withFilterExpression("userId == '" + userId + "'");
-        
-        java.util.List<org.springframework.ai.document.Document> relevantDocs = vectorStore.similaritySearch(searchRequest);
-        String relevantContext = relevantDocs.stream()
-                .map(org.springframework.ai.document.Document::getContent)
-                .collect(java.util.stream.Collectors.joining("\n- "));
+        String relevantContext = "";
+        try {
+            List<float[]> embeddings = jinaEmbeddingClient.embed(List.of(request.getJobDescription()));
+            if (!embeddings.isEmpty()) {
+                List<String> relevantDocs = pgVectorRepository.findSimilar(userId, embeddings.get(0), 4);
+                if (relevantDocs != null && !relevantDocs.isEmpty()) {
+                    relevantContext = String.join("\n- ", relevantDocs);
+                }
+            }
+        } catch (Exception e) {
+            log.warn("[AiApplicationService] RAG retrieval failed for cover letter, continuing with profile data: {}", e.getMessage());
+        }
 
         String systemPrompt = "You are an expert technical recruiter and career coach. Write a highly professional and tailored cover letter. Output JSON in format: {\"coverLetter\": \"<text>\"}";
         String userMessage = String.format(
@@ -79,14 +90,19 @@ public class AiApplicationService extends AbstractAiStructuredService {
             throw new RuntimeException("Failed to process profile data", e);
         }
 
-        org.springframework.ai.vectorstore.SearchRequest searchRequest = org.springframework.ai.vectorstore.SearchRequest.query(request.getJobDescription())
-                .withTopK(5)
-                .withFilterExpression("userId == '" + userId + "'");
-        
-        java.util.List<org.springframework.ai.document.Document> relevantDocs = vectorStore.similaritySearch(searchRequest);
-        String relevantContext = relevantDocs.stream()
-                .map(org.springframework.ai.document.Document::getContent)
-                .collect(java.util.stream.Collectors.joining("\n- "));
+        // RAG: Retrieve top 5 most relevant experiences/projects for this job description
+        String relevantContext = "";
+        try {
+            List<float[]> embeddings = jinaEmbeddingClient.embed(List.of(request.getJobDescription()));
+            if (!embeddings.isEmpty()) {
+                List<String> relevantDocs = pgVectorRepository.findSimilar(userId, embeddings.get(0), 5);
+                if (relevantDocs != null && !relevantDocs.isEmpty()) {
+                    relevantContext = String.join("\n- ", relevantDocs);
+                }
+            }
+        } catch (Exception e) {
+            log.warn("[AiApplicationService] RAG retrieval failed for tailor resume, continuing with profile data: {}", e.getMessage());
+        }
 
         String systemPrompt = "You are an expert technical resume writer. Rewrite the candidate's resume summary and experience to align with the JD. Output JSON in format: {\"suggestions\": \"<markdown text>\"}";
         String userMessage = String.format(
@@ -102,7 +118,7 @@ public class AiApplicationService extends AbstractAiStructuredService {
         throw new RuntimeException("AI generated invalid structure: missing 'suggestions'");
     }
 
-    public com.medev.modules.ai.dto.AiMatchResponse matchJob(Long userId, String jobDescription) {
+    public AiMatchResponse matchJob(Long userId, String jobDescription) {
         subscriptionService.assertPro(userId);
         ProfileDto profile = profileService.getByUserId(userId);
         
@@ -122,7 +138,7 @@ public class AiApplicationService extends AbstractAiStructuredService {
 
         JsonNode root = generateStructuredData(systemPrompt, userMessage, JsonNode.class);
         if (root != null && root.has("score") && root.has("feedback")) {
-            return new com.medev.modules.ai.dto.AiMatchResponse(
+            return new AiMatchResponse(
                 root.get("score").asInt(),
                 root.get("feedback").asText()
             );
@@ -130,4 +146,3 @@ public class AiApplicationService extends AbstractAiStructuredService {
         throw new RuntimeException("AI generated invalid structure: missing 'score' or 'feedback'");
     }
 }
-

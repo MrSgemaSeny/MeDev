@@ -20,7 +20,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.ai.vectorstore.VectorStore;
+import com.medev.modules.ai.embedding.JinaEmbeddingClient;
+import com.medev.modules.ai.embedding.PgVectorRepository;
+
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
@@ -544,7 +547,9 @@ public class M1AdversarialChallengeTest {
         @Mock
         private ProfileService profileService;
         @Mock
-        private VectorStore vectorStore;
+        private JinaEmbeddingClient jinaEmbeddingClient;
+        @Mock
+        private PgVectorRepository pgVectorRepository;
         @Mock
         private UserRepository userRepository;
         @Mock
@@ -558,8 +563,9 @@ public class M1AdversarialChallengeTest {
         @BeforeEach
         void setUp() {
             aiApplicationService = new AiApplicationService(
-                    llmProvider, objectMapper, subscriptionService, profileService, vectorStore
+                    llmProvider, objectMapper, subscriptionService, profileService, jinaEmbeddingClient, pgVectorRepository
             );
+
 
             resumeController = new ResumeController(pdfGeneratorService, userRepository);
             resumeMockMvc = MockMvcBuilders.standaloneSetup(resumeController)

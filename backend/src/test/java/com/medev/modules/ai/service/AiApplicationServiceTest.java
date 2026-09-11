@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medev.modules.ai.dto.AiApplicationRequest;
 import com.medev.modules.ai.dto.AiApplicationResponse;
 import com.medev.modules.ai.dto.AiMatchResponse;
+import com.medev.modules.ai.embedding.JinaEmbeddingClient;
+import com.medev.modules.ai.embedding.PgVectorRepository;
 import com.medev.modules.billing.service.SubscriptionService;
 import com.medev.modules.profile.dto.ProfileDto;
 import com.medev.modules.profile.service.ProfileService;
@@ -13,16 +15,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.ai.document.Document;
-import org.springframework.ai.vectorstore.SearchRequest;
-import org.springframework.ai.vectorstore.VectorStore;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,7 +39,10 @@ public class AiApplicationServiceTest {
     private ProfileService profileService;
 
     @Mock
-    private VectorStore vectorStore;
+    private JinaEmbeddingClient jinaEmbeddingClient;
+
+    @Mock
+    private PgVectorRepository pgVectorRepository;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -51,7 +55,8 @@ public class AiApplicationServiceTest {
                 objectMapper,
                 subscriptionService,
                 profileService,
-                vectorStore
+                jinaEmbeddingClient,
+                pgVectorRepository
         );
     }
 
@@ -131,8 +136,10 @@ public class AiApplicationServiceTest {
         ProfileDto mockProfile = new ProfileDto();
         when(profileService.getByUserId(userId)).thenReturn(mockProfile);
 
-        Document doc = new Document("Built high-scale Spring Boot payment service");
-        when(vectorStore.similaritySearch(any(SearchRequest.class))).thenReturn(List.of(doc));
+        float[] mockVector = new float[]{0.1f, 0.2f};
+        when(jinaEmbeddingClient.embed(anyList())).thenReturn(List.of(mockVector));
+        when(pgVectorRepository.findSimilar(eq(userId), eq(mockVector), eq(4)))
+                .thenReturn(List.of("Built high-scale Spring Boot payment service"));
 
         String llmOutput = "{\"coverLetter\": \"Dear Hiring Team, I am excited to apply for the Tech Lead position...\"}";
         when(llmProvider.structuredCompletion(anyString(), anyString())).thenReturn(llmOutput);
@@ -170,8 +177,10 @@ public class AiApplicationServiceTest {
         ProfileDto mockProfile = new ProfileDto();
         when(profileService.getByUserId(userId)).thenReturn(mockProfile);
 
-        Document doc = new Document("Experience with microservices and PostgreSQL");
-        when(vectorStore.similaritySearch(any(SearchRequest.class))).thenReturn(List.of(doc));
+        float[] mockVector = new float[]{0.3f, 0.4f};
+        when(jinaEmbeddingClient.embed(anyList())).thenReturn(List.of(mockVector));
+        when(pgVectorRepository.findSimilar(eq(userId), eq(mockVector), eq(5)))
+                .thenReturn(List.of("Experience with microservices and PostgreSQL"));
 
         String llmOutput = "{\"suggestions\": \"### Tailored Summary\\nFocus on PostgreSQL and microservices.\"}";
         when(llmProvider.structuredCompletion(anyString(), anyString())).thenReturn(llmOutput);
