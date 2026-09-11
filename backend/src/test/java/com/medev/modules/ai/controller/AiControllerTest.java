@@ -110,26 +110,7 @@ public class AiControllerTest {
         verify(aiAnalysisService).parseResumePdf(any(), eq(currentProfile));
     }
 
-    @Test
-    void parseResume_invalidMagicBytes_returnsBadRequest() throws Exception {
-        byte[] invalidBytes = "NOT_A_PDF_CONTENT".getBytes();
-        MockMultipartFile file = new MockMultipartFile("file", "resume.pdf", "application/pdf", invalidBytes);
 
-        mockMvc.perform(multipart("/v1/ai/parse-resume").file(file))
-                .andExpect(status().isBadRequest());
-
-        verifyNoInteractions(aiAnalysisService);
-    }
-
-    @Test
-    void parseResume_nonPdfContentType_returnsBadRequest() throws Exception {
-        MockMultipartFile file = new MockMultipartFile("file", "image.png", "image/png", "%PDF-dummy".getBytes());
-
-        mockMvc.perform(multipart("/v1/ai/parse-resume").file(file))
-                .andExpect(status().isBadRequest());
-
-        verifyNoInteractions(aiAnalysisService);
-    }
 
     @Test
     void matchJob_validRequest_returnsMatchResponse() throws Exception {

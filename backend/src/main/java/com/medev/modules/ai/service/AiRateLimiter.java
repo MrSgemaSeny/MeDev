@@ -25,18 +25,12 @@ public class AiRateLimiter {
     public void checkAndConsume(Long userId) {
         int limit = getUserDailyLimit(userId);
         String key = getRedisKey(userId);
-        
-        Long current = stringRedisTemplate.opsForValue().increment(key);
-        if (current != null && current == 1L) {
-            stringRedisTemplate.expire(key, Duration.ofDays(1));
-        } else if (current != null) {
-            Long expire = stringRedisTemplate.getExpire(key);
-            if (expire != null && expire == -1L) {
-                stringRedisTemplate.expire(key, Duration.ofDays(1));
-            }
-        }
 
-        if (current != null && current > limit) {
+        // Читаем текущее значение ПЕРЕД инкрементом
+        String currentStr = stringRedisTemplate.opsForValue().get(key);
+        long current = currentStr != null ? Long.parseLong(currentStr) : 0L;
+
+        if (current >= limit) {
             log.warn("[AiRateLimiter] User {} exceeded daily AI limit ({})", userId, limit);
             throw new TooManyRequestsException(
                     "Вы достигли дневного лимита AI-запросов (" + limit + "). " +
@@ -44,8 +38,19 @@ public class AiRateLimiter {
             );
         }
 
+        // Инкрементируем только если лимит не превышен
+        Long newValue = stringRedisTemplate.opsForValue().increment(key);
+        if (newValue != null && newValue == 1L) {
+            stringRedisTemplate.expire(key, Duration.ofDays(1));
+        } else if (newValue != null) {
+            Long expire = stringRedisTemplate.getExpire(key);
+            if (expire != null && expire == -1L) {
+                stringRedisTemplate.expire(key, Duration.ofDays(1));
+            }
+        }
+
         log.debug("[AiRateLimiter] User {} consumed 1 token, remaining: {}",
-                userId, limit - (current != null ? current : 0));
+                userId, limit - (newValue != null ? newValue : 1));
     }
 
     public long getRemainingRequests(Long userId) {

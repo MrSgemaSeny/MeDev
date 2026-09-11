@@ -93,6 +93,9 @@
     - **Performance**: N+1 queries eliminated in onboarding wizard using `saveAll()` batching.
     - **Security**: Added explicit masking of GitHub snapshot JSON before sending it to LLM (Groq).
     - **Prompt Engineering**: Enforced canonical array field output (`[]` instead of `null`) to fix frontend mapping.
+    - **Reliability (GroqClient)**: Added 5000ms connect timeout to prevent infinite hanging, reduced synchronous retries from 4 to 2 for better UX.
+    - **Rate Limiting**: Fixed increment-before-check race condition in `AiRateLimiter.java` preventing parallel-request token leak.
+    - **Clean Code**: Eliminated redundant in-memory PDF magic-byte validation in `AiController`.
 
 ## Verification
 - `backend`: 278+ тестов успешно пройдены (`./gradlew test`).

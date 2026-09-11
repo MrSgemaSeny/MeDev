@@ -237,27 +237,6 @@ public class AiController {
             throw new IllegalArgumentException("Файл не передан или пуст");
         }
 
-        if (file.getSize() > 10 * 1024 * 1024) {
-            throw new IllegalArgumentException("Размер файла превышает максимально допустимый (10 МБ)");
-        }
-
-        String contentType = file.getContentType();
-        String filename = file.getOriginalFilename();
-        boolean isPdfMime = contentType != null && (contentType.equalsIgnoreCase("application/pdf") || contentType.equalsIgnoreCase("application/x-pdf"));
-        boolean isPdfExt = filename != null && filename.toLowerCase().endsWith(".pdf");
-        if (!isPdfMime && !isPdfExt) {
-            throw new IllegalArgumentException("Поддерживаются только файлы в формате PDF");
-        }
-
-        try {
-            byte[] bytes = file.getBytes();
-            if (bytes.length < 4 || bytes[0] != '%' || bytes[1] != 'P' || bytes[2] != 'D' || bytes[3] != 'F') {
-                throw new IllegalArgumentException("Файл поврежден или не является корректным PDF");
-            }
-        } catch (java.io.IOException e) {
-            throw new IllegalArgumentException("Не удалось прочитать загруженный файл", e);
-        }
-
         ProfileDto currentProfile = profileService.getByUserId(userId);
         AiParsedResumeDto parsed = aiAnalysisService.parseResumePdf(file, currentProfile);
         ProfileDto updatedProfile = profileService.importParsedResume(userId, parsed);

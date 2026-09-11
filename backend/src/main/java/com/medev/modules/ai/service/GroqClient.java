@@ -55,14 +55,14 @@ public class GroqClient implements LlmProvider {
         this.model = (model == null || model.isBlank()) ? "openai/gpt-oss-20b" : model;
 
         HttpClient httpClient = HttpClient.create()
-                .resolver(DefaultAddressResolverGroup.INSTANCE);
+                .resolver(DefaultAddressResolverGroup.INSTANCE)
+                .option(io.netty.channel.ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000);
 
         this.webClient = webClientBuilder
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .baseUrl(apiUrl)
                 .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                // connect timeout отдельно — через HttpClient в конфиге WebClient bean
                 .build();
 
         this.objectMapper = objectMapper;
@@ -181,8 +181,8 @@ public class GroqClient implements LlmProvider {
      * НЕ ретраит 400/401/422 — это программные ошибки.
      */
     private Retry retrySpec() {
-        return Retry.backoff(4, Duration.ofSeconds(4))
-                .maxBackoff(Duration.ofSeconds(20))
+        return Retry.backoff(2, Duration.ofSeconds(3))
+                .maxBackoff(Duration.ofSeconds(10))
                 .filter(e -> e instanceof LlmException && ((LlmException) e).isRetryable())
                 .doBeforeRetry(signal ->
                     log.warn("[GroqClient] Retry attempt {} after: {}",
