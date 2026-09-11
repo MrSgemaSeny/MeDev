@@ -119,7 +119,13 @@
       "interviews": "Интервью",
       "offers": "Офферы"
     },
-    "emptyColumn": "Нет вакансий"
+    "emptyColumn": "Нет вакансий",
+    "emptyTitle": "Нет отслеживаемых вакансий",
+    "emptyDesc": "Добавляйте вакансии вручную или вставьте ссылку на hh.kz / LinkedIn для автоматического импорта и подбора резюме с помощью AI.",
+    "quickImportTitle": "Быстрый импорт по ссылке",
+    "importPlaceholder": "https://hh.kz/vacancy/... или LinkedIn URL",
+    "importButton": "Импортировать",
+    "importing": "Импорт..."
   },
   "dashboard": {
     "title": "Панель управления",

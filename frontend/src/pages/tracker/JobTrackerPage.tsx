@@ -14,7 +14,6 @@ import {
   Calendar, 
   Trash2, 
   Search, 
-  Filter, 
   TrendingUp, 
   Target, 
   CheckCircle2, 
@@ -26,7 +25,8 @@ import {
   List as ListIcon, 
   MapPin, 
   DollarSign,
-  X
+  X,
+  Link2
 } from 'lucide-react';
 
 const STATUS_CONFIG: Record<ApplicationStatus, { label: string; tone: 'default' | 'accent' | 'danger'; colorClass: string; icon: any }> = {
@@ -41,6 +41,8 @@ export const JobTrackerPage = () => {
   const { t } = useTranslation();
   const { data: applications = [], isLoading } = useJobApplications();
   const deleteApp = useDeleteJobApplication();
+  const scrapeJob = useScrapeJob();
+  const addApp = useAddJobApplication();
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [coverLetterModalApp, setCoverLetterModalApp] = useState<JobApplicationDto | null>(null);
@@ -49,6 +51,7 @@ export const JobTrackerPage = () => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<ApplicationStatus | 'ALL'>('ALL');
   const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban');
+  const [quickUrl, setQuickUrl] = useState('');
   const updateApp = useUpdateJobApplication();
 
   const filteredApps = useMemo(() => {
@@ -71,6 +74,29 @@ export const JobTrackerPage = () => {
     return { total, wishlist, applied, interview, offer, rejected };
   }, [applications]);
 
+  const handleQuickImport = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!quickUrl.trim()) return;
+    scrapeJob.mutate(quickUrl.trim(), {
+      onSuccess: (data) => {
+        addApp.mutate({
+          companyName: data.companyName || 'Unknown Company',
+          role: data.role || 'Developer',
+          status: 'WISHLIST',
+          jobUrl: quickUrl.trim(),
+          location: data.location || '',
+          salaryRange: data.salaryRange || '',
+          jobDescription: data.jobDescription || '',
+          appliedDate: new Date().toISOString().split('T')[0],
+        }, {
+          onSuccess: () => {
+            setQuickUrl('');
+          }
+        });
+      }
+    });
+  };
+
   if (isLoading) {
     return (
       <div className="flex h-full items-center justify-center bg-[var(--color-bg-inset)]">
@@ -84,26 +110,19 @@ export const JobTrackerPage = () => {
 
   return (
     <div className="flex flex-col h-full bg-[var(--color-bg-inset)] min-w-0 overflow-hidden">
-      {/* Top Header & Action Bar */}
+      {/* Top Header */}
       <header className="px-4 py-3 sm:px-6 border-b border-[var(--color-border-default)] bg-[var(--color-bg-primary)] shrink-0 flex flex-col md:flex-row md:items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-lg font-bold text-primary tracking-tight">{t('tracker.title', 'Job Tracker CRM')}</h1>
-              <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-[var(--color-bg-secondary)] text-secondary border border-[var(--color-border-default)]">
-                {stats.total}
-              </span>
-            </div>
-            <p className="text-xs text-secondary hidden sm:block mt-0.5">
-              {t('tracker.subtitle', 'Enterprise-grade pipeline management for your career.')}
-            </p>
-          </div>
+        <div className="flex items-center gap-2">
+          <h1 className="text-base sm:text-lg font-bold text-primary tracking-tight">{t('tracker.title', 'Job Tracker CRM')}</h1>
+          <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-[var(--color-bg-secondary)] text-secondary border border-[var(--color-border-default)]">
+            {stats.total}
+          </span>
         </div>
 
         {/* Toolbar Controls */}
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           {/* Search Box */}
-          <div className="relative flex-1 sm:w-64">
+          <div className="relative flex-1 sm:w-60">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary" />
             <input 
               type="text" 
@@ -150,23 +169,6 @@ export const JobTrackerPage = () => {
             </button>
           </div>
 
-          {/* Status Filter (List View) */}
-          {viewMode === 'list' && (
-            <div className="flex items-center gap-1.5">
-              <Filter size={13} className="text-secondary" />
-              <select 
-                className="py-1.5 px-2.5 text-xs bg-[var(--color-bg-secondary)] border border-[var(--color-border-default)] rounded-md outline-none text-primary hover:border-[var(--color-border-muted,#484f58)] transition-colors cursor-pointer"
-                value={statusFilter}
-                onChange={e => setStatusFilter(e.target.value as ApplicationStatus | 'ALL')}
-              >
-                <option value="ALL">{t('tracker.allStatuses', 'All Statuses')}</option>
-                {Object.entries(STATUS_CONFIG).map(([k, v]) => (
-                  <option key={k} value={k}>{t(`tracker.status.${k.toLowerCase()}`, v.label)}</option>
-                ))}
-              </select>
-            </div>
-          )}
-
           {/* Add Application Button */}
           <Button 
             variant="primary" 
@@ -179,89 +181,160 @@ export const JobTrackerPage = () => {
         </div>
       </header>
 
-      {/* Metrics Bar */}
-      <div className="px-4 py-2 sm:px-6 bg-[var(--color-bg-secondary)] border-b border-[var(--color-border-default)] flex items-center gap-2 overflow-x-auto shrink-0 text-xs">
+      {/* GitHub-style Segmented Status Tabs */}
+      <nav className="px-4 sm:px-6 bg-[var(--color-bg-primary)] border-b border-[var(--color-border-default)] flex items-center gap-1 sm:gap-2 overflow-x-auto shrink-0 text-xs py-1">
         <button 
           onClick={() => setStatusFilter('ALL')}
-          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border transition-colors shrink-0 ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors shrink-0 font-medium ${
             statusFilter === 'ALL'
-              ? 'border-[var(--color-accent)] bg-[var(--color-bg-primary)] text-primary font-medium'
-              : 'border-[var(--color-border-default)] bg-[var(--color-bg-primary)] text-secondary hover:text-primary'
+              ? 'bg-[var(--color-bg-secondary)] text-primary'
+              : 'text-secondary hover:text-primary hover:bg-[var(--color-bg-secondary)]/50'
           }`}
         >
-          <Briefcase size={12} className="text-secondary" />
-          <span>{t('tracker.stats.total', 'Total')}:</span>
-          <span className="font-semibold text-primary">{stats.total}</span>
+          <span>{t('tracker.status.all', 'All')}</span>
+          <span className="text-[11px] font-mono opacity-70">({stats.total})</span>
         </button>
 
         <button 
-          onClick={() => setStatusFilter(statusFilter === 'WISHLIST' ? 'ALL' : 'WISHLIST')}
-          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border transition-colors shrink-0 ${
+          onClick={() => setStatusFilter('WISHLIST')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors shrink-0 font-medium ${
             statusFilter === 'WISHLIST'
-              ? 'border-gray-400 bg-[var(--color-bg-primary)] text-primary font-medium'
-              : 'border-[var(--color-border-default)] bg-[var(--color-bg-primary)] text-secondary hover:text-primary'
+              ? 'bg-[var(--color-bg-secondary)] text-primary'
+              : 'text-secondary hover:text-primary hover:bg-[var(--color-bg-secondary)]/50'
           }`}
         >
           <Clock size={12} className="text-secondary" />
-          <span>{t('tracker.status.wishlist', 'Wishlist')}:</span>
-          <span className="font-semibold text-primary">{stats.wishlist}</span>
+          <span>{t('tracker.status.wishlist', 'Wishlist')}</span>
+          <span className="text-[11px] font-mono opacity-70">({stats.wishlist})</span>
         </button>
 
         <button 
-          onClick={() => setStatusFilter(statusFilter === 'APPLIED' ? 'ALL' : 'APPLIED')}
-          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border transition-colors shrink-0 ${
+          onClick={() => setStatusFilter('APPLIED')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors shrink-0 font-medium ${
             statusFilter === 'APPLIED'
-              ? 'border-blue-500 bg-[var(--color-bg-primary)] text-blue-400 font-medium'
-              : 'border-[var(--color-border-default)] bg-[var(--color-bg-primary)] text-secondary hover:text-primary'
+              ? 'bg-[var(--color-bg-secondary)] text-blue-400'
+              : 'text-secondary hover:text-primary hover:bg-[var(--color-bg-secondary)]/50'
           }`}
         >
           <Target size={12} className="text-blue-400" />
-          <span>{t('tracker.status.applied', 'Applied')}:</span>
-          <span className="font-semibold text-primary">{stats.applied}</span>
+          <span>{t('tracker.status.applied', 'Applied')}</span>
+          <span className="text-[11px] font-mono opacity-70">({stats.applied})</span>
         </button>
 
         <button 
-          onClick={() => setStatusFilter(statusFilter === 'INTERVIEW' ? 'ALL' : 'INTERVIEW')}
-          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border transition-colors shrink-0 ${
+          onClick={() => setStatusFilter('INTERVIEW')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors shrink-0 font-medium ${
             statusFilter === 'INTERVIEW'
-              ? 'border-amber-500 bg-[var(--color-bg-primary)] text-amber-400 font-medium'
-              : 'border-[var(--color-border-default)] bg-[var(--color-bg-primary)] text-secondary hover:text-primary'
+              ? 'bg-[var(--color-bg-secondary)] text-amber-400'
+              : 'text-secondary hover:text-primary hover:bg-[var(--color-bg-secondary)]/50'
           }`}
         >
           <TrendingUp size={12} className="text-amber-400" />
-          <span>{t('tracker.status.interview', 'Interview')}:</span>
-          <span className="font-semibold text-primary">{stats.interview}</span>
+          <span>{t('tracker.status.interview', 'Interview')}</span>
+          <span className="text-[11px] font-mono opacity-70">({stats.interview})</span>
         </button>
 
         <button 
-          onClick={() => setStatusFilter(statusFilter === 'OFFER' ? 'ALL' : 'OFFER')}
-          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border transition-colors shrink-0 ${
+          onClick={() => setStatusFilter('OFFER')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors shrink-0 font-medium ${
             statusFilter === 'OFFER'
-              ? 'border-emerald-500 bg-[var(--color-bg-primary)] text-emerald-400 font-medium'
-              : 'border-[var(--color-border-default)] bg-[var(--color-bg-primary)] text-secondary hover:text-primary'
+              ? 'bg-[var(--color-bg-secondary)] text-emerald-400'
+              : 'text-secondary hover:text-primary hover:bg-[var(--color-bg-secondary)]/50'
           }`}
         >
           <CheckCircle2 size={12} className="text-emerald-400" />
-          <span>{t('tracker.status.offer', 'Offer')}:</span>
-          <span className="font-semibold text-primary">{stats.offer}</span>
+          <span>{t('tracker.status.offer', 'Offer')}</span>
+          <span className="text-[11px] font-mono opacity-70">({stats.offer})</span>
         </button>
 
         <button 
-          onClick={() => setStatusFilter(statusFilter === 'REJECTED' ? 'ALL' : 'REJECTED')}
-          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border transition-colors shrink-0 ${
+          onClick={() => setStatusFilter('REJECTED')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors shrink-0 font-medium ${
             statusFilter === 'REJECTED'
-              ? 'border-red-500 bg-[var(--color-bg-primary)] text-red-400 font-medium'
-              : 'border-[var(--color-border-default)] bg-[var(--color-bg-primary)] text-secondary hover:text-primary'
+              ? 'bg-[var(--color-bg-secondary)] text-red-400'
+              : 'text-secondary hover:text-primary hover:bg-[var(--color-bg-secondary)]/50'
           }`}
         >
           <XCircle size={12} className="text-red-400" />
-          <span>{t('tracker.status.rejected', 'Rejected')}:</span>
-          <span className="font-semibold text-primary">{stats.rejected}</span>
+          <span>{t('tracker.status.rejected', 'Rejected')}</span>
+          <span className="text-[11px] font-mono opacity-70">({stats.rejected})</span>
         </button>
-      </div>
+      </nav>
 
-      {/* Main Content Area */}
-      {viewMode === 'kanban' ? (
+      {/* Main Workspace Area */}
+      {applications.length === 0 ? (
+        /* Empty State: Sleek full-viewport welcome with quick import */
+        <div className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-[var(--color-bg-inset)]">
+          <div className="w-16 h-16 rounded-2xl bg-[var(--color-bg-primary)] border border-[var(--color-border-default)] flex items-center justify-center mb-4 shadow-md">
+            <Briefcase size={28} className="text-[var(--color-accent)]" />
+          </div>
+
+          <h2 className="text-lg font-bold text-primary mb-2">
+            {t('tracker.emptyTitle', 'No tracked applications')}
+          </h2>
+          <p className="text-secondary text-xs sm:text-sm max-w-md mb-6 leading-relaxed">
+            {t('tracker.emptyDesc', 'Add job applications manually or paste a link from hh.kz / LinkedIn to automatically import details and tailor your resume with AI.')}
+          </p>
+
+          {/* Quick Import Box */}
+          <form onSubmit={handleQuickImport} className="w-full max-w-md mb-4">
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <Link2 size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary" />
+                <input 
+                  type="url"
+                  placeholder={t('tracker.importPlaceholder', 'https://hh.kz/vacancy/... or LinkedIn URL')}
+                  className="w-full pl-9 pr-3 py-2 text-xs bg-[var(--color-bg-primary)] border border-[var(--color-border-default)] rounded-md focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] outline-none text-primary placeholder-muted"
+                  value={quickUrl}
+                  onChange={e => setQuickUrl(e.target.value)}
+                />
+              </div>
+              <Button 
+                type="submit" 
+                variant="primary" 
+                className="text-xs px-4" 
+                disabled={scrapeJob.isPending || !quickUrl.trim()}
+              >
+                {scrapeJob.isPending ? t('tracker.importing', 'Importing...') : t('tracker.importButton', 'Import')}
+              </Button>
+            </div>
+          </form>
+
+          <div className="flex items-center gap-3 text-xs text-muted my-2">
+            <span className="w-12 h-px bg-[var(--color-border-default)]" />
+            <span>or</span>
+            <span className="w-12 h-px bg-[var(--color-border-default)]" />
+          </div>
+
+          <Button 
+            variant="outline" 
+            className="text-xs mt-2 flex items-center gap-1.5" 
+            onClick={() => setIsModalOpen(true)}
+          >
+            <Plus size={14} />
+            <span>{t('tracker.newApplication', 'New Application')}</span>
+          </Button>
+        </div>
+      ) : filteredApps.length === 0 ? (
+        /* Filter/Search Zero Results */
+        <div className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-[var(--color-bg-inset)]">
+          <Search size={32} className="text-muted mb-3" />
+          <h3 className="text-base font-semibold text-primary mb-1">
+            {t('tracker.emptySearchTitle', 'No applications found')}
+          </h3>
+          <p className="text-secondary text-xs max-w-sm mb-4">
+            {t('tracker.emptySearchDesc', 'Try clearing your search query or switching the status filter.')}
+          </p>
+          <Button 
+            variant="outline" 
+            className="text-xs" 
+            onClick={() => { setSearch(''); setStatusFilter('ALL'); }}
+          >
+            Clear Filters
+          </Button>
+        </div>
+      ) : viewMode === 'kanban' ? (
+        /* Kanban Board View */
         <div className="flex-1 min-h-0 min-w-0 overflow-hidden bg-[var(--color-bg-inset)]">
           <KanbanBoard 
             applications={filteredApps} 
@@ -272,111 +345,96 @@ export const JobTrackerPage = () => {
           />
         </div>
       ) : (
+        /* Clean List / Table View */
         <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-[var(--color-bg-inset)]">
-          <div className="max-w-6xl mx-auto border border-[var(--color-border-default)] rounded-xl bg-[var(--color-bg-primary)] overflow-hidden shadow-sm divide-y divide-[var(--color-border-default)]">
+          <div className="border border-[var(--color-border-default)] rounded-xl bg-[var(--color-bg-primary)] overflow-hidden shadow-sm divide-y divide-[var(--color-border-default)]">
             {filteredApps.map(app => {
               const statusCfg = STATUS_CONFIG[app.status];
               const StatusIcon = statusCfg.icon;
               return (
-                <div key={app.id} className="p-4 hover:bg-[var(--color-bg-secondary)] transition-colors group flex items-start gap-3">
-                  {/* Left Icon */}
-                  <div className="mt-1">
-                    <StatusIcon size={18} className={statusCfg.colorClass} />
-                  </div>
-                  
-                  {/* Main Content */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <h3 className="text-base font-semibold text-primary">{app.role}</h3>
-                      <span className="text-secondary text-sm">at</span>
-                      <span className="text-base font-semibold text-primary">{app.companyName}</span>
-                      
-                      <Badge tone={statusCfg.tone} className="ml-2 text-[10px] px-2 py-0.5">
-                        {statusCfg.label}
-                      </Badge>
-                      {app.matchScore != null && (
-                        <Badge tone={app.matchScore > 75 ? 'accent' : 'default'} className="text-[10px] px-2 py-0.5">
-                          {app.matchScore}% Match
-                        </Badge>
-                      )}
+                <div key={app.id} className="p-4 hover:bg-[var(--color-bg-secondary)] transition-colors group flex items-start sm:items-center justify-between gap-4">
+                  {/* Left: Status Icon & Role / Company */}
+                  <div className="flex items-start sm:items-center gap-3 min-w-0 flex-1">
+                    <div className="mt-0.5 sm:mt-0 shrink-0">
+                      <StatusIcon size={18} className={statusCfg.colorClass} />
                     </div>
                     
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-secondary mt-1.5">
-                      {app.location && (
-                        <span className="flex items-center gap-1">
-                          <MapPin size={12} /> {app.location}
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="text-sm font-semibold text-primary truncate">{app.role}</h3>
+                        <span className="text-secondary text-xs">at</span>
+                        <span className="text-sm font-medium text-secondary truncate">{app.companyName}</span>
+                        
+                        <Badge tone={statusCfg.tone} className="text-[10px] px-2 py-0.5 shrink-0">
+                          {statusCfg.label}
+                        </Badge>
+                        {app.matchScore != null && (
+                          <Badge tone={app.matchScore > 75 ? 'accent' : 'default'} className="text-[10px] px-2 py-0.5 shrink-0">
+                            {app.matchScore}% Match
+                          </Badge>
+                        )}
+                      </div>
+                      
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-secondary mt-1">
+                        {app.location && (
+                          <span className="flex items-center gap-1">
+                            <MapPin size={11} /> {app.location}
+                          </span>
+                        )}
+                        {app.salaryRange && (
+                          <span className="flex items-center gap-0.5 font-mono text-emerald-400">
+                            <DollarSign size={11} /> {app.salaryRange}
+                          </span>
+                        )}
+                        <span className="flex items-center gap-1 font-mono text-muted text-[11px]">
+                          <Calendar size={11} /> {app.appliedDate || 'No date'}
                         </span>
-                      )}
-                      {app.salaryRange && (
-                        <span className="flex items-center gap-0.5 font-mono text-emerald-400">
-                          <DollarSign size={12} /> {app.salaryRange}
-                        </span>
-                      )}
-                      <span className="flex items-center gap-1 font-mono text-muted">
-                        <Calendar size={12} /> {app.appliedDate || 'No date'}
-                      </span>
+                      </div>
                     </div>
                   </div>
                   
-                  {/* Actions */}
-                  <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shrink-0">
+                  {/* Right Actions */}
+                  <div className="flex items-center gap-1 shrink-0">
                     {app.jobUrl && (
                       <a 
                         href={app.jobUrl} 
                         target="_blank" 
                         rel="noreferrer" 
-                        className="p-2 text-secondary hover:text-[var(--color-accent)] hover:bg-[var(--color-bg-tertiary)] rounded-md transition-colors" 
+                        className="p-1.5 text-secondary hover:text-[var(--color-accent)] hover:bg-[var(--color-bg-tertiary)] rounded-md transition-colors" 
                         title="View Job Post"
                         aria-label="View Job Post"
                       >
-                        <ExternalLink size={15} />
+                        <ExternalLink size={14} />
                       </a>
                     )}
                     <button 
                       onClick={() => setTailorModalApp(app)} 
-                      className="p-2 text-secondary hover:text-[var(--color-accent)] hover:bg-[var(--color-bg-tertiary)] rounded-md transition-colors" 
+                      className="p-1.5 text-secondary hover:text-[var(--color-accent)] hover:bg-[var(--color-bg-tertiary)] rounded-md transition-colors" 
                       title="AI Resume Tailoring"
                       aria-label="AI Resume Tailoring"
                     >
-                      <Sparkles size={15} />
+                      <Sparkles size={14} />
                     </button>
                     <button 
                       onClick={() => setCoverLetterModalApp(app)} 
-                      className="p-2 text-secondary hover:text-purple-400 hover:bg-purple-500/10 rounded-md transition-colors" 
+                      className="p-1.5 text-secondary hover:text-purple-400 hover:bg-purple-500/10 rounded-md transition-colors" 
                       title="AI Cover Letter"
                       aria-label="AI Cover Letter"
                     >
-                      <Wand2 size={15} />
+                      <Wand2 size={14} />
                     </button>
                     <button 
                       onClick={() => deleteApp.mutate(app.id)} 
-                      className="p-2 text-secondary hover:text-red-400 hover:bg-red-500/10 rounded-md transition-colors" 
+                      className="p-1.5 text-secondary hover:text-red-400 hover:bg-red-500/10 rounded-md transition-colors" 
                       title="Delete Application"
                       aria-label="Delete Application"
                     >
-                      <Trash2 size={15} />
+                      <Trash2 size={14} />
                     </button>
                   </div>
                 </div>
               );
             })}
-            
-            {filteredApps.length === 0 && (
-              <div className="py-16 flex flex-col items-center justify-center text-center px-4">
-                <div className="w-14 h-14 rounded-full bg-[var(--color-bg-inset)] border border-[var(--color-border-default)] flex items-center justify-center mb-3">
-                  <Briefcase size={22} className="text-muted" />
-                </div>
-                <h3 className="text-base font-semibold text-primary mb-1">
-                  {t('tracker.emptyTitle', 'No applications found')}
-                </h3>
-                <p className="text-secondary text-xs max-w-sm mb-5">
-                  {t('tracker.emptyDesc', "You haven't tracked any applications matching this criteria yet.")}
-                </p>
-                <Button variant="primary" className="text-xs" onClick={() => setIsModalOpen(true)}>
-                  <Plus size={14} className="mr-1" /> {t('tracker.newApplication', 'New Application')}
-                </Button>
-              </div>
-            )}
           </div>
         </div>
       )}

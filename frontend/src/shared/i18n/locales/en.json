@@ -119,7 +119,13 @@
       "interviews": "Interviews",
       "offers": "Offers"
     },
-    "emptyColumn": "No applications"
+    "emptyColumn": "No applications",
+    "emptyTitle": "No tracked applications",
+    "emptyDesc": "Add job applications manually or paste a link from hh.kz / LinkedIn to automatically import details and tailor your resume with AI.",
+    "quickImportTitle": "Quick Import from URL",
+    "importPlaceholder": "https://hh.kz/vacancy/... or LinkedIn URL",
+    "importButton": "Import",
+    "importing": "Importing..."
   },
   "dashboard": {
     "title": "Dashboard",
