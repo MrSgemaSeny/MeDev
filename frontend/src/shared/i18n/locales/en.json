@@ -118,7 +118,8 @@
       "active": "Active",
       "interviews": "Interviews",
       "offers": "Offers"
-    }
+    },
+    "emptyColumn": "No applications"
   },
   "dashboard": {
     "title": "Dashboard",

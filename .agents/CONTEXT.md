@@ -81,7 +81,10 @@
     - **Flyway V27**: `V27__update_vector_dimensions.sql` обновляет размерность `vector(384)` -> `vector(768)` с пересозданием индекса HNSW.
     - **JinaEmbeddingClient**: Высокопроизводительный WebClient HTTP-клиент к Jina AI (`jina-embeddings-v2-base-en`), исключающий OOM на JVM.
     - **PgVectorRepository**: Нативный репозиторий на чистом JdbcTemplate для batch upsert и косинусного поиска (`<=>`).
-    - **Service Refactoring**: `VectorizationService` и `AiApplicationService` переведены на реальный RAG-ретривал, удалена заглушка `MockVectorStoreConfig.java`.
+16. **Job Tracker CRM UX/UI Overhaul (100% COMPLETE)**:
+    - **Layout & Responsiveness**: Маршрут `/tracker` переведен в полноэкранный режим `isFullBleedPage`. Устранены ограничения `max-w-6xl` и фиксированная высота `h-[600px]`, вызывавшие обрезание 4-й и 5-й колонок.
+    - **Unified Toolbar & Metrics**: Создан единый тулбар в стиле GitHub Projects / Linear: быстрый поиск с кнопкой сброса, переключатель вида (Доска / Список с иконками `LayoutGrid` и `List`), интерактивные счетчики-фильтры статусов (`Всего`, `В планах`, `Отправлено`, `Интервью`, `Оффер`, `Отказ`).
+    - **Kanban Board Polish**: Колонки получили цветовую подсветку статусов, адаптивную ширину и полноразмерную зону скролла карточек. Карточки обновлены: четкая иерархия с бейджами AI Match %, чипами зарплаты/локации и тулбаром действий.
 
 ## Verification
 - `backend`: 273/273 тестов успешно пройдены (`./gradlew test`).
@@ -94,5 +97,6 @@
 - Setting up automated nightly DB backup jobs.
 - Sentry and Prometheus/Grafana monitoring dashboards.
 - **RAG Semantic Vacancy Match (Plan B):** Векторизация вакансий из Job Tracker и автоматический двусторонний поиск под профиль пользователя.
+
 
 

@@ -118,7 +118,8 @@
       "active": "В процессе",
       "interviews": "Интервью",
       "offers": "Офферы"
-    }
+    },
+    "emptyColumn": "Нет вакансий"
   },
   "dashboard": {
     "title": "Панель управления",
