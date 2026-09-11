@@ -19,8 +19,7 @@ import {
   LayoutGrid, 
   List as ListIcon, 
   MapPin, 
-  DollarSign,
-  X
+  DollarSign
 } from 'lucide-react';
 
 const STATUS_CONFIG: Record<ApplicationStatus, { label: string }> = {
@@ -142,27 +141,7 @@ export const JobTrackerPage = () => {
 
         {/* Toolbar Controls - Visible only when applications exist */}
         {applications.length > 0 && (
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            {/* Search Box */}
-            <div className="relative flex-1 sm:w-60">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary" />
-              <input 
-                type="text" 
-                placeholder="Поиск по компании или роли..." 
-                className="w-full pl-8 pr-7 py-1.5 text-xs bg-[var(--color-bg-secondary)] border border-[var(--color-border-default)] rounded-[6px] focus:border-[var(--color-accent)] outline-none transition-all text-primary placeholder:text-secondary"
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-              />
-              {search && (
-                <button 
-                  onClick={() => setSearch('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-secondary hover:text-primary"
-                >
-                  <X size={12} />
-                </button>
-              )}
-            </div>
-
+          <div className="flex items-center gap-2 sm:gap-3">
             {/* View Mode Switcher */}
             <div className="flex items-center border border-[var(--color-border-default)] rounded-[6px] bg-[var(--color-bg-secondary)] p-0.5">
               <button 

@@ -102,6 +102,11 @@
     - **Backend (WebScraperService)**: Added structured LLM parsing (Groq `LlmProvider` + `ObjectMapper`) to extract accurate `CreateJobApplicationRequest` JSON from the raw Markdown.
     - **Frontend (JobTrackerPage)**: Redesigned the Empty State from scratch. Added a sleek gradient background, a glowing target icon, and a modern floating input field with a purple/accent shadow for the URL import form. Added confirmation dialogs for profile deletions using `ConfirmDialog`.
 
+20. **Strict Minimal Design System & Scraper Hardening (100% COMPLETE)**:
+    - **Design Tokens**: Restored strict GitHub Green accent (`#238636` dark / `#1f883d` light) for all buttons and active switches.
+    - **Visual De-cluttering**: Removed search bar from Job Tracker page toolbar (global search remains in header). Removed all subtext hints and secondary descriptions from navigation links in `MobileNavDrawer` and `AppSidebar`.
+    - **WebScraperService**: Direct HeadHunter Public API integration (`api.hh.ru/vacancies/{id}`) with Jsoup and AI fallback, eliminating 500 errors.
+
 ## Verification
 - `backend`: 278+ тестов успешно пройдены (`./gradlew test`).
 - `frontend`: 55/55 тестов пройдены (`npm test`).

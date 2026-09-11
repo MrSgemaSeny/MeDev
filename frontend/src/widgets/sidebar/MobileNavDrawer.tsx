@@ -35,12 +35,12 @@ const MAIN_NAV = [
 ];
 
 const SECTIONS_NAV = [
-  { to: '/profile/edit#experience', labelKey: 'nav.experience', defaultLabel: 'Опыт работы', hint: 'Компании', icon: Briefcase },
-  { to: '/profile/edit#education', labelKey: 'nav.education', defaultLabel: 'Образование', hint: 'Вуз, курсы', icon: GraduationCap },
-  { to: '/profile/edit#skills', labelKey: 'nav.skills', defaultLabel: 'Навыки', hint: 'Стек, тулы', icon: Code },
-  { to: '/profile/edit#languages', labelKey: 'nav.languages', defaultLabel: 'Языки', hint: 'Уровни', icon: Globe },
-  { to: '/profile/edit#projects', labelKey: 'nav.projects', defaultLabel: 'Проекты', hint: 'Портфолио', icon: Box },
-  { to: '/profile/edit#github', labelKey: 'nav.github', defaultLabel: 'GitHub', hint: 'Репозитории', icon: GitBranch },
+  { to: '/profile/edit#experience', labelKey: 'nav.experience', defaultLabel: 'Опыт работы', icon: Briefcase },
+  { to: '/profile/edit#education', labelKey: 'nav.education', defaultLabel: 'Образование', icon: GraduationCap },
+  { to: '/profile/edit#skills', labelKey: 'nav.skills', defaultLabel: 'Навыки', icon: Code },
+  { to: '/profile/edit#languages', labelKey: 'nav.languages', defaultLabel: 'Языки', icon: Globe },
+  { to: '/profile/edit#projects', labelKey: 'nav.projects', defaultLabel: 'Проекты', icon: Box },
+  { to: '/profile/edit#github', labelKey: 'nav.github', defaultLabel: 'GitHub', icon: GitBranch },
 ];
 
 export const MobileNavDrawer = () => {
@@ -160,17 +160,14 @@ export const MobileNavDrawer = () => {
                 key={item.to}
                 to={item.to}
                 onClick={close}
-                className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors cursor-pointer ${
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors cursor-pointer ${
                   isActive
                     ? 'text-primary bg-[var(--color-bg-tertiary)] font-semibold'
                     : 'text-secondary hover:bg-[var(--color-bg-tertiary)]/60 hover:text-primary font-medium'
                 }`}
               >
-                <div className="flex items-center gap-3 min-w-0">
-                  <item.icon size={17} className="shrink-0" />
-                  <span className="truncate">{t(item.labelKey, item.defaultLabel)}</span>
-                </div>
-                <span className="text-[11px] text-muted font-normal shrink-0 ml-2">{item.hint}</span>
+                <item.icon size={17} className="shrink-0" />
+                <span className="truncate">{t(item.labelKey, item.defaultLabel)}</span>
               </NavLink>
             );
           })}

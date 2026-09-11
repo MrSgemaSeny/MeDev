@@ -37,6 +37,10 @@ Explain WHY, not just WHAT (Senior Tech Lead mentoring approach: architect think
 9. **No God Objects (MeDev)**: Строго соблюдай SRP (Single Responsibility Principle). Сервисы должны быть компактными.
 10. **FSD Compliance (MeDev)**: Frontend обязан строго следовать Feature-Sliced Design (app, pages, features, entities, shared).
 11. **Groq Model (STRICT)**: Единственная рабочая и разрешенная модель для Groq API — `openai/gpt-oss-20b` (GPT-20B). Модели Llama НЕ РАБОТАЮТ и СТРОГО ЗАПРЕЩЕНЫ к установке. Никаких подмен модели.
+12. **UI & Design (STRICT)**: 
+    - Основной акцентный цвет кнопок и активных переключателей — СТРОГО зелёный (`#238636` в тёмной теме, `#1f883d` в светлой теме).
+    - СТРОГО БЕЗ маленьких бейджей, ненужных описаний, подсказок и маленьких текстов к основному тексту в навигации и интерфейсе (никакого визуального шума). Меню и списки должны быть чистыми: только иконка + заголовок.
+    - В тулбаре страницы трекера вакансий нет поля поиска — поиск только в глобальном хедере.
 
 ## Current Technical Debt & Unfinished Phases (Sprint Backlog)
 *Все CRITICAL, WARNING и INFO задачи из аудитов 1 и 2 закрыты (2026-08-13). Бэклог чист.*
