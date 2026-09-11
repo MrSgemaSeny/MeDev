@@ -14,11 +14,6 @@ import {
   Calendar, 
   Trash2, 
   Search, 
-  TrendingUp, 
-  Target, 
-  CheckCircle2, 
-  XCircle, 
-  Clock, 
   Wand2, 
   Sparkles, 
   LayoutGrid, 
@@ -28,12 +23,12 @@ import {
   X
 } from 'lucide-react';
 
-const STATUS_CONFIG: Record<ApplicationStatus, { label: string; tone: 'default' | 'accent' | 'danger'; colorClass: string; icon: any }> = {
-  WISHLIST: { label: 'Wishlist', tone: 'default', colorClass: 'text-secondary', icon: Clock },
-  APPLIED: { label: 'Applied', tone: 'accent', colorClass: 'text-blue-400', icon: Target },
-  INTERVIEW: { label: 'Interviewing', tone: 'accent', colorClass: 'text-amber-400', icon: TrendingUp },
-  OFFER: { label: 'Offer', tone: 'accent', colorClass: 'text-emerald-400', icon: CheckCircle2 },
-  REJECTED: { label: 'Rejected', tone: 'danger', colorClass: 'text-red-400', icon: XCircle },
+const STATUS_CONFIG: Record<ApplicationStatus, { label: string }> = {
+  WISHLIST: { label: 'В планах' },
+  APPLIED: { label: 'Отправлено' },
+  INTERVIEW: { label: 'Собеседование' },
+  OFFER: { label: 'Оффер' },
+  REJECTED: { label: 'Отказ' },
 };
 
 export const JobTrackerPage = () => {
@@ -121,23 +116,25 @@ export const JobTrackerPage = () => {
 
   if (isLoading) {
     return (
-      <div className="flex h-full items-center justify-center bg-[var(--color-bg-inset)]">
-        <div className="flex flex-col items-center gap-2 text-secondary text-sm">
-          <span className="inline-block w-6 h-6 border-2 border-[var(--color-border-default)] border-t-[var(--color-accent)] rounded-full animate-spin" />
-          <span>{t('tracker.loading', 'Loading CRM...')}</span>
+      <div className="flex h-full items-center justify-center bg-[#0D0D0D]">
+        <div className="flex flex-col items-center gap-2 text-[#94A3B8] text-sm">
+          <span className="inline-block w-6 h-6 border-2 border-[#2A2A2A] border-t-[#22C55E] rounded-full animate-spin" />
+          <span>Загрузка...</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-full bg-[var(--color-bg-inset)] min-w-0 overflow-hidden">
+    <div className="flex flex-col h-full bg-[#0D0D0D] min-w-0 overflow-hidden font-sans">
       {/* Top Header */}
-      <header className="px-4 py-3 sm:px-6 border-b border-[var(--color-border-default)] bg-[var(--color-bg-primary)] shrink-0 flex flex-col md:flex-row md:items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <h1 className="text-base sm:text-lg font-bold text-primary tracking-tight">{t('tracker.title', 'Job Tracker CRM')}</h1>
+      <header className="px-4 py-3.5 sm:px-6 border-b border-[#2A2A2A] bg-[#111111] shrink-0 flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          <h1 className="text-base sm:text-lg font-semibold text-[#F1F5F9] tracking-tight">
+            Отслеживание вакансий
+          </h1>
           {applications.length > 0 && (
-            <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-[var(--color-bg-secondary)] text-secondary border border-[var(--color-border-default)]">
+            <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-[#1A1A1A] text-[#94A3B8] border border-[#2A2A2A] font-medium">
               {stats.total}
             </span>
           )}
@@ -148,18 +145,18 @@ export const JobTrackerPage = () => {
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             {/* Search Box */}
             <div className="relative flex-1 sm:w-60">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary" />
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#94A3B8]" />
               <input 
                 type="text" 
-                placeholder={t('tracker.searchPlaceholder', 'Search company or role...')} 
-                className="w-full pl-8 pr-7 py-1.5 text-xs bg-[var(--color-bg-secondary)] border border-[var(--color-border-default)] rounded-md focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] outline-none transition-all text-primary placeholder-muted"
+                placeholder="Поиск по компании или роли..." 
+                className="w-full pl-8 pr-7 py-1.5 text-xs bg-[#1A1A1A] border border-[#2A2A2A] rounded-[6px] focus:border-[#22C55E] outline-none transition-all text-[#F1F5F9] placeholder-[#94A3B8]"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
               />
               {search && (
                 <button 
                   onClick={() => setSearch('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-secondary hover:text-primary"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-[#F1F5F9]"
                 >
                   <X size={12} />
                 </button>
@@ -167,123 +164,118 @@ export const JobTrackerPage = () => {
             </div>
 
             {/* View Mode Switcher */}
-            <div className="flex items-center border border-[var(--color-border-default)] rounded-md bg-[var(--color-bg-secondary)] p-0.5">
+            <div className="flex items-center border border-[#2A2A2A] rounded-[6px] bg-[#1A1A1A] p-0.5">
               <button 
                 onClick={() => setViewMode('kanban')} 
-                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs rounded transition-colors ${
+                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-[4px] transition-colors ${
                   viewMode === 'kanban' 
-                    ? 'bg-[var(--color-bg-primary)] text-primary font-medium shadow-xs' 
-                    : 'text-secondary hover:text-primary'
+                    ? 'bg-[#2A2A2A] text-[#F1F5F9] font-medium' 
+                    : 'text-[#94A3B8] hover:text-[#F1F5F9]'
                 }`}
-                title="Kanban Board"
+                title="Канбан-доска"
               >
                 <LayoutGrid size={13} />
-                <span className="hidden sm:inline">{t('tracker.board', 'Board')}</span>
+                <span className="hidden sm:inline">Доска</span>
               </button>
               <button 
                 onClick={() => setViewMode('list')} 
-                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs rounded transition-colors ${
+                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-[4px] transition-colors ${
                   viewMode === 'list' 
-                    ? 'bg-[var(--color-bg-primary)] text-primary font-medium shadow-xs' 
-                    : 'text-secondary hover:text-primary'
+                    ? 'bg-[#2A2A2A] text-[#F1F5F9] font-medium' 
+                    : 'text-[#94A3B8] hover:text-[#F1F5F9]'
                 }`}
-                title="List View"
+                title="Список"
               >
                 <ListIcon size={13} />
-                <span className="hidden sm:inline">{t('tracker.list', 'List')}</span>
+                <span className="hidden sm:inline">Список</span>
               </button>
             </div>
 
             {/* Add Application Button */}
-            <Button 
-              variant="primary" 
-              className="flex items-center justify-center gap-1.5 py-1.5 px-3 text-xs" 
+            <button 
+              type="button"
+              className="flex items-center justify-center gap-1.5 py-1.5 px-3.5 text-xs font-semibold rounded-[6px] bg-[#22C55E] text-[#000000] hover:bg-[#1ea750] transition-colors cursor-pointer" 
               onClick={() => setIsModalOpen(true)}
             >
               <Plus size={14} />
-              <span>{t('tracker.newApplication', 'New Application')}</span>
-            </Button>
+              <span>+ Новый отклик</span>
+            </button>
           </div>
         )}
       </header>
 
-      {/* GitHub-style Segmented Status Tabs - Visible only when applications exist */}
+      {/* Segmented Status Tabs - Visible only when applications exist */}
       {applications.length > 0 && (
-        <nav className="px-4 sm:px-6 bg-[var(--color-bg-primary)] border-b border-[var(--color-border-default)] flex items-center gap-1 sm:gap-2 overflow-x-auto shrink-0 text-xs py-1">
+        <nav className="px-4 sm:px-6 bg-[#111111] border-b border-[#2A2A2A] flex items-center gap-1 sm:gap-2 overflow-x-auto shrink-0 text-xs py-1">
           <button 
             onClick={() => setStatusFilter('ALL')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors shrink-0 font-medium ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] transition-colors shrink-0 font-medium ${
               statusFilter === 'ALL'
-                ? 'bg-[var(--color-bg-secondary)] text-primary'
-                : 'text-secondary hover:text-primary hover:bg-[var(--color-bg-secondary)]/50'
+                ? 'bg-[#1A1A1A] text-[#F1F5F9] border border-[#2A2A2A]'
+                : 'text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#1A1A1A]/50'
             }`}
           >
-            <span>{t('tracker.status.all', 'All')}</span>
+            <span>Все</span>
             <span className="text-[11px] font-mono opacity-70">({stats.total})</span>
           </button>
 
           <button 
             onClick={() => setStatusFilter('WISHLIST')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors shrink-0 font-medium ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] transition-colors shrink-0 font-medium ${
               statusFilter === 'WISHLIST'
-                ? 'bg-[var(--color-bg-secondary)] text-primary'
-                : 'text-secondary hover:text-primary hover:bg-[var(--color-bg-secondary)]/50'
+                ? 'bg-[#1A1A1A] text-[#F1F5F9] border border-[#2A2A2A]'
+                : 'text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#1A1A1A]/50'
             }`}
           >
-            <Clock size={12} className="text-secondary" />
-            <span>{t('tracker.status.wishlist', 'Wishlist')}</span>
+            <span>В планах</span>
             <span className="text-[11px] font-mono opacity-70">({stats.wishlist})</span>
           </button>
 
           <button 
             onClick={() => setStatusFilter('APPLIED')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors shrink-0 font-medium ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] transition-colors shrink-0 font-medium ${
               statusFilter === 'APPLIED'
-                ? 'bg-[var(--color-bg-secondary)] text-blue-400'
-                : 'text-secondary hover:text-primary hover:bg-[var(--color-bg-secondary)]/50'
+                ? 'bg-[#1A1A1A] text-[#F1F5F9] border border-[#2A2A2A]'
+                : 'text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#1A1A1A]/50'
             }`}
           >
-            <Target size={12} className="text-blue-400" />
-            <span>{t('tracker.status.applied', 'Applied')}</span>
+            <span>Отправлено</span>
             <span className="text-[11px] font-mono opacity-70">({stats.applied})</span>
           </button>
 
           <button 
             onClick={() => setStatusFilter('INTERVIEW')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors shrink-0 font-medium ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] transition-colors shrink-0 font-medium ${
               statusFilter === 'INTERVIEW'
-                ? 'bg-[var(--color-bg-secondary)] text-amber-400'
-                : 'text-secondary hover:text-primary hover:bg-[var(--color-bg-secondary)]/50'
+                ? 'bg-[#1A1A1A] text-[#F1F5F9] border border-[#2A2A2A]'
+                : 'text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#1A1A1A]/50'
             }`}
           >
-            <TrendingUp size={12} className="text-amber-400" />
-            <span>{t('tracker.status.interview', 'Interview')}</span>
+            <span>Собеседование</span>
             <span className="text-[11px] font-mono opacity-70">({stats.interview})</span>
           </button>
 
           <button 
             onClick={() => setStatusFilter('OFFER')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors shrink-0 font-medium ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] transition-colors shrink-0 font-medium ${
               statusFilter === 'OFFER'
-                ? 'bg-[var(--color-bg-secondary)] text-emerald-400'
-                : 'text-secondary hover:text-primary hover:bg-[var(--color-bg-secondary)]/50'
+                ? 'bg-[#1A1A1A] text-[#F1F5F9] border border-[#2A2A2A]'
+                : 'text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#1A1A1A]/50'
             }`}
           >
-            <CheckCircle2 size={12} className="text-emerald-400" />
-            <span>{t('tracker.status.offer', 'Offer')}</span>
+            <span>Оффер</span>
             <span className="text-[11px] font-mono opacity-70">({stats.offer})</span>
           </button>
 
           <button 
             onClick={() => setStatusFilter('REJECTED')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors shrink-0 font-medium ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] transition-colors shrink-0 font-medium ${
               statusFilter === 'REJECTED'
-                ? 'bg-[var(--color-bg-secondary)] text-red-400'
-                : 'text-secondary hover:text-primary hover:bg-[var(--color-bg-secondary)]/50'
+                ? 'bg-[#1A1A1A] text-[#F1F5F9] border border-[#2A2A2A]'
+                : 'text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#1A1A1A]/50'
             }`}
           >
-            <XCircle size={12} className="text-red-400" />
-            <span>{t('tracker.status.rejected', 'Rejected')}</span>
+            <span>Отказ</span>
             <span className="text-[11px] font-mono opacity-70">({stats.rejected})</span>
           </button>
         </nav>
@@ -291,155 +283,70 @@ export const JobTrackerPage = () => {
 
       {/* Main Workspace Area */}
       {applications.length === 0 ? (
-        /* Comprehensive Onboarding & Pipeline Overview */
-        <div className="flex-1 overflow-y-auto p-4 sm:p-8 bg-[var(--color-bg-inset)]">
-          <div className="max-w-4xl mx-auto flex flex-col gap-8">
-            
-            {/* Hero & Primary Action Block */}
-            <div className="bg-[var(--color-bg-primary)] border border-[var(--color-border-default)] rounded-xl p-6 sm:p-8 shadow-sm">
-              <div className="max-w-2xl">
-                <h2 className="text-xl sm:text-2xl font-bold text-primary tracking-tight mb-2">
-                  Управляйте откликами и адаптацией резюме
-                </h2>
-                <p className="text-sm text-secondary leading-relaxed mb-6">
-                  Добавляйте вакансии вручную или вставьте ссылку на hh.kz / LinkedIn. AI автоматически извлечет требования, оценит совпадение с вашим профилем и подготовит сопроводительное письмо.
-                </p>
-              </div>
+        /* СОСТОЯНИЕ 1 — EMPTY STATE (нет откликов) */
+        <div className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-[#0D0D0D]">
+          <div className="w-full max-w-[540px] flex flex-col items-center">
+            {/* Заголовок */}
+            <h2 className="text-2xl sm:text-3xl font-semibold text-[#F1F5F9] tracking-tight mb-3">
+              Добавьте первую вакансию
+            </h2>
 
-              {/* Action Form */}
-              <form onSubmit={handleQuickImport} className="mb-4">
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <input 
-                    type="url"
-                    placeholder="https://hh.kz/vacancy/... или LinkedIn URL"
-                    className="flex-1 bg-[var(--color-bg-secondary)] border border-[var(--color-border-default)] rounded-lg px-4 py-2.5 text-sm text-primary placeholder-muted focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] outline-none"
-                    value={quickUrl}
-                    onChange={e => setQuickUrl(e.target.value)}
-                  />
-                  <Button 
-                    type="submit" 
-                    variant="primary" 
-                    className="h-10 px-6 text-xs font-semibold shrink-0" 
-                    disabled={scrapeJob.isPending || !quickUrl.trim()}
-                  >
-                    {scrapeJob.isPending ? 'Парсинг...' : 'Импортировать'}
-                  </Button>
-                </div>
-              </form>
+            {/* Подзаголовок */}
+            <p className="text-sm sm:text-base text-[#94A3B8] max-w-[480px] text-center leading-relaxed mb-8">
+              Вставьте ссылку с hh.kz или LinkedIn — мы автоматически извлечём роль, компанию, требования и зарплату
+            </p>
 
-              <div className="flex items-center gap-3">
-                <span className="text-xs text-muted">или</span>
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(true)}
-                  className="text-xs font-medium text-[var(--color-link)] hover:underline cursor-pointer"
+            {/* Инпут + кнопка в одну строку */}
+            <form onSubmit={handleQuickImport} className="w-full mb-4">
+              <div className="flex flex-col sm:flex-row gap-2.5">
+                <input 
+                  type="url"
+                  placeholder="https://hh.kz/vacancy/... или LinkedIn URL"
+                  className="flex-1 bg-[#1A1A1A] border border-[#2A2A2A] rounded-[6px] px-4 py-3 text-sm text-[#F1F5F9] placeholder-[#94A3B8] focus:border-[#22C55E] focus:outline-none transition-colors"
+                  value={quickUrl}
+                  onChange={e => setQuickUrl(e.target.value)}
+                />
+                <button 
+                  type="submit" 
+                  disabled={scrapeJob.isPending || !quickUrl.trim()}
+                  className="h-11 sm:h-auto px-6 py-3 bg-[#22C55E] text-[#000000] font-semibold text-sm rounded-[6px] hover:bg-[#1ea750] transition-colors disabled:opacity-50 shrink-0 cursor-pointer"
                 >
-                  Заполнить данные вручную →
+                  {scrapeJob.isPending ? 'Импортирование...' : 'Импортировать'}
                 </button>
               </div>
+            </form>
 
-              {/* 3 Step Flow Pillars */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8 pt-6 border-t border-[var(--color-border-default)]">
-                <div className="p-3 rounded-lg bg-[var(--color-bg-secondary)] border border-[var(--color-border-default)]">
-                  <div className="text-xs font-semibold text-primary mb-1">1. Автоматический парсинг</div>
-                  <div className="text-xs text-secondary leading-relaxed">
-                    Извлечение роли, компании, локации, вилки зарплат и ключевых требований в 1 клик.
-                  </div>
-                </div>
-
-                <div className="p-3 rounded-lg bg-[var(--color-bg-secondary)] border border-[var(--color-border-default)]">
-                  <div className="text-xs font-semibold text-primary mb-1">2. AI Match & Tailoring</div>
-                  <div className="text-xs text-secondary leading-relaxed">
-                    Оценка совпадения стека, генерация Cover Letter и точечная адаптация пунктов резюме.
-                  </div>
-                </div>
-
-                <div className="p-3 rounded-lg bg-[var(--color-bg-secondary)] border border-[var(--color-border-default)]">
-                  <div className="text-xs font-semibold text-primary mb-1">3. Канбан-воронка</div>
-                  <div className="text-xs text-secondary leading-relaxed">
-                    Контроль каждого этапа отбора: В планах → Отправлено → Собеседование → Оффер.
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Ghost Preview (Mockup of Live Kanban Board) */}
-            <div className="opacity-60 pointer-events-none select-none">
-              <div className="text-xs font-medium text-muted uppercase tracking-wider mb-3">
-                Превью рабочего пространства (Канбан-доска)
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {/* Column 1: Wishlist */}
-                <div className="p-3 rounded-lg bg-[var(--color-bg-primary)] border border-[var(--color-border-default)]">
-                  <div className="text-xs font-semibold text-secondary mb-3 flex items-center justify-between">
-                    <span>В планах</span>
-                    <span className="font-mono text-[10px] bg-[var(--color-bg-secondary)] px-1.5 py-0.5 rounded">1</span>
-                  </div>
-                  <div className="p-3 rounded-md bg-[var(--color-bg-secondary)] border border-[var(--color-border-default)] shadow-xs">
-                    <div className="text-xs font-semibold text-primary mb-1">Senior Java Developer</div>
-                    <div className="text-xs text-secondary mb-2">Kaspi.kz • Almaty</div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-medium">94% Match</span>
-                      <span className="text-[10px] text-muted">$3,500 - $4,500</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Column 2: Applied */}
-                <div className="p-3 rounded-lg bg-[var(--color-bg-primary)] border border-[var(--color-border-default)]">
-                  <div className="text-xs font-semibold text-blue-400 mb-3 flex items-center justify-between">
-                    <span>Отправлено</span>
-                    <span className="font-mono text-[10px] bg-[var(--color-bg-secondary)] px-1.5 py-0.5 rounded">1</span>
-                  </div>
-                  <div className="p-3 rounded-md bg-[var(--color-bg-secondary)] border border-[var(--color-border-default)] shadow-xs">
-                    <div className="text-xs font-semibold text-primary mb-1">Lead Frontend Engineer</div>
-                    <div className="text-xs text-secondary mb-2">Kolesa Group • Remote</div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 font-medium">Applied 2d ago</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Column 3: Interview */}
-                <div className="p-3 rounded-lg bg-[var(--color-bg-primary)] border border-[var(--color-border-default)]">
-                  <div className="text-xs font-semibold text-amber-400 mb-3 flex items-center justify-between">
-                    <span>Собеседование</span>
-                    <span className="font-mono text-[10px] bg-[var(--color-bg-secondary)] px-1.5 py-0.5 rounded">1</span>
-                  </div>
-                  <div className="p-3 rounded-md bg-[var(--color-bg-secondary)] border border-[var(--color-border-default)] shadow-xs">
-                    <div className="text-xs font-semibold text-primary mb-1">Full-Stack Architect</div>
-                    <div className="text-xs text-secondary mb-2">inDrive • Astana</div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 font-medium">Tech Interview</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
+            {/* Ссылка под инпутом */}
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(true)}
+              className="text-[#94A3B8] hover:underline text-sm transition-colors cursor-pointer"
+            >
+              или заполнить вручную →
+            </button>
           </div>
         </div>
       ) : filteredApps.length === 0 ? (
         /* Filter/Search Zero Results */
-        <div className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-[var(--color-bg-inset)]">
-          <Search size={32} className="text-muted mb-3" />
-          <h3 className="text-base font-semibold text-primary mb-1">
-            {t('tracker.emptySearchTitle', 'No applications found')}
+        <div className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-[#0D0D0D]">
+          <Search size={32} className="text-[#94A3B8] mb-3" />
+          <h3 className="text-base font-semibold text-[#F1F5F9] mb-1">
+            Вакансии не найдены
           </h3>
-          <p className="text-secondary text-xs max-w-sm mb-4">
-            {t('tracker.emptySearchDesc', 'Try clearing your search query or switching the status filter.')}
+          <p className="text-[#94A3B8] text-xs max-w-sm mb-4">
+            Попробуйте сбросить поисковый запрос или выбрать другой статус.
           </p>
-          <Button 
-            variant="outline" 
-            className="text-xs" 
+          <button 
+            type="button"
+            className="text-xs px-4 py-2 rounded-[6px] border border-[#2A2A2A] text-[#F1F5F9] hover:bg-[#1A1A1A] transition-colors" 
             onClick={() => { setSearch(''); setStatusFilter('ALL'); }}
           >
-            Clear Filters
-          </Button>
+            Сбросить фильтры
+          </button>
         </div>
       ) : viewMode === 'kanban' ? (
-        /* Kanban Board View */
-        <div className="flex-1 min-h-0 min-w-0 overflow-hidden bg-[var(--color-bg-inset)]">
+        /* СОСТОЯНИЕ 2 — КАНБАН (есть данные) */
+        <div className="flex-1 min-h-0 min-w-0 overflow-hidden bg-[#0D0D0D]">
           <KanbanBoard 
             applications={filteredApps} 
             onStatusChange={(id, status) => updateApp.mutate({ id, payload: { status } })}
@@ -449,51 +356,44 @@ export const JobTrackerPage = () => {
           />
         </div>
       ) : (
-        /* Clean List / Table View */
-        <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-[var(--color-bg-inset)]">
-          <div className="border border-[var(--color-border-default)] rounded-xl bg-[var(--color-bg-primary)] overflow-hidden shadow-sm divide-y divide-[var(--color-border-default)]">
+        /* Список (List View) */
+        <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-[#0D0D0D]">
+          <div className="border border-[#2A2A2A] rounded-[8px] bg-[#111111] overflow-hidden divide-y divide-[#2A2A2A]">
             {filteredApps.map(app => {
               const statusCfg = STATUS_CONFIG[app.status];
-              const StatusIcon = statusCfg.icon;
               return (
-                <div key={app.id} className="p-4 hover:bg-[var(--color-bg-secondary)] transition-colors group flex items-start sm:items-center justify-between gap-4">
-                  {/* Left: Status Icon & Role / Company */}
-                  <div className="flex items-start sm:items-center gap-3 min-w-0 flex-1">
-                    <div className="mt-0.5 sm:mt-0 shrink-0">
-                      <StatusIcon size={18} className={statusCfg.colorClass} />
+                <div key={app.id} className="p-4 hover:bg-[#1A1A1A] transition-colors group flex items-start sm:items-center justify-between gap-4">
+                  {/* Left: Role / Company */}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="text-sm font-semibold text-[#F1F5F9] truncate">{app.role}</h3>
+                      <span className="text-[#94A3B8] text-xs">в</span>
+                      <span className="text-sm font-medium text-[#94A3B8] truncate">{app.companyName}</span>
+                      
+                      <span className="text-[11px] px-2 py-0.5 rounded-[4px] bg-[#1A1A1A] text-[#94A3B8] border border-[#2A2A2A] shrink-0">
+                        {statusCfg.label}
+                      </span>
+                      {app.matchScore != null && (
+                        <span className="text-[11px] px-2 py-0.5 rounded-[4px] bg-[#22C55E]/15 text-[#22C55E] font-medium shrink-0">
+                          {app.matchScore}% Match
+                        </span>
+                      )}
                     </div>
                     
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <h3 className="text-sm font-semibold text-primary truncate">{app.role}</h3>
-                        <span className="text-secondary text-xs">at</span>
-                        <span className="text-sm font-medium text-secondary truncate">{app.companyName}</span>
-                        
-                        <Badge tone={statusCfg.tone} className="text-[10px] px-2 py-0.5 shrink-0">
-                          {statusCfg.label}
-                        </Badge>
-                        {app.matchScore != null && (
-                          <Badge tone={app.matchScore > 75 ? 'accent' : 'default'} className="text-[10px] px-2 py-0.5 shrink-0">
-                            {app.matchScore}% Match
-                          </Badge>
-                        )}
-                      </div>
-                      
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-secondary mt-1">
-                        {app.location && (
-                          <span className="flex items-center gap-1">
-                            <MapPin size={11} /> {app.location}
-                          </span>
-                        )}
-                        {app.salaryRange && (
-                          <span className="flex items-center gap-0.5 font-mono text-emerald-400">
-                            <DollarSign size={11} /> {app.salaryRange}
-                          </span>
-                        )}
-                        <span className="flex items-center gap-1 font-mono text-muted text-[11px]">
-                          <Calendar size={11} /> {app.appliedDate || 'No date'}
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#94A3B8] mt-1.5">
+                      {app.location && (
+                        <span className="flex items-center gap-1">
+                          <MapPin size={12} /> {app.location}
                         </span>
-                      </div>
+                      )}
+                      {app.salaryRange && (
+                        <span className="flex items-center gap-0.5 font-mono text-[#94A3B8]">
+                          <DollarSign size={12} /> {app.salaryRange}
+                        </span>
+                      )}
+                      <span className="flex items-center gap-1 font-mono text-[#94A3B8] text-[11px]">
+                        <Calendar size={12} /> {app.appliedDate || 'No date'}
+                      </span>
                     </div>
                   </div>
                   
@@ -504,34 +404,34 @@ export const JobTrackerPage = () => {
                         href={app.jobUrl} 
                         target="_blank" 
                         rel="noreferrer" 
-                        className="p-1.5 text-secondary hover:text-[var(--color-accent)] hover:bg-[var(--color-bg-tertiary)] rounded-md transition-colors" 
-                        title="View Job Post"
-                        aria-label="View Job Post"
+                        className="p-1.5 text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#2A2A2A] rounded-[6px] transition-colors" 
+                        title="Ссылка на вакансию"
+                        aria-label="Ссылка на вакансию"
                       >
                         <ExternalLink size={14} />
                       </a>
                     )}
                     <button 
                       onClick={() => setTailorModalApp(app)} 
-                      className="p-1.5 text-secondary hover:text-[var(--color-accent)] hover:bg-[var(--color-bg-tertiary)] rounded-md transition-colors" 
-                      title="AI Resume Tailoring"
-                      aria-label="AI Resume Tailoring"
+                      className="p-1.5 text-[#94A3B8] hover:text-[#22C55E] hover:bg-[#2A2A2A] rounded-[6px] transition-colors" 
+                      title="AI Адаптация"
+                      aria-label="AI Адаптация"
                     >
                       <Sparkles size={14} />
                     </button>
                     <button 
                       onClick={() => setCoverLetterModalApp(app)} 
-                      className="p-1.5 text-secondary hover:text-purple-400 hover:bg-purple-500/10 rounded-md transition-colors" 
-                      title="AI Cover Letter"
-                      aria-label="AI Cover Letter"
+                      className="p-1.5 text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#2A2A2A] rounded-[6px] transition-colors" 
+                      title="Cover Letter"
+                      aria-label="Cover Letter"
                     >
                       <Wand2 size={14} />
                     </button>
                     <button 
                       onClick={() => deleteApp.mutate(app.id)} 
-                      className="p-1.5 text-secondary hover:text-red-400 hover:bg-red-500/10 rounded-md transition-colors" 
-                      title="Delete Application"
-                      aria-label="Delete Application"
+                      className="p-1.5 text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#2A2A2A] rounded-[6px] transition-colors" 
+                      title="Удалить"
+                      aria-label="Удалить"
                     >
                       <Trash2 size={14} />
                     </button>
