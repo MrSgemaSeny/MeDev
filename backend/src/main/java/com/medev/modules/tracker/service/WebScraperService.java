@@ -17,6 +17,8 @@ import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.time.Duration;
 import java.util.Set;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.medev.modules.ai.service.LlmProvider;
 
 import com.medev.shared.security.SecurityUtils;
 import com.medev.shared.exception.TooManyRequestsException;
@@ -28,18 +30,16 @@ public class WebScraperService {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
+    private final LlmProvider llmProvider;
+    private final ObjectMapper objectMapper;
+
     private static final Set<String> ALLOWED_HOSTS = Set.of(
             "hh.kz", "hh.ru", "linkedin.com", "www.linkedin.com",
             "indeed.com", "www.indeed.com", "career.habr.com"
     );
 
-    private static final Set<String> HH_HOSTS = Set.of("hh.kz", "hh.ru");
-
     public CreateJobApplicationRequest scrapeJobUrl(String url) {
-        // A1: validate URL first — invalid URLs must not consume the rate-limit quota
         String normalizedHost = validateUrl(url);
-
-        // Rate-limit by userId after URL is confirmed valid
         enforceRateLimit();
 
         CreateJobApplicationRequest request = new CreateJobApplicationRequest();
@@ -48,35 +48,43 @@ public class WebScraperService {
         request.setAppliedDate(java.time.LocalDate.now());
 
         try {
-            Document doc = Jsoup.connect(url)
-                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36")
-                    .maxBodySize(2 * 1024 * 1024)
-                    .timeout(4000)
-                    .followRedirects(false) // prevent redirect-based SSRF after DNS validation
-                    .get();
+            org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
+            org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+            headers.set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
+            org.springframework.http.HttpEntity<String> entity = new org.springframework.http.HttpEntity<>(headers);
+            
+            String jinaUrl = "https://r.jina.ai/" + url;
+            org.springframework.http.ResponseEntity<String> response = restTemplate.exchange(
+                    jinaUrl,
+                    org.springframework.http.HttpMethod.GET,
+                    entity,
+                    String.class
+            );
 
-            // Generic fallback extraction
-            String title = doc.title();
-            request.setRole(title != null ? title.split(" - ")[0].trim() : "Unknown Role");
-            request.setCompanyName("Unknown Company");
-
-            // B1: dispatch by parsed URI host, not by substring match on raw URL
-            if (HH_HOSTS.contains(normalizedHost)) {
-                extractHhKz(doc, request);
-            } else if (normalizedHost.contains("linkedin.com")) {
-                extractLinkedIn(doc, request);
-            } else {
-                String bodyText = doc.body().text();
-                request.setJobDescription(bodyText.substring(0, Math.min(bodyText.length(), 2000)));
+            String markdown = response.getBody();
+            if (markdown != null && !markdown.isEmpty()) {
+                String systemPrompt = "Extract job vacancy details from the following markdown text into a strict JSON object. " +
+                        "Use the following keys: 'role' (string, job title), 'companyName' (string), 'location' (string, optional), 'salaryRange' (string, optional), 'jobDescription' (string, full cleaned job description text). " +
+                        "Output ONLY valid JSON. If something is not found, leave it as null.";
+                
+                String textToParse = markdown.substring(0, Math.min(markdown.length(), 20000));
+                
+                String jsonResponse = llmProvider.structuredCompletion(systemPrompt, textToParse);
+                String cleaned = com.medev.modules.ai.service.GroqClient.extractJson(jsonResponse);
+                
+                com.fasterxml.jackson.databind.JsonNode root = objectMapper.readTree(cleaned);
+                if (root.hasNonNull("role")) request.setRole(root.get("role").asText());
+                if (root.hasNonNull("companyName")) request.setCompanyName(root.get("companyName").asText());
+                if (root.hasNonNull("location")) request.setLocation(root.get("location").asText());
+                if (root.hasNonNull("salaryRange")) request.setSalaryRange(root.get("salaryRange").asText());
+                if (root.hasNonNull("jobDescription")) request.setJobDescription(root.get("jobDescription").asText());
             }
 
-            // Sanitize job description to prevent Stored XSS
-            if (request.getJobDescription() != null) {
-                request.setJobDescription(Jsoup.clean(request.getJobDescription(), org.jsoup.safety.Safelist.none()));
-            }
+            if (request.getRole() == null) request.setRole("Manual Entry Required");
+            if (request.getCompanyName() == null) request.setCompanyName("Unknown Company");
+
         } catch (Exception e) {
-            // A2: never expose e.getMessage() — may contain internal paths, DB hosts, etc.
-            log.error("Failed to scrape job url: {}", url, e);
+            log.error("Failed to scrape job url with AI: {}", url, e);
             request.setRole("Manual Entry Required");
             request.setCompanyName("Unknown");
             request.setNotes("Could not automatically fetch job details. Please fill in manually.");

@@ -287,57 +287,67 @@ export const JobTrackerPage = () => {
 
       {/* Main Workspace Area */}
       {applications.length === 0 ? (
-        /* Empty State: Sleek full-viewport welcome with quick import */
-        <div className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-[var(--color-bg-inset)]">
-          <div className="w-16 h-16 rounded-2xl bg-[var(--color-bg-primary)] border border-[var(--color-border-default)] flex items-center justify-center mb-4 shadow-md">
-            <Briefcase size={28} className="text-[var(--color-accent)]" />
-          </div>
+        /* Empty State: Premium Redesign */
+        <div className="flex-1 relative flex flex-col items-center justify-center p-6 text-center bg-[var(--color-bg-inset)] overflow-hidden">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[var(--color-accent)]/5 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="relative z-10 flex flex-col items-center max-w-lg w-full">
+            <div className="w-20 h-20 rounded-3xl bg-gradient-to-b from-[var(--color-bg-secondary)] to-[var(--color-bg-primary)] border border-[var(--color-border-default)] shadow-2xl flex items-center justify-center mb-6 relative overflow-hidden">
+              <div className="absolute inset-0 bg-[var(--color-accent)]/10 animate-pulse" />
+              <Target size={36} className="text-[var(--color-accent)] relative z-10" />
+            </div>
 
-          <h2 className="text-lg font-bold text-primary mb-2">
-            {t('tracker.emptyTitle', 'No tracked applications')}
-          </h2>
-          <p className="text-secondary text-xs sm:text-sm max-w-md mb-6 leading-relaxed">
-            {t('tracker.emptyDesc', 'Add job applications manually or paste a link from hh.kz / LinkedIn to automatically import details and tailor your resume with AI.')}
-          </p>
+            <h2 className="text-2xl font-bold text-primary mb-3 tracking-tight">
+              {t('tracker.emptyTitle', 'No tracked applications')}
+            </h2>
+            <p className="text-secondary text-sm mb-8 leading-relaxed max-w-md mx-auto">
+              {t('tracker.emptyDesc', 'Paste a link to a job posting from hh.kz or LinkedIn. Our AI will automatically parse the requirements and match them against your profile.')}
+            </p>
 
-          {/* Quick Import Box */}
-          <form onSubmit={handleQuickImport} className="w-full max-w-md mb-4">
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <Link2 size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary" />
+            <form onSubmit={handleQuickImport} className="w-full mb-8 relative group">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-[var(--color-accent)] to-purple-500 rounded-xl blur opacity-30 group-focus-within:opacity-60 transition duration-500"></div>
+              <div className="relative flex items-center bg-[var(--color-bg-primary)] rounded-lg p-1.5 shadow-xl border border-[var(--color-border-default)]">
+                <div className="flex items-center pl-3 pr-2 pointer-events-none text-secondary">
+                  <Link2 size={18} />
+                </div>
                 <input 
                   type="url"
-                  placeholder={t('tracker.importPlaceholder', 'https://hh.kz/vacancy/... or LinkedIn URL')}
-                  className="w-full pl-9 pr-3 py-2 text-xs bg-[var(--color-bg-primary)] border border-[var(--color-border-default)] rounded-md focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] outline-none text-primary placeholder-muted"
+                  placeholder={t('tracker.importPlaceholder', 'https://hh.kz/vacancy/...')}
+                  className="flex-1 bg-transparent border-none py-3 px-2 text-sm text-primary placeholder-muted focus:ring-0 outline-none"
                   value={quickUrl}
                   onChange={e => setQuickUrl(e.target.value)}
                 />
+                <Button 
+                  type="submit" 
+                  variant="primary" 
+                  className="h-10 px-6 font-medium tracking-wide shadow-md" 
+                  disabled={scrapeJob.isPending || !quickUrl.trim()}
+                  style={{ backgroundColor: 'var(--color-accent)', color: '#fff', border: 'none' }}
+                >
+                  {scrapeJob.isPending ? (
+                    <span className="flex items-center gap-2"><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"/> {t('tracker.importing', 'Parsing...')}</span>
+                  ) : (
+                    <span className="flex items-center gap-2"><Sparkles size={16} /> {t('tracker.importButton', 'Import with AI')}</span>
+                  )}
+                </Button>
               </div>
-              <Button 
-                type="submit" 
-                variant="primary" 
-                className="text-xs px-4" 
-                disabled={scrapeJob.isPending || !quickUrl.trim()}
-              >
-                {scrapeJob.isPending ? t('tracker.importing', 'Importing...') : t('tracker.importButton', 'Import')}
-              </Button>
+            </form>
+
+            <div className="flex items-center gap-4 text-xs text-muted w-full max-w-sm mb-8">
+              <span className="flex-1 h-px bg-gradient-to-r from-transparent to-[var(--color-border-default)]" />
+              <span className="uppercase tracking-widest font-medium">or</span>
+              <span className="flex-1 h-px bg-gradient-to-l from-transparent to-[var(--color-border-default)]" />
             </div>
-          </form>
 
-          <div className="flex items-center gap-3 text-xs text-muted my-2">
-            <span className="w-12 h-px bg-[var(--color-border-default)]" />
-            <span>or</span>
-            <span className="w-12 h-px bg-[var(--color-border-default)]" />
+            <Button 
+              variant="outline" 
+              className="text-sm px-6 py-2.5 h-auto flex items-center gap-2 hover:bg-[var(--color-bg-secondary)]" 
+              onClick={() => setIsModalOpen(true)}
+            >
+              <Plus size={16} />
+              <span>{t('tracker.newApplication', 'Add Manually')}</span>
+            </Button>
           </div>
-
-          <Button 
-            variant="outline" 
-            className="text-xs mt-2 flex items-center gap-1.5" 
-            onClick={() => setIsModalOpen(true)}
-          >
-            <Plus size={14} />
-            <span>{t('tracker.newApplication', 'New Application')}</span>
-          </Button>
         </div>
       ) : filteredApps.length === 0 ? (
         /* Filter/Search Zero Results */
