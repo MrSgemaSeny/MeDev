@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5435/medev
-    username: test_user
-    password: pass1
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/medev}
+    username: ${SPRING_DATASOURCE_USERNAME:test_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:pass1}
   data:
     redis:
       host: localhost
