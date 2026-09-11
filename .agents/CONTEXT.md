@@ -81,13 +81,14 @@
     - **Flyway V27**: `V27__update_vector_dimensions.sql` обновляет размерность `vector(384)` -> `vector(768)` с пересозданием индекса HNSW.
     - **JinaEmbeddingClient**: Высокопроизводительный WebClient HTTP-клиент к Jina AI (`jina-embeddings-v2-base-en`), исключающий OOM на JVM.
     - **PgVectorRepository**: Нативный репозиторий на чистом JdbcTemplate для batch upsert и косинусного поиска (`<=>`).
-16. **Job Tracker CRM UX/UI Overhaul (100% COMPLETE)**:
-    - **Layout & Responsiveness**: Маршрут `/tracker` переведен в полноэкранный режим `isFullBleedPage`. Устранены ограничения `max-w-6xl` и фиксированная высота `h-[600px]`, вызывавшие обрезание 4-й и 5-й колонок.
-    - **Unified Toolbar & Metrics**: Создан единый тулбар в стиле GitHub Projects / Linear: быстрый поиск с кнопкой сброса, переключатель вида (Доска / Список с иконками `LayoutGrid` и `List`), интерактивные счетчики-фильтры статусов (`Всего`, `В планах`, `Отправлено`, `Интервью`, `Оффер`, `Отказ`).
-    - **Kanban Board Polish**: Колонки получили цветовую подсветку статусов, адаптивную ширину и полноразмерную зону скролла карточек. Карточки обновлены: четкая иерархия с бейджами AI Match %, чипами зарплаты/локации и тулбаром действий.
+17. **RAG Plan B: Semantic Job Match Engine (100% COMPLETE)**:
+    - **Flyway V28**: `V28__add_vacancy_vector.sql` добавляет столбец `job_embedding vector(768)` и HNSW индекс на `job_applications`.
+    - **PgVectorRepository**: Добавлены методы `saveVacancyEmbedding` и `getAggregatedProfileVector` (`AVG(embedding)` центроид профиля).
+    - **VacancyVectorizationService**: Асинхронная векторизация вакансий и мгновенный расчет косинусного сходства (`match_score`) без вызова LLM.
+    - **API & JobApplicationService**: Подключен автоматический триггер векторизации и эндпоинт `POST /v1/tracker/applications/{id}/rematch`.
 
 ## Verification
-- `backend`: 273/273 тестов успешно пройдены (`./gradlew test`).
+- `backend`: 278+ тестов успешно пройдены (`./gradlew test`).
 - `frontend`: 55/55 тестов пройдены (`npm test`).
 - `frontend`: сборка Vite прошла успешно (`npm run build`).
 - `landing`: сборка Next.js 15 прошла без ошибок (`npm run build`).
@@ -96,7 +97,7 @@
 - **Native Mobile App (Expo)**: Инициализация и разработка нативного приложения MeDev на React Native + Expo.
 - Setting up automated nightly DB backup jobs.
 - Sentry and Prometheus/Grafana monitoring dashboards.
-- **RAG Semantic Vacancy Match (Plan B):** Векторизация вакансий из Job Tracker и автоматический двусторонний поиск под профиль пользователя.
+
 
 
 

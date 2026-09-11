@@ -38,6 +38,9 @@ class JobApplicationServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private VacancyVectorizationService vacancyVectorizationService;
+
     @InjectMocks
     private JobApplicationService service;
 
@@ -199,6 +202,16 @@ class JobApplicationServiceTest {
                 .hasMessageContaining("Job application not found");
 
         verify(repository, never()).delete(any());
+    }
+
+    @Test
+    @DisplayName("rematch triggers VacancyVectorizationService when application has job description")
+    void testRematch_Success() {
+        when(repository.findById(10L)).thenReturn(Optional.of(app));
+
+        service.rematch(1L, 10L);
+
+        verify(vacancyVectorizationService).vectorizeAndMatch(eq(1L), eq(10L), eq("Java Spring Boot microservices"));
     }
 
     @Test

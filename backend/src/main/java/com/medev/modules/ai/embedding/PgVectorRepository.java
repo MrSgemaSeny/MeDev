@@ -110,6 +110,50 @@ public class PgVectorRepository {
     }
 
     /**
+     * Saves vacancy embedding vector directly into job_applications table.
+     *
+     * @param jobApplicationId The job application ID
+     * @param vector           The embedding vector
+     */
+    public void saveVacancyEmbedding(Long jobApplicationId, float[] vector) {
+        if (jobApplicationId == null || vector == null || vector.length == 0) {
+            return;
+        }
+        String sql = "UPDATE job_applications SET job_embedding = ?::vector WHERE id = ?";
+        try {
+            jdbcTemplate.update(sql, formatVector(vector), jobApplicationId);
+            log.debug("[PgVectorRepository] Saved vacancy embedding for jobApplicationId={}", jobApplicationId);
+        } catch (Exception e) {
+            log.error("[PgVectorRepository] Failed to save vacancy embedding for jobApplicationId={}: {}", jobApplicationId, e.getMessage());
+        }
+    }
+
+    /**
+     * Calculates the aggregated (mean) embedding vector for all profile chunks belonging to the given user.
+     *
+     * @param userId The user ID
+     * @return Aggregated float[] vector or null if user has no stored vectors
+     */
+    public float[] getAggregatedProfileVector(Long userId) {
+        if (userId == null) {
+            return null;
+        }
+        String sql = "SELECT CAST(AVG(embedding) AS TEXT) AS avg_vec FROM vector_store WHERE metadata->>'userId' = ?";
+        try {
+            String result = jdbcTemplate.query(sql, rs -> {
+                if (rs.next()) {
+                    return rs.getString("avg_vec");
+                }
+                return null;
+            }, String.valueOf(userId));
+            return parseVector(result);
+        } catch (Exception e) {
+            log.error("[PgVectorRepository] Failed to get aggregated profile vector for user {}: {}", userId, e.getMessage());
+            return null;
+        }
+    }
+
+    /**
      * Periodically cleans up orphaned vector records for deleted users.
      *
      * @return Number of deleted rows
@@ -144,5 +188,53 @@ public class PgVectorRepository {
         }
         sb.append(']');
         return sb.toString();
+    }
+
+    /**
+     * Parses PostgreSQL pgvector string format "[0.1,0.2,...]" into float array.
+     */
+    public static float[] parseVector(String str) {
+        if (str == null || str.isBlank() || str.equals("[]")) {
+            return null;
+        }
+        String trimmed = str.trim();
+        if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+            trimmed = trimmed.substring(1, trimmed.length() - 1).trim();
+        }
+        if (trimmed.isEmpty()) {
+            return null;
+        }
+        String[] parts = trimmed.split(",");
+        float[] vector = new float[parts.length];
+        for (int i = 0; i < parts.length; i++) {
+            vector[i] = Float.parseFloat(parts[i].trim());
+        }
+        return vector;
+    }
+
+    /**
+     * Computes cosine similarity between two float vectors.
+     *
+     * @param a Vector A
+     * @param b Vector B
+     * @return Cosine similarity (0.0 to 1.0)
+     */
+    public static float calculateCosineSimilarity(float[] a, float[] b) {
+        if (a == null || b == null || a.length == 0 || b.length == 0 || a.length != b.length) {
+            return 0f;
+        }
+        double dot = 0.0;
+        double normA = 0.0;
+        double normB = 0.0;
+        for (int i = 0; i < a.length; i++) {
+            dot += (double) a[i] * b[i];
+            normA += (double) a[i] * a[i];
+            normB += (double) b[i] * b[i];
+        }
+        double denominator = Math.sqrt(normA) * Math.sqrt(normB);
+        if (denominator <= 1e-9) {
+            return 0f;
+        }
+        return (float) Math.max(0.0, Math.min(1.0, dot / denominator));
     }
 }

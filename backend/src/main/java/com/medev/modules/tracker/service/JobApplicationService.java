@@ -23,6 +23,7 @@ public class JobApplicationService {
 
     private final JobApplicationRepository repository;
     private final UserRepository userRepository;
+    private final VacancyVectorizationService vacancyVectorizationService;
 
     @Transactional(readOnly = true)
     public List<JobApplicationDto> getAll(Long userId) {
@@ -51,7 +52,13 @@ public class JobApplicationService {
                 .appliedDate(request.getAppliedDate())
                 .build();
 
-        return toDto(repository.save(entity));
+        JobApplication saved = repository.save(entity);
+
+        if (saved.getJobDescription() != null && !saved.getJobDescription().isBlank()) {
+            vacancyVectorizationService.vectorizeAndMatch(userId, saved.getId(), saved.getJobDescription());
+        }
+
+        return toDto(saved);
     }
 
     @Transactional
@@ -73,13 +80,27 @@ public class JobApplicationService {
         if (request.getMatchFeedback() != null) entity.setMatchFeedback(request.getMatchFeedback());
         if (request.getAppliedDate() != null) entity.setAppliedDate(request.getAppliedDate());
 
-        return toDto(repository.save(entity));
+        JobApplication saved = repository.save(entity);
+
+        if (request.getJobDescription() != null && !request.getJobDescription().isBlank()) {
+            vacancyVectorizationService.vectorizeAndMatch(userId, saved.getId(), saved.getJobDescription());
+        }
+
+        return toDto(saved);
     }
 
     @Transactional
     public void delete(Long userId, Long id) {
         JobApplication entity = getOwnedEntity(userId, id);
         repository.delete(entity);
+    }
+
+    @Transactional(readOnly = true)
+    public void rematch(Long userId, Long id) {
+        JobApplication entity = getOwnedEntity(userId, id);
+        if (entity.getJobDescription() != null && !entity.getJobDescription().isBlank()) {
+            vacancyVectorizationService.vectorizeAndMatch(userId, entity.getId(), entity.getJobDescription());
+        }
     }
 
     private JobApplication getOwnedEntity(Long userId, Long id) {

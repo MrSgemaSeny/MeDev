@@ -87,4 +87,38 @@ public class PgVectorRepositoryTest {
         assertThat(repository.findSimilar(42L, new float[]{0.1f}, 0)).isEmpty();
         verifyNoInteractions(jdbcTemplate);
     }
+
+    @Test
+    void saveVacancyEmbedding_validParams_executesUpdate() {
+        float[] vector = new float[]{0.1f, 0.2f};
+        repository.saveVacancyEmbedding(100L, vector);
+
+        verify(jdbcTemplate).update(
+                eq("UPDATE job_applications SET job_embedding = ?::vector WHERE id = ?"),
+                eq("[0.1,0.2]"),
+                eq(100L)
+        );
+    }
+
+    @Test
+    void parseVector_validAndInvalidStrings() {
+        assertThat(PgVectorRepository.parseVector(null)).isNull();
+        assertThat(PgVectorRepository.parseVector("")).isNull();
+        assertThat(PgVectorRepository.parseVector("[]")).isNull();
+
+        float[] parsed = PgVectorRepository.parseVector("[0.5, -0.25, 0.75]");
+        assertThat(parsed).isNotNull();
+        assertThat(parsed).containsExactly(0.5f, -0.25f, 0.75f);
+    }
+
+    @Test
+    void calculateCosineSimilarity_orthogonalAndParallelVectors() {
+        float[] v1 = new float[]{1.0f, 0.0f};
+        float[] v2 = new float[]{1.0f, 0.0f};
+        float[] v3 = new float[]{0.0f, 1.0f};
+
+        assertThat(PgVectorRepository.calculateCosineSimilarity(v1, v2)).isEqualTo(1.0f);
+        assertThat(PgVectorRepository.calculateCosineSimilarity(v1, v3)).isEqualTo(0.0f);
+        assertThat(PgVectorRepository.calculateCosineSimilarity(null, v1)).isEqualTo(0.0f);
+    }
 }

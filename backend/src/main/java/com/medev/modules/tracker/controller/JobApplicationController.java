@@ -46,4 +46,10 @@ public class JobApplicationController {
     public void delete(@PathVariable Long id) {
         service.delete(SecurityUtils.getCurrentUserId(), id);
     }
+
+    @PostMapping("/{id}/rematch")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void rematch(@PathVariable Long id) {
+        service.rematch(SecurityUtils.getCurrentUserId(), id);
+    }
 }
