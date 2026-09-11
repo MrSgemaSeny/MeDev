@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "profiles")
 @Data
+@ToString(exclude = {"user", "experiences", "educations", "skills", "languages", "projects"})
+@EqualsAndHashCode(exclude = {"user", "experiences", "educations", "skills", "languages", "projects"})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

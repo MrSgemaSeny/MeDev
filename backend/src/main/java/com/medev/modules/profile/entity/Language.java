@@ -6,6 +6,8 @@ import lombok.*;
 @Entity
 @Table(name = "languages")
 @Data
+@ToString(exclude = "profile")
+@EqualsAndHashCode(exclude = "profile")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

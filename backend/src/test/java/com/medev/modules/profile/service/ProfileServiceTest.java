@@ -159,7 +159,7 @@ class ProfileServiceTest {
 
         verify(profileRepository).findByUserIdForUpdate(1L);
         verify(profileRepository).saveAndFlush(profile);
-        verify(skillRepository, times(1)).save(any(Skill.class));
+        verify(skillRepository).saveAll(anyList());
         verify(eventPublisher).publishEvent(any());
         assertThat(profile.getFullName()).isEqualTo("Parsed Name");
     }

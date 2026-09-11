@@ -153,20 +153,26 @@ public class ProfileService {
         
         profileRepository.saveAndFlush(profile);
 
-        if (parsed.getSkills() != null) {
+        // Batch save skills
+        if (parsed.getSkills() != null && !parsed.getSkills().isEmpty()) {
             int order = 0;
+            List<Skill> newSkills = new java.util.ArrayList<>();
             for (com.medev.modules.ai.dto.AiSkillDto s : parsed.getSkills()) {
                 String skillName = truncate(s.getName(), 100);
                 if (skillName != null && !skillName.isBlank()) {
-                    Skill skill = Skill.builder().profile(profile).name(skillName).sortOrder(order++).build();
-                    skillRepository.save(skill);
-                    profile.getSkills().add(skill);
+                    newSkills.add(Skill.builder().profile(profile).name(skillName).sortOrder(order++).build());
                 }
+            }
+            if (!newSkills.isEmpty()) {
+                skillRepository.saveAll(newSkills);
+                profile.getSkills().addAll(newSkills);
             }
         }
 
-        if (parsed.getExperience() != null) {
+        // Batch save experience
+        if (parsed.getExperience() != null && !parsed.getExperience().isEmpty()) {
             int order = 0;
+            List<Experience> newExperiences = new java.util.ArrayList<>();
             for (com.medev.modules.ai.dto.AiExperienceDto e : parsed.getExperience()) {
                 String company = truncate(e.getCompany(), 255);
                 if (company == null || company.isBlank()) {
@@ -177,12 +183,9 @@ public class ProfileService {
                     position = "Software Engineer";
                 }
                 LocalDate start = parseDateSafe(e.getStartDate());
-                if (start == null) {
-                    start = LocalDate.now();
-                }
                 LocalDate end = parseDateSafe(e.getEndDate());
 
-                Experience exp = Experience.builder()
+                newExperiences.add(Experience.builder()
                         .profile(profile)
                         .company(company)
                         .position(position)
@@ -192,26 +195,27 @@ public class ProfileService {
                         .endDate(end)
                         .isCurrent(e.getIsCurrent() != null ? e.getIsCurrent() : false)
                         .sortOrder(order++)
-                        .build();
-                experienceRepository.save(exp);
-                profile.getExperiences().add(exp);
+                        .build());
+            }
+            if (!newExperiences.isEmpty()) {
+                experienceRepository.saveAll(newExperiences);
+                profile.getExperiences().addAll(newExperiences);
             }
         }
 
-        if (parsed.getEducation() != null) {
+        // Batch save education
+        if (parsed.getEducation() != null && !parsed.getEducation().isEmpty()) {
             int order = 0;
+            List<Education> newEducations = new java.util.ArrayList<>();
             for (com.medev.modules.ai.dto.AiEducationDto ed : parsed.getEducation()) {
                 String institution = truncate(ed.getInstitution(), 255);
                 if (institution == null || institution.isBlank()) {
                     institution = "University";
                 }
                 LocalDate start = parseDateSafe(ed.getStartDate());
-                if (start == null) {
-                    start = LocalDate.now();
-                }
                 LocalDate end = parseDateSafe(ed.getEndDate());
 
-                Education edu = Education.builder()
+                newEducations.add(Education.builder()
                         .profile(profile)
                         .institution(institution)
                         .degree(truncate(ed.getDegree(), 255))
@@ -220,19 +224,24 @@ public class ProfileService {
                         .endDate(end)
                         .isCurrent(false)
                         .sortOrder(order++)
-                        .build();
-                educationRepository.save(edu);
-                profile.getEducations().add(edu);
+                        .build());
+            }
+            if (!newEducations.isEmpty()) {
+                educationRepository.saveAll(newEducations);
+                profile.getEducations().addAll(newEducations);
             }
         }
 
-        if (parsed.getLanguages() != null) {
+        // Batch save languages & rerouted programming language skills
+        if (parsed.getLanguages() != null && !parsed.getLanguages().isEmpty()) {
             int order = 0;
+            List<Language> newLanguages = new java.util.ArrayList<>();
+            List<Skill> reroutedSkills = new java.util.ArrayList<>();
+
             for (com.medev.modules.ai.dto.AiLanguageDto l : parsed.getLanguages()) {
                 String cleanName = truncate(l.getName(), 100);
                 if (cleanName != null && !cleanName.isBlank()) {
                     if (LanguageService.isProgrammingLanguage(cleanName)) {
-                        // Перенаправляем язык программирования в skills если его там еще нет
                         boolean skillExists = profile.getSkills().stream()
                                 .anyMatch(s -> s.getName().equalsIgnoreCase(cleanName));
                         if (!skillExists) {
@@ -240,10 +249,9 @@ public class ProfileService {
                                     .profile(profile)
                                     .name(cleanName)
                                     .category("Languages")
-                                    .sortOrder(profile.getSkills().size())
+                                    .sortOrder(profile.getSkills().size() + reroutedSkills.size())
                                     .build();
-                            skillRepository.save(fallbackSkill);
-                            profile.getSkills().add(fallbackSkill);
+                            reroutedSkills.add(fallbackSkill);
                         }
                         continue;
                     }
@@ -252,31 +260,47 @@ public class ProfileService {
                     if (level == null || level.isBlank()) {
                         level = "intermediate";
                     }
-                    Language lang = Language.builder().profile(profile).name(cleanName).level(level).sortOrder(order++).build();
-                    languageRepository.save(lang);
-                    profile.getLanguages().add(lang);
+                    newLanguages.add(Language.builder()
+                            .profile(profile)
+                            .name(cleanName)
+                            .level(level)
+                            .sortOrder(order++)
+                            .build());
                 }
+            }
+            if (!reroutedSkills.isEmpty()) {
+                skillRepository.saveAll(reroutedSkills);
+                profile.getSkills().addAll(reroutedSkills);
+            }
+            if (!newLanguages.isEmpty()) {
+                languageRepository.saveAll(newLanguages);
+                profile.getLanguages().addAll(newLanguages);
             }
         }
 
-        if (parsed.getProjects() != null) {
+        // Batch save projects
+        if (parsed.getProjects() != null && !parsed.getProjects().isEmpty()) {
             int order = 0;
+            List<Project> newProjects = new java.util.ArrayList<>();
             for (com.medev.modules.ai.dto.AiProjectDto p : parsed.getProjects()) {
                 String name = truncate(p.getName(), 255);
                 if (name != null && !name.isBlank()) {
-                    Project proj = Project.builder()
+                    newProjects.add(Project.builder()
                             .profile(profile)
                             .name(name)
                             .description(p.getDescription())
                             .githubUrl(truncate(p.getGithubUrl(), 500))
                             .techStack(truncate(p.getTechStack(), 500))
                             .sortOrder(order++)
-                            .build();
-                    projectRepository.save(proj);
-                    profile.getProjects().add(proj);
+                            .build());
                 }
             }
+            if (!newProjects.isEmpty()) {
+                projectRepository.saveAll(newProjects);
+                profile.getProjects().addAll(newProjects);
+            }
         }
+
 
         publishAfterCommit(userId);
         return mapToProfileDto(profile);

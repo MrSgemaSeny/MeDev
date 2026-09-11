@@ -74,9 +74,9 @@ public class AiAnalysisServiceTest {
     }
 
     @Test
-    void parseResumePdf_longText_truncatesTo10000() throws Exception {
+    void parseResumePdf_longText_truncatesSafely() throws Exception {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 11000; i++) {
+        for (int i = 0; i < 20000; i++) {
             sb.append("A");
         }
         MockMultipartFile file = createPdfFile(sb.toString());
@@ -87,7 +87,7 @@ public class AiAnalysisServiceTest {
 
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(llmProvider).structuredCompletion(anyString(), captor.capture());
-        assertThat(captor.getValue().length()).isLessThanOrEqualTo(10500);
+        assertThat(captor.getValue().length()).isLessThanOrEqualTo(16000);
     }
 
     @Test

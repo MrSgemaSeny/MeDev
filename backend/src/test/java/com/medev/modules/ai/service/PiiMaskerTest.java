@@ -27,7 +27,6 @@ public class PiiMaskerTest {
         
         String result = piiMasker.mask(input);
 
-        // Technical terms, degrees, and institutions must NOT be replaced with [NAME]
         assertThat(result).contains("Software Engineer");
         assertThat(result).contains("Spring Boot");
         assertThat(result).contains("React");
@@ -62,13 +61,18 @@ public class PiiMaskerTest {
 
         assertThat(result).contains("[PHONE]");
         assertThat(result).doesNotContain("123-45-67");
+        assertThat(result).doesNotContain("87011234567");
     }
 
     @Test
-    void mask_preservesDateRanges() {
-        String input = "Experience: 2022-09-01 - 2026-06-01 at TechCorp.";
+    void mask_preservesDateRangesAndVersions() {
+        String input = "Experience: 2022-09-01 - 2026-06-01 at TechCorp. Stack: Java 17, Spring Boot 3.3.0, PostgreSQL 17.6.";
         String result = piiMasker.mask(input);
 
         assertThat(result).contains("2022-09-01 - 2026-06-01");
+        assertThat(result).contains("Java 17");
+        assertThat(result).contains("3.3.0");
+        assertThat(result).contains("17.6");
+        assertThat(result).doesNotContain("[PHONE]");
     }
 }

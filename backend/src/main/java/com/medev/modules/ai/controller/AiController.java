@@ -237,7 +237,7 @@ public class AiController {
             throw new IllegalArgumentException("Файл не передан или пуст");
         }
 
-        if (file.getSize() > 10 * 1024 * 1024) { 
+        if (file.getSize() > 10 * 1024 * 1024) {
             throw new IllegalArgumentException("Размер файла превышает максимально допустимый (10 МБ)");
         }
 

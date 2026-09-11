@@ -1,8 +1,9 @@
 package com.medev.modules.ai.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.medev.modules.ai.dto.AiParsedResumeDto;
-import com.medev.modules.profile.dto.UpdateProfileRequest;
+import com.medev.modules.ai.dto.*;
+import com.medev.modules.ai.model.LlmException;
+import com.medev.modules.profile.dto.ProfileDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.Loader;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -23,36 +26,43 @@ public class AiAnalysisService {
     private final ObjectMapper objectMapper;
     private final PiiMasker piiMasker;
 
-    public AiParsedResumeDto parseResumePdf(MultipartFile file, com.medev.modules.profile.dto.ProfileDto currentProfile) {
-        String pdfText = extractTextFromPdf(file);
-        
-        // Ограничиваем размер текста, чтобы не превысить лимиты (например 10000 символов)
-        if (pdfText.length() > 10000) {
-            pdfText = pdfText.substring(0, 10000);
-        }
+    private static final int MAX_RESUME_TEXT_CHARS = 15000;
+    private static final long MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
+    private static final int MAX_PDF_PAGES = 30;
 
-        String systemPrompt = promptLoader.load("resume_parser_v1");
+    /**
+     * Extracts text from uploaded PDF resume, masks PII, prompts LLM, and parses into AiParsedResumeDto.
+     */
+    public AiParsedResumeDto parseResumePdf(MultipartFile file, ProfileDto currentProfile) {
+        String pdfText = extractTextFromPdf(file);
+        String normalizedText = smartNormalizePdfText(pdfText);
+
+        String systemPrompt = getResumeParserPrompt();
         String currentProfileJson = "{}";
         try {
-            currentProfileJson = objectMapper.writeValueAsString(currentProfile);
+            if (currentProfile != null) {
+                currentProfileJson = objectMapper.writeValueAsString(currentProfile);
+            }
         } catch (Exception e) {
             log.warn("Failed to serialize current profile", e);
         }
 
-        String maskedPdfText = piiMasker.mask(pdfText);
+        // A3: Mask PII from both user's uploaded PDF and current database profile
+        String maskedPdfText = piiMasker.mask(normalizedText);
+        String maskedProfileJson = piiMasker.mask(currentProfileJson);
 
-        String finalPrompt = "CURRENT PROFILE JSON (FROM GITHUB/DB):\n" + currentProfileJson + "\n\n" +
+        String finalPrompt = "CURRENT PROFILE JSON (FROM GITHUB/DB):\n" + maskedProfileJson + "\n\n" +
                              "<user_resume>\n" + maskedPdfText + "\n</user_resume>";
 
         String jsonResponse;
         try {
             jsonResponse = llmProvider.structuredCompletion(systemPrompt, finalPrompt);
-        } catch (com.medev.modules.ai.model.LlmException e) {
+        } catch (LlmException e) {
             throw e;
         } catch (Exception e) {
             log.error("LLM provider call failed during resume parsing: {}", e.getMessage());
-            throw new com.medev.modules.ai.model.LlmException(
-                    com.medev.modules.ai.model.LlmException.Reason.PROVIDER_UNAVAILABLE,
+            throw new LlmException(
+                    LlmException.Reason.PROVIDER_UNAVAILABLE,
                     "AI generation failed: " + e.getMessage(), e);
         }
 
@@ -60,30 +70,42 @@ public class AiAnalysisService {
         try {
             return objectMapper.readValue(cleaned, AiParsedResumeDto.class);
         } catch (Exception e) {
-            log.error("Failed to parse JSON from AI resume parser: {}", e.getMessage());
-            throw new com.medev.modules.ai.model.LlmException(
-                    com.medev.modules.ai.model.LlmException.Reason.INVALID_RESPONSE,
+            String preview = cleaned != null ? cleaned.substring(0, Math.min(cleaned.length(), 300)) : "null";
+            log.error("Failed to parse JSON from AI resume parser. Raw preview: {}", preview, e);
+            throw new LlmException(
+                    LlmException.Reason.INVALID_RESPONSE,
                     "AI generation returned invalid format: " + e.getMessage(), e);
         }
     }
 
-    private String extractTextFromPdf(MultipartFile file) {
+    /**
+     * B1: Centralized PDF validation and extraction logic.
+     */
+    public String extractTextFromPdf(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("Файл не передан или пуст");
+        }
+
+        if (file.getSize() > MAX_FILE_SIZE_BYTES) {
+            throw new IllegalArgumentException("Размер файла превышает максимально допустимый (10 МБ)");
+        }
+
         String contentType = file.getContentType();
         String filename = file.getOriginalFilename();
         boolean isPdfMime = contentType != null && (contentType.equalsIgnoreCase("application/pdf") || contentType.equalsIgnoreCase("application/x-pdf"));
         boolean isPdfExt = filename != null && filename.toLowerCase().endsWith(".pdf");
-        
+
         if (!isPdfMime && !isPdfExt) {
             throw new IllegalArgumentException("Поддерживаются только файлы в формате PDF");
         }
-        
+
         try {
             byte[] fileBytes = file.getBytes();
             if (fileBytes.length < 4 || fileBytes[0] != '%' || fileBytes[1] != 'P' || fileBytes[2] != 'D' || fileBytes[3] != 'F') {
                 throw new IllegalArgumentException("Файл поврежден или не является корректным PDF");
             }
             try (PDDocument document = Loader.loadPDF(fileBytes)) {
-                if (document.getNumberOfPages() > 30) {
+                if (document.getNumberOfPages() > MAX_PDF_PAGES) {
                     throw new IllegalArgumentException("PDF превышает максимально допустимый объем (30 страниц)");
                 }
                 PDFTextStripper stripper = new PDFTextStripper();
@@ -101,7 +123,48 @@ public class AiAnalysisService {
         }
     }
 
-    public AiParsedResumeDto generateFullProfile(Long userId, String githubSnapshotJson, com.medev.modules.profile.dto.ProfileDto currentProfile) {
+    /**
+     * A2: Smart text normalization & truncation preserving section boundaries.
+     */
+    private String smartNormalizePdfText(String raw) {
+        if (raw == null) return "";
+
+        // Remove null bytes and non-printable control chars
+        String cleaned = raw.replace("\u0000", "")
+                .replaceAll("[\\r\\t]+", " ")
+                .replaceAll(" {2,}", " ")
+                .replaceAll("\\n{3,}", "\n\n")
+                .trim();
+
+        if (cleaned.length() <= MAX_RESUME_TEXT_CHARS) {
+            return cleaned;
+        }
+
+        // Intelligently find last paragraph boundary before character limit
+        int cutIndex = cleaned.lastIndexOf("\n\n", MAX_RESUME_TEXT_CHARS);
+        if (cutIndex < MAX_RESUME_TEXT_CHARS / 2) {
+            cutIndex = cleaned.lastIndexOf("\n", MAX_RESUME_TEXT_CHARS);
+        }
+        if (cutIndex < MAX_RESUME_TEXT_CHARS / 2) {
+            cutIndex = cleaned.lastIndexOf(". ", MAX_RESUME_TEXT_CHARS);
+        }
+        if (cutIndex < MAX_RESUME_TEXT_CHARS / 2) {
+            cutIndex = MAX_RESUME_TEXT_CHARS;
+        }
+
+        return cleaned.substring(0, cutIndex).trim();
+    }
+
+    private String getResumeParserPrompt() {
+        try {
+            return promptLoader.load("resume_parser_v2");
+        } catch (Exception e) {
+            log.warn("Prompt resume_parser_v2 not found, falling back to v1: {}", e.getMessage());
+            return promptLoader.load("resume_parser_v1");
+        }
+    }
+
+    public AiParsedResumeDto generateFullProfile(Long userId, String githubSnapshotJson, ProfileDto currentProfile) {
         String systemPrompt = promptLoader.load("full_profile_generator_v1");
         String currentProfileJson = "{}";
         try {
@@ -110,7 +173,8 @@ public class AiAnalysisService {
             log.warn("Failed to serialize current profile", e);
         }
 
-        String finalPrompt = "CURRENT PROFILE JSON (CONTAINS ONBOARDING DATA):\n" + currentProfileJson + "\n\n" +
+        String maskedProfileJson = piiMasker.mask(currentProfileJson);
+        String finalPrompt = "CURRENT PROFILE JSON (CONTAINS ONBOARDING DATA):\n" + maskedProfileJson + "\n\n" +
                              "GITHUB SNAPSHOT JSON:\n" + (githubSnapshotJson != null ? githubSnapshotJson : "{}");
 
         try {
@@ -123,7 +187,10 @@ public class AiAnalysisService {
         }
     }
 
-    private AiParsedResumeDto buildFallbackParsedProfile(com.medev.modules.profile.dto.ProfileDto current) {
+    /**
+     * B5: Clean and type-safe fallback profile builder.
+     */
+    private AiParsedResumeDto buildFallbackParsedProfile(ProfileDto current) {
         if (current == null) {
             return new AiParsedResumeDto();
         }
@@ -140,16 +207,16 @@ public class AiAnalysisService {
         if (current.getSkills() != null) {
             fallback.setSkills(current.getSkills().stream()
                     .map(s -> {
-                        com.medev.modules.ai.dto.AiSkillDto dto = new com.medev.modules.ai.dto.AiSkillDto();
+                        AiSkillDto dto = new AiSkillDto();
                         dto.setName(s.getName());
                         return dto;
-                    }).collect(java.util.stream.Collectors.toList()));
+                    }).collect(Collectors.toList()));
         }
 
         if (current.getExperience() != null) {
             fallback.setExperience(current.getExperience().stream()
                     .map(exp -> {
-                        com.medev.modules.ai.dto.AiExperienceDto dto = new com.medev.modules.ai.dto.AiExperienceDto();
+                        AiExperienceDto dto = new AiExperienceDto();
                         dto.setCompany(exp.getCompany());
                         dto.setPosition(exp.getPosition());
                         dto.setDescription(exp.getDescription());
@@ -158,32 +225,32 @@ public class AiAnalysisService {
                         dto.setEndDate(exp.getEndDate() != null ? exp.getEndDate().toString() : null);
                         dto.setIsCurrent(exp.getIsCurrent());
                         return dto;
-                    }).collect(java.util.stream.Collectors.toList()));
+                    }).collect(Collectors.toList()));
         }
 
         if (current.getEducation() != null) {
             fallback.setEducation(current.getEducation().stream()
                     .map(edu -> {
-                        com.medev.modules.ai.dto.AiEducationDto dto = new com.medev.modules.ai.dto.AiEducationDto();
+                        AiEducationDto dto = new AiEducationDto();
                         dto.setInstitution(edu.getInstitution());
                         dto.setDegree(edu.getDegree());
                         dto.setFieldOfStudy(edu.getField());
                         dto.setStartDate(edu.getStartDate() != null ? edu.getStartDate().toString() : null);
                         dto.setEndDate(edu.getEndDate() != null ? edu.getEndDate().toString() : null);
                         return dto;
-                    }).collect(java.util.stream.Collectors.toList()));
+                    }).collect(Collectors.toList()));
         }
 
         if (current.getProjects() != null) {
             fallback.setProjects(current.getProjects().stream()
                     .map(p -> {
-                        com.medev.modules.ai.dto.AiProjectDto dto = new com.medev.modules.ai.dto.AiProjectDto();
+                        AiProjectDto dto = new AiProjectDto();
                         dto.setName(p.getName());
                         dto.setDescription(p.getDescription());
                         dto.setGithubUrl(p.getGithubUrl());
                         dto.setTechStack(p.getTechStack());
                         return dto;
-                    }).collect(java.util.stream.Collectors.toList()));
+                    }).collect(Collectors.toList()));
         }
 
         return fallback;

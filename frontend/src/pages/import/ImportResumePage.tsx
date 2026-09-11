@@ -1,52 +1,90 @@
-import { useRef } from 'react';
+import { useState, useRef } from 'react';
 import { useParseResume } from '../../entities/profile/api/hooks';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../shared/ui/Button';
-import { UploadCloud, FileText } from 'lucide-react';
+import { UploadCloud, FileText, CheckCircle2, ShieldCheck, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const ImportResumePage = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [parseStage, setParseStage] = useState<'reading' | 'extracting' | 'syncing'>('reading');
   const { mutate: parseResume, isPending: isParsing } = useParseResume();
   const navigate = useNavigate();
+
+  const processFile = (file: File) => {
+    if (!file.name.toLowerCase().endsWith('.pdf') && file.type !== 'application/pdf') {
+      toast.error('Пожалуйста, загрузите резюме в формате PDF.');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('Файл слишком большой. Максимальный размер: 10 МБ.');
+      return;
+    }
+
+    setParseStage('reading');
+    const timer1 = setTimeout(() => setParseStage('extracting'), 1500);
+    const timer2 = setTimeout(() => setParseStage('syncing'), 4500);
+
+    parseResume(file, {
+      onSuccess: () => {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+        toast.success('Резюме успешно проанализировано и добавлено в профиль!');
+        navigate('/profile/edit');
+      },
+      onError: (err: any) => {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+        console.error(err);
+        const message = err.response?.data?.error || err.response?.data?.message || 'Не удалось распознать резюме. Убедитесь, что файл содержит текстовый слой.';
+        toast.error(message);
+      }
+    });
+  };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (!file.name.toLowerCase().endsWith('.pdf') && file.type !== 'application/pdf') {
-        toast.error('Пожалуйста, загрузите резюме в формате PDF.');
-        return;
-      }
-      if (file.size > 10 * 1024 * 1024) {
-        toast.error('Файл слишком большой. Максимальный размер: 10 МБ.');
-        return;
-      }
-      parseResume(file, {
-        onSuccess: () => {
-          toast.success('Резюме успешно проанализировано!');
-          navigate('/profile/edit');
-        },
-        onError: (err: any) => {
-          console.error(err);
-          const message = err.response?.data?.error || err.response?.data?.message || 'Не удалось распознать резюме. Убедитесь, что в файле есть текст.';
-          toast.error(message);
-        }
-      });
+      processFile(file);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      processFile(file);
     }
   };
 
   return (
     <div className="min-h-full flex flex-col items-center justify-center p-3 sm:p-6 animate-in fade-in slide-in-from-bottom-4 duration-700 bg-[var(--color-bg-inset)]">
-      <div className="text-center mb-10 max-w-2xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--color-border-default)] bg-[var(--color-bg-primary)] mb-6 shadow-sm">
-          <span className="w-2 h-2 rounded-full bg-[var(--color-success,auto)] shadow-[0_0_8px_var(--color-success,auto)] animate-pulse"></span>
-          <span className="text-xs font-semibold text-secondary tracking-wide uppercase">Zero-Input Setup</span>
+      <div className="text-center mb-8 max-w-2xl mx-auto">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--color-border-default)] bg-[var(--color-bg-primary)] mb-5 shadow-sm">
+          <Sparkles size={14} className="text-[var(--color-accent)]" />
+          <span className="text-xs font-semibold text-secondary tracking-wide uppercase">AI Resume Parser v2</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-4 text-primary leading-tight">
-          Update profile via <span className="text-[var(--color-success,auto)]">PDF Upload</span>.
+        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-3 text-primary leading-tight">
+          Автоматический импорт <span className="text-[var(--color-accent)]">PDF резюме</span>
         </h1>
-        <p className="text-base text-secondary max-w-xl mx-auto">
-          Upload your existing resume and let our AI instantly extract and merge your experience, skills, and education into your profile.
+        <p className="text-sm sm:text-base text-secondary max-w-xl mx-auto leading-relaxed">
+          Загрузите ваш существующий PDF и наш AI мгновенно извлечет и структурирует стек технологий, опыт работы, образование и контактные данные.
         </p>
       </div>
 
@@ -61,7 +99,14 @@ export const ImportResumePage = () => {
               fileInputRef.current?.click();
             }
           }}
-          className="group relative border-2 border-dashed border-[var(--color-border-default)] rounded-2xl p-5 sm:p-8 md:p-12 flex flex-col items-center justify-center text-center cursor-pointer bg-[var(--color-bg-primary)] hover:bg-[var(--color-bg-secondary)] hover:border-[var(--color-success,auto)] focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none transition-all duration-300 shadow-sm hover:shadow-[0_0_30px_rgba(35,134,54,0.1)]"
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          className={`group relative border-2 border-dashed rounded-2xl p-6 sm:p-10 md:p-12 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-300 shadow-sm ${
+            isDragging
+              ? 'border-[var(--color-accent)] bg-[var(--color-bg-secondary)] scale-[1.01] shadow-[0_0_25px_rgba(35,134,54,0.15)]'
+              : 'border-[var(--color-border-default)] bg-[var(--color-bg-primary)] hover:bg-[var(--color-bg-secondary)] hover:border-[var(--color-accent)]'
+          } focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:outline-none`}
           onClick={() => fileInputRef.current?.click()}
         >
           <input 
@@ -72,29 +117,54 @@ export const ImportResumePage = () => {
             onChange={handleFileUpload}
           />
           {isParsing ? (
-            <div className="text-[var(--color-success,auto)] animate-pulse flex flex-col items-center">
-              <FileText size={64} className="mb-6 opacity-90" aria-hidden="true" />
-              <h3 className="text-xl font-bold mb-2">AI анализирует ваше резюме...</h3>
-              <p className="text-sm opacity-80">Извлечение навыков, проектов и профессионального опыта. Пожалуйста, подождите.</p>
+            <div className="flex flex-col items-center max-w-md w-full">
+              <div className="w-16 h-16 rounded-full bg-[var(--color-bg-secondary)] border border-[var(--color-border-default)] flex items-center justify-center mb-5 animate-pulse">
+                <FileText size={32} className="text-[var(--color-accent)]" />
+              </div>
+              <h3 className="text-lg sm:text-xl font-bold text-primary mb-2">AI анализирует ваше резюме...</h3>
+              <p className="text-xs sm:text-sm text-secondary mb-6">
+                Выделение навыков, проектов и хронологии опыта.
+              </p>
+
+              {/* Multi-step progress list */}
+              <div className="w-full space-y-2.5 text-left text-xs bg-[var(--color-bg-inset)] p-3.5 rounded-xl border border-[var(--color-border-default)]">
+                <div className={`flex items-center gap-2.5 ${parseStage === 'reading' ? 'text-[var(--color-accent)] font-semibold' : 'text-secondary'}`}>
+                  <CheckCircle2 size={14} className={parseStage !== 'reading' ? 'text-[var(--color-accent)]' : 'text-secondary'} />
+                  <span>1. Извлечение текста и безопасное маскирование PII</span>
+                </div>
+                <div className={`flex items-center gap-2.5 ${parseStage === 'extracting' ? 'text-[var(--color-accent)] font-semibold' : 'text-secondary'}`}>
+                  <CheckCircle2 size={14} className={parseStage === 'syncing' ? 'text-[var(--color-accent)]' : 'text-secondary'} />
+                  <span>2. Структурирование стека и хронологии опыта via LLM</span>
+                </div>
+                <div className={`flex items-center gap-2.5 ${parseStage === 'syncing' ? 'text-[var(--color-accent)] font-semibold' : 'text-secondary'}`}>
+                  <CheckCircle2 size={14} className="text-secondary" />
+                  <span>3. Бесшовный Smart Merge в базу данных профиля</span>
+                </div>
+              </div>
             </div>
           ) : (
             <>
-              <div className="w-20 h-20 rounded-full bg-[var(--color-bg-inset)] border border-[var(--color-border-default)] flex items-center justify-center mb-6 group-hover:scale-110 group-hover:border-[var(--color-success,auto)] transition-all duration-300">
-                <UploadCloud size={32} className="text-secondary group-hover:text-[var(--color-success,auto)] transition-colors" aria-hidden="true" />
+              <div className="w-20 h-20 rounded-full bg-[var(--color-bg-inset)] border border-[var(--color-border-default)] flex items-center justify-center mb-5 group-hover:scale-110 group-hover:border-[var(--color-accent)] transition-all duration-300">
+                <UploadCloud size={34} className="text-secondary group-hover:text-[var(--color-accent)] transition-colors" aria-hidden="true" />
               </div>
-              <h3 className="text-xl font-bold text-primary mb-2">Загрузите резюме или экспорт профиля</h3>
-              <p className="text-sm text-secondary mb-6 max-w-sm">
-                Поддерживаются PDF-файлы размером до 10 МБ. Данные обрабатываются безопасно.
+              <h3 className="text-lg sm:text-xl font-bold text-primary mb-2">
+                Перетащите PDF резюме сюда или нажмите для выбора
+              </h3>
+              <p className="text-xs sm:text-sm text-secondary mb-6 max-w-sm">
+                Поддерживаются любые PDF-файлы до 10 МБ.
               </p>
-              <Button variant="primary" size="lg" type="button" className="pointer-events-none rounded-xl px-4 sm:px-8 w-full sm:w-auto text-sm sm:text-base shadow-md">
-                Выбрать PDF-файл резюме
+              <Button variant="primary" size="lg" type="button" className="pointer-events-none rounded-xl px-5 sm:px-8 text-xs sm:text-sm shadow-md">
+                Выбрать PDF-файл
               </Button>
             </>
           )}
         </div>
-        <p className="text-xs text-center mt-4 text-secondary max-w-xl mx-auto">
-          Загружая резюме, вы соглашаетесь на обработку данных для генерации профиля. Конфиденциальные PII-данные автоматически маскируются перед передачей в AI.
-        </p>
+
+        {/* Security / PII Badge */}
+        <div className="flex items-center justify-center gap-2 mt-4 text-xs text-secondary">
+          <ShieldCheck size={14} className="text-[var(--color-accent)]" />
+          <span>Конфиденциальные PII-данные (паспорта, телефоны, email) автоматически маскируются перед анализом</span>
+        </div>
       </div>
     </div>
   );

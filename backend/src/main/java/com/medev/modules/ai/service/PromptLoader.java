@@ -30,6 +30,7 @@ public class PromptLoader {
         // чтобы ошибка конфигурации была видна сразу, не в runtime
         String[] knownPrompts = {
             "resume_parser_v1",
+            "resume_parser_v2",
             "summary_generator_v1",
             "project_description_v1",
             "full_profile_generator_v1",

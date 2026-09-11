@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "experience")
 @Data
+@ToString(exclude = "profile")
+@EqualsAndHashCode(exclude = "profile")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
