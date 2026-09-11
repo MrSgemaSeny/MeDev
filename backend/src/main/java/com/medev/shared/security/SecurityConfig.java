@@ -45,7 +45,8 @@ public class SecurityConfig {
                 // Публичные эндпоинты
                 .requestMatchers(
                     "/v1/auth/**",
-                    "/v1/portfolio/**",    // публичные страницы
+                    "/v1/portfolio/**",    // READ-ONLY публичные страницы. Мутирующих методов нет в PortfolioController.
+                                           // [WARNING] При добавлении POST/PUT/DELETE под /v1/portfolio/ — убрать из этого списка.
                     "/v1/billing/webhook",
                     "/v1/billing/webhook/kaspi",
                     "/actuator/health",

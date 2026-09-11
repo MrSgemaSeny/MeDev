@@ -154,6 +154,27 @@ public class PgVectorRepository {
     }
 
     /**
+     * Updates the match score for a job application.
+     *
+     * @param jobApplicationId The job application ID
+     * @param matchScore       The computed score (0-100)
+     */
+    public void updateMatchScore(Long jobApplicationId, int matchScore) {
+        if (jobApplicationId == null) {
+            return;
+        }
+        try {
+            jdbcTemplate.update(
+                    "UPDATE job_applications SET match_score = ? WHERE id = ?",
+                    matchScore, jobApplicationId
+            );
+            log.debug("[PgVectorRepository] Updated matchScore={} for jobApplicationId={}", matchScore, jobApplicationId);
+        } catch (Exception e) {
+            log.error("[PgVectorRepository] Failed to update match score for jobApplicationId={}: {}", jobApplicationId, e.getMessage());
+        }
+    }
+
+    /**
      * Periodically cleans up orphaned vector records for deleted users.
      *
      * @return Number of deleted rows
