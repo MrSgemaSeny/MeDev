@@ -7,7 +7,7 @@ import { OnboardingWizard } from '../../features/onboarding/ui/OnboardingWizard'
 
 export const AppLayout = () => {
   const location = useLocation();
-  const isFullBleedPage = location.pathname === '/resume' || location.pathname === '/builder';
+  const isFullBleedPage = location.pathname === '/resume' || location.pathname === '/builder' || location.pathname === '/tracker';
 
   return (
     <div className="flex h-[100dvh] overflow-hidden overflow-x-hidden" style={{ backgroundColor: 'var(--color-bg-primary)' }}>
