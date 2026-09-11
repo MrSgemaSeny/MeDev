@@ -59,10 +59,6 @@ export const AppSidebar = () => {
 
       {/* Main Navigation Items */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden py-3 px-2 flex flex-col gap-1">
-        <div className="text-[11px] text-muted px-3 pt-1 pb-1 tracking-wider uppercase font-semibold">
-          {t('nav.main', 'Main')}
-        </div>
-
         {MAIN_NAV.map((item) => {
           const label = t(item.labelKey, item.defaultLabel);
           return (
@@ -72,7 +68,7 @@ export const AppSidebar = () => {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2 w-full font-medium rounded-lg transition-all text-[13px] relative cursor-pointer ${
                   isActive
-                    ? 'text-primary surface-tertiary shadow-xs font-semibold before:absolute before:left-0 before:top-2 before:bottom-2 before:w-1 before:bg-[#238636] before:rounded-r-full'
+                    ? 'text-primary surface-tertiary shadow-xs font-semibold before:absolute before:left-0 before:top-2 before:bottom-2 before:w-1 before:bg-[var(--color-accent)] before:rounded-r-full'
                     : 'text-secondary hover:surface-secondary hover:text-primary'
                 }`
               }
@@ -87,10 +83,6 @@ export const AppSidebar = () => {
         <div className="border-t border-default my-2 mx-2" />
 
         {/* Section Navigation Items */}
-        <div className="text-[11px] text-muted px-3 pt-1 pb-1 tracking-wider uppercase font-semibold">
-          {t('nav.sections', 'Sections')}
-        </div>
-
         {SECTIONS_NAV.map((item) => {
           const currentHash = location.hash.replace('#', '') || 'experience';
           const sectionId = item.to.split('#')[1];
@@ -103,7 +95,7 @@ export const AppSidebar = () => {
               to={item.to}
               className={`flex items-center gap-3 px-3 py-1.5 w-full font-normal rounded-lg transition-all text-[13px] relative cursor-pointer ${
                 isActive
-                  ? 'text-primary surface-tertiary shadow-xs font-medium before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-1 before:bg-[#238636] before:rounded-r-full'
+                  ? 'text-primary surface-tertiary shadow-xs font-medium before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-1 before:bg-[var(--color-accent)] before:rounded-r-full'
                   : 'text-secondary hover:surface-secondary hover:text-primary'
               }`}
             >
@@ -121,7 +113,7 @@ export const AppSidebar = () => {
           className={({ isActive }) =>
             `flex items-center gap-3 px-3 py-2 w-full font-medium rounded-lg transition-all text-[13px] relative cursor-pointer ${
               isActive
-                ? 'text-primary surface-tertiary shadow-xs font-semibold before:absolute before:left-0 before:top-2 before:bottom-2 before:w-1 before:bg-[#238636] before:rounded-r-full'
+                ? 'text-primary surface-tertiary shadow-xs font-semibold before:absolute before:left-0 before:top-2 before:bottom-2 before:w-1 before:bg-[var(--color-accent)] before:rounded-r-full'
                 : 'text-secondary hover:surface-secondary hover:text-primary'
             }`
           }
@@ -135,7 +127,7 @@ export const AppSidebar = () => {
           className={({ isActive }) =>
             `flex items-center rounded-lg transition-all text-[13px] relative cursor-pointer gap-3 px-3 py-2 w-full font-medium ${
               isActive
-                ? 'text-primary surface-tertiary shadow-xs font-semibold before:absolute before:left-0 before:top-2 before:bottom-2 before:w-1 before:bg-[#238636] before:rounded-r-full'
+                ? 'text-primary surface-tertiary shadow-xs font-semibold before:absolute before:left-0 before:top-2 before:bottom-2 before:w-1 before:bg-[var(--color-accent)] before:rounded-r-full'
                 : 'text-secondary hover:surface-secondary hover:text-primary'
             }`
           }

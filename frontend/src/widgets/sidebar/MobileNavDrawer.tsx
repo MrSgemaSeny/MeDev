@@ -126,185 +126,168 @@ export const MobileNavDrawer = () => {
           </button>
         </div>
 
-        {/* Content Island Cards */}
-        <div className="flex-1 flex flex-col gap-4">
-          
-          {/* Card 1: Main Menu & Preferences */}
-          <div>
-            <div className="text-[11px] font-bold text-white/70 uppercase tracking-wider px-2 mb-1.5">
-              {t('nav.main', 'Главное')}
-            </div>
-            <div className="surface-primary border border-default rounded-2xl p-1.5 flex flex-col gap-0.5 shadow-xs">
-              {MAIN_NAV.map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  onClick={close}
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors cursor-pointer ${
-                      isActive
-                        ? 'text-white bg-white/10 font-semibold'
-                        : 'text-white/80 hover:bg-white/10 hover:text-white font-medium'
-                    }`
-                  }
-                >
-                  <item.icon size={18} className="shrink-0 text-white/80" />
-                  <span className="text-white">{t(item.labelKey, item.defaultLabel)}</span>
-                </NavLink>
-              ))}
+        {/* Flat Navigation List */}
+        <div className="flex-1 flex flex-col gap-1 overflow-y-auto">
+          {/* Main Navigation Items */}
+          {MAIN_NAV.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              onClick={close}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors cursor-pointer ${
+                  isActive
+                    ? 'text-primary bg-[var(--color-bg-tertiary)] font-semibold'
+                    : 'text-secondary hover:bg-[var(--color-bg-tertiary)]/60 hover:text-primary font-medium'
+                }`
+              }
+            >
+              <item.icon size={18} className="shrink-0" />
+              <span>{t(item.labelKey, item.defaultLabel)}</span>
+            </NavLink>
+          ))}
 
-              <div className="border-t border-default my-1.5 mx-2" />
+          {/* Separator */}
+          <div className="border-t border-default my-2 mx-1" />
 
-              {/* Language Row */}
-              <div className="flex items-center justify-between px-3 py-2">
-                <span className="text-xs font-medium text-white">{t('header.language', 'Тіл / Язык')}:</span>
-                <LanguageSwitcher inactiveClassName="text-white/70 hover:text-white hover:bg-white/10" />
-              </div>
-
-              {/* Theme Row */}
-              <div className="flex items-center justify-between px-3 py-2">
-                <span className="text-xs font-medium text-white">{t('settings.theme', 'Тема')}:</span>
-                <div
-                  className="inline-flex items-center rounded-full p-0.5 border shadow-sm transition-colors"
-                  style={{
-                    backgroundColor: 'var(--color-bg-inset)',
-                    borderColor: 'var(--color-border-default)',
-                  }}
-                  role="group"
-                  aria-label="Theme selection"
-                >
-                  <button
-                    type="button"
-                    onClick={() => setTheme(true, setIsDark)}
-                    aria-pressed={isDark}
-                    className={`flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full transition-all cursor-pointer ${
-                      isDark
-                        ? 'bg-[var(--color-accent)] text-white shadow-sm'
-                        : 'text-white/70 hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    <Moon size={13} />
-                    <span>{t('settings.dark', 'Тёмная')}</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setTheme(false, setIsDark)}
-                    aria-pressed={!isDark}
-                    className={`flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full transition-all cursor-pointer ${
-                      !isDark
-                        ? 'bg-[var(--color-accent)] text-white shadow-sm'
-                        : 'text-white/70 hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    <Sun size={13} />
-                    <span>{t('settings.light', 'Светлая')}</span>
-                  </button>
+          {/* Resume Sections */}
+          {SECTIONS_NAV.map((item) => {
+            const currentHash = location.hash.replace('#', '') || 'experience';
+            const sectionId = item.to.split('#')[1];
+            const isActive = isProfileActive && currentHash === sectionId;
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                onClick={close}
+                className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors cursor-pointer ${
+                  isActive
+                    ? 'text-primary bg-[var(--color-bg-tertiary)] font-semibold'
+                    : 'text-secondary hover:bg-[var(--color-bg-tertiary)]/60 hover:text-primary font-medium'
+                }`}
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <item.icon size={17} className="shrink-0" />
+                  <span className="truncate">{t(item.labelKey, item.defaultLabel)}</span>
                 </div>
-              </div>
-            </div>
+                <span className="text-[11px] text-muted font-normal shrink-0 ml-2">{item.hint}</span>
+              </NavLink>
+            );
+          })}
+
+          {/* Separator */}
+          <div className="border-t border-default my-2 mx-1" />
+
+          {/* Billing & Settings */}
+          <NavLink
+            to="/billing"
+            onClick={close}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors cursor-pointer ${
+                isActive
+                  ? 'text-primary bg-[var(--color-bg-tertiary)] font-semibold'
+                  : 'text-secondary hover:bg-[var(--color-bg-tertiary)]/60 hover:text-primary font-medium'
+              }`
+            }
+          >
+            <CreditCard size={17} className="shrink-0" />
+            <span>{t('nav.billing', 'Тарифы')}</span>
+          </NavLink>
+
+          <NavLink
+            to="/settings"
+            onClick={close}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors cursor-pointer ${
+                isActive
+                  ? 'text-primary bg-[var(--color-bg-tertiary)] font-semibold'
+                  : 'text-secondary hover:bg-[var(--color-bg-tertiary)]/60 hover:text-primary font-medium'
+              }`
+            }
+          >
+            <Settings size={17} className="shrink-0" />
+            <span>{t('nav.settings', 'Настройки')}</span>
+          </NavLink>
+
+          {role === 'ADMIN' && (
+            <NavLink
+              to="/admin/dashboard"
+              onClick={close}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors cursor-pointer ${
+                  isActive
+                    ? 'text-primary bg-[var(--color-bg-tertiary)] font-semibold'
+                    : 'text-secondary hover:bg-[var(--color-bg-tertiary)]/60 hover:text-primary font-medium'
+                }`
+              }
+            >
+              <Shield size={17} className="shrink-0" />
+              <span>{t('nav.adminPanel', 'Админ-панель')}</span>
+            </NavLink>
+          )}
+
+          {/* Language & Theme Controls */}
+          <div className="border-t border-default my-2 mx-1" />
+
+          <div className="flex items-center justify-between px-3 py-1.5">
+            <span className="text-xs font-medium text-secondary">{t('header.language', 'Тіл / Язык')}:</span>
+            <LanguageSwitcher inactiveClassName="text-secondary hover:text-primary hover:bg-black/5 dark:hover:bg-white/5" />
           </div>
 
-          {/* Card 2: Resume Sections */}
-          <div>
-            <div className="text-[11px] font-bold text-white/70 uppercase tracking-wider px-2 mb-1.5">
-              {t('nav.sections', 'Разделы резюме')}
-            </div>
-            <div className="surface-primary border border-default rounded-2xl p-1.5 flex flex-col gap-0.5 shadow-xs">
-              {SECTIONS_NAV.map((item) => {
-                const currentHash = location.hash.replace('#', '') || 'experience';
-                const sectionId = item.to.split('#')[1];
-                const isActive = isProfileActive && currentHash === sectionId;
-                return (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    onClick={close}
-                    className={`flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-colors cursor-pointer ${
-                      isActive
-                        ? 'text-white bg-white/10 font-semibold'
-                        : 'text-white/80 hover:bg-white/10 hover:text-white font-medium'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <item.icon size={17} className="shrink-0 text-white/80" />
-                      <span className="truncate text-white">{t(item.labelKey, item.defaultLabel)}</span>
-                    </div>
-                    <span className="text-[11px] text-white/50 font-normal shrink-0 ml-2">{item.hint}</span>
-                  </NavLink>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Card 3: Account & Service */}
-          <div>
-            <div className="text-[11px] font-bold text-white/70 uppercase tracking-wider px-2 mb-1.5">
-              {t('nav.account', 'Сервис')}
-            </div>
-            <div className="surface-primary border border-default rounded-2xl p-1.5 flex flex-col gap-0.5 shadow-xs">
-              <NavLink
-                to="/billing"
-                onClick={close}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-3 py-2 rounded-xl text-sm transition-colors cursor-pointer ${
-                    isActive
-                      ? 'text-white bg-white/10 font-semibold'
-                      : 'text-white/80 hover:bg-white/10 hover:text-white font-medium'
-                  }`
-                }
-              >
-                <CreditCard size={17} className="shrink-0 text-white/80" />
-                <span className="text-white">{t('nav.billing', 'Тарифы')}</span>
-              </NavLink>
-
-              <NavLink
-                to="/settings"
-                onClick={close}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-3 py-2 rounded-xl text-sm transition-colors cursor-pointer ${
-                    isActive
-                      ? 'text-white bg-white/10 font-semibold'
-                      : 'text-white/80 hover:bg-white/10 hover:text-white font-medium'
-                  }`
-                }
-              >
-                <Settings size={17} className="shrink-0 text-white/80" />
-                <span className="text-white">{t('nav.settings', 'Настройки')}</span>
-              </NavLink>
-
-              {role === 'ADMIN' && (
-                <NavLink
-                  to="/admin/dashboard"
-                  onClick={close}
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-3 py-2 rounded-xl text-sm transition-colors cursor-pointer ${
-                      isActive
-                        ? 'text-white bg-white/10 font-semibold'
-                        : 'text-white/80 hover:bg-white/10 hover:text-white font-medium'
-                    }`
-                  }
-                >
-                  <Shield size={17} className="shrink-0 text-white/80" />
-                  <span className="text-white">{t('nav.adminPanel', 'Админ-панель')}</span>
-                </NavLink>
-              )}
-
-              <div className="border-t border-default my-1 mx-2" />
-
+          <div className="flex items-center justify-between px-3 py-1.5">
+            <span className="text-xs font-medium text-secondary">{t('settings.theme', 'Тема')}:</span>
+            <div
+              className="inline-flex items-center rounded-full p-0.5 border shadow-sm transition-colors"
+              style={{
+                backgroundColor: 'var(--color-bg-secondary)',
+                borderColor: 'var(--color-border-default)',
+              }}
+              role="group"
+              aria-label="Theme selection"
+            >
               <button
                 type="button"
-                onClick={() => {
-                  logout();
-                  close();
-                }}
-                className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-white/90 hover:text-red-400 hover:bg-white/5 transition-colors text-left cursor-pointer font-medium"
+                onClick={() => setTheme(true, setIsDark)}
+                aria-pressed={isDark}
+                className={`flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full transition-all cursor-pointer ${
+                  isDark
+                    ? 'bg-[var(--color-accent)] text-white shadow-sm'
+                    : 'text-secondary hover:text-primary hover:bg-black/5 dark:hover:bg-white/5'
+                }`}
               >
-                <LogOut size={17} className="shrink-0 text-white/80" />
-                <span>{t('header.logout', 'Выйти')}</span>
+                <Moon size={13} />
+                <span>{t('settings.dark', 'Тёмная')}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setTheme(false, setIsDark)}
+                aria-pressed={!isDark}
+                className={`flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full transition-all cursor-pointer ${
+                  !isDark
+                    ? 'bg-[var(--color-accent)] text-white shadow-sm'
+                    : 'text-secondary hover:text-primary hover:bg-black/5 dark:hover:bg-white/5'
+                }`}
+              >
+                <Sun size={13} />
+                <span>{t('settings.light', 'Светлая')}</span>
               </button>
             </div>
           </div>
 
+          {/* Logout */}
+          <div className="border-t border-default my-2 mx-1" />
+
+          <button
+            type="button"
+            onClick={() => {
+              logout();
+              close();
+            }}
+            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-secondary hover:text-[var(--color-danger)] hover:bg-[var(--color-bg-tertiary)]/60 transition-colors text-left cursor-pointer font-medium"
+          >
+            <LogOut size={17} className="shrink-0" />
+            <span>{t('header.logout', 'Выйти')}</span>
+          </button>
         </div>
       </aside>
     </div>
