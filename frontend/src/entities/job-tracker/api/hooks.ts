@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../../shared/api/api';
 import { queryKeys } from '../../../shared/api/queryKeys';
+import { toast } from 'sonner';
 import type { 
   JobApplicationDto, 
   CreateJobApplicationRequest, 
@@ -39,7 +40,42 @@ export const useUpdateJobApplication = () => {
       const { data } = await api.put(`/tracker/applications/${id}`, payload);
       return data;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.jobApplications.all }),
+    // Optimistic Update: мгновенно обновляем локальный кэш до ответа бэкенда
+    onMutate: async ({ id, payload }) => {
+      // Отменяем исходящие запросы refetch, чтобы они не перезаписали наш оптимистичный стейт
+      await queryClient.cancelQueries({ queryKey: queryKeys.jobApplications.all });
+
+      // Сохраняем предыдущий снимок состояния кэша для безопасного отката
+      const previousApplications = queryClient.getQueryData<JobApplicationDto[]>(queryKeys.jobApplications.all);
+
+      // Оптимистично применяем изменения в кэш
+      if (previousApplications) {
+        queryClient.setQueryData<JobApplicationDto[]>(
+          queryKeys.jobApplications.all,
+          (old) => {
+            if (!old) return [];
+            return old.map((app) => 
+              app.id === id 
+                ? { ...app, ...payload, updatedAt: new Date().toISOString() } 
+                : app
+            );
+          }
+        );
+      }
+
+      return { previousApplications };
+    },
+    // В случае ошибки на сервере откатываемся к сохранённому снимку
+    onError: (_err, _variables, context) => {
+      if (context?.previousApplications) {
+        queryClient.setQueryData(queryKeys.jobApplications.all, context.previousApplications);
+      }
+      toast.error('Не удалось обновить статус вакансии');
+    },
+    // В любом случае (успех или ошибка) синхронизируем данные с сервером
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.jobApplications.all });
+    },
   });
 };
 
@@ -49,7 +85,30 @@ export const useDeleteJobApplication = () => {
     mutationFn: async (id: number) => {
       await api.delete(`/tracker/applications/${id}`);
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.jobApplications.all }),
+    // Optimistic Delete: мгновенно убираем карточку из UI
+    onMutate: async (id: number) => {
+      await queryClient.cancelQueries({ queryKey: queryKeys.jobApplications.all });
+
+      const previousApplications = queryClient.getQueryData<JobApplicationDto[]>(queryKeys.jobApplications.all);
+
+      if (previousApplications) {
+        queryClient.setQueryData<JobApplicationDto[]>(
+          queryKeys.jobApplications.all,
+          (old) => (old ? old.filter((app) => app.id !== id) : [])
+        );
+      }
+
+      return { previousApplications };
+    },
+    onError: (_err, _id, context) => {
+      if (context?.previousApplications) {
+        queryClient.setQueryData(queryKeys.jobApplications.all, context.previousApplications);
+      }
+      toast.error('Не удалось удалить вакансию');
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.jobApplications.all });
+    },
   });
 };
 
@@ -88,4 +147,3 @@ export const useMatchJob = () => {
     },
   });
 };
-
