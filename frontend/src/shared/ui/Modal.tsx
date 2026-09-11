@@ -6,9 +6,10 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   children: React.ReactNode;
+  maxWidth?: string;
 }
 
-export function Modal({ isOpen, onClose, title, children }: ModalProps) {
+export function Modal({ isOpen, onClose, title, children, maxWidth = 'max-w-2xl' }: ModalProps) {
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -31,18 +32,17 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       onClick={onClose}
-      style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+      style={{ backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(2px)' }}
     >
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
-        className="relative w-full max-w-2xl max-h-[calc(100dvh-2rem)] flex flex-col rounded-md"
+        className={`relative w-full ${maxWidth} max-h-[calc(100dvh-2rem)] flex flex-col rounded-xl border border-[var(--color-border-default)] shadow-2xl overflow-hidden`}
         onClick={(e) => e.stopPropagation()}
         style={{
           backgroundColor: 'var(--color-bg-primary)',
-          border: '1px solid var(--color-border-default)',
-          boxShadow: '0 8px 24px var(--color-shadow)',
+          boxShadow: '0 12px 36px rgba(0, 0, 0, 0.4)',
         }}
       >
         <div

@@ -25,8 +25,7 @@ import {
   List as ListIcon, 
   MapPin, 
   DollarSign,
-  X,
-  Link2
+  X
 } from 'lucide-react';
 
 const STATUS_CONFIG: Record<ApplicationStatus, { label: string; tone: 'default' | 'accent' | 'danger'; colorClass: string; icon: any }> = {
@@ -286,65 +285,49 @@ export const JobTrackerPage = () => {
 
       {/* Main Workspace Area */}
       {applications.length === 0 ? (
-        /* Empty State: Premium Redesign */
-        <div className="flex-1 relative flex flex-col items-center justify-center p-6 text-center bg-[var(--color-bg-inset)] overflow-hidden">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[var(--color-accent)]/5 rounded-full blur-3xl pointer-events-none" />
-          
-          <div className="relative z-10 flex flex-col items-center max-w-lg w-full">
-            <div className="w-20 h-20 rounded-3xl bg-gradient-to-b from-[var(--color-bg-secondary)] to-[var(--color-bg-primary)] border border-[var(--color-border-default)] shadow-2xl flex items-center justify-center mb-6 relative overflow-hidden">
-              <div className="absolute inset-0 bg-[var(--color-accent)]/10 animate-pulse" />
-              <Target size={36} className="text-[var(--color-accent)] relative z-10" />
+        /* Clean Strict GitHub Dark Empty State */
+        <div className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-[var(--color-bg-inset)]">
+          <div className="flex flex-col items-center max-w-lg w-full">
+            <div className="w-16 h-16 rounded-2xl bg-[var(--color-bg-secondary)] border border-[var(--color-border-default)] flex items-center justify-center mb-4">
+              <Target size={30} className="text-[var(--color-text-secondary)]" />
             </div>
 
-            <h2 className="text-2xl font-bold text-primary mb-3 tracking-tight">
+            <h2 className="text-xl font-bold text-primary mb-6 tracking-tight">
               {t('tracker.emptyTitle', 'No tracked applications')}
             </h2>
-            <p className="text-secondary text-sm mb-8 leading-relaxed max-w-md mx-auto">
-              {t('tracker.emptyDesc', 'Paste a link to a job posting from hh.kz or LinkedIn. Our AI will automatically parse the requirements and match them against your profile.')}
-            </p>
 
-            <form onSubmit={handleQuickImport} className="w-full mb-8 relative group">
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-[var(--color-accent)] to-purple-500 rounded-xl blur opacity-30 group-focus-within:opacity-60 transition duration-500"></div>
-              <div className="relative flex items-center bg-[var(--color-bg-primary)] rounded-lg p-1.5 shadow-xl border border-[var(--color-border-default)]">
-                <div className="flex items-center pl-3 pr-2 pointer-events-none text-secondary">
-                  <Link2 size={18} />
-                </div>
+            <form onSubmit={handleQuickImport} className="w-full mb-6">
+              <div className="flex items-center bg-[var(--color-bg-primary)] rounded-lg p-1 border border-[var(--color-border-default)] focus-within:border-[var(--color-accent)]">
                 <input 
                   type="url"
                   placeholder={t('tracker.importPlaceholder', 'https://hh.kz/vacancy/...')}
-                  className="flex-1 bg-transparent border-none py-3 px-2 text-sm text-primary placeholder-muted focus:ring-0 outline-none"
+                  className="flex-1 bg-transparent border-none py-2.5 px-3 text-sm text-primary placeholder-muted focus:ring-0 outline-none"
                   value={quickUrl}
                   onChange={e => setQuickUrl(e.target.value)}
                 />
                 <Button 
                   type="submit" 
                   variant="primary" 
-                  className="h-10 px-6 font-medium tracking-wide shadow-md" 
+                  className="h-9 px-5 text-xs font-medium" 
                   disabled={scrapeJob.isPending || !quickUrl.trim()}
-                  style={{ backgroundColor: 'var(--color-accent)', color: '#fff', border: 'none' }}
                 >
-                  {scrapeJob.isPending ? (
-                    <span className="flex items-center gap-2"><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"/> {t('tracker.importing', 'Parsing...')}</span>
-                  ) : (
-                    <span className="flex items-center gap-2"><Sparkles size={16} /> {t('tracker.importButton', 'Import with AI')}</span>
-                  )}
+                  {scrapeJob.isPending ? t('tracker.importing', 'Importing...') : t('tracker.importButton', 'Import')}
                 </Button>
               </div>
             </form>
 
-            <div className="flex items-center gap-4 text-xs text-muted w-full max-w-sm mb-8">
-              <span className="flex-1 h-px bg-gradient-to-r from-transparent to-[var(--color-border-default)]" />
-              <span className="uppercase tracking-widest font-medium">or</span>
-              <span className="flex-1 h-px bg-gradient-to-l from-transparent to-[var(--color-border-default)]" />
+            <div className="flex items-center gap-3 text-xs text-muted w-full max-w-xs mb-6">
+              <span className="flex-1 h-px bg-[var(--color-border-default)]" />
+              <span>or</span>
+              <span className="flex-1 h-px bg-[var(--color-border-default)]" />
             </div>
 
             <Button 
               variant="outline" 
-              className="text-sm px-6 py-2.5 h-auto flex items-center gap-2 hover:bg-[var(--color-bg-secondary)]" 
+              className="text-xs px-5 py-2 h-auto" 
               onClick={() => setIsModalOpen(true)}
             >
-              <Plus size={16} />
-              <span>{t('tracker.newApplication', 'Add Manually')}</span>
+              <span>{t('tracker.newApplication', 'New Application')}</span>
             </Button>
           </div>
         </div>
@@ -559,45 +542,83 @@ const AddApplicationModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Add Job Application">
-      <div className="space-y-4 pt-2">
-        {/* Import section */}
-        <div className="flex gap-2 items-end border-b border-[var(--color-border-default)] pb-4 mb-4">
-          <div className="flex-1">
-            <Label htmlFor="importUrl">Import from URL (HH.kz, LinkedIn)</Label>
-            <Input id="importUrl" placeholder="https://hh.kz/vacancy/..." value={importUrl} onChange={e => setImportUrl(e.target.value)} />
+    <Modal isOpen={isOpen} onClose={onClose} title="Add Job Application" maxWidth="max-w-3xl">
+      <div className="space-y-5 pt-1">
+        {/* Quick URL Import Bar */}
+        <div className="p-3.5 rounded-lg bg-[var(--color-bg-secondary)] border border-[var(--color-border-default)]">
+          <Label htmlFor="importUrl" className="text-xs font-semibold mb-2 block text-primary">
+            Import from URL (HH.kz, LinkedIn)
+          </Label>
+          <div className="flex gap-2">
+            <Input 
+              id="importUrl" 
+              placeholder="https://hh.kz/vacancy/... or LinkedIn URL" 
+              value={importUrl} 
+              onChange={e => setImportUrl(e.target.value)} 
+              className="flex-1 bg-[var(--color-bg-primary)] h-10 text-xs"
+            />
+            <Button 
+              type="button" 
+              variant="primary" 
+              onClick={handleImport} 
+              disabled={scrapeJob.isPending || !importUrl.trim()}
+              className="h-10 px-5 text-xs font-medium shrink-0"
+            >
+              {scrapeJob.isPending ? 'Scraping...' : 'Import'}
+            </Button>
           </div>
-          <Button type="button" variant="primary" onClick={handleImport} disabled={scrapeJob.isPending || !importUrl}>
-            {scrapeJob.isPending ? 'Scraping...' : 'Import'}
-          </Button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div><Label htmlFor="companyName">Company</Label><Input id="companyName" required value={formData.companyName} onChange={e => setFormData({...formData, companyName: e.target.value})} /></div>
-            <div><Label htmlFor="role">Role</Label><Input id="role" required value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})} /></div>
+            <div>
+              <Label htmlFor="companyName">Company</Label>
+              <Input id="companyName" required value={formData.companyName} onChange={e => setFormData({...formData, companyName: e.target.value})} className="h-10" />
+            </div>
+            <div>
+              <Label htmlFor="role">Role</Label>
+              <Input id="role" required value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})} className="h-10" />
+            </div>
           </div>
-          <div>
-            <Label htmlFor="status">Pipeline Status</Label>
-            <select 
-              id="status" 
-              className="w-full h-10 px-3 rounded-md bg-[var(--color-bg-primary)] border border-default text-[16px] md:text-sm text-primary focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] outline-none"
-              value={formData.status} 
-              onChange={e => setFormData({...formData, status: e.target.value as ApplicationStatus})}
-            >
-              {Object.entries(STATUS_CONFIG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
-            </select>
-          </div>
-          <div><Label htmlFor="jobUrl">Job URL</Label><Input id="jobUrl" type="url" value={formData.jobUrl} onChange={e => setFormData({...formData, jobUrl: e.target.value})} /></div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div><Label htmlFor="location">Location</Label><Input id="location" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} /></div>
-            <div><Label htmlFor="salaryRange">Salary Range</Label><Input id="salaryRange" value={formData.salaryRange} onChange={e => setFormData({...formData, salaryRange: e.target.value})} /></div>
+            <div>
+              <Label htmlFor="status">Pipeline Status</Label>
+              <select 
+                id="status" 
+                className="w-full h-10 px-3 rounded-md bg-[var(--color-bg-primary)] border border-[var(--color-border-default)] text-sm text-primary focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] outline-none"
+                value={formData.status} 
+                onChange={e => setFormData({...formData, status: e.target.value as ApplicationStatus})}
+              >
+                {Object.entries(STATUS_CONFIG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <Label htmlFor="appliedDate">Applied Date</Label>
+              <Input id="appliedDate" type="date" value={formData.appliedDate} onChange={e => setFormData({...formData, appliedDate: e.target.value})} className="h-10" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="location">Location</Label>
+              <Input id="location" placeholder="e.g. Almaty, Remote" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} className="h-10" />
+            </div>
+            <div>
+              <Label htmlFor="salaryRange">Salary Range</Label>
+              <Input id="salaryRange" placeholder="e.g. $3,000 - $4,500" value={formData.salaryRange} onChange={e => setFormData({...formData, salaryRange: e.target.value})} className="h-10" />
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="jobUrl">Job URL</Label>
+            <Input id="jobUrl" type="url" placeholder="https://..." value={formData.jobUrl} onChange={e => setFormData({...formData, jobUrl: e.target.value})} className="h-10" />
           </div>
           
           {formData.jobDescription && (
             <div>
               <Label>Job Description (Auto-extracted)</Label>
-              <div className="text-xs text-secondary max-h-24 overflow-y-auto bg-[var(--color-bg-inset)] p-2 rounded border border-[var(--color-border-default)]">
+              <div className="text-xs text-secondary max-h-32 overflow-y-auto bg-[var(--color-bg-secondary)] p-3 rounded-md border border-[var(--color-border-default)] leading-relaxed whitespace-pre-wrap">
                 {formData.jobDescription}
               </div>
             </div>
@@ -613,15 +634,18 @@ const AddApplicationModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
             </div>
           )}
           {matchJob.isPending && (
-            <div className="text-xs text-[var(--color-accent)] flex items-center gap-1 animate-pulse">
-              <Wand2 size={12} /> Analyzing match with your profile...
+            <div className="text-xs text-[var(--color-accent)]">
+              Analyzing match with your profile...
             </div>
           )}
 
-          <div><Label htmlFor="appliedDate">Applied Date</Label><Input id="appliedDate" type="date" value={formData.appliedDate} onChange={e => setFormData({...formData, appliedDate: e.target.value})} /></div>
-          <div className="flex gap-3 pt-4 border-t border-[var(--color-border-default)]">
-            <Button type="submit" variant="primary" className="flex-1" disabled={addApp.isPending}>{addApp.isPending ? 'Saving...' : 'Save'}</Button>
-            <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
+          <div className="flex gap-3 pt-3 border-t border-[var(--color-border-default)]">
+            <Button type="submit" variant="primary" className="flex-1 h-10" disabled={addApp.isPending}>
+              {addApp.isPending ? 'Saving...' : 'Save'}
+            </Button>
+            <Button type="button" variant="outline" className="px-6 h-10" onClick={onClose}>
+              Cancel
+            </Button>
           </div>
         </form>
       </div>
