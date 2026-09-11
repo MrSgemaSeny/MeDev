@@ -125,7 +125,11 @@
     "quickImportTitle": "Quick Import from URL",
     "importPlaceholder": "https://hh.kz/vacancy/... or LinkedIn URL",
     "importButton": "Import",
-    "importing": "Importing..."
+    "importing": "Importing...",
+    "importSuccess": "Job application imported successfully",
+    "importError": "Failed to save application",
+    "manualImportFallback": "Link saved. Please fill in the details manually.",
+    "scrapeFailedNotice": "Could not extract details automatically. Please enter them manually."
   },
   "dashboard": {
     "title": "Dashboard",

@@ -125,7 +125,11 @@
     "quickImportTitle": "Быстрый импорт по ссылке",
     "importPlaceholder": "https://hh.kz/vacancy/... или LinkedIn URL",
     "importButton": "Импортировать",
-    "importing": "Импорт..."
+    "importing": "Импорт...",
+    "importSuccess": "Вакансия успешно импортирована",
+    "importError": "Не удалось сохранить вакансию",
+    "manualImportFallback": "Ссылка сохранена. Заполните описание вручную.",
+    "scrapeFailedNotice": "Не удалось автоматически распарсить страницу. Заполните поля вручную."
   },
   "dashboard": {
     "title": "Панель управления",

@@ -33,16 +33,22 @@ public class WebScraperService {
     );
 
     public CreateJobApplicationRequest scrapeJobUrl(String url) {
-        Long userId = SecurityUtils.getCurrentUserId();
-        if (userId != null) {
-            String key = "rate:scrape:" + userId;
-            Long count = redisTemplate.opsForValue().increment(key);
-            if (count != null && count == 1L) {
-                redisTemplate.expire(key, java.time.Duration.ofMinutes(1));
+        try {
+            Long userId = SecurityUtils.getCurrentUserId();
+            if (userId != null && redisTemplate != null) {
+                String key = "rate:scrape:" + userId;
+                Long count = redisTemplate.opsForValue().increment(key);
+                if (count != null && count == 1L) {
+                    redisTemplate.expire(key, java.time.Duration.ofMinutes(1));
+                }
+                if (count != null && count > 10) {
+                    throw new TooManyRequestsException("Слишком много запросов на парсинг. Пожалуйста, подождите.");
+                }
             }
-            if (count != null && count > 10) {
-                throw new TooManyRequestsException("Слишком много запросов на парсинг. Пожалуйста, подождите.");
-            }
+        } catch (TooManyRequestsException e) {
+            throw e;
+        } catch (Exception e) {
+            log.warn("Redis rate limit check failed for scraper, skipping: {}", e.getMessage());
         }
 
         CreateJobApplicationRequest request = new CreateJobApplicationRequest();

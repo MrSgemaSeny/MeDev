@@ -7,6 +7,7 @@ import type { ApplicationStatus, JobApplicationDto, CreateJobApplicationRequest 
 import { Button } from '../../shared/ui/Button';
 import { Input, Label, Badge } from '../../shared/ui/Form';
 import { Modal } from '../../shared/ui/Modal';
+import { toast } from 'sonner';
 import { 
   Plus, 
   Briefcase, 
@@ -77,13 +78,14 @@ export const JobTrackerPage = () => {
   const handleQuickImport = (e: React.FormEvent) => {
     e.preventDefault();
     if (!quickUrl.trim()) return;
-    scrapeJob.mutate(quickUrl.trim(), {
+    const targetUrl = quickUrl.trim();
+    scrapeJob.mutate(targetUrl, {
       onSuccess: (data) => {
         addApp.mutate({
-          companyName: data.companyName || 'Unknown Company',
-          role: data.role || 'Developer',
+          companyName: data.companyName && data.companyName !== 'Failed to scrape' ? data.companyName : 'Новая вакансия',
+          role: data.role && data.role !== 'Manual Entry Required' ? data.role : 'Разработчик',
           status: 'WISHLIST',
-          jobUrl: quickUrl.trim(),
+          jobUrl: targetUrl,
           location: data.location || '',
           salaryRange: data.salaryRange || '',
           jobDescription: data.jobDescription || '',
@@ -91,6 +93,28 @@ export const JobTrackerPage = () => {
         }, {
           onSuccess: () => {
             setQuickUrl('');
+            toast.success(t('tracker.importSuccess', 'Вакансия успешно импортирована'));
+          },
+          onError: () => {
+            toast.error(t('tracker.importError', 'Не удалось сохранить вакансию'));
+          }
+        });
+      },
+      onError: () => {
+        // Fallback: create an entry with the URL so the user does not lose progress
+        addApp.mutate({
+          companyName: 'Новая вакансия',
+          role: 'Разработчик',
+          status: 'WISHLIST',
+          jobUrl: targetUrl,
+          appliedDate: new Date().toISOString().split('T')[0],
+        }, {
+          onSuccess: () => {
+            setQuickUrl('');
+            toast.info(t('tracker.manualImportFallback', 'Ссылка сохранена. Заполните описание вручную.'));
+          },
+          onError: () => {
+            toast.error(t('tracker.importError', 'Не удалось добавить вакансию'));
           }
         });
       }
@@ -459,6 +483,7 @@ export const JobTrackerPage = () => {
 };
 
 const AddApplicationModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+  const { t } = useTranslation();
   const addApp = useAddJobApplication();
   const scrapeJob = useScrapeJob();
   const matchJob = useMatchJob();
@@ -500,6 +525,13 @@ const AddApplicationModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
             }
           });
         }
+      },
+      onError: () => {
+        setFormData(prev => ({
+          ...prev,
+          jobUrl: importUrl,
+        }));
+        toast.error(t('tracker.scrapeFailedNotice', 'Не удалось автоматически распарсить страницу. Заполните поля вручную.'));
       }
     });
   };
