@@ -10,7 +10,6 @@ import { Modal } from '../../shared/ui/Modal';
 import { toast } from 'sonner';
 import { 
   Plus, 
-  Briefcase, 
   ExternalLink, 
   Calendar, 
   Trash2, 
