@@ -67,31 +67,38 @@ public class AiOnboardingService extends AbstractAiStructuredService {
 
         if (response.getSkills() != null) {
             java.util.List<Skill> existingSkills = skillRepository.findByProfileIdOrderBySortOrderAsc(profile.getId());
+            java.util.Set<String> existingNames = existingSkills.stream()
+                    .map(s -> s.getName().toLowerCase())
+                    .collect(java.util.stream.Collectors.toSet());
+
+            java.util.List<Skill> toSave = new java.util.ArrayList<>();
             for (AiOnboardingResponse.SkillDto s : response.getSkills()) {
-                boolean exists = existingSkills.stream().anyMatch(ex -> ex.getName().equalsIgnoreCase(s.getName()));
-                if (!exists) {
-                    Skill skill = Skill.builder()
+                if (s.getName() != null && !existingNames.contains(s.getName().toLowerCase())) {
+                    toSave.add(Skill.builder()
                             .profile(profile)
                             .name(s.getName())
                             .category(s.getCategory())
-                            .build();
-                    skillRepository.save(skill);
+                            .build());
                 }
+            }
+            if (!toSave.isEmpty()) {
+                skillRepository.saveAll(toSave);
             }
         }
 
-        if (response.getExperiences() != null) {
+        if (response.getExperiences() != null && !response.getExperiences().isEmpty()) {
+            java.util.List<Experience> toSave = new java.util.ArrayList<>();
             for (AiOnboardingResponse.ExperienceDto exp : response.getExperiences()) {
-                Experience experience = Experience.builder()
+                toSave.add(Experience.builder()
                         .profile(profile)
                         .company(exp.getCompany())
                         .position(exp.getPosition())
                         .description(exp.getParsedDescription())
                         .startDate(null)
                         .endDate(null)
-                        .build();
-                experienceRepository.save(experience);
+                        .build());
             }
+            experienceRepository.saveAll(toSave);
         }
 
         return response;

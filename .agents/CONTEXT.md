@@ -87,6 +87,13 @@
     - **VacancyVectorizationService**: Асинхронная векторизация вакансий и мгновенный расчет косинусного сходства (`match_score`) без вызова LLM.
     - **API & JobApplicationService**: Подключен автоматический триггер векторизации и эндпоинт `POST /v1/tracker/applications/{id}/rematch`.
 
+18. **Resume Parsing Pipeline Deep Audit & Remediation (100% COMPLETE)**:
+    - **Stability**: Removed crash-inducing `spring.ai.vectorstore.pgvector` auto-config.
+    - **Data Integrity**: Hardened PII masking logic to prevent false-positive masking of ISO dates and software versions.
+    - **Performance**: N+1 queries eliminated in onboarding wizard using `saveAll()` batching.
+    - **Security**: Added explicit masking of GitHub snapshot JSON before sending it to LLM (Groq).
+    - **Prompt Engineering**: Enforced canonical array field output (`[]` instead of `null`) to fix frontend mapping.
+
 ## Verification
 - `backend`: 278+ тестов успешно пройдены (`./gradlew test`).
 - `frontend`: 55/55 тестов пройдены (`npm test`).

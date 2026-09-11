@@ -410,7 +410,7 @@ public class ProfileService {
                         .position("Open Source Contributor")
                         .isCurrent(true)
                         .description("[Draft / GitHub Import] Contributor at " + org)
-                        .startDate(java.time.LocalDate.now().minusMonths(1)) // fallback date
+                        .startDate(null) // fallback date
                         .build();
                 experienceRepository.save(exp);
                 existingExp.add(exp);

@@ -23,7 +23,16 @@ public class PiiMasker {
     // - Formats with explicit parentheses (e.g. (777) 123-45-67, (555) 123-4567)
     // - US 10-digit standard format (e.g. 555-123-4567)
     private static final Pattern PHONE_PATTERN = Pattern.compile(
-            "(?:\\+\\d{1,3}[-.\\s]?)?\\(?\\d{3}\\)?[-.\\s]?\\d{3}[-.\\s]?\\d{2,4}[-.\\s]?\\d{2,4}"
+            "(?<![\\d.])(?:" +
+            // Международный формат: +7 777 123 45 67, +1-555-123-4567
+            "\\+\\d{1,3}[-.\\s]?\\(?\\d{1,4}\\)?[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,4}[-.\\s]?\\d{1,9}" +
+            "|" +
+            // CIS/KZ/RU: начинается с 8 и далее 10 цифр
+            "\\b8[-.\\s]?\\(?\\d{3}\\)?[-.\\s]?\\d{3}[-.\\s]?\\d{2}[-.\\s]?\\d{2}\\b" +
+            "|" +
+            // Скобочный формат: (777) 123-45-67
+            "\\(\\d{3,4}\\)[-.\\s]?\\d{3}[-.\\s]?\\d{2,4}[-.\\s]?\\d{0,4}" +
+            ")(?![\\d-])"
     );
 
     // Date and version guard pattern to avoid false-positive phone masking
@@ -62,18 +71,19 @@ public class PiiMasker {
     }
 
     private boolean isDateOrVersion(String str) {
-        // Year-Month-Day pattern: e.g. 2024-05-12 or 2020.01.01
-        if (ISO_DATE_PATTERN.matcher(str).matches()) {
-            return true;
-        }
-        // Year range pattern: 2020 - 2024
-        if (str.matches("^\\d{4}\\s*[-–—]\\s*\\d{4}$")) {
-            return true;
-        }
-        // Version string: 3.3.0 or 17.0.1
-        if (str.matches("^\\d+\\.\\d+(\\.\\d+)+$")) {
-            return true;
-        }
+        if (str == null) return false;
+        // ISO дата: 2024-05-12
+        if (ISO_DATE_PATTERN.matcher(str).matches()) return true;
+        // Диапазон лет: 2020 - 2024, 2020-2024, 2020–2024
+        if (str.matches("^\\d{4}\\s*[-–—]\\s*\\d{4}$")) return true;
+        // Версия: 3.3.0, 17.0.1
+        if (str.matches("^\\d+\\.\\d+(\\.\\d+)+$")) return true;
+        // Год и квартал: 2022-Q3
+        if (str.matches("^\\d{4}-Q[1-4]$")) return true;
+        // Просто год: 2024
+        if (str.matches("^\\d{4}$")) return true;
+        // Фрагмент вида 019-202 (часть года) — меньше 7 цифр итого
+        if (str.replaceAll("\\D", "").length() < 7) return true;
         return false;
     }
 }

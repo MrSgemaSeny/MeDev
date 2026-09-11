@@ -23,10 +23,20 @@ public class LanguageService {
     private final ProfileService profileService;
 
     public static final java.util.Set<String> PROGRAMMING_LANGUAGES = java.util.Set.of(
+            // Языки программирования
             "java", "python", "javascript", "typescript", "c++", "cpp", "c#", "csharp", "c", "golang", "go",
-            "rust", "php", "ruby", "kotlin", "swift", "scala", "dart", "sql", "html", "css", "scss", "less",
-            "shell", "bash", "sh", "zsh", "powershell", "r", "perl", "elixir", "clojure", "haskell", "solidity",
-            "dockerfile", "docker", "yaml", "yml", "json", "xml", "markdown", "md", "makefile"
+            "rust", "php", "ruby", "kotlin", "swift", "scala", "dart", "groovy", "lua", "perl",
+            "elixir", "clojure", "haskell", "solidity", "r", "matlab", "cobol", "fortran",
+            "assembly", "asm", "vhdl",
+            // Web
+            "html", "css", "scss", "less", "graphql",
+            // Data / Query
+            "sql", "nosql",
+            // DevOps / Config / IaC
+            "shell", "bash", "sh", "zsh", "powershell", "dockerfile", "docker",
+            "yaml", "yml", "json", "xml", "makefile", "terraform", "hcl", "bicep", "nix",
+            // Markup / Schema
+            "markdown", "md", "protobuf", "toml"
     );
 
     public static boolean isProgrammingLanguage(String name) {

@@ -74,4 +74,10 @@ DO NOT wrap in ```json fences. Return RAW JSON ONLY.
    - If only year/month is given: "2022-09" -> "2022-09-01". If only year: "2020" -> "2020-01-01".
    - If current role: `isCurrent: true`, `endDate: null`.
 
+ARRAY FIELDS RULE: For all array fields (skills, experience, education, languages,
+projects, detectedTechnologies, githubOrganizations): ALWAYS return an array.
+Use [] (empty array) when the section is absent or empty.
+NEVER return null for array fields. NEVER omit an array key from the output.
+NEVER return {} instead of [].
+
 Return ONLY the raw JSON object.

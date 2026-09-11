@@ -174,8 +174,9 @@ public class AiAnalysisService {
         }
 
         String maskedProfileJson = piiMasker.mask(currentProfileJson);
+        String maskedGithubJson = piiMasker.mask(githubSnapshotJson != null ? githubSnapshotJson : "{}");
         String finalPrompt = "CURRENT PROFILE JSON (CONTAINS ONBOARDING DATA):\n" + maskedProfileJson + "\n\n" +
-                             "GITHUB SNAPSHOT JSON:\n" + (githubSnapshotJson != null ? githubSnapshotJson : "{}");
+                             "GITHUB SNAPSHOT JSON:\n" + maskedGithubJson;
 
         try {
             String jsonResponse = llmProvider.structuredCompletion(systemPrompt, finalPrompt);
