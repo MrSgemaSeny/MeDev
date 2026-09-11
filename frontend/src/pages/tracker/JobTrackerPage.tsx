@@ -116,9 +116,9 @@ export const JobTrackerPage = () => {
 
   if (isLoading) {
     return (
-      <div className="flex h-full items-center justify-center bg-[#0D0D0D]">
-        <div className="flex flex-col items-center gap-2 text-[#94A3B8] text-sm">
-          <span className="inline-block w-6 h-6 border-2 border-[#2A2A2A] border-t-[#22C55E] rounded-full animate-spin" />
+      <div className="flex h-full items-center justify-center bg-[var(--color-bg-inset)]">
+        <div className="flex flex-col items-center gap-2 text-secondary text-sm">
+          <span className="inline-block w-6 h-6 border-2 border-[var(--color-border-default)] border-t-[var(--color-accent)] rounded-full animate-spin" />
           <span>Загрузка...</span>
         </div>
       </div>
@@ -126,15 +126,15 @@ export const JobTrackerPage = () => {
   }
 
   return (
-    <div className="flex flex-col h-full bg-[#0D0D0D] min-w-0 overflow-hidden font-sans">
+    <div className="flex flex-col h-full bg-[var(--color-bg-inset)] min-w-0 overflow-hidden font-sans">
       {/* Top Header */}
-      <header className="px-4 py-3.5 sm:px-6 border-b border-[#2A2A2A] bg-[#111111] shrink-0 flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <header className="px-4 py-3.5 sm:px-6 border-b border-[var(--color-border-default)] bg-[var(--color-bg-primary)] shrink-0 flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <h1 className="text-base sm:text-lg font-semibold text-[#F1F5F9] tracking-tight">
+          <h1 className="text-base sm:text-lg font-semibold text-primary tracking-tight">
             Отслеживание вакансий
           </h1>
           {applications.length > 0 && (
-            <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-[#1A1A1A] text-[#94A3B8] border border-[#2A2A2A] font-medium">
+            <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-[var(--color-bg-secondary)] text-secondary border border-[var(--color-border-default)] font-medium">
               {stats.total}
             </span>
           )}
@@ -145,18 +145,18 @@ export const JobTrackerPage = () => {
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             {/* Search Box */}
             <div className="relative flex-1 sm:w-60">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#94A3B8]" />
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary" />
               <input 
                 type="text" 
                 placeholder="Поиск по компании или роли..." 
-                className="w-full pl-8 pr-7 py-1.5 text-xs bg-[#1A1A1A] border border-[#2A2A2A] rounded-[6px] focus:border-[#22C55E] outline-none transition-all text-[#F1F5F9] placeholder-[#94A3B8]"
+                className="w-full pl-8 pr-7 py-1.5 text-xs bg-[var(--color-bg-secondary)] border border-[var(--color-border-default)] rounded-[6px] focus:border-[var(--color-accent)] outline-none transition-all text-primary placeholder:text-secondary"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
               />
               {search && (
                 <button 
                   onClick={() => setSearch('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-[#F1F5F9]"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-secondary hover:text-primary"
                 >
                   <X size={12} />
                 </button>
@@ -164,13 +164,13 @@ export const JobTrackerPage = () => {
             </div>
 
             {/* View Mode Switcher */}
-            <div className="flex items-center border border-[#2A2A2A] rounded-[6px] bg-[#1A1A1A] p-0.5">
+            <div className="flex items-center border border-[var(--color-border-default)] rounded-[6px] bg-[var(--color-bg-secondary)] p-0.5">
               <button 
                 onClick={() => setViewMode('kanban')} 
                 className={`flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-[4px] transition-colors ${
                   viewMode === 'kanban' 
-                    ? 'bg-[#2A2A2A] text-[#F1F5F9] font-medium' 
-                    : 'text-[#94A3B8] hover:text-[#F1F5F9]'
+                    ? 'bg-[var(--color-bg-tertiary)] text-primary font-medium' 
+                    : 'text-secondary hover:text-primary'
                 }`}
                 title="Канбан-доска"
               >
@@ -181,8 +181,8 @@ export const JobTrackerPage = () => {
                 onClick={() => setViewMode('list')} 
                 className={`flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-[4px] transition-colors ${
                   viewMode === 'list' 
-                    ? 'bg-[#2A2A2A] text-[#F1F5F9] font-medium' 
-                    : 'text-[#94A3B8] hover:text-[#F1F5F9]'
+                    ? 'bg-[var(--color-bg-tertiary)] text-primary font-medium' 
+                    : 'text-secondary hover:text-primary'
                 }`}
                 title="Список"
               >
@@ -194,7 +194,7 @@ export const JobTrackerPage = () => {
             {/* Add Application Button */}
             <button 
               type="button"
-              className="flex items-center justify-center gap-1.5 py-1.5 px-3.5 text-xs font-semibold rounded-[6px] bg-[#22C55E] text-[#000000] hover:bg-[#1ea750] transition-colors cursor-pointer" 
+              className="flex items-center justify-center gap-1.5 py-1.5 px-3.5 text-xs font-semibold rounded-[6px] bg-[var(--color-accent)] text-white hover:bg-[var(--color-accent-hover)] transition-colors cursor-pointer" 
               onClick={() => setIsModalOpen(true)}
             >
               <Plus size={14} />
@@ -206,13 +206,13 @@ export const JobTrackerPage = () => {
 
       {/* Segmented Status Tabs - Visible only when applications exist */}
       {applications.length > 0 && (
-        <nav className="px-4 sm:px-6 bg-[#111111] border-b border-[#2A2A2A] flex items-center gap-1 sm:gap-2 overflow-x-auto shrink-0 text-xs py-1">
+        <nav className="px-4 sm:px-6 bg-[var(--color-bg-secondary)] border-b border-[var(--color-border-default)] flex items-center gap-1 sm:gap-2 overflow-x-auto shrink-0 text-xs py-1">
           <button 
             onClick={() => setStatusFilter('ALL')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] transition-colors shrink-0 font-medium ${
               statusFilter === 'ALL'
-                ? 'bg-[#1A1A1A] text-[#F1F5F9] border border-[#2A2A2A]'
-                : 'text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#1A1A1A]/50'
+                ? 'bg-[var(--color-bg-tertiary)] text-primary border border-[var(--color-border-default)]'
+                : 'text-secondary hover:text-primary hover:bg-[var(--color-bg-tertiary)]'
             }`}
           >
             <span>Все</span>
@@ -223,8 +223,8 @@ export const JobTrackerPage = () => {
             onClick={() => setStatusFilter('WISHLIST')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] transition-colors shrink-0 font-medium ${
               statusFilter === 'WISHLIST'
-                ? 'bg-[#1A1A1A] text-[#F1F5F9] border border-[#2A2A2A]'
-                : 'text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#1A1A1A]/50'
+                ? 'bg-[var(--color-bg-tertiary)] text-primary border border-[var(--color-border-default)]'
+                : 'text-secondary hover:text-primary hover:bg-[var(--color-bg-tertiary)]'
             }`}
           >
             <span>В планах</span>
@@ -235,8 +235,8 @@ export const JobTrackerPage = () => {
             onClick={() => setStatusFilter('APPLIED')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] transition-colors shrink-0 font-medium ${
               statusFilter === 'APPLIED'
-                ? 'bg-[#1A1A1A] text-[#F1F5F9] border border-[#2A2A2A]'
-                : 'text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#1A1A1A]/50'
+                ? 'bg-[var(--color-bg-tertiary)] text-primary border border-[var(--color-border-default)]'
+                : 'text-secondary hover:text-primary hover:bg-[var(--color-bg-tertiary)]'
             }`}
           >
             <span>Отправлено</span>
@@ -247,8 +247,8 @@ export const JobTrackerPage = () => {
             onClick={() => setStatusFilter('INTERVIEW')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] transition-colors shrink-0 font-medium ${
               statusFilter === 'INTERVIEW'
-                ? 'bg-[#1A1A1A] text-[#F1F5F9] border border-[#2A2A2A]'
-                : 'text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#1A1A1A]/50'
+                ? 'bg-[var(--color-bg-tertiary)] text-primary border border-[var(--color-border-default)]'
+                : 'text-secondary hover:text-primary hover:bg-[var(--color-bg-tertiary)]'
             }`}
           >
             <span>Собеседование</span>
@@ -259,8 +259,8 @@ export const JobTrackerPage = () => {
             onClick={() => setStatusFilter('OFFER')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] transition-colors shrink-0 font-medium ${
               statusFilter === 'OFFER'
-                ? 'bg-[#1A1A1A] text-[#F1F5F9] border border-[#2A2A2A]'
-                : 'text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#1A1A1A]/50'
+                ? 'bg-[var(--color-bg-tertiary)] text-primary border border-[var(--color-border-default)]'
+                : 'text-secondary hover:text-primary hover:bg-[var(--color-bg-tertiary)]'
             }`}
           >
             <span>Оффер</span>
@@ -271,8 +271,8 @@ export const JobTrackerPage = () => {
             onClick={() => setStatusFilter('REJECTED')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] transition-colors shrink-0 font-medium ${
               statusFilter === 'REJECTED'
-                ? 'bg-[#1A1A1A] text-[#F1F5F9] border border-[#2A2A2A]'
-                : 'text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#1A1A1A]/50'
+                ? 'bg-[var(--color-bg-tertiary)] text-primary border border-[var(--color-border-default)]'
+                : 'text-secondary hover:text-primary hover:bg-[var(--color-bg-tertiary)]'
             }`}
           >
             <span>Отказ</span>
@@ -284,15 +284,15 @@ export const JobTrackerPage = () => {
       {/* Main Workspace Area */}
       {applications.length === 0 ? (
         /* СОСТОЯНИЕ 1 — EMPTY STATE (нет откликов) */
-        <div className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-[#0D0D0D]">
+        <div className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-[var(--color-bg-inset)]">
           <div className="w-full max-w-[540px] flex flex-col items-center">
             {/* Заголовок */}
-            <h2 className="text-2xl sm:text-3xl font-semibold text-[#F1F5F9] tracking-tight mb-3">
+            <h2 className="text-2xl sm:text-3xl font-semibold text-primary tracking-tight mb-3">
               Добавьте первую вакансию
             </h2>
 
             {/* Подзаголовок */}
-            <p className="text-sm sm:text-base text-[#94A3B8] max-w-[480px] text-center leading-relaxed mb-8">
+            <p className="text-sm sm:text-base text-secondary max-w-[480px] text-center leading-relaxed mb-8">
               Вставьте ссылку с hh.kz или LinkedIn — мы автоматически извлечём роль, компанию, требования и зарплату
             </p>
 
@@ -302,14 +302,14 @@ export const JobTrackerPage = () => {
                 <input 
                   type="url"
                   placeholder="https://hh.kz/vacancy/... или LinkedIn URL"
-                  className="flex-1 bg-[#1A1A1A] border border-[#2A2A2A] rounded-[6px] px-4 py-3 text-sm text-[#F1F5F9] placeholder-[#94A3B8] focus:border-[#22C55E] focus:outline-none transition-colors"
+                  className="flex-1 bg-[var(--color-bg-primary)] border border-[var(--color-border-default)] rounded-[6px] px-4 py-3 text-sm text-primary placeholder:text-secondary focus:border-[var(--color-accent)] focus:outline-none transition-colors"
                   value={quickUrl}
                   onChange={e => setQuickUrl(e.target.value)}
                 />
                 <button 
                   type="submit" 
                   disabled={scrapeJob.isPending || !quickUrl.trim()}
-                  className="h-11 sm:h-auto px-6 py-3 bg-[#22C55E] text-[#000000] font-semibold text-sm rounded-[6px] hover:bg-[#1ea750] transition-colors disabled:opacity-50 shrink-0 cursor-pointer"
+                  className="h-11 sm:h-auto px-6 py-3 bg-[var(--color-accent)] text-white font-semibold text-sm rounded-[6px] hover:bg-[var(--color-accent-hover)] transition-colors disabled:opacity-50 shrink-0 cursor-pointer"
                 >
                   {scrapeJob.isPending ? 'Импортирование...' : 'Импортировать'}
                 </button>
@@ -320,7 +320,7 @@ export const JobTrackerPage = () => {
             <button
               type="button"
               onClick={() => setIsModalOpen(true)}
-              className="text-[#94A3B8] hover:underline text-sm transition-colors cursor-pointer"
+              className="text-secondary hover:text-primary hover:underline text-sm transition-colors cursor-pointer"
             >
               или заполнить вручную →
             </button>
@@ -328,17 +328,17 @@ export const JobTrackerPage = () => {
         </div>
       ) : filteredApps.length === 0 ? (
         /* Filter/Search Zero Results */
-        <div className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-[#0D0D0D]">
-          <Search size={32} className="text-[#94A3B8] mb-3" />
-          <h3 className="text-base font-semibold text-[#F1F5F9] mb-1">
+        <div className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-[var(--color-bg-inset)]">
+          <Search size={32} className="text-secondary mb-3" />
+          <h3 className="text-base font-semibold text-primary mb-1">
             Вакансии не найдены
           </h3>
-          <p className="text-[#94A3B8] text-xs max-w-sm mb-4">
+          <p className="text-secondary text-xs max-w-sm mb-4">
             Попробуйте сбросить поисковый запрос или выбрать другой статус.
           </p>
           <button 
             type="button"
-            className="text-xs px-4 py-2 rounded-[6px] border border-[#2A2A2A] text-[#F1F5F9] hover:bg-[#1A1A1A] transition-colors" 
+            className="text-xs px-4 py-2 rounded-[6px] border border-[var(--color-border-default)] text-primary hover:bg-[var(--color-bg-secondary)] transition-colors" 
             onClick={() => { setSearch(''); setStatusFilter('ALL'); }}
           >
             Сбросить фильтры
@@ -346,7 +346,7 @@ export const JobTrackerPage = () => {
         </div>
       ) : viewMode === 'kanban' ? (
         /* СОСТОЯНИЕ 2 — КАНБАН (есть данные) */
-        <div className="flex-1 min-h-0 min-w-0 overflow-hidden bg-[#0D0D0D]">
+        <div className="flex-1 min-h-0 min-w-0 overflow-hidden bg-[var(--color-bg-inset)]">
           <KanbanBoard 
             applications={filteredApps} 
             onStatusChange={(id, status) => updateApp.mutate({ id, payload: { status } })}
@@ -357,41 +357,41 @@ export const JobTrackerPage = () => {
         </div>
       ) : (
         /* Список (List View) */
-        <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-[#0D0D0D]">
-          <div className="border border-[#2A2A2A] rounded-[8px] bg-[#111111] overflow-hidden divide-y divide-[#2A2A2A]">
+        <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-[var(--color-bg-inset)]">
+          <div className="border border-[var(--color-border-default)] rounded-[8px] bg-[var(--color-bg-primary)] overflow-hidden divide-y divide-[var(--color-border-default)]">
             {filteredApps.map(app => {
               const statusCfg = STATUS_CONFIG[app.status];
               return (
-                <div key={app.id} className="p-4 hover:bg-[#1A1A1A] transition-colors group flex items-start sm:items-center justify-between gap-4">
+                <div key={app.id} className="p-4 hover:bg-[var(--color-bg-secondary)] transition-colors group flex items-start sm:items-center justify-between gap-4">
                   {/* Left: Role / Company */}
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h3 className="text-sm font-semibold text-[#F1F5F9] truncate">{app.role}</h3>
-                      <span className="text-[#94A3B8] text-xs">в</span>
-                      <span className="text-sm font-medium text-[#94A3B8] truncate">{app.companyName}</span>
+                      <h3 className="text-sm font-semibold text-primary truncate">{app.role}</h3>
+                      <span className="text-secondary text-xs">в</span>
+                      <span className="text-sm font-medium text-secondary truncate">{app.companyName}</span>
                       
-                      <span className="text-[11px] px-2 py-0.5 rounded-[4px] bg-[#1A1A1A] text-[#94A3B8] border border-[#2A2A2A] shrink-0">
+                      <span className="text-[11px] px-2 py-0.5 rounded-[4px] bg-[var(--color-bg-secondary)] text-secondary border border-[var(--color-border-default)] shrink-0">
                         {statusCfg.label}
                       </span>
                       {app.matchScore != null && (
-                        <span className="text-[11px] px-2 py-0.5 rounded-[4px] bg-[#22C55E]/15 text-[#22C55E] font-medium shrink-0">
+                        <span className="text-[11px] px-2 py-0.5 rounded-[4px] bg-[var(--color-accent-muted)] text-[var(--color-accent)] font-medium shrink-0">
                           {app.matchScore}% Match
                         </span>
                       )}
                     </div>
                     
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#94A3B8] mt-1.5">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-secondary mt-1.5">
                       {app.location && (
                         <span className="flex items-center gap-1">
                           <MapPin size={12} /> {app.location}
                         </span>
                       )}
                       {app.salaryRange && (
-                        <span className="flex items-center gap-0.5 font-mono text-[#94A3B8]">
+                        <span className="flex items-center gap-0.5 font-mono text-secondary">
                           <DollarSign size={12} /> {app.salaryRange}
                         </span>
                       )}
-                      <span className="flex items-center gap-1 font-mono text-[#94A3B8] text-[11px]">
+                      <span className="flex items-center gap-1 font-mono text-secondary text-[11px]">
                         <Calendar size={12} /> {app.appliedDate || 'No date'}
                       </span>
                     </div>
@@ -404,7 +404,7 @@ export const JobTrackerPage = () => {
                         href={app.jobUrl} 
                         target="_blank" 
                         rel="noreferrer" 
-                        className="p-1.5 text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#2A2A2A] rounded-[6px] transition-colors" 
+                        className="p-1.5 text-secondary hover:text-primary hover:bg-[var(--color-bg-tertiary)] rounded-[6px] transition-colors" 
                         title="Ссылка на вакансию"
                         aria-label="Ссылка на вакансию"
                       >
@@ -413,7 +413,7 @@ export const JobTrackerPage = () => {
                     )}
                     <button 
                       onClick={() => setTailorModalApp(app)} 
-                      className="p-1.5 text-[#94A3B8] hover:text-[#22C55E] hover:bg-[#2A2A2A] rounded-[6px] transition-colors" 
+                      className="p-1.5 text-secondary hover:text-[var(--color-accent)] hover:bg-[var(--color-bg-tertiary)] rounded-[6px] transition-colors" 
                       title="AI Адаптация"
                       aria-label="AI Адаптация"
                     >
@@ -421,7 +421,7 @@ export const JobTrackerPage = () => {
                     </button>
                     <button 
                       onClick={() => setCoverLetterModalApp(app)} 
-                      className="p-1.5 text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#2A2A2A] rounded-[6px] transition-colors" 
+                      className="p-1.5 text-secondary hover:text-primary hover:bg-[var(--color-bg-tertiary)] rounded-[6px] transition-colors" 
                       title="Cover Letter"
                       aria-label="Cover Letter"
                     >
@@ -429,7 +429,7 @@ export const JobTrackerPage = () => {
                     </button>
                     <button 
                       onClick={() => deleteApp.mutate(app.id)} 
-                      className="p-1.5 text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#2A2A2A] rounded-[6px] transition-colors" 
+                      className="p-1.5 text-secondary hover:text-primary hover:bg-[var(--color-bg-tertiary)] rounded-[6px] transition-colors" 
                       title="Удалить"
                       aria-label="Удалить"
                     >

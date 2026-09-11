@@ -91,13 +91,13 @@ const KanbanColumn: React.FC<KanbanColumnProps> = React.memo(({ status, applicat
   const title = t(`tracker.status.${status.toLowerCase()}`, COLUMN_TITLES[status]);
 
   return (
-    <div className="flex-1 min-w-[240px] flex flex-col bg-[#111111] border border-[#2A2A2A] rounded-[8px] overflow-hidden h-full max-h-full">
+    <div className="flex-1 min-w-[240px] flex flex-col bg-[var(--color-bg-secondary)] border border-[var(--color-border-default)] rounded-[8px] overflow-hidden h-full max-h-full">
       {/* Column Header */}
-      <div className="px-4 py-3 border-b border-[#2A2A2A] flex items-center justify-between bg-[#161616]">
-        <h3 className="text-[#F1F5F9] font-semibold text-sm tracking-tight">
+      <div className="px-4 py-3 border-b border-[var(--color-border-default)] flex items-center justify-between bg-[var(--color-bg-tertiary)]">
+        <h3 className="text-primary font-semibold text-sm tracking-tight">
           {title}
         </h3>
-        <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-[#1A1A1A] text-[#94A3B8] border border-[#2A2A2A] font-medium">
+        <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-[var(--color-bg-secondary)] text-secondary border border-[var(--color-border-default)] font-medium">
           {applications.length}
         </span>
       </div>
@@ -106,7 +106,7 @@ const KanbanColumn: React.FC<KanbanColumnProps> = React.memo(({ status, applicat
       <div 
         ref={setNodeRef} 
         className={`flex-1 p-3 overflow-y-auto flex flex-col gap-3 transition-colors min-h-0 ${
-          isOver ? 'bg-[#1A1A1A]/70 ring-1 ring-[#22C55E] ring-inset' : 'bg-[#0D0D0D]'
+          isOver ? 'bg-[var(--color-bg-secondary)]/70 ring-1 ring-[var(--color-accent)] ring-inset' : 'bg-[var(--color-bg-inset)]'
         }`}
       >
         {applications.map(app => (
@@ -120,7 +120,7 @@ const KanbanColumn: React.FC<KanbanColumnProps> = React.memo(({ status, applicat
         ))}
 
         {applications.length === 0 && (
-          <div className="h-28 border border-dashed border-[#2A2A2A] rounded-[8px] flex flex-col items-center justify-center text-center p-3 text-[#94A3B8] text-xs">
+          <div className="h-28 border border-dashed border-[var(--color-border-default)] rounded-[8px] flex flex-col items-center justify-center text-center p-3 text-secondary text-xs">
             <span>{t('tracker.emptyColumn', 'Нет вакансий')}</span>
           </div>
         )}
@@ -149,7 +149,7 @@ const KanbanCard: React.FC<KanbanCardProps> = React.memo(({ app, isOverlay, onTa
       <div 
         ref={setNodeRef} 
         style={style} 
-        className="bg-[#1A1A1A]/40 border-2 border-dashed border-[#22C55E] rounded-[8px] h-28 opacity-60" 
+        className="bg-[var(--color-bg-secondary)]/50 border-2 border-dashed border-[var(--color-accent)] rounded-[8px] h-28 opacity-60" 
       />
     );
   }
@@ -160,19 +160,19 @@ const KanbanCard: React.FC<KanbanCardProps> = React.memo(({ app, isOverlay, onTa
       style={style}
       {...listeners}
       {...attributes}
-      className={`bg-[#1A1A1A] border border-[#2A2A2A] rounded-[8px] p-4 shadow-sm cursor-grab active:cursor-grabbing select-none transition-all duration-150 flex flex-col ${
+      className={`bg-[var(--color-bg-primary)] border border-[var(--color-border-default)] rounded-[8px] p-4 shadow-sm cursor-grab active:cursor-grabbing select-none transition-all duration-150 flex flex-col ${
         isOverlay 
-          ? 'rotate-1 scale-105 shadow-2xl ring-2 ring-[#22C55E] z-50 bg-[#222222]' 
-          : 'hover:border-[#3A3A3A]'
+          ? 'rotate-1 scale-105 shadow-2xl ring-2 ring-[var(--color-accent)] z-50 bg-[var(--color-bg-secondary)]' 
+          : 'hover:border-[var(--color-border-muted)]'
       }`}
     >
       {/* Role Title */}
-      <h4 className="font-semibold text-[15px] text-[#F1F5F9] leading-snug mb-1">
+      <h4 className="font-semibold text-[15px] text-primary leading-snug mb-1">
         {app.role}
       </h4>
 
       {/* Company + Location */}
-      <p className="text-[13px] text-[#94A3B8] mb-3">
+      <p className="text-[13px] text-secondary mb-3">
         {app.companyName}{app.location ? ` • ${app.location}` : ''}
       </p>
 
@@ -180,12 +180,12 @@ const KanbanCard: React.FC<KanbanCardProps> = React.memo(({ app, isOverlay, onTa
       {(app.matchScore != null || app.salaryRange) && (
         <div className="flex flex-wrap items-center gap-2 mb-3">
           {app.matchScore != null && (
-            <span className="text-xs font-medium px-2 py-0.5 rounded bg-[#22C55E]/15 text-[#22C55E]">
+            <span className="text-xs font-medium px-2 py-0.5 rounded bg-[var(--color-accent-muted)] text-[var(--color-accent)]">
               {app.matchScore}% Match
             </span>
           )}
           {app.salaryRange && (
-            <span className="text-[13px] text-[#94A3B8] font-mono">
+            <span className="text-[13px] text-secondary font-mono">
               {app.salaryRange}
             </span>
           )}
@@ -193,8 +193,8 @@ const KanbanCard: React.FC<KanbanCardProps> = React.memo(({ app, isOverlay, onTa
       )}
       
       {/* Footer: Date & Action buttons */}
-      <div className="flex items-center justify-between pt-2.5 border-t border-[#2A2A2A] mt-auto">
-        <span className="text-[12px] text-[#94A3B8]">
+      <div className="flex items-center justify-between pt-2.5 border-t border-[var(--color-border-default)] mt-auto">
+        <span className="text-[12px] text-secondary">
           {app.appliedDate || 'No date'}
         </span>
 
@@ -205,7 +205,7 @@ const KanbanCard: React.FC<KanbanCardProps> = React.memo(({ app, isOverlay, onTa
                 href={sanitizeUrl(app.jobUrl)} 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="p-1.5 text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#2A2A2A] rounded-[6px] transition-colors" 
+                className="p-1.5 text-secondary hover:text-primary hover:bg-[var(--color-bg-tertiary)] rounded-[6px] transition-colors" 
                 title="Ссылка на вакансию"
                 aria-label="Ссылка на вакансию"
               >
@@ -216,7 +216,7 @@ const KanbanCard: React.FC<KanbanCardProps> = React.memo(({ app, isOverlay, onTa
               <button 
                 onClick={onTailor} 
                 aria-label="AI Адаптация"
-                className="p-1.5 text-[#94A3B8] hover:text-[#22C55E] hover:bg-[#2A2A2A] rounded-[6px] transition-colors" 
+                className="p-1.5 text-secondary hover:text-[var(--color-accent)] hover:bg-[var(--color-bg-tertiary)] rounded-[6px] transition-colors" 
                 title="AI Адаптация"
               >
                 <Sparkles size={14} aria-hidden="true" />
@@ -226,7 +226,7 @@ const KanbanCard: React.FC<KanbanCardProps> = React.memo(({ app, isOverlay, onTa
               <button 
                 onClick={onCoverLetter} 
                 aria-label="Cover Letter"
-                className="p-1.5 text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#2A2A2A] rounded-[6px] transition-colors" 
+                className="p-1.5 text-secondary hover:text-primary hover:bg-[var(--color-bg-tertiary)] rounded-[6px] transition-colors" 
                 title="Cover Letter"
               >
                 <Wand2 size={14} aria-hidden="true" />
@@ -236,7 +236,7 @@ const KanbanCard: React.FC<KanbanCardProps> = React.memo(({ app, isOverlay, onTa
               <button 
                 onClick={onDelete} 
                 aria-label="Удалить вакансию"
-                className="p-1.5 text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[#2A2A2A] rounded-[6px] transition-colors" 
+                className="p-1.5 text-secondary hover:text-primary hover:bg-[var(--color-bg-tertiary)] rounded-[6px] transition-colors" 
                 title="Удалить"
               >
                 <Trash2 size={14} aria-hidden="true" />
