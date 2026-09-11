@@ -6,7 +6,7 @@ import { useDroppable, useDraggable } from '@dnd-kit/core';
 import type { JobApplicationDto, ApplicationStatus } from '../../../entities/job-tracker/model/types';
 import { Badge } from '../../../shared/ui/Form';
 import { sanitizeUrl } from '../../../shared/lib/utils';
-import { Target, TrendingUp, CheckCircle2, XCircle, Clock, ExternalLink, Wand2, Trash2 } from 'lucide-react';
+import { Target, TrendingUp, CheckCircle2, XCircle, Clock, ExternalLink, Wand2, Trash2, Sparkles } from 'lucide-react';
 
 const STATUS_CONFIG: Record<ApplicationStatus, { label: string; tone: 'default' | 'accent' | 'danger', icon: any }> = {
   WISHLIST: { label: 'Wishlist', tone: 'default', icon: Clock },
@@ -21,11 +21,13 @@ const COLUMNS: ApplicationStatus[] = ['WISHLIST', 'APPLIED', 'INTERVIEW', 'OFFER
 interface KanbanBoardProps {
   applications: JobApplicationDto[];
   onStatusChange: (id: number, newStatus: ApplicationStatus) => void;
+  onTailor: (app: JobApplicationDto) => void;
   onCoverLetter: (app: JobApplicationDto) => void;
   onDelete: (id: number) => void;
 }
 
-export const KanbanBoard: React.FC<KanbanBoardProps> = ({ applications, onStatusChange, onCoverLetter, onDelete }) => {
+export const KanbanBoard: React.FC<KanbanBoardProps> = ({ applications, onStatusChange, onTailor, onCoverLetter, onDelete }) => {
+
   const [activeId, setActiveId] = React.useState<number | null>(null);
 
   const sensors = useSensors(
@@ -64,6 +66,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ applications, onStatus
             key={status} 
             status={status} 
             applications={applications.filter(a => a.status === status)}
+            onTailor={onTailor}
             onCoverLetter={onCoverLetter}
             onDelete={onDelete}
           />
@@ -79,11 +82,12 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({ applications, onStatus
 interface KanbanColumnProps {
   status: ApplicationStatus;
   applications: JobApplicationDto[];
+  onTailor: (app: JobApplicationDto) => void;
   onCoverLetter: (app: JobApplicationDto) => void;
   onDelete: (id: number) => void;
 }
 
-const KanbanColumn: React.FC<KanbanColumnProps> = React.memo(({ status, applications, onCoverLetter, onDelete }) => {
+const KanbanColumn: React.FC<KanbanColumnProps> = React.memo(({ status, applications, onTailor, onCoverLetter, onDelete }) => {
   const { t } = useTranslation();
   const { setNodeRef, isOver } = useDroppable({ id: status });
   const config = STATUS_CONFIG[status];
@@ -103,7 +107,13 @@ const KanbanColumn: React.FC<KanbanColumnProps> = React.memo(({ status, applicat
         className={`flex-1 p-3 overflow-y-auto flex flex-col gap-3 transition-colors ${isOver ? 'bg-[var(--color-bg-secondary)]' : 'bg-[var(--color-bg-inset)]'}`}
       >
         {applications.map(app => (
-          <KanbanCard key={app.id} app={app} onCoverLetter={() => onCoverLetter(app)} onDelete={() => onDelete(app.id)} />
+          <KanbanCard 
+            key={app.id} 
+            app={app} 
+            onTailor={() => onTailor(app)} 
+            onCoverLetter={() => onCoverLetter(app)} 
+            onDelete={() => onDelete(app.id)} 
+          />
         ))}
       </div>
     </div>
@@ -113,11 +123,13 @@ const KanbanColumn: React.FC<KanbanColumnProps> = React.memo(({ status, applicat
 interface KanbanCardProps {
   app: JobApplicationDto;
   isOverlay?: boolean;
+  onTailor?: () => void;
   onCoverLetter?: () => void;
   onDelete?: () => void;
 }
 
-const KanbanCard: React.FC<KanbanCardProps> = React.memo(({ app, isOverlay, onCoverLetter, onDelete }) => {
+const KanbanCard: React.FC<KanbanCardProps> = React.memo(({ app, isOverlay, onTailor, onCoverLetter, onDelete }) => {
+
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: app.id });
 
   const style = transform ? {
@@ -162,6 +174,16 @@ const KanbanCard: React.FC<KanbanCardProps> = React.memo(({ app, isOverlay, onCo
               <a href={sanitizeUrl(app.jobUrl)} target="_blank" rel="noopener noreferrer" className="p-1 min-w-[44px] min-h-[44px] flex items-center justify-center text-secondary hover:text-[var(--color-accent)] rounded" title="View Job Post">
                 <ExternalLink size={14} />
               </a>
+            )}
+            {onTailor && (
+              <button 
+                onClick={onTailor} 
+                aria-label="AI Resume Tailoring"
+                className="p-1 min-w-[44px] min-h-[44px] flex items-center justify-center text-secondary hover:text-[var(--color-accent)] rounded focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none" 
+                title="AI Resume Tailoring"
+              >
+                <Sparkles size={14} aria-hidden="true" />
+              </button>
             )}
             {onCoverLetter && (
               <button 

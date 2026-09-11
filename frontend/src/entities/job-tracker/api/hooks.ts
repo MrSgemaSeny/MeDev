@@ -1,6 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../../shared/api/api';
-import type { JobApplicationDto, CreateJobApplicationRequest, UpdateJobApplicationRequest } from '../../job-tracker/model/types';
+import type { 
+  JobApplicationDto, 
+  CreateJobApplicationRequest, 
+  UpdateJobApplicationRequest,
+  AiTailorRequest,
+  AiTailorResponse,
+  AiMatchResponse,
+  AiApplicationResponse
+} from '../../job-tracker/model/types';
 
 const QUERY_KEY = ['job-applications'];
 
@@ -48,9 +56,18 @@ export const useDeleteJobApplication = () => {
 
 export const useGenerateCoverLetter = () => {
   return useMutation({
-    mutationFn: async ({ jobDescription, targetRole }: { jobDescription: string; targetRole: string }) => {
-      const { data } = await api.post('/ai/cover-letter', { jobDescription, targetRole });
-      return data; // { coverLetter: string }
+    mutationFn: async ({ jobDescription, targetRole }: { jobDescription: string; targetRole?: string }) => {
+      const { data } = await api.post<AiApplicationResponse>('/ai/cover-letter', { jobDescription, targetRole });
+      return data;
+    },
+  });
+};
+
+export const useTailorResume = () => {
+  return useMutation({
+    mutationFn: async ({ jobDescription, targetRole }: AiTailorRequest) => {
+      const { data } = await api.post<AiTailorResponse>('/ai/tailor', { jobDescription, targetRole });
+      return data;
     },
   });
 };
@@ -67,8 +84,9 @@ export const useScrapeJob = () => {
 export const useMatchJob = () => {
   return useMutation({
     mutationFn: async (jobDescription: string) => {
-      const { data } = await api.post('/ai/match-job', { jobDescription });
-      return data as { score: number; feedback: string };
+      const { data } = await api.post<AiMatchResponse>('/ai/match-job', { jobDescription });
+      return data;
     },
   });
 };
+

@@ -18,3 +18,26 @@ export interface JobApplicationDto {
 
 export type CreateJobApplicationRequest = Omit<JobApplicationDto, 'id' | 'updatedAt'>;
 export type UpdateJobApplicationRequest = Partial<CreateJobApplicationRequest>;
+
+export interface AiTailorRequest {
+  jobDescription: string;
+  targetRole?: string;
+}
+
+export interface AiApplicationResponse {
+  content: string;
+  coverLetter?: string;
+  suggestions?: string;
+}
+
+export type AiTailorResponse = AiApplicationResponse;
+
+export interface AiMatchRequest {
+  jobDescription: string;
+}
+
+export interface AiMatchResponse {
+  score: number;
+  feedback: string;
+}
+

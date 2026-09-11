@@ -70,9 +70,16 @@
     - `languages.level`: исправлено усечение до `VARCHAR(20)` (ранее стояло 50).
     - `profiles`: добавлены усечения `truncate` для всех строковых полей (fullName, headline, location, website, githubUsername, telegram, linkedin).
 
+14. **Job Tracker ↔ AI Resume Tailoring Integration (100% COMPLETE)**:
+    - **Contract-First & API Alignment**: В `AiApplicationResponse` добавлены псевдонимы `coverLetter` и `suggestions` для обратной совместимости по Hyrum's Law.
+    - **Frontend DTOs & Hooks**: Добавлены контракты `AiTailorRequest`, `AiTailorResponse`, `AiMatchRequest`, `AiMatchResponse` и хук `useTailorResume`.
+    - **AiTailorModal**: Новое модальное окно для пошаговой адаптации резюме под требования вакансии с валидацией длины текста, индикацией статуса, копированием и быстрым переходом в конструктор резюме.
+    - **Kanban & List Quick Actions**: В карточки KanbanBoard и строки списка Job Tracker добавлены кнопки быстрого вызова адаптации резюме (`Sparkles`) с доступностью по WCAG AA.
+    - **Bugfix**: Исправлена автоподстановка распарсенного `jobDescription` в `AiCoverLetterModal`.
+
 ## Verification
 - `backend`: 272/272 тестов успешно пройдены (`./gradlew test`).
-- `frontend`: 53/53 тестов пройдены (`npm test`).
+- `frontend`: 55/55 тестов пройдены (`npm test`).
 - `frontend`: сборка Vite прошла успешно (`npm run build`).
 - `landing`: сборка Next.js 15 прошла без ошибок (`npm run build`).
 
@@ -81,3 +88,4 @@
 - Setting up automated nightly DB backup jobs.
 - Sentry and Prometheus/Grafana monitoring dashboards.
 - **RAG Retrieval:** `VectorizationService` пишет векторы в pgvector при `ProfileUpdatedEvent`. Реализация semantic search: Job Tracker → AI Match по вакансии.
+

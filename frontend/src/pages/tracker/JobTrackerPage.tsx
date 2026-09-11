@@ -2,11 +2,12 @@ import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useJobApplications, useAddJobApplication, useDeleteJobApplication, useUpdateJobApplication, useGenerateCoverLetter, useScrapeJob, useMatchJob } from '../../entities/job-tracker/api/hooks';
 import { KanbanBoard } from '../../features/job-tracker/ui/KanbanBoard';
+import { AiTailorModal } from '../../features/job-tracker/ui/AiTailorModal';
 import type { ApplicationStatus, JobApplicationDto, CreateJobApplicationRequest } from '../../entities/job-tracker/model/types';
 import { Button } from '../../shared/ui/Button';
 import { Input, Label, Badge } from '../../shared/ui/Form';
 import { Modal } from '../../shared/ui/Modal';
-import { Plus, Briefcase, ExternalLink, Calendar, Trash2, Search, Filter, TrendingUp, Target, CheckCircle2, XCircle, Clock, Wand2 } from 'lucide-react';
+import { Plus, Briefcase, ExternalLink, Calendar, Trash2, Search, Filter, TrendingUp, Target, CheckCircle2, XCircle, Clock, Wand2, Sparkles } from 'lucide-react';
 
 const STATUS_CONFIG: Record<ApplicationStatus, { label: string; tone: 'default' | 'accent' | 'danger', icon: any }> = {
   WISHLIST: { label: 'Wishlist', tone: 'default', icon: Clock },
@@ -23,6 +24,8 @@ export const JobTrackerPage = () => {
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [coverLetterModalApp, setCoverLetterModalApp] = useState<JobApplicationDto | null>(null);
+  const [tailorModalApp, setTailorModalApp] = useState<JobApplicationDto | null>(null);
+
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<ApplicationStatus | 'ALL'>('ALL');
   const [viewMode, setViewMode] = useState<'list' | 'kanban'>('kanban');
@@ -132,6 +135,7 @@ export const JobTrackerPage = () => {
               <KanbanBoard 
                 applications={filteredApps} 
                 onStatusChange={(id, status) => updateApp.mutate({ id, payload: { status } })}
+                onTailor={setTailorModalApp}
                 onCoverLetter={setCoverLetterModalApp}
                 onDelete={(id) => deleteApp.mutate(id)}
               />
@@ -202,6 +206,14 @@ export const JobTrackerPage = () => {
                         </a>
                       )}
                       <button 
+                        onClick={() => setTailorModalApp(app)} 
+                        className="min-w-[44px] min-h-[44px] flex items-center justify-center text-secondary hover:text-[var(--color-accent)] hover:bg-[var(--color-bg-tertiary)] rounded-md transition-colors" 
+                        title="AI Resume Tailoring"
+                        aria-label="AI Resume Tailoring"
+                      >
+                        <Sparkles size={16} />
+                      </button>
+                      <button 
                         onClick={() => setCoverLetterModalApp(app)} 
                         className="min-w-[44px] min-h-[44px] flex items-center justify-center text-secondary hover:text-purple-400 hover:bg-purple-500/10 rounded-md transition-colors" 
                         title="AI Cover Letter"
@@ -242,6 +254,13 @@ export const JobTrackerPage = () => {
       </div>
 
       <AddApplicationModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      {tailorModalApp && (
+        <AiTailorModal 
+          app={tailorModalApp} 
+          isOpen={!!tailorModalApp} 
+          onClose={() => setTailorModalApp(null)} 
+        />
+      )}
       {coverLetterModalApp && (
         <AiCoverLetterModal 
           app={coverLetterModalApp} 
@@ -384,17 +403,17 @@ const AddApplicationModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
 };
 
 const AiCoverLetterModal = ({ app, isOpen, onClose }: { app: JobApplicationDto; isOpen: boolean; onClose: () => void }) => {
-  const [jobDescription, setJobDescription] = useState('');
+  const [jobDescription, setJobDescription] = useState(app.jobDescription || '');
   const [coverLetter, setCoverLetter] = useState('');
   const generate = useGenerateCoverLetter();
 
   const handleGenerate = () => {
     if (!jobDescription.trim()) return;
     generate.mutate(
-      { jobDescription, targetRole: app.role },
+      { jobDescription: jobDescription.trim(), targetRole: app.role },
       {
         onSuccess: (data: any) => {
-          setCoverLetter(data.coverLetter);
+          setCoverLetter(data.content || data.coverLetter || '');
         },
         onError: (err: any) => {
           console.error(err);
