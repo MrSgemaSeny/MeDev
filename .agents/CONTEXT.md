@@ -97,6 +97,11 @@
     - **Rate Limiting**: Fixed increment-before-check race condition in `AiRateLimiter.java` preventing parallel-request token leak.
     - **Clean Code**: Eliminated redundant in-memory PDF magic-byte validation in `AiController`.
 
+19. **Job Tracker URL Parsing Upgrade & UI Polish (100% COMPLETE)**:
+    - **Backend (WebScraperService)**: Replaced fragile and blocking Jsoup HTML parsing with Jina AI Reader API (`https://r.jina.ai/`) for bypassing Cloudflare/Authwalls and fetching clean Markdown.
+    - **Backend (WebScraperService)**: Added structured LLM parsing (Groq `LlmProvider` + `ObjectMapper`) to extract accurate `CreateJobApplicationRequest` JSON from the raw Markdown.
+    - **Frontend (JobTrackerPage)**: Redesigned the Empty State from scratch. Added a sleek gradient background, a glowing target icon, and a modern floating input field with a purple/accent shadow for the URL import form. Added confirmation dialogs for profile deletions using `ConfirmDialog`.
+
 ## Verification
 - `backend`: 278+ тестов успешно пройдены (`./gradlew test`).
 - `frontend`: 55/55 тестов пройдены (`npm test`).
@@ -107,7 +112,3 @@
 - **Native Mobile App (Expo)**: Инициализация и разработка нативного приложения MeDev на React Native + Expo.
 - Setting up automated nightly DB backup jobs.
 - Sentry and Prometheus/Grafana monitoring dashboards.
-
-
-
-
