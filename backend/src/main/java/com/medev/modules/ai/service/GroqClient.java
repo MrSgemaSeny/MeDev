@@ -258,20 +258,36 @@ public class GroqClient implements LlmProvider {
         try {
             objectMapper.readTree(cleaned);
             return cleaned;
-        } catch (Exception e) {
-            log.error("[GroqClient] Response is not valid JSON: {}", content);
-            throw new LlmException(Reason.INVALID_RESPONSE, "LLM returned invalid JSON");
+        } catch (Exception primaryEx) {
+            // Secondary attempt: sanitize common LLM artifacts (trailing commas, control chars)
+            try {
+                String sanitized = cleaned
+                        .replaceAll("(?s)<think>.*?</think>", "")
+                        .replaceAll(",\\s*([}\\]])", "$1")
+                        .replaceAll("[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F]", "")
+                        .trim();
+                sanitized = extractJson(sanitized);
+                objectMapper.readTree(sanitized);
+                return sanitized;
+            } catch (Exception secondaryEx) {
+                String preview = content.length() > 300 ? content.substring(0, 300) + "..." : content;
+                log.error("[GroqClient] Response is not valid JSON. Preview: {}", preview, primaryEx);
+                throw new LlmException(Reason.INVALID_RESPONSE, "LLM returned invalid JSON: " + primaryEx.getMessage());
+            }
         }
     }
 
     /**
      * Извлекает чистый JSON-объект или массив из строки LLM ответа,
-     * очищая markdown-блоки (```json ... ```) и разговорный текст/преамбулы.
+     * очищая markdown-блоки (```json ... ```), reasoning теги (<think>) и разговорный текст.
      */
     public static String extractJson(String content) {
         if (content == null) return "{}";
         String trimmed = content.trim();
         if (trimmed.isEmpty()) return "{}";
+
+        // Remove reasoning/thought tags if emitted by reasoning models
+        trimmed = trimmed.replaceAll("(?s)<think>.*?</think>", "").trim();
 
         int firstBackticks = trimmed.indexOf("```");
         if (firstBackticks != -1) {

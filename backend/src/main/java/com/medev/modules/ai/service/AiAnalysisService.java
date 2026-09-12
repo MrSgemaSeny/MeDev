@@ -69,12 +69,22 @@ public class AiAnalysisService {
         String cleaned = GroqClient.extractJson(jsonResponse);
         try {
             return objectMapper.readValue(cleaned, AiParsedResumeDto.class);
-        } catch (Exception e) {
-            String preview = cleaned != null ? cleaned.substring(0, Math.min(cleaned.length(), 300)) : "null";
-            log.error("Failed to parse JSON from AI resume parser. Raw preview: {}", preview, e);
-            throw new LlmException(
-                    LlmException.Reason.INVALID_RESPONSE,
-                    "AI generation returned invalid format: " + e.getMessage(), e);
+        } catch (Exception primaryEx) {
+            try {
+                String sanitized = cleaned
+                        .replaceAll("(?s)<think>.*?</think>", "")
+                        .replaceAll(",\\s*([}\\]])", "$1")
+                        .replaceAll("[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F]", "")
+                        .trim();
+                sanitized = GroqClient.extractJson(sanitized);
+                return objectMapper.readValue(sanitized, AiParsedResumeDto.class);
+            } catch (Exception secondaryEx) {
+                String preview = cleaned != null ? cleaned.substring(0, Math.min(cleaned.length(), 300)) : "null";
+                log.error("Failed to parse JSON from AI resume parser. Raw preview: {}", preview, primaryEx);
+                throw new LlmException(
+                        LlmException.Reason.INVALID_RESPONSE,
+                        "AI generation returned invalid format: " + primaryEx.getMessage(), primaryEx);
+            }
         }
     }
 
