@@ -175,7 +175,7 @@ const InnerResumeBuilder = () => {
   }, [selectedTemplate, isSinglePageMode]);
 
   return (
-    <div className="flex flex-col lg:flex-row h-full surface-inset text-primary overflow-y-auto lg:overflow-hidden font-sans">
+    <div className="flex flex-col lg:flex-row min-h-full surface-inset text-primary font-sans">
       
       {/* Mobile Tab Switcher */}
       <div className="flex lg:hidden items-center border-b border-default surface-primary p-2 gap-2 sticky top-0 z-30 shrink-0">
@@ -206,7 +206,7 @@ const InnerResumeBuilder = () => {
       </div>
 
       {/* Left Sidebar */}
-      <div className={`w-full lg:w-[300px] xl:w-[340px] surface-primary border-b lg:border-b-0 lg:border-r border-default flex-col shrink-0 ${mobileTab === 'editor' ? 'flex' : 'hidden lg:flex'}`}>
+      <div className={`w-full lg:w-[300px] xl:w-[340px] surface-primary border-b lg:border-b-0 lg:border-r border-default flex-col shrink-0 lg:sticky lg:top-0 lg:h-[calc(100vh-64px)] ${mobileTab === 'editor' ? 'flex' : 'hidden lg:flex'}`}>
         
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-default">
@@ -352,7 +352,7 @@ const InnerResumeBuilder = () => {
       </div>
 
       {/* Main Content - Scaled PDF Viewer */}
-      <div className={`flex-1 flex-col p-2.5 sm:p-6 lg:p-8 overflow-y-auto relative ${mobileTab === 'preview' ? 'flex' : 'hidden lg:flex'}`}>
+      <div className={`flex-1 flex-col p-2.5 sm:p-6 lg:p-8 relative min-w-0 ${mobileTab === 'preview' ? 'flex' : 'hidden lg:flex'}`}>
         {/* Top bar for preview */}
         <div className="flex items-center justify-between mb-3 sm:mb-6">
           <div className="flex items-center gap-2">
@@ -411,7 +411,7 @@ const InnerResumeBuilder = () => {
           </div>
         </div>
 
-        {/* Live Scaled Container with scroll support */}
+        {/* Live Scaled Container */}
         <div ref={previewWrapperRef} className="w-full flex justify-center items-start pb-16 lg:pb-24">
           <div 
             style={{
@@ -424,7 +424,7 @@ const InnerResumeBuilder = () => {
             className="bg-white rounded-xl shadow-2xl overflow-hidden border border-default shrink-0 transition-transform duration-150 ease-out flex flex-col"
           >
             {previewLoading ? (
-              <div className="flex-1 flex items-center justify-center flex-col gap-4 text-muted surface-primary">
+              <div className="flex-1 flex items-center justify-center flex-col gap-4 text-muted surface-primary min-h-[400px]">
                 <div className="w-8 h-8 border-2 border-default border-t-[#238636] rounded-full animate-spin"></div>
                 <div className="text-sm">{t('builder.previewLoading', 'Rendering HTML Template...')}</div>
               </div>
@@ -432,11 +432,11 @@ const InnerResumeBuilder = () => {
               <iframe 
                 srcDoc={htmlDoc || undefined} 
                 src={htmlUrl || undefined} 
-                className="w-full h-full border-0 bg-white" 
+                className="w-full h-full border-0 bg-transparent" 
                 title="HTML Preview" 
               />
             ) : (
-              <div className="flex-1 flex items-center justify-center text-muted text-sm surface-primary">
+              <div className="flex-1 flex items-center justify-center text-muted text-sm surface-primary min-h-[400px]">
                 {t('builder.failedPreview', 'Failed to load preview')}
               </div>
             )}
