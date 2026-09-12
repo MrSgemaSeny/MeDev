@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { useParseResume } from '../../entities/profile/api/hooks';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../shared/ui/Button';
-import { UploadCloud, FileText, CheckCircle2, ShieldCheck, Sparkles } from 'lucide-react';
+import { UploadCloud, FileText, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const ImportResumePage = () => {
@@ -76,16 +76,9 @@ export const ImportResumePage = () => {
   return (
     <div className="min-h-full flex flex-col items-center justify-center p-3 sm:p-6 animate-in fade-in slide-in-from-bottom-4 duration-700 bg-[var(--color-bg-inset)]">
       <div className="text-center mb-8 max-w-2xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--color-border-default)] bg-[var(--color-bg-primary)] mb-5 shadow-sm">
-          <Sparkles size={14} className="text-[var(--color-accent)]" />
-          <span className="text-xs font-semibold text-secondary tracking-wide uppercase">AI Resume Parser v2</span>
-        </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight mb-3 text-primary leading-tight">
+        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-primary leading-tight">
           Автоматический импорт <span className="text-[var(--color-accent)]">PDF резюме</span>
         </h1>
-        <p className="text-sm sm:text-base text-secondary max-w-xl mx-auto leading-relaxed">
-          Загрузите ваш существующий PDF и наш AI мгновенно извлечет и структурирует стек технологий, опыт работы, образование и контактные данные.
-        </p>
       </div>
 
       <div className="w-full max-w-2xl mx-auto">
@@ -158,12 +151,6 @@ export const ImportResumePage = () => {
               </Button>
             </>
           )}
-        </div>
-
-        {/* Security / PII Badge */}
-        <div className="flex items-center justify-center gap-2 mt-4 text-xs text-secondary">
-          <ShieldCheck size={14} className="text-[var(--color-accent)]" />
-          <span>Конфиденциальные PII-данные (паспорта, телефоны, email) автоматически маскируются перед анализом</span>
         </div>
       </div>
     </div>
