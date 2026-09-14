@@ -70,7 +70,7 @@ describe('DashboardPage', () => {
 
     // Verify Stats
     expect(screen.getByText('Synced')).toBeTruthy(); // githubUsername is present
-    expect(screen.getByText('100% Free')).toBeTruthy();
+    expect(screen.getByText('Profile Strength')).toBeTruthy();
 
     // Verify Live Preview uses real data
     expect(screen.getByText('Real User Name')).toBeTruthy();
