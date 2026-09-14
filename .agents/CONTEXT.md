@@ -107,6 +107,10 @@
     - **Visual De-cluttering**: Removed search bar from Job Tracker page toolbar (global search remains in header). Removed all subtext hints and secondary descriptions from navigation links in `MobileNavDrawer` and `AppSidebar`.
     - **WebScraperService**: Direct HeadHunter Public API integration (`api.hh.ru/vacancies/{id}`) with Jsoup and AI fallback, eliminating 500 errors.
 
+21. **Dashboard UI Polish & De-cluttering (100% COMPLETE)**:
+    - **Hero & Actions Subtitles**: Removed secondary description text below welcome heading and Quick Actions heading in `DashboardPage.tsx`.
+    - **Stats Container**: Removed 3rd status column ("100% Free / Status") that broke boundaries. Layout cleanly centered with 2 balanced stats cards (`grid-cols-2 max-w-md`).
+
 ## Verification
 - `backend`: 278+ тестов успешно пройдены (`./gradlew test`).
 - `frontend`: 55/55 тестов пройдены (`npm test`).
