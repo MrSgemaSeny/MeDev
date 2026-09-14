@@ -27,10 +27,10 @@ describe('LoginPage', () => {
 
   it('renders login form correctly', () => {
     renderComponent();
-    expect(screen.getByText('Sign in to MeDev')).toBeDefined();
+    expect(screen.getByRole('heading', { level: 1 })).toBeDefined();
     expect(screen.getByLabelText(/Email/i)).toBeDefined();
-    expect(screen.getByLabelText(/Password/i)).toBeDefined();
-    expect(screen.getByRole('button', { name: /Sign in/i })).toBeDefined();
+    expect(screen.getByLabelText(/^Пароль$|^Password$/i)).toBeDefined();
+    expect(screen.getByRole('button', { name: /Войти|Sign in/i })).toBeDefined();
   });
 
   it('shows error on failed login', async () => {
@@ -41,10 +41,10 @@ describe('LoginPage', () => {
     renderComponent();
     
     fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'test@test.com' } });
-    fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: 'password123' } });
-    fireEvent.click(screen.getByRole('button', { name: /Sign in/i }));
+    fireEvent.change(screen.getByLabelText(/^Пароль$|^Password$/i), { target: { value: 'password123' } });
+    fireEvent.click(screen.getByRole('button', { name: /Войти|Sign in/i }));
 
-    expect(screen.getByRole('button', { name: /Signing in.../i })).toBeDefined();
+    expect(screen.getByRole('button', { name: /Вход\.\.\.|Signing in\.\.\./i })).toBeDefined();
 
     await waitFor(() => {
       expect(screen.getByText('Invalid credentials')).toBeDefined();
@@ -64,8 +64,8 @@ describe('LoginPage', () => {
     renderComponent();
     
     fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'test@test.com' } });
-    fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: 'password123' } });
-    fireEvent.click(screen.getByRole('button', { name: /Sign in/i }));
+    fireEvent.change(screen.getByLabelText(/^Пароль$|^Password$/i), { target: { value: 'password123' } });
+    fireEvent.click(screen.getByRole('button', { name: /Войти|Sign in/i }));
 
     await waitFor(() => {
       const state = useAuthStore.getState();

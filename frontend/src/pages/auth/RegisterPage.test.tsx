@@ -27,11 +27,11 @@ describe('RegisterPage', () => {
 
   it('renders register form correctly', () => {
     renderComponent();
-    expect(screen.getByText('Create your account')).toBeDefined();
+    expect(screen.getByRole('heading', { level: 1 })).toBeDefined();
     expect(screen.getByLabelText(/Email/i)).toBeDefined();
-    expect(screen.getByLabelText(/Username/i)).toBeDefined();
-    expect(screen.getByLabelText(/Password/i)).toBeDefined();
-    expect(screen.getByRole('button', { name: /Create account/i })).toBeDefined();
+    expect(screen.getByLabelText(/^Имя пользователя$|^Username$/i)).toBeDefined();
+    expect(screen.getByLabelText(/^Пароль$|^Password$/i)).toBeDefined();
+    expect(screen.getByRole('button', { name: /Создать аккаунт|Create account/i })).toBeDefined();
   });
 
   it('shows error on failed registration', async () => {
@@ -42,11 +42,11 @@ describe('RegisterPage', () => {
     renderComponent();
     
     fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'test@test.com' } });
-    fireEvent.change(screen.getByLabelText(/Username/i), { target: { value: 'testuser' } });
-    fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: 'password123' } });
-    fireEvent.click(screen.getByRole('button', { name: /Create account/i }));
+    fireEvent.change(screen.getByLabelText(/^Имя пользователя$|^Username$/i), { target: { value: 'testuser' } });
+    fireEvent.change(screen.getByLabelText(/^Пароль$|^Password$/i), { target: { value: 'password123' } });
+    fireEvent.click(screen.getByRole('button', { name: /Создать аккаунт|Create account/i }));
 
-    expect(screen.getByRole('button', { name: /Creating.../i })).toBeDefined();
+    expect(screen.getByRole('button', { name: /Создание\.\.\.|Creating\.\.\./i })).toBeDefined();
 
     await waitFor(() => {
       expect(screen.getByText('Username taken')).toBeDefined();
@@ -66,9 +66,9 @@ describe('RegisterPage', () => {
     renderComponent();
     
     fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'test@test.com' } });
-    fireEvent.change(screen.getByLabelText(/Username/i), { target: { value: 'testuser' } });
-    fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: 'password123' } });
-    fireEvent.click(screen.getByRole('button', { name: /Create account/i }));
+    fireEvent.change(screen.getByLabelText(/^Имя пользователя$|^Username$/i), { target: { value: 'testuser' } });
+    fireEvent.change(screen.getByLabelText(/^Пароль$|^Password$/i), { target: { value: 'password123' } });
+    fireEvent.click(screen.getByRole('button', { name: /Создать аккаунт|Create account/i }));
 
     await waitFor(() => {
       const state = useAuthStore.getState();

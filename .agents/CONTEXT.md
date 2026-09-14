@@ -111,6 +111,11 @@
     - **Hero & Actions Subtitles**: Removed secondary description text below welcome heading and Quick Actions heading in `DashboardPage.tsx`.
     - **Stats Container**: Removed 3rd status column ("100% Free / Status") that broke boundaries. Layout cleanly centered with 2 balanced stats cards (`grid-cols-2 max-w-md`).
 
+22. **Auth Pages Localization & UX Overhaul (100% COMPLETE)**:
+    - **Full i18n**: Eliminated language mixing across `LoginPage`, `RegisterPage`, and `ResetPasswordPage`. Added top-bar `LanguageSwitcher` and header home link.
+    - **GitHub OAuth Accent**: GitHub button visually prioritized as primary developer auth mechanism.
+    - **Input UX Polish**: Added password visibility toggles (`Eye`/`EyeOff`), placeholders, and clear footer links.
+
 ## Verification
 - `backend`: 278+ тестов успешно пройдены (`./gradlew test`).
 - `frontend`: 55/55 тестов пройдены (`npm test`).
