@@ -113,11 +113,13 @@
 
 22. **Auth Pages Localization & UX Overhaul (100% COMPLETE)**:
     - **Full i18n**: Eliminated language mixing across `LoginPage`, `RegisterPage`, and `ResetPasswordPage`. Added top-bar `LanguageSwitcher` and header home link.
-    - **GitHub OAuth Accent**: GitHub button visually prioritized as primary developer auth mechanism.
-    - **Input UX Polish**: Added password visibility toggles (`Eye`/`EyeOff`), placeholders, and clear footer links.
+23. **AI Cover Letter & Resume Tailoring Markdown & Templating Remediation (100% COMPLETE)**:
+    - **Backend (Prompt Engineering & Data Enrichment)**: `AiApplicationService.java` now extracts full candidate details (`buildCandidateProfileContext`) and passes them into LLM prompt context alongside RAG vector search results. Strict rules enforced against generic template placeholders (`[Your Name]`, `[Company]`, `[Date]`) and markdown formatting (`**`, `##`, `*`).
+    - **Backend (Tailor Resume Plain Text)**: Replaced raw `<markdown text>` system prompt instruction with structured plain text headers, eliminating markdown clutter from plain text resume exports.
+    - **Frontend (UX & Toasts)**: Replaced native `alert()` with `toast.error` in `AiCoverLetterModal`, added dynamic `Copy`/`Check` clipboard feedback and localization.
 
 ## Verification
-- `backend`: 278+ тестов успешно пройдены (`./gradlew test`).
+- `backend`: 278/278 тестов успешно пройдены (`./gradlew test`).
 - `frontend`: 55/55 тестов пройдены (`npm test`).
 - `frontend`: сборка Vite прошла успешно (`npm run build`).
 - `landing`: сборка Next.js 15 прошла без ошибок (`npm run build`).
@@ -126,3 +128,4 @@
 - **Native Mobile App (Expo)**: Инициализация и разработка нативного приложения MeDev на React Native + Expo.
 - Setting up automated nightly DB backup jobs.
 - Sentry and Prometheus/Grafana monitoring dashboards.
+

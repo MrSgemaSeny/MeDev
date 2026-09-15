@@ -19,7 +19,9 @@ import {
   LayoutGrid, 
   List as ListIcon, 
   MapPin, 
-  DollarSign
+  DollarSign,
+  Copy,
+  Check
 } from 'lucide-react';
 
 const STATUS_CONFIG: Record<ApplicationStatus, { label: string }> = {
@@ -621,8 +623,10 @@ const AddApplicationModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
 };
 
 const AiCoverLetterModal = ({ app, isOpen, onClose }: { app: JobApplicationDto; isOpen: boolean; onClose: () => void }) => {
+  const { t } = useTranslation();
   const [jobDescription, setJobDescription] = useState(app.jobDescription || '');
   const [coverLetter, setCoverLetter] = useState('');
+  const [copied, setCopied] = useState(false);
   const generate = useGenerateCoverLetter();
 
   const handleGenerate = () => {
@@ -634,52 +638,114 @@ const AiCoverLetterModal = ({ app, isOpen, onClose }: { app: JobApplicationDto; 
           setCoverLetter(data.content || data.coverLetter || '');
         },
         onError: (err: any) => {
-          console.error(err);
-          alert('Failed to generate cover letter. ' + (err.response?.data?.message || err.message));
+          const status = err.response?.status;
+          if (status === 402 || status === 403) {
+            toast.error(t('tracker.ai.proRequired', 'Для генерации сопроводительного письма требуется подписка PRO.'));
+          } else if (status === 429) {
+            toast.error(t('tracker.ai.rateLimit', 'Превышен суточный лимит запросов к AI.'));
+          } else {
+            toast.error(err.response?.data?.message || t('tracker.ai.generateError', 'Не удалось сгенерировать сопроводительное письмо.'));
+          }
         }
       }
     );
   };
 
+  const handleCopy = async () => {
+    if (!coverLetter) return;
+    try {
+      await navigator.clipboard.writeText(coverLetter);
+      setCopied(true);
+      toast.success(t('tracker.ai.copied', 'Скопировано в буфер обмена'));
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error(t('tracker.ai.copyError', 'Не удалось скопировать'));
+    }
+  };
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="AI Cover Letter Generator">
-      <div className="space-y-4 pt-2 w-[500px] max-w-[90vw]">
+    <Modal isOpen={isOpen} onClose={onClose} title={t('tracker.ai.coverLetterTitle', 'AI Cover Letter Generator')}>
+      <div className="space-y-4 pt-2 w-[600px] max-w-[90vw]">
+        <div className="flex items-center justify-between pb-2 border-b border-[var(--color-border-default)]">
+          <div>
+            <h3 className="text-sm font-semibold text-primary">{app.role}</h3>
+            <p className="text-xs text-secondary">{app.companyName}</p>
+          </div>
+        </div>
+
         {!coverLetter ? (
           <>
             <div>
-              <Label>Job Description</Label>
+              <div className="flex justify-between items-center mb-1">
+                <Label htmlFor="coverLetterJd">
+                  {t('tracker.ai.jobDescriptionLabel', 'Описание вакансии')}
+                </Label>
+                <span className="text-xs text-muted">
+                  {jobDescription.length} / 8000
+                </span>
+              </div>
               <textarea 
-                className="w-full h-40 p-3 mt-1 rounded-md bg-[var(--color-bg-primary)] border border-default text-[16px] md:text-sm text-primary focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] outline-none resize-none"
-                placeholder="Paste the job description here..."
+                id="coverLetterJd"
+                className="w-full h-48 p-3 rounded-md bg-[var(--color-bg-primary)] border border-[var(--color-border-default)] text-[16px] md:text-sm text-primary focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] outline-none resize-none placeholder-muted"
+                placeholder={t('tracker.ai.pasteJdPlaceholder', 'Вставьте требования вакансии сюда...')}
                 value={jobDescription}
+                maxLength={8000}
                 onChange={e => setJobDescription(e.target.value)}
               />
-              <p className="text-xs text-secondary mt-1 flex items-center gap-1">
-                <Wand2 size={12} /> AI will use vector search to match your projects to this JD.
+              <p className="text-xs text-secondary mt-1 flex items-center gap-1.5">
+                <Sparkles size={13} className="text-[var(--color-accent)]" />
+                {t('tracker.ai.ragNoticeLetter', 'AI персонализирует письмо на основе вашего опыта и требований вакансии.')}
               </p>
             </div>
             <div className="flex gap-3 pt-4 border-t border-[var(--color-border-default)]">
-              <Button onClick={handleGenerate} variant="primary" className="flex-1" disabled={generate.isPending || !jobDescription.trim()}>
-                {generate.isPending ? 'Generating (RAG)...' : 'Generate with AI'}
+              <Button 
+                onClick={handleGenerate} 
+                variant="primary" 
+                className="flex-1 min-h-[44px] flex items-center justify-center gap-2" 
+                disabled={generate.isPending || !jobDescription.trim()}
+              >
+                <Sparkles size={16} />
+                {generate.isPending ? t('tracker.ai.generating', 'Генерирую письмо...') : t('tracker.ai.generateAction', 'Сгенерировать с AI')}
               </Button>
-              <Button onClick={onClose} variant="outline">Cancel</Button>
+              <Button onClick={onClose} variant="outline" className="min-h-[44px]">
+                {t('common.cancel', 'Отмена')}
+              </Button>
             </div>
           </>
         ) : (
           <>
             <div>
-              <Label>Generated Cover Letter</Label>
+              <div className="flex justify-between items-center mb-1">
+                <Label htmlFor="generatedCoverLetter">
+                  {t('tracker.ai.generatedCoverLetterLabel', 'Готовое сопроводительное письмо')}
+                </Label>
+                <span className="text-xs text-[var(--color-accent)] font-medium">
+                  {t('tracker.ai.ready', 'Готово')}
+                </span>
+              </div>
               <textarea 
-                className="w-full h-64 p-3 mt-1 rounded-md bg-[var(--color-bg-primary)] border border-default text-[16px] md:text-sm text-primary focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] outline-none"
+                id="generatedCoverLetter"
+                className="w-full h-64 p-3 rounded-md bg-[var(--color-bg-primary)] border border-[var(--color-border-default)] text-[16px] md:text-sm text-primary focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] outline-none font-sans leading-relaxed"
                 value={coverLetter}
                 onChange={e => setCoverLetter(e.target.value)}
               />
             </div>
-            <div className="flex gap-3 pt-4 border-t border-[var(--color-border-default)]">
-              <Button onClick={() => navigator.clipboard.writeText(coverLetter)} variant="primary" className="flex-1">
-                Copy to Clipboard
+            <div className="flex flex-wrap gap-2.5 pt-4 border-t border-[var(--color-border-default)]">
+              <Button 
+                onClick={handleCopy} 
+                variant="primary" 
+                className="flex-1 min-h-[44px] flex items-center justify-center gap-2"
+              >
+                {copied ? <Check size={16} /> : <Copy size={16} />}
+                {copied ? t('common.copied', 'Скопировано!') : t('common.copy', 'Копировать')}
               </Button>
-              <Button onClick={() => setCoverLetter('')} variant="outline">Back</Button>
+              <Button 
+                onClick={() => setCoverLetter('')} 
+                variant="outline"
+                className="min-h-[44px]"
+              >
+                {t('common.back', 'Назад')}
+              </Button>
             </div>
           </>
         )}
