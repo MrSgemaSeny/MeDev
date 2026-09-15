@@ -1,42 +1,12 @@
-import { Search, Moon, Sun, Menu } from 'lucide-react';
+import { Search, Menu } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { UserProfileDropdown } from './UserProfileDropdown';
 import { useTranslation } from 'react-i18next';
-import { useState, useEffect } from 'react';
-import { toggleTheme, isDarkMode } from '../../shared/lib/theme';
 import { useMobileNavStore } from '../sidebar/model/mobileNavStore';
-import { LanguageSwitcher } from '../../shared/ui/LanguageSwitcher';
 
 export const AppHeader = () => {
   const { t } = useTranslation();
   const toggleNav = useMobileNavStore((s) => s.toggle);
-  const [isDark, setIsDark] = useState(isDarkMode);
-
-  useEffect(() => {
-    const handleThemeChange = (e: any) => {
-      if (e.detail?.isDark !== undefined) {
-        setIsDark(e.detail.isDark);
-      } else {
-        setIsDark(isDarkMode());
-      }
-    };
-
-    window.addEventListener('medev-theme-changed', handleThemeChange);
-
-    const observer = new MutationObserver(() => {
-      setIsDark(isDarkMode());
-    });
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-
-    return () => {
-      window.removeEventListener('medev-theme-changed', handleThemeChange);
-      observer.disconnect();
-    };
-  }, []);
-
-  const handleToggleTheme = () => {
-    toggleTheme(setIsDark);
-  };
 
   return (
     <header
@@ -82,25 +52,8 @@ export const AppHeader = () => {
         </div>
       </div>
 
-      <div className="flex items-center gap-1 sm:gap-3 ml-auto">
-        {/* Theme Toggle */}
-        <button
-          type="button"
-          onClick={handleToggleTheme}
-          className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full transition-colors hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none"
-          style={{ color: 'var(--color-text-secondary)' }}
-          aria-label={t('header.toggleTheme', isDark ? 'Переключить на светлую тему' : 'Переключить на тёмную тему')}
-          title={isDark ? 'Light Theme' : 'Dark Theme'}
-        >
-          {isDark ? <Moon size={18} /> : <Sun size={18} />}
-        </button>
-
-        {/* Language Switcher */}
-        <div className="flex items-center">
-          <LanguageSwitcher />
-        </div>
-
-        {/* Profile Avatar */}
+      {/* Profile Avatar & Dropdown */}
+      <div className="flex items-center ml-auto">
         <UserProfileDropdown variant="header" />
       </div>
     </header>

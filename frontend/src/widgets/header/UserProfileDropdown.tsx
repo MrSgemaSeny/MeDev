@@ -94,16 +94,15 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
         aria-haspopup="true"
         className={
           isHeader
-            ? 'min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full shrink-0 cursor-pointer focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none'
-            : 'w-full flex items-center justify-between gap-2 py-1.5 px-2 min-h-[44px] rounded-md hover:bg-surface-2 transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-[#2ea043] focus-visible:outline-none'
+            ? 'min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full shrink-0 cursor-pointer focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:outline-none'
+            : 'w-full flex items-center justify-between gap-2 py-1.5 px-2 min-h-[44px] rounded-md hover:bg-surface-2 transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] focus-visible:outline-none'
         }
       >
         {isHeader ? (
           <img
             src={avatarUrl}
             alt={`${username || 'User'} — фото профиля`}
-            className="w-9 h-9 rounded-full object-cover hover:ring-2 transition-all"
-            style={{ '--tw-ring-color': 'var(--color-border-default)' } as React.CSSProperties}
+            className="w-9 h-9 rounded-full object-cover border border-[var(--color-border-default)] hover:border-[var(--color-text-secondary)] transition-all"
           />
         ) : (
           <div className="flex items-center gap-2">
@@ -191,7 +190,7 @@ export const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ varian
                 onClick={() => { setIsOpen(false); window.location.href = '/admin/dashboard'; }}
                 className="w-full px-4 py-2.5 flex items-center justify-between hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-left cursor-pointer"
               >
-                <div className="flex items-center gap-3 text-[var(--color-accent)]">
+                <div className="flex items-center gap-3 text-secondary hover:text-primary">
                   <Shield size={18} />
                   <span className="text-sm font-medium">{t('header.adminPanel', 'Админ-панель')}</span>
                 </div>
