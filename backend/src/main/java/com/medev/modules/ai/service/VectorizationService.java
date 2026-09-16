@@ -88,14 +88,60 @@ public class VectorizationService {
         }
 
         try {
-            List<String> texts = chunks.stream().map(ProfileChunk::content).toList();
-            List<float[]> embeddings = jinaEmbeddingClient.embed(texts);
+            List<PgVectorRepository.ExistingVectorChunk> existingChunks = pgVectorRepository.findExistingChunksByUserId(userId);
+            java.util.Map<String, float[]> cachedEmbeddings = new java.util.HashMap<>();
+            for (PgVectorRepository.ExistingVectorChunk ec : existingChunks) {
+                boolean isCompatible = (ec.version() == null || "v2".equals(ec.version()))
+                        && (ec.model() == null || "jina-embeddings-v2-base-en".equals(ec.model()));
+                if (isCompatible && ec.chunkHash() != null && ec.embedding() != null) {
+                    cachedEmbeddings.put(ec.chunkHash(), ec.embedding());
+                }
+            }
+
+            List<ProfileChunk> chunksToEmbed = new ArrayList<>();
+            List<Integer> chunkIndicesToEmbed = new ArrayList<>();
+            float[][] finalEmbeddings = new float[chunks.size()][];
+
+            for (int i = 0; i < chunks.size(); i++) {
+                ProfileChunk chunk = chunks.get(i);
+                String hash = com.medev.shared.util.CryptoUtils.sha256Hex(chunk.content());
+                if (cachedEmbeddings.containsKey(hash)) {
+                    finalEmbeddings[i] = cachedEmbeddings.get(hash);
+                } else {
+                    chunksToEmbed.add(chunk);
+                    chunkIndicesToEmbed.add(i);
+                }
+            }
+
+            if (!chunksToEmbed.isEmpty()) {
+                log.info("[VectorizationService] Embedding {} new/modified chunks for user {} (reusing {} cached)",
+                        chunksToEmbed.size(), userId, chunks.size() - chunksToEmbed.size());
+                List<String> textsToEmbed = chunksToEmbed.stream().map(ProfileChunk::content).toList();
+                List<float[]> newEmbeddings = jinaEmbeddingClient.embed(textsToEmbed);
+                for (int j = 0; j < chunksToEmbed.size(); j++) {
+                    int originalIdx = chunkIndicesToEmbed.get(j);
+                    float[] emb = j < newEmbeddings.size() ? newEmbeddings.get(j) : new float[768];
+                    finalEmbeddings[originalIdx] = emb;
+                }
+            } else {
+                log.info("[VectorizationService] All {} chunks cached for user {}, 0 external embeddings needed", chunks.size(), userId);
+            }
 
             List<PgVectorRepository.VectorItem> items = new ArrayList<>(chunks.size());
             for (int i = 0; i < chunks.size(); i++) {
                 ProfileChunk chunk = chunks.get(i);
-                float[] emb = i < embeddings.size() ? embeddings.get(i) : new float[768];
-                items.add(new PgVectorRepository.VectorItem(chunk.content(), chunk.type(), chunk.sourceId(), emb));
+                String hash = com.medev.shared.util.CryptoUtils.sha256Hex(chunk.content());
+                float[] emb = finalEmbeddings[i] != null ? finalEmbeddings[i] : new float[768];
+                items.add(new PgVectorRepository.VectorItem(
+                        chunk.content(),
+                        chunk.type(),
+                        chunk.sourceId(),
+                        hash,
+                        "jina-embeddings-v2-base-en",
+                        "v2",
+                        768,
+                        emb
+                ));
             }
 
             pgVectorRepository.upsert(userId, items);

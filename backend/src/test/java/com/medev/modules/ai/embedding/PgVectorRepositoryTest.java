@@ -51,7 +51,7 @@ public class PgVectorRepositoryTest {
     @Test
     void upsert_emptyItems_deletesOldVectorsOnly() {
         repository.upsert(42L, List.of());
-        verify(jdbcTemplate).update(eq("DELETE FROM vector_store WHERE metadata->>'userId' = ?"), eq("42"));
+        verify(jdbcTemplate).update(eq("DELETE FROM vector_store WHERE user_id = ?"), eq(42L));
         verify(jdbcTemplate, never()).batchUpdate(anyString(), anyList());
     }
 
@@ -63,14 +63,14 @@ public class PgVectorRepositoryTest {
 
         repository.upsert(42L, List.of(item));
 
-        verify(jdbcTemplate).update(eq("DELETE FROM vector_store WHERE metadata->>'userId' = ?"), eq("42"));
+        verify(jdbcTemplate).update(eq("DELETE FROM vector_store WHERE user_id = ?"), eq(42L));
         verify(jdbcTemplate).batchUpdate(contains("INSERT INTO vector_store"), anyList());
     }
 
     @Test
     void findSimilar_validParams_executesQuery() {
         float[] queryVector = new float[]{0.1f, 0.2f};
-        when(jdbcTemplate.query(anyString(), any(RowMapper.class), eq("42"), eq("[0.1,0.2]"), eq(3)))
+        when(jdbcTemplate.query(eq("SELECT content FROM vector_store WHERE user_id = ? ORDER BY embedding <=> ?::vector LIMIT ?"), any(RowMapper.class), eq(42L), eq("[0.1,0.2]"), eq(3)))
                 .thenReturn(List.of("Relevant project 1", "Relevant experience 2"));
 
         List<String> results = repository.findSimilar(42L, queryVector, 3);

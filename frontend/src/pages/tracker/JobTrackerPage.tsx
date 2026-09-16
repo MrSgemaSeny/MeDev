@@ -450,6 +450,7 @@ const AddApplicationModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
   const matchJob = useMatchJob();
 
   const [importUrl, setImportUrl] = useState('');
+  const [previewMatch, setPreviewMatch] = useState<{ score: number; feedback: string } | null>(null);
   
   const [formData, setFormData] = useState<CreateJobApplicationRequest>({
     companyName: '',
@@ -459,8 +460,6 @@ const AddApplicationModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
     location: '',
     salaryRange: '',
     jobDescription: '',
-    matchScore: undefined,
-    matchFeedback: '',
     appliedDate: new Date().toISOString().split('T')[0],
   });
 
@@ -474,15 +473,14 @@ const AddApplicationModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
           jobUrl: importUrl,
         }));
         
-        // After scraping, if there's a job description, trigger match
+        // After scraping, if there's a job description, trigger match preview
         if (data.jobDescription) {
           matchJob.mutate(data.jobDescription, {
             onSuccess: (matchData) => {
-              setFormData(prev => ({
-                ...prev,
-                matchScore: matchData.score,
-                matchFeedback: matchData.feedback
-              }));
+              setPreviewMatch({
+                score: matchData.score,
+                feedback: matchData.feedback,
+              });
             }
           });
         }
@@ -503,8 +501,9 @@ const AddApplicationModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
       onSuccess: () => {
         onClose();
         setFormData({ 
-          companyName: '', role: '', status: 'WISHLIST', jobUrl: '', location: '', salaryRange: '', jobDescription: '', matchScore: undefined, matchFeedback: '', appliedDate: new Date().toISOString().split('T')[0] 
+          companyName: '', role: '', status: 'WISHLIST', jobUrl: '', location: '', salaryRange: '', jobDescription: '', appliedDate: new Date().toISOString().split('T')[0] 
         });
+        setPreviewMatch(null);
         setImportUrl('');
       }
     });
@@ -593,13 +592,13 @@ const AddApplicationModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: ()
             </div>
           )}
 
-          {formData.matchScore != null && (
+          {previewMatch != null && (
             <div className="p-3 bg-[var(--color-bg-secondary)] border border-[var(--color-border-default)] rounded-md">
               <div className="flex justify-between items-center mb-1">
                 <span className="text-sm font-semibold text-primary">AI Profile Match</span>
-                <Badge tone={formData.matchScore > 75 ? 'accent' : 'default'} className="text-xs">{formData.matchScore}%</Badge>
+                <Badge tone={previewMatch.score > 75 ? 'accent' : 'default'} className="text-xs">{previewMatch.score}%</Badge>
               </div>
-              <p className="text-xs text-secondary mt-1">{formData.matchFeedback}</p>
+              <p className="text-xs text-secondary mt-1">{previewMatch.feedback}</p>
             </div>
           )}
           {matchJob.isPending && (

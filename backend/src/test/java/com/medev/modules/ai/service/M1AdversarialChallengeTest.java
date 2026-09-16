@@ -11,6 +11,7 @@ import com.medev.modules.profile.service.ProfileService;
 import com.medev.modules.resume.controller.ResumeController;
 import com.medev.modules.resume.service.PdfGeneratorService;
 import com.medev.shared.exception.ForbiddenException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -575,6 +576,11 @@ public class M1AdversarialChallengeTest {
             UsernamePasswordAuthenticationToken auth =
                     new UsernamePasswordAuthenticationToken(10L, null, List.of());
             SecurityContextHolder.getContext().setAuthentication(auth);
+        }
+
+        @AfterEach
+        void tearDown() {
+            SecurityContextHolder.clearContext();
         }
 
         @Test

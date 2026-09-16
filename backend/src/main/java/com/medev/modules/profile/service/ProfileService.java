@@ -39,7 +39,7 @@ public class ProfileService {
     public void createEmptyProfile(User user) {
         Profile profile = Profile.builder()
                 .user(user)
-                .isPublic(true)
+                .isPublic(false)
                 .build();
         profileRepository.save(profile);
     }
@@ -134,33 +134,30 @@ public class ProfileService {
     public ProfileDto importParsedResume(Long userId, AiParsedResumeDto parsed) {
         Profile profile = getProfileEntityForUpdate(userId);
         
-        if (parsed.getFullName() != null) profile.setFullName(truncate(parsed.getFullName(), 255));
-        if (parsed.getHeadline() != null) profile.setHeadline(truncate(parsed.getHeadline(), 500));
-        if (parsed.getSummary() != null) profile.setSummary(parsed.getSummary());
-        if (parsed.getLocation() != null) profile.setLocation(truncate(parsed.getLocation(), 255));
-        if (parsed.getWebsite() != null) profile.setWebsite(truncate(parsed.getWebsite(), 500));
-        if (parsed.getGithubUsername() != null) profile.setGithubUsername(truncate(parsed.getGithubUsername(), 100));
-        if (parsed.getTelegram() != null) profile.setTelegram(truncate(parsed.getTelegram(), 100));
-        if (parsed.getLinkedin() != null) profile.setLinkedin(truncate(parsed.getLinkedin(), 255));
-        
-        // Smart Merge guarantees the DTO has the FINAL state, so we overwrite collections
-        // ONLY if the parsed object explicitly provided items for that section
-        if (parsed.getSkills() != null && !parsed.getSkills().isEmpty()) profile.getSkills().clear();
-        if (parsed.getExperience() != null && !parsed.getExperience().isEmpty()) profile.getExperiences().clear();
-        if (parsed.getEducation() != null && !parsed.getEducation().isEmpty()) profile.getEducations().clear();
-        if (parsed.getLanguages() != null && !parsed.getLanguages().isEmpty()) profile.getLanguages().clear();
-        if (parsed.getProjects() != null && !parsed.getProjects().isEmpty()) profile.getProjects().clear();
+        if (parsed.getFullName() != null && !parsed.getFullName().isBlank()) profile.setFullName(truncate(parsed.getFullName(), 255));
+        if (parsed.getHeadline() != null && !parsed.getHeadline().isBlank()) profile.setHeadline(truncate(parsed.getHeadline(), 500));
+        if (parsed.getSummary() != null && !parsed.getSummary().isBlank()) profile.setSummary(parsed.getSummary());
+        if (parsed.getLocation() != null && !parsed.getLocation().isBlank()) profile.setLocation(truncate(parsed.getLocation(), 255));
+        if (parsed.getWebsite() != null && !parsed.getWebsite().isBlank()) profile.setWebsite(truncate(parsed.getWebsite(), 500));
+        if (parsed.getGithubUsername() != null && !parsed.getGithubUsername().isBlank()) profile.setGithubUsername(truncate(parsed.getGithubUsername(), 100));
+        if (parsed.getTelegram() != null && !parsed.getTelegram().isBlank()) profile.setTelegram(truncate(parsed.getTelegram(), 100));
+        if (parsed.getLinkedin() != null && !parsed.getLinkedin().isBlank()) profile.setLinkedin(truncate(parsed.getLinkedin(), 255));
         
         profileRepository.saveAndFlush(profile);
 
-        // Batch save skills
+        // Non-destructive safe merge for skills
         if (parsed.getSkills() != null && !parsed.getSkills().isEmpty()) {
-            int order = 0;
+            int order = profile.getSkills().size();
             List<Skill> newSkills = new java.util.ArrayList<>();
             for (com.medev.modules.ai.dto.AiSkillDto s : parsed.getSkills()) {
                 String skillName = truncate(s.getName(), 100);
                 if (skillName != null && !skillName.isBlank()) {
-                    newSkills.add(Skill.builder().profile(profile).name(skillName).sortOrder(order++).build());
+                    boolean exists = profile.getSkills().stream()
+                            .anyMatch(existing -> existing.getName().equalsIgnoreCase(skillName))
+                            || newSkills.stream().anyMatch(existing -> existing.getName().equalsIgnoreCase(skillName));
+                    if (!exists) {
+                        newSkills.add(Skill.builder().profile(profile).name(skillName).sortOrder(order++).build());
+                    }
                 }
             }
             if (!newSkills.isEmpty()) {
@@ -169,33 +166,37 @@ public class ProfileService {
             }
         }
 
-        // Batch save experience
+        // Non-destructive safe merge for experience
         if (parsed.getExperience() != null && !parsed.getExperience().isEmpty()) {
-            int order = 0;
+            int order = profile.getExperiences().size();
             List<Experience> newExperiences = new java.util.ArrayList<>();
             for (com.medev.modules.ai.dto.AiExperienceDto e : parsed.getExperience()) {
                 String company = truncate(e.getCompany(), 255);
-                if (company == null || company.isBlank()) {
-                    company = "Company";
-                }
                 String position = truncate(e.getPosition(), 255);
-                if (position == null || position.isBlank()) {
-                    position = "Software Engineer";
+                if (company == null || company.isBlank() || position == null || position.isBlank() || isDummyCompany(company)) {
+                    continue;
                 }
-                LocalDate start = parseDateSafe(e.getStartDate());
-                LocalDate end = parseDateSafe(e.getEndDate());
+                boolean exists = profile.getExperiences().stream().anyMatch(existing ->
+                        existing.getCompany().equalsIgnoreCase(company) && existing.getPosition().equalsIgnoreCase(position)
+                ) || newExperiences.stream().anyMatch(existing ->
+                        existing.getCompany().equalsIgnoreCase(company) && existing.getPosition().equalsIgnoreCase(position)
+                );
+                if (!exists) {
+                    LocalDate start = parseDateSafe(e.getStartDate());
+                    LocalDate end = parseDateSafe(e.getEndDate());
 
-                newExperiences.add(Experience.builder()
-                        .profile(profile)
-                        .company(company)
-                        .position(position)
-                        .description(e.getDescription())
-                        .techStack(truncate(e.getTechStack(), 500))
-                        .startDate(start)
-                        .endDate(end)
-                        .isCurrent(e.getIsCurrent() != null ? e.getIsCurrent() : false)
-                        .sortOrder(order++)
-                        .build());
+                    newExperiences.add(Experience.builder()
+                            .profile(profile)
+                            .company(company)
+                            .position(position)
+                            .description(e.getDescription())
+                            .techStack(truncate(e.getTechStack(), 500))
+                            .startDate(start)
+                            .endDate(end)
+                            .isCurrent(e.getIsCurrent() != null ? e.getIsCurrent() : false)
+                            .sortOrder(order++)
+                            .build());
+                }
             }
             if (!newExperiences.isEmpty()) {
                 experienceRepository.saveAll(newExperiences);
@@ -203,28 +204,38 @@ public class ProfileService {
             }
         }
 
-        // Batch save education
+        // Non-destructive safe merge for education
         if (parsed.getEducation() != null && !parsed.getEducation().isEmpty()) {
-            int order = 0;
+            int order = profile.getEducations().size();
             List<Education> newEducations = new java.util.ArrayList<>();
             for (com.medev.modules.ai.dto.AiEducationDto ed : parsed.getEducation()) {
                 String institution = truncate(ed.getInstitution(), 255);
-                if (institution == null || institution.isBlank()) {
-                    institution = "University";
+                if (institution == null || institution.isBlank() || isDummyInstitution(institution)) {
+                    continue;
                 }
-                LocalDate start = parseDateSafe(ed.getStartDate());
-                LocalDate end = parseDateSafe(ed.getEndDate());
+                String degree = truncate(ed.getDegree(), 255);
+                boolean exists = profile.getEducations().stream().anyMatch(existing ->
+                        existing.getInstitution().equalsIgnoreCase(institution)
+                        && (degree == null || existing.getDegree() == null || existing.getDegree().equalsIgnoreCase(degree))
+                ) || newEducations.stream().anyMatch(existing ->
+                        existing.getInstitution().equalsIgnoreCase(institution)
+                        && (degree == null || existing.getDegree() == null || existing.getDegree().equalsIgnoreCase(degree))
+                );
+                if (!exists) {
+                    LocalDate start = parseDateSafe(ed.getStartDate());
+                    LocalDate end = parseDateSafe(ed.getEndDate());
 
-                newEducations.add(Education.builder()
-                        .profile(profile)
-                        .institution(institution)
-                        .degree(truncate(ed.getDegree(), 255))
-                        .field(truncate(ed.getFieldOfStudy(), 255))
-                        .startDate(start)
-                        .endDate(end)
-                        .isCurrent(false)
-                        .sortOrder(order++)
-                        .build());
+                    newEducations.add(Education.builder()
+                            .profile(profile)
+                            .institution(institution)
+                            .degree(degree)
+                            .field(truncate(ed.getFieldOfStudy(), 255))
+                            .startDate(start)
+                            .endDate(end)
+                            .isCurrent(false)
+                            .sortOrder(order++)
+                            .build());
+                }
             }
             if (!newEducations.isEmpty()) {
                 educationRepository.saveAll(newEducations);
@@ -232,9 +243,9 @@ public class ProfileService {
             }
         }
 
-        // Batch save languages & rerouted programming language skills
+        // Non-destructive safe merge for languages & rerouted programming languages
         if (parsed.getLanguages() != null && !parsed.getLanguages().isEmpty()) {
-            int order = 0;
+            int order = profile.getLanguages().size();
             List<Language> newLanguages = new java.util.ArrayList<>();
             List<Skill> reroutedSkills = new java.util.ArrayList<>();
 
@@ -243,7 +254,8 @@ public class ProfileService {
                 if (cleanName != null && !cleanName.isBlank()) {
                     if (LanguageService.isProgrammingLanguage(cleanName)) {
                         boolean skillExists = profile.getSkills().stream()
-                                .anyMatch(s -> s.getName().equalsIgnoreCase(cleanName));
+                                .anyMatch(s -> s.getName().equalsIgnoreCase(cleanName))
+                                || reroutedSkills.stream().anyMatch(s -> s.getName().equalsIgnoreCase(cleanName));
                         if (!skillExists) {
                             Skill fallbackSkill = Skill.builder()
                                     .profile(profile)
@@ -256,16 +268,21 @@ public class ProfileService {
                         continue;
                     }
 
-                    String level = truncate(l.getProficiency(), 20);
-                    if (level == null || level.isBlank()) {
-                        level = "intermediate";
+                    boolean langExists = profile.getLanguages().stream()
+                            .anyMatch(lang -> lang.getName().equalsIgnoreCase(cleanName))
+                            || newLanguages.stream().anyMatch(lang -> lang.getName().equalsIgnoreCase(cleanName));
+                    if (!langExists) {
+                        String level = truncate(l.getProficiency(), 20);
+                        if (level == null || level.isBlank()) {
+                            level = "intermediate";
+                        }
+                        newLanguages.add(Language.builder()
+                                .profile(profile)
+                                .name(cleanName)
+                                .level(level)
+                                .sortOrder(order++)
+                                .build());
                     }
-                    newLanguages.add(Language.builder()
-                            .profile(profile)
-                            .name(cleanName)
-                            .level(level)
-                            .sortOrder(order++)
-                            .build());
                 }
             }
             if (!reroutedSkills.isEmpty()) {
@@ -278,21 +295,26 @@ public class ProfileService {
             }
         }
 
-        // Batch save projects
+        // Non-destructive safe merge for projects
         if (parsed.getProjects() != null && !parsed.getProjects().isEmpty()) {
-            int order = 0;
+            int order = profile.getProjects().size();
             List<Project> newProjects = new java.util.ArrayList<>();
             for (com.medev.modules.ai.dto.AiProjectDto p : parsed.getProjects()) {
                 String name = truncate(p.getName(), 255);
                 if (name != null && !name.isBlank()) {
-                    newProjects.add(Project.builder()
-                            .profile(profile)
-                            .name(name)
-                            .description(p.getDescription())
-                            .githubUrl(truncate(p.getGithubUrl(), 500))
-                            .techStack(truncate(p.getTechStack(), 500))
-                            .sortOrder(order++)
-                            .build());
+                    boolean projExists = profile.getProjects().stream()
+                            .anyMatch(existing -> existing.getName().equalsIgnoreCase(name))
+                            || newProjects.stream().anyMatch(existing -> existing.getName().equalsIgnoreCase(name));
+                    if (!projExists) {
+                        newProjects.add(Project.builder()
+                                .profile(profile)
+                                .name(name)
+                                .description(p.getDescription())
+                                .githubUrl(truncate(p.getGithubUrl(), 500))
+                                .techStack(truncate(p.getTechStack(), 500))
+                                .sortOrder(order++)
+                                .build());
+                    }
                 }
             }
             if (!newProjects.isEmpty()) {
@@ -495,4 +517,17 @@ public class ProfileService {
             eventPublisher.publishEvent(event);
         }
     }
+
+    private boolean isDummyCompany(String company) {
+        if (company == null) return true;
+        String s = company.trim().toLowerCase();
+        return s.equals("company") || s.equals("компания") || s.equals("[company]") || s.equals("[company name]") || s.equals("n/a") || s.equals("unknown");
+    }
+
+    private boolean isDummyInstitution(String institution) {
+        if (institution == null) return true;
+        String s = institution.trim().toLowerCase();
+        return s.equals("university") || s.equals("университет") || s.equals("[university]") || s.equals("[institution]") || s.equals("n/a") || s.equals("unknown");
+    }
 }
+

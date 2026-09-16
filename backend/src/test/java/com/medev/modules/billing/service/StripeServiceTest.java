@@ -44,6 +44,9 @@ class StripeServiceTest {
     @Mock
     private com.medev.modules.audit.service.AuditService auditService;
 
+    @Mock
+    private com.medev.modules.billing.repository.StripeWebhookEventRepository stripeWebhookEventRepository;
+
     @InjectMocks
     private StripeService stripeService;
 
@@ -54,6 +57,7 @@ class StripeServiceTest {
     void setUp() {
         lenient().when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         lenient().when(valueOperations.setIfAbsent(anyString(), anyString(), any())).thenReturn(true);
+        lenient().when(stripeWebhookEventRepository.existsByEventId(anyString())).thenReturn(false);
 
         ReflectionTestUtils.setField(stripeService, "proPriceId", "price_test");
         ReflectionTestUtils.setField(stripeService, "webhookSecret", "whsec_test");
@@ -177,5 +181,55 @@ class StripeServiceTest {
                 .isInstanceOf(NotFoundException.class);
 
         verify(redisTemplate).delete("stripe:webhook:evt_fail");
+    }
+
+    @Test
+    void handleWebhook_existingDbEvent_skipsProcessing() throws Exception {
+        String payload = "{}";
+        String sigHeader = "sig";
+
+        Event event = mock(Event.class);
+        when(event.getId()).thenReturn("evt_db_duplicate");
+        mockedWebhook.when(() -> Webhook.constructEvent(anyString(), anyString(), anyString())).thenReturn(event);
+
+        when(stripeWebhookEventRepository.existsByEventId("evt_db_duplicate")).thenReturn(true);
+
+        stripeService.handleWebhook(payload, sigHeader);
+
+        verify(userRepository, never()).save(any());
+        verify(stripeWebhookEventRepository, never()).save(any());
+    }
+
+    @Test
+    void handleWebhook_subscriptionUpdated_syncsPeriodEnd() throws Exception {
+        String payload = "{}";
+        String sigHeader = "sig";
+
+        Event event = mock(Event.class);
+        when(event.getId()).thenReturn("evt_sub_update");
+        when(event.getType()).thenReturn("customer.subscription.updated");
+
+        EventDataObjectDeserializer deserializer = mock(EventDataObjectDeserializer.class);
+        when(event.getDataObjectDeserializer()).thenReturn(deserializer);
+
+        com.stripe.model.Subscription subscription = mock(com.stripe.model.Subscription.class);
+        when(subscription.getStatus()).thenReturn("active");
+        when(subscription.getCustomer()).thenReturn("cus_sync");
+        when(subscription.getCurrentPeriodEnd()).thenReturn(1750000000L);
+        when(deserializer.getObject()).thenReturn(Optional.of(subscription));
+
+        mockedWebhook.when(() -> Webhook.constructEvent(anyString(), anyString(), anyString())).thenReturn(event);
+
+        User user = User.builder().id(2L).stripeCustomerId("cus_sync").plan(User.Plan.FREE).build();
+        when(userRepository.findByStripeCustomerId("cus_sync")).thenReturn(Optional.of(user));
+
+        stripeService.handleWebhook(payload, sigHeader);
+
+        assertThat(user.getPlan()).isEqualTo(User.Plan.PRO);
+        assertThat(user.getSubscriptionExpiresAt()).isEqualTo(
+                java.time.LocalDateTime.ofInstant(java.time.Instant.ofEpochSecond(1750000000L), java.time.ZoneOffset.UTC)
+        );
+        verify(userRepository).save(user);
+        verify(stripeWebhookEventRepository).save(any());
     }
 }

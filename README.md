@@ -2,12 +2,12 @@
 
 [![Release Status](https://img.shields.io/badge/Status-v1.0.0--RC%20%7C%20Pre--Launch%20%28Private%20Beta%29-orange?style=flat-square)](https://me-dev-two.vercel.app)
 [![CI/CD Pipeline](https://img.shields.io/github/actions/workflow/status/MrSgemaSeny/MeDev/deploy.yml?branch=main&style=flat-square&label=CI%2FCD)](https://github.com/MrSgemaSeny/MeDev/actions)
-[![Backend Tests](https://img.shields.io/badge/Backend%20Tests-253%20passed-brightgreen?style=flat-square&logo=junit5)](backend)
-[![Frontend Tests](https://img.shields.io/badge/Frontend%20Tests-37%20passed-brightgreen?style=flat-square&logo=vitest)](frontend)
+[![Backend Tests](https://img.shields.io/badge/Backend%20Tests-456%20passed-brightgreen?style=flat-square&logo=junit5)](backend)
+[![Frontend Tests](https://img.shields.io/badge/Frontend%20Tests-55%20passed-brightgreen?style=flat-square&logo=vitest)](frontend)
 [![Java](https://img.shields.io/badge/Java-17-007396?style=flat-square&logo=openjdk&logoColor=white)](https://openjdk.org/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.0-6DB33F?style=flat-square&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
 [![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-~6.0.2-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Redis](https://img.shields.io/badge/Redis-Valkey%208.1-DC382D?style=flat-square&logo=redis&logoColor=white)](https://redis.io/)
@@ -49,17 +49,17 @@ MeDev (DevProfile) — специализированная data-first B2B/B2C S
 - **Core Framework**: Java 17, Spring Boot 3.3.0
 - **Модульная архитектура**: 10 изолированных доменных модулей (`auth`, `profile`, `portfolio`, `github`, `ai`, `resume`, `tracker`, `billing`, `audit`, `admin`).
 - **Security & Auth**: Spring Security 6, Stateless JWT (Access 24h, Refresh 30d в Redis), GitHub OAuth2, RBAC (`USER`, `ADMIN`), Row-Level Security через `SecurityUtils.getCurrentUserId()`.
-- **Data & Migration**: PostgreSQL 17, Spring Data JPA, Hibernate, Flyway (цепочка миграций V1–V24), векторные расширения `pgvector`.
+- **Data & Migration**: PostgreSQL 17, Spring Data JPA, Hibernate, Flyway (цепочка миграций V1–V29), векторные расширения `pgvector`.
 - **Двухуровневое кэширование (L1 + L2)**: 
   - **L1 (In-Memory Caffeine)**: регионы `profiles` и `public-profiles` для наносекундной отдачи без сетевых задержек.
   - **L2 (Redis / Valkey 8.1.4)**: распределенные сессии, токены, защита идемпотентности вебхуков.
   - **Транзакционная инвалидация**: синхронизация через `TransactionSynchronizationManager.afterCommit()` (`PublicProfileCacheEvictListener`) для предотвращения race conditions.
 - **AI Core & Streaming**: Groq API (`openai/gpt-oss-20b`), реактивный WebClient, Server-Sent Events (SSE) с детерминированным закрытием подписок (`Disposable.dispose()`), PII-маскирование персональных данных.
 - **Document & PDF Engine**: Thymeleaf, Flying Saucer, Apache PDFBox, локальные кириллические шрифты Roboto (без внешних `@import`).
-- **Resilience & Rate Limiting**: Bucket4j (распределенный и локальный лимитер: Public 60/min, AI 10/min, Auth 5/min), HikariCP fail-fast тюнинг (`connection-timeout: 10s`, `maximum-pool-size: 10`).
+- **Resilience & Rate Limiting**: Distributed Redis Rate Limiting (Public 60/min, AI 10/min, Auth 5/min, Scraper 20/min), HikariCP fail-fast тюнинг (`connection-timeout: 10s`, `maximum-pool-size: 10`).
 
 ### Frontend (Feature-Sliced Design)
-- **Core Framework**: React 19, TypeScript 5, Vite
+- **Core Framework**: React 19, TypeScript ~6.0.2, Vite
 - **Архитектура**: Feature-Sliced Design (FSD) (`app` -> `pages` -> `widgets` -> `features` -> `entities` -> `shared`).
 - **State Management**: Zustand (с персистентностью), TanStack React Query v5 (дедупликация и кэширование запросов).
 - **Design System**: Tailwind CSS v4, строгий GitHub Dark Mode (`#0d1117` фон, `#161b22` карточки, `#30363d` границы, `#238636` акцент). Никакого ресурсоемкого glassmorphism.
@@ -72,7 +72,7 @@ MeDev (DevProfile) — специализированная data-first B2B/B2C S
   - GitHub Pages (`https://mrsgemaseny.github.io/MeDev/`) — динамический `base: /MeDev/` через `build:github`.
 - **Backend Hosting**: Render Web Service (Docker-контейнер, Java 17, оптимизация JVM памяти для 512MB RAM).
 - **База данных и Кэш**: Render PostgreSQL 17 + Render Redis (Valkey 8.1.4).
-- **CI/CD**: GitHub Actions (автоматическая проверка типов, прогон 290 тестов, сборка артефактов и деплой).
+- **CI/CD**: GitHub Actions (автоматическая проверка типов, прогон 511 тестов: 456 backend + 55 frontend, сборка артефактов и деплой).
 
 ---
 
@@ -105,7 +105,7 @@ MeDev (DevProfile) — специализированная data-first B2B/B2C S
 +-------v-------+                               +-------v-------+            +-------v-------+
 |  PostgreSQL   |                               |  Redis Cache  |            |   Groq API    |
 |  Postgres 17  |                               |  Valkey 8.1   |            | gpt-oss-20b   |
-|  Flyway (V24) |                               |  Sessions /   |            | Reactive SSE  |
+|  Flyway (V29) |                               |  Sessions /   |            | Reactive SSE  |
 |  AES-256-GCM  |                               |  Rate Limits  |            | Streaming     |
 +---------------+                               +---------------+            +---------------+
 ```
@@ -156,10 +156,10 @@ MeDev/
 │   │   ├── modules/           # Доменные модули (auth, profile, portfolio, ai, resume, tracker, billing, audit)
 │   │   └── shared/            # Общие компоненты (security, config, entity, exception, util)
 │   ├── src/main/resources/
-│   │   ├── db/migration/      # Цепочка миграций Flyway (V1..V24)
+│   │   ├── db/migration/      # Цепочка миграций Flyway (V1..V29)
 │   │   ├── templates/resume/  # HTML/CSS шаблоны резюме
 │   │   └── fonts/             # Локальные шрифты Roboto
-│   └── src/test/java/         # 253 Unit и Integration теста (JUnit 5, Mockito, MockMvc)
+│   └── src/test/java/         # 456 Unit и Integration тестов (JUnit 5, Mockito, MockMvc)
 ├── frontend/                  # React 19 SPA на базе Feature-Sliced Design
 │   ├── src/
 │   │   ├── app/               # Провайдеры, роутер, глобальные стили
@@ -168,7 +168,7 @@ MeDev/
 │   │   ├── features/          # Бизнес-фичи (AI Assistant, Profile Edit, Resume Editor, Job Tracker)
 │   │   ├── entities/          # Бизнес-сущности и Zustand-хранилища
 │   │   └── shared/            # UI-kit, Axios клиенты, хуки, утилиты
-│   └── src/test/              # 37 тестов Vitest + React Testing Library
+│   └── src/test/              # 55 тестов Vitest + React Testing Library
 ├── docs/                      # Инженерная документация (ARCHITECTURE, RUNBOOK, ADR, API)
 ├── AUDIT_2026-08-27.md        # Комплексный аудит готовности к релизу
 ├── docker-compose.yml         # Локальная инфраструктура (PostgreSQL 17, Redis, Backend, Frontend)
@@ -223,13 +223,13 @@ npm run dev
 
 ## Запуск Тестов
 
-### Backend Unit & Integration Tests (253 теста):
+### Backend Unit & Integration Tests (456 тестов):
 ```bash
 cd backend
 ./gradlew test
 ```
 
-### Frontend Unit & Component Tests (37 тестов):
+### Frontend Unit & Component Tests (55 тестов):
 ```bash
 cd frontend
 npm test
@@ -245,22 +245,22 @@ npm run build
 
 ## Статус Безопасности, Нагрузочной Устойчивости и Комплаенса
 
-- **Chaos Engineering & Стресс-устойчивость**: Система протестирована спайк-нагрузкой до 500 RPS (10 500 виртуальных пользователей за 45 сек на инстансе 0.1 CPU). Сервер выдержал нагрузку без падения JVM по памяти (нет OOM). Bucket4j Rate Limiter предотвратил деградацию базы данных, отсекая избыточный трафик ответами `429 Too Many Requests`.
+- **Chaos Engineering & Стресс-устойчивость**: Система протестирована спайк-нагрузкой до 500 RPS (10 500 виртуальных пользователей за 45 сек на инстансе 0.1 CPU). Сервер выдержал нагрузку без падения JVM по памяти (нет OOM). Распределенный Redis Rate Limiter предотвратил деградацию базы данных, отсекая избыточный трафик ответами `429 Too Many Requests`.
 - **HikariCP Fail-Fast Protection**: Таймаут получения коннекта ограничен 10 секундами, максимальный пул коннектов зафиксирован на 10, пул потоков веб-сервера ограничен 25 потоками.
 - **Pessimistic Concurrency Control**: Мутации профиля защищены пессимистическими блокировками (`PESSIMISTIC_WRITE`), что исключает гонки при одновременной синхронизации нескольких репозиториев.
 - **Zero Resource Leak Policy**: Все потоки ввода-вывода (PDFBox, WebClient SSE emitters) закрываются через try-with-resources и хуки `Disposable.dispose()`.
-- **Flyway Immutability**: Все 24 миграции строго неизменяемы, поддержка отказоустойчивой схемы данных.
+- **Flyway Immutability**: Все 29 миграций строго неизменяемы, поддержка отказоустойчивой схемы данных.
 - **Защита секретов**: Длина JWT секрета валидируется при старте приложения (`@PostConstruct >= 256 bit`), токены интеграций зашифрованы в БД.
 
 ## Дорожная Карта Выхода на Рынок (Go-to-Market Roadmap)
 
 ### Фаза 1: Инженерная и Инфраструктурная Готовность (Завершена)
-- [x] Развертывание боевой инфраструктуры (Render, Vercel, PostgreSQL 17, Redis Valkey, Flyway V24).
-- [x] Стресс-тестирование спайками до 500 RPS (Chaos Engineering) и тюнинг HikariCP / Bucket4j.
+- [x] Развертывание боевой инфраструктуры (Render, Vercel, PostgreSQL 17, Redis Valkey, Flyway V29).
+- [x] Стресс-тестирование спайками до 500 RPS (Chaos Engineering) и тюнинг HikariCP / Redis Rate Limiter.
 - [x] Внедрение двухуровневого кэша L1 Caffeine + L2 Valkey с транзакционной инвалидацией.
-- [x] Комплексный аудит безопасности (A- Production Ready: AES-256-GCM, RLS, IDOR defense).
+- [x] Комплексный аудит безопасности (A- Production Ready: AES-256-GCM, RLS, IDOR defense, SSRF remediation).
 - [x] Рефакторинг лендинга по стандарту FSD в строгом стиле GitHub Dark Mode.
-- [x] 100% покрытие базовыми тестами (253 бэкенд + 37 фронтенд).
+- [x] 100% покрытие тестами (456 бэкенд + 55 фронтенд).
 
 ### Фаза 2: Закрытое Тестирование и Подготовка к Запуску (Текущий этап)
 - [ ] Закрытый онбординг первых пользователей (Private Beta / Early Adopters feedback loop).

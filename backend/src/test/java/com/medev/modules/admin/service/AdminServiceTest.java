@@ -109,6 +109,27 @@ class AdminServiceTest {
         assertThat(user.getRole()).isEqualTo(User.Role.ADMIN);
         verify(userRepository).save(user);
         verify(auditService).logAction(eq(10L), eq("ADMIN_ROLE_UPDATE"), eq("10"), contains("ADMIN"), isNull());
+        verify(redisTemplate).delete("refresh:10");
+        verify(redisTemplate).delete("user_plan:10");
+    }
+
+    @Test
+    @DisplayName("updateUserRole throws ForbiddenException when caller DB role is not ADMIN")
+    void testUpdateUserRole_CallerRevokedInDb_ThrowsForbiddenException() {
+        org.springframework.security.core.Authentication auth = mock(org.springframework.security.core.Authentication.class);
+        when(auth.getPrincipal()).thenReturn(999L);
+        org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(auth);
+
+        User revokedCaller = User.builder().id(999L).role(User.Role.USER).build();
+        when(userRepository.findById(999L)).thenReturn(Optional.of(revokedCaller));
+
+        try {
+            assertThatThrownBy(() -> adminService.updateUserRole(10L, User.Role.ADMIN))
+                    .isInstanceOf(com.medev.shared.exception.ForbiddenException.class)
+                    .hasMessageContaining("administrator privileges revoked");
+        } finally {
+            org.springframework.security.core.context.SecurityContextHolder.clearContext();
+        }
     }
 
     @Test

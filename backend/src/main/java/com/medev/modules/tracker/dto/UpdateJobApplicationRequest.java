@@ -23,8 +23,5 @@ public class UpdateJobApplicationRequest {
     private String notes;
     @jakarta.validation.constraints.Size(max = 20000)
     private String jobDescription;
-    private Integer matchScore;
-    @jakarta.validation.constraints.Size(max = 2000)
-    private String matchFeedback;
     private LocalDate appliedDate;
 }

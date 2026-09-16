@@ -11,6 +11,7 @@ import com.medev.modules.profile.dto.ProfileDto;
 import com.medev.modules.profile.service.ProfileService;
 import com.medev.shared.exception.TooManyRequestsException;
 import com.medev.shared.security.SecurityUtils;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -193,7 +194,7 @@ public class AiController {
     // ─────────────────────────────────────────────────
 
     @PostMapping(value = "/cover-letter", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<com.medev.modules.ai.dto.AiApplicationResponse> generateCoverLetter(@RequestBody com.medev.modules.ai.dto.AiApplicationRequest request) {
+    public ResponseEntity<com.medev.modules.ai.dto.AiApplicationResponse> generateCoverLetter(@Valid @RequestBody com.medev.modules.ai.dto.AiApplicationRequest request) {
         Long userId = SecurityUtils.getCurrentUserId();
         aiRateLimiter.checkAndConsume(userId);
         
@@ -202,7 +203,7 @@ public class AiController {
     }
 
     @PostMapping(value = "/tailor", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<com.medev.modules.ai.dto.AiApplicationResponse> tailorResume(@RequestBody com.medev.modules.ai.dto.AiApplicationRequest request) {
+    public ResponseEntity<com.medev.modules.ai.dto.AiApplicationResponse> tailorResume(@Valid @RequestBody com.medev.modules.ai.dto.AiApplicationRequest request) {
         Long userId = SecurityUtils.getCurrentUserId();
         aiRateLimiter.checkAndConsume(userId);
         
@@ -211,16 +212,11 @@ public class AiController {
     }
 
     @PostMapping(value = "/match-job", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<com.medev.modules.ai.dto.AiMatchResponse> matchJob(@RequestBody java.util.Map<String, String> body) {
+    public ResponseEntity<com.medev.modules.ai.dto.AiMatchResponse> matchJob(@Valid @RequestBody com.medev.modules.ai.dto.AiMatchRequest request) {
         Long userId = SecurityUtils.getCurrentUserId();
         aiRateLimiter.checkAndConsume(userId);
         
-        String jobDescription = body.get("jobDescription");
-        if (jobDescription == null || jobDescription.isBlank()) {
-            return ResponseEntity.badRequest().build();
-        }
-        
-        com.medev.modules.ai.dto.AiMatchResponse response = aiApplicationService.matchJob(userId, jobDescription);
+        com.medev.modules.ai.dto.AiMatchResponse response = aiApplicationService.matchJob(userId, request.getJobDescription());
         return ResponseEntity.ok(response);
     }
 

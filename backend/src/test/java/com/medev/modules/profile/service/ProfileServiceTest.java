@@ -48,7 +48,7 @@ class ProfileServiceTest {
     @Test
     void createEmptyProfile_savesProfile() {
         profileService.createEmptyProfile(user);
-        verify(profileRepository).save(argThat(p -> p.getUser().getId().equals(1L) && p.getIsPublic()));
+        verify(profileRepository).save(argThat(p -> p.getUser().getId().equals(1L) && Boolean.FALSE.equals(p.getIsPublic())));
     }
 
     @Test
@@ -260,5 +260,42 @@ class ProfileServiceTest {
 
         assertThat(successCount.get()).isEqualTo(threadCount);
         verify(profileRepository, times(threadCount)).findByUserIdForUpdate(1L);
+    }
+
+    @Test
+    void importParsedResume_safeMerge_preservesExistingAndDeduplicates() {
+        when(profileRepository.findByUserIdForUpdate(1L)).thenReturn(Optional.of(profile));
+
+        Skill existingSkill = Skill.builder().id(101L).profile(profile).name("Java").sortOrder(0).build();
+        profile.getSkills().add(existingSkill);
+
+        Experience existingExp = Experience.builder().id(201L).profile(profile).company("Acme Corp").position("Backend Engineer").sortOrder(0).build();
+        profile.getExperiences().add(existingExp);
+
+        com.medev.modules.ai.dto.AiParsedResumeDto parsed = new com.medev.modules.ai.dto.AiParsedResumeDto();
+        parsed.setFullName("Updated Name");
+        com.medev.modules.ai.dto.AiSkillDto s1 = new com.medev.modules.ai.dto.AiSkillDto();
+        s1.setName("java");
+        com.medev.modules.ai.dto.AiSkillDto s2 = new com.medev.modules.ai.dto.AiSkillDto();
+        s2.setName("Spring Boot");
+        parsed.setSkills(List.of(s1, s2));
+
+        com.medev.modules.ai.dto.AiExperienceDto exp1 = new com.medev.modules.ai.dto.AiExperienceDto();
+        exp1.setCompany("Acme Corp");
+        exp1.setPosition("Backend Engineer");
+        com.medev.modules.ai.dto.AiExperienceDto exp2 = new com.medev.modules.ai.dto.AiExperienceDto();
+        exp2.setCompany("Globex");
+        exp2.setPosition("Tech Lead");
+        parsed.setExperience(List.of(exp1, exp2));
+
+        when(profileMapper.toDto(any(Profile.class))).thenReturn(new ProfileDto());
+
+        profileService.importParsedResume(1L, parsed);
+
+        assertThat(profile.getSkills()).extracting(Skill::getName).contains("Java", "Spring Boot");
+        assertThat(profile.getSkills()).hasSize(2);
+
+        assertThat(profile.getExperiences()).extracting(Experience::getCompany).contains("Acme Corp", "Globex");
+        assertThat(profile.getExperiences()).hasSize(2);
     }
 }

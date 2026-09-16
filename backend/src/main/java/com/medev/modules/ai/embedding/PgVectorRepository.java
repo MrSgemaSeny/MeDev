@@ -17,12 +17,79 @@ public class PgVectorRepository {
     private final JdbcTemplate jdbcTemplate;
     private final ObjectMapper objectMapper;
 
+    public static final String DEFAULT_MODEL = "jina-embeddings-v2-base-en";
+    public static final String DEFAULT_VERSION = "v2";
+    public static final int DEFAULT_DIMENSION = 768;
+
     public record VectorItem(
             String content,
             String type,
             String sourceId,
+            String chunkHash,
+            String model,
+            String version,
+            Integer dimension,
             float[] embedding
-    ) {}
+    ) {
+        public VectorItem(String content, String type, String sourceId, String chunkHash, float[] embedding) {
+            this(content, type, sourceId, chunkHash, DEFAULT_MODEL, DEFAULT_VERSION, DEFAULT_DIMENSION, embedding);
+        }
+
+        public VectorItem(String content, String type, String sourceId, float[] embedding) {
+            this(content, type, sourceId, null, DEFAULT_MODEL, DEFAULT_VERSION, DEFAULT_DIMENSION, embedding);
+        }
+    }
+
+    public record ExistingVectorChunk(
+            String id,
+            String type,
+            String sourceId,
+            String chunkHash,
+            String model,
+            String version,
+            Integer dimension,
+            float[] embedding
+    ) {
+        public ExistingVectorChunk(String id, String type, String sourceId, String chunkHash, float[] embedding) {
+            this(id, type, sourceId, chunkHash, DEFAULT_MODEL, DEFAULT_VERSION, DEFAULT_DIMENSION, embedding);
+        }
+    }
+
+    public List<ExistingVectorChunk> findExistingChunksByUserId(Long userId) {
+        if (userId == null) {
+            return List.of();
+        }
+        String sql = "SELECT id, metadata, CAST(embedding AS TEXT) AS emb_text FROM vector_store WHERE user_id = ?";
+        try {
+            return jdbcTemplate.query(sql, (rs, rowNum) -> {
+                String id = rs.getString("id");
+                String metadataJson = rs.getString("metadata");
+                String embText = rs.getString("emb_text");
+                float[] emb = parseVector(embText);
+                String type = null;
+                String sourceId = null;
+                String chunkHash = null;
+                String model = null;
+                String version = null;
+                Integer dimension = null;
+                if (metadataJson != null) {
+                    try {
+                        com.fasterxml.jackson.databind.JsonNode node = objectMapper.readTree(metadataJson);
+                        if (node.has("type")) type = node.get("type").asText();
+                        if (node.has("sourceId")) sourceId = node.get("sourceId").asText();
+                        if (node.has("chunkHash")) chunkHash = node.get("chunkHash").asText();
+                        if (node.has("model")) model = node.get("model").asText();
+                        if (node.has("version")) version = node.get("version").asText();
+                        if (node.has("dimension")) dimension = node.get("dimension").asInt();
+                    } catch (Exception ignored) {}
+                }
+                return new ExistingVectorChunk(id, type, sourceId, chunkHash, model, version, dimension, emb);
+            }, userId);
+        } catch (Exception e) {
+            log.error("[PgVectorRepository] Failed to fetch existing chunks for user {}: {}", userId, e.getMessage());
+            return List.of();
+        }
+    }
 
     /**
      * Replaces all vector records for the given user with new vector items.
@@ -39,17 +106,17 @@ public class PgVectorRepository {
         String userIdStr = String.valueOf(userId);
 
         // Delete existing vectors for this user
-        jdbcTemplate.update("DELETE FROM vector_store WHERE metadata->>'userId' = ?", userIdStr);
+        jdbcTemplate.update("DELETE FROM vector_store WHERE user_id = ?", userId);
 
         if (items == null || items.isEmpty()) {
             return;
         }
 
-        String sql = "INSERT INTO vector_store (id, content, metadata, embedding) VALUES (?, ?, ?::json, ?::vector)";
+        String sql = "INSERT INTO vector_store (id, user_id, content, metadata, embedding) VALUES (?, ?, ?, ?::json, ?::vector)";
 
         List<Object[]> batchArgs = new ArrayList<>(items.size());
         for (VectorItem item : items) {
-            Map<String, String> metadata = new LinkedHashMap<>();
+            Map<String, Object> metadata = new LinkedHashMap<>();
             metadata.put("userId", userIdStr);
             if (item.type() != null) {
                 metadata.put("type", item.type());
@@ -57,16 +124,24 @@ public class PgVectorRepository {
             if (item.sourceId() != null) {
                 metadata.put("sourceId", item.sourceId());
             }
+            if (item.chunkHash() != null) {
+                metadata.put("chunkHash", item.chunkHash());
+            }
+            metadata.put("model", item.model() != null ? item.model() : DEFAULT_MODEL);
+            metadata.put("version", item.version() != null ? item.version() : DEFAULT_VERSION);
+            metadata.put("dimension", item.dimension() != null ? item.dimension() : DEFAULT_DIMENSION);
 
             String metadataJson;
             try {
                 metadataJson = objectMapper.writeValueAsString(metadata);
             } catch (Exception e) {
-                metadataJson = String.format("{\"userId\":\"%s\"}", userIdStr);
+                metadataJson = String.format("{\"userId\":\"%s\",\"model\":\"%s\",\"version\":\"%s\",\"dimension\":%d}",
+                        userIdStr, DEFAULT_MODEL, DEFAULT_VERSION, DEFAULT_DIMENSION);
             }
 
             batchArgs.add(new Object[]{
                     UUID.randomUUID(),
+                    userId,
                     item.content(),
                     metadataJson,
                     formatVector(item.embedding())
@@ -91,7 +166,7 @@ public class PgVectorRepository {
         }
 
         String sql = "SELECT content FROM vector_store " +
-                "WHERE metadata->>'userId' = ? " +
+                "WHERE user_id = ? " +
                 "ORDER BY embedding <=> ?::vector " +
                 "LIMIT ?";
 
@@ -99,7 +174,7 @@ public class PgVectorRepository {
             return jdbcTemplate.query(
                     sql,
                     (rs, rowNum) -> rs.getString("content"),
-                    String.valueOf(userId),
+                    userId,
                     formatVector(queryVector),
                     topK
             );
@@ -138,14 +213,14 @@ public class PgVectorRepository {
         if (userId == null) {
             return null;
         }
-        String sql = "SELECT CAST(AVG(embedding) AS TEXT) AS avg_vec FROM vector_store WHERE metadata->>'userId' = ?";
+        String sql = "SELECT CAST(AVG(embedding) AS TEXT) AS avg_vec FROM vector_store WHERE user_id = ?";
         try {
             String result = jdbcTemplate.query(sql, rs -> {
                 if (rs.next()) {
                     return rs.getString("avg_vec");
                 }
                 return null;
-            }, String.valueOf(userId));
+            }, userId);
             return parseVector(result);
         } catch (Exception e) {
             log.error("[PgVectorRepository] Failed to get aggregated profile vector for user {}: {}", userId, e.getMessage());
@@ -182,7 +257,7 @@ public class PgVectorRepository {
     public int cleanupOrphanedVectors() {
         String sql = "DELETE FROM vector_store vs " +
                 "WHERE NOT EXISTS (" +
-                "  SELECT 1 FROM users u WHERE CAST(u.id AS VARCHAR) = vs.metadata->>'userId'" +
+                "  SELECT 1 FROM users u WHERE u.id = vs.user_id" +
                 ")";
         try {
             return jdbcTemplate.update(sql);

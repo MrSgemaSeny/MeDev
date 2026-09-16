@@ -16,7 +16,7 @@ export interface JobApplicationDto {
   updatedAt: string;
 }
 
-export type CreateJobApplicationRequest = Omit<JobApplicationDto, 'id' | 'updatedAt'>;
+export type CreateJobApplicationRequest = Omit<JobApplicationDto, 'id' | 'updatedAt' | 'matchScore' | 'matchFeedback'>;
 export type UpdateJobApplicationRequest = Partial<CreateJobApplicationRequest>;
 
 export interface AiTailorRequest {

@@ -95,8 +95,9 @@ class JwtFilterTest {
     @Test
     void blacklistedToken_doesNotSetSecurityContext() throws ServletException, IOException {
         String token = "blacklisted.token";
+        String tokenHash = com.medev.shared.util.CryptoUtils.sha256Hex(token);
         when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
-        when(redisTemplate.hasKey("blacklist:access:" + token)).thenReturn(true);
+        when(redisTemplate.hasKey("blacklist:access:" + tokenHash)).thenReturn(true);
 
         jwtFilter.doFilterInternal(request, response, filterChain);
 

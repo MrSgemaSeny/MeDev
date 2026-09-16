@@ -1,76 +1,63 @@
 package com.medev.modules.ai.service;
 
+import com.medev.modules.tracker.service.GenericPageFetcher;
+import com.medev.modules.tracker.service.UrlSecurityValidator;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Service;
 
-import java.net.InetAddress;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.UnknownHostException;
-import java.util.Set;
 
+/**
+ * AI module scraper service that delegates fetching and URL security validation
+ * to the core SRP tracker scraper components.
+ */
 @Service("aiWebScraperService")
 @Slf4j
 public class WebScraperService {
 
-    private static final Set<String> ALLOWED_HOSTS = Set.of(
-            "hh.kz", "hh.ru", "linkedin.com", "www.linkedin.com",
-            "indeed.com", "www.indeed.com", "career.habr.com"
-    );
+    private final GenericPageFetcher genericPageFetcher;
+    private final UrlSecurityValidator urlSecurityValidator;
 
-    public WebScraperService() {
-        // Enforce DNS caching to prevent Time-Of-Check to Time-Of-Use (TOCTOU) DNS rebinding attacks.
-        // By caching the DNS resolution for 30 seconds, the subsequent Jsoup.connect() will use the
-        // exactly same IP address that we validated in validateUrl().
-        java.security.Security.setProperty("networkaddress.cache.ttl", "30");
+    public WebScraperService(GenericPageFetcher genericPageFetcher, UrlSecurityValidator urlSecurityValidator) {
+        this.genericPageFetcher = genericPageFetcher;
+        this.urlSecurityValidator = urlSecurityValidator;
+    }
+
+    public WebScraperService(UrlSecurityValidator urlSecurityValidator) {
+        this(new GenericPageFetcher(urlSecurityValidator), urlSecurityValidator);
     }
 
     /**
-     * Extracts text content from a given URL.
+     * Extracts text content from a given URL safely.
+     *
      * @param url The URL of the job posting or article.
      * @return The extracted text.
      */
     public String extractTextFromUrl(String url) {
         try {
-            validateUrl(url);
-
-            log.info("Scraping URL: {}", url);
-            // We use a common User-Agent to avoid basic bot blocking
-            Document doc = Jsoup.connect(url)
-                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
-                    .timeout(10000)
-                    .get();
-
-            // Return the visible text, removing HTML tags
-            return doc.body().text();
+            urlSecurityValidator.validateUrl(url);
+            String text = genericPageFetcher.fetchText(url);
+            if (text == null || text.isBlank()) {
+                throw new RuntimeException("Failed to fetch content from the provided URL. Please copy-paste the text manually.");
+            }
+            return text;
+        } catch (IllegalArgumentException e) {
+            log.warn("Security validation blocked URL in AI scraper: {} - {}", sanitizeUrlForLogging(url), e.getMessage());
+            throw e;
         } catch (Exception e) {
-            log.error("Failed to scrape URL: {}", url, e);
+            log.error("Failed to scrape URL in AI scraper: {}", sanitizeUrlForLogging(url), e);
             throw new RuntimeException("Failed to fetch content from the provided URL. Please copy-paste the text manually.");
         }
     }
 
-    private void validateUrl(String url) {
+    private String sanitizeUrlForLogging(String url) {
+        if (url == null) return "null";
         try {
             URI uri = new URI(url);
-            String scheme = uri.getScheme();
-            String host = uri.getHost();
-
-            if (!"https".equalsIgnoreCase(scheme)) {
-                throw new IllegalArgumentException("Only HTTPS URLs are allowed");
-            }
-            if (host == null || !ALLOWED_HOSTS.contains(host.toLowerCase())) {
-                throw new IllegalArgumentException("URL host is not allowed: " + host);
-            }
-            
-            // The JVM will cache this resolution due to networkaddress.cache.ttl = 30
-            InetAddress addr = InetAddress.getByName(host);
-            if (addr.isLoopbackAddress() || addr.isSiteLocalAddress() || addr.isAnyLocalAddress() || addr.isLinkLocalAddress()) {
-                throw new IllegalArgumentException("Private/loopback addresses are not allowed");
-            }
-        } catch (URISyntaxException | UnknownHostException e) {
-            throw new IllegalArgumentException("Invalid URL format");
+            return new URI(uri.getScheme(), uri.getAuthority(), uri.getPath(), null, null).toString();
+        } catch (Exception e) {
+            int qIndex = url.indexOf('?');
+            return qIndex != -1 ? url.substring(0, qIndex) : url;
         }
     }
 }

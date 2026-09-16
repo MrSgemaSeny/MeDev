@@ -89,16 +89,27 @@ public class AiOnboardingService extends AbstractAiStructuredService {
         if (response.getExperiences() != null && !response.getExperiences().isEmpty()) {
             java.util.List<Experience> toSave = new java.util.ArrayList<>();
             for (AiOnboardingResponse.ExperienceDto exp : response.getExperiences()) {
+                String company = exp.getCompany() != null ? exp.getCompany().trim() : null;
+                String position = exp.getPosition() != null ? exp.getPosition().trim() : null;
+                if (company == null || company.isBlank() || position == null || position.isBlank()) {
+                    continue;
+                }
+                String lowerCompany = company.toLowerCase();
+                if (lowerCompany.equals("company") || lowerCompany.equals("компания") || lowerCompany.equals("n/a") || lowerCompany.equals("unknown")) {
+                    continue;
+                }
                 toSave.add(Experience.builder()
                         .profile(profile)
-                        .company(exp.getCompany())
-                        .position(exp.getPosition())
+                        .company(company)
+                        .position(position)
                         .description(exp.getParsedDescription())
                         .startDate(null)
                         .endDate(null)
                         .build());
             }
-            experienceRepository.saveAll(toSave);
+            if (!toSave.isEmpty()) {
+                experienceRepository.saveAll(toSave);
+            }
         }
 
         return response;

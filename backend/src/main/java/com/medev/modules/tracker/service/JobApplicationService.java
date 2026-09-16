@@ -46,8 +46,6 @@ public class JobApplicationService {
                 .salaryRange(request.getSalaryRange())
                 .notes(request.getNotes())
                 .jobDescription(request.getJobDescription())
-                .matchScore(request.getMatchScore())
-                .matchFeedback(request.getMatchFeedback())
                 .appliedDate(request.getAppliedDate())
                 .build();
 
@@ -75,8 +73,6 @@ public class JobApplicationService {
         if (request.getSalaryRange() != null) entity.setSalaryRange(request.getSalaryRange());
         if (request.getNotes() != null) entity.setNotes(request.getNotes());
         if (request.getJobDescription() != null) entity.setJobDescription(request.getJobDescription());
-        if (request.getMatchScore() != null) entity.setMatchScore(request.getMatchScore());
-        if (request.getMatchFeedback() != null) entity.setMatchFeedback(request.getMatchFeedback());
         if (request.getAppliedDate() != null) entity.setAppliedDate(request.getAppliedDate());
 
         JobApplication saved = repository.save(entity);

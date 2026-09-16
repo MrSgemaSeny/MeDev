@@ -33,6 +33,7 @@ public class AiOnboardingResponse {
     }
 
     @Data
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
     public static class ExperienceDto {
         @NotBlank
         private String company;
@@ -41,6 +42,7 @@ public class AiOnboardingResponse {
         @NotNull
         private JsonNode description;
 
+        @com.fasterxml.jackson.annotation.JsonIgnore
         public String getParsedDescription() {
             if (description == null) return "";
             if (description.isArray()) {

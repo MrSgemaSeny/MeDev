@@ -10,6 +10,7 @@ import com.medev.modules.profile.service.ProfileService;
 import com.medev.shared.exception.ConflictException;
 import com.medev.shared.exception.UnauthorizedException;
 import com.medev.shared.security.JwtService;
+import com.medev.shared.util.CryptoUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,6 +32,7 @@ public class AuthService {
     private final RedisTemplate<String, String> redisTemplate;
     private final ProfileService profileService;
     private final AuditService auditService;
+    private final EmailDispatchService emailDispatchService;
 
     public static final java.util.List<String> RESERVED_USERNAMES = java.util.List.of(
             "admin", "root", "system", "support", "billing", "me", "profile", "api", "auth",
@@ -65,19 +67,16 @@ public class AuthService {
 
         // Создаём пустой профиль автоматически
         profileService.createEmptyProfile(user);
-        auditService.logAction(user.getId(), "AUTH_REGISTER_SUCCESS", String.valueOf(user.getId()), "User registered with email: " + user.getEmail(), null);
+        auditService.logAction(user.getId(), "AUTH_REGISTER_SUCCESS", String.valueOf(user.getId()), "User registered successfully", null);
 
         return buildAuthResponse(user);
     }
     
     public AuthResponse exchangeOauth2Code(String code) {
-        String userIdStr = redisTemplate.opsForValue().get("oauth2_code:" + code);
+        String userIdStr = redisTemplate.opsForValue().getAndDelete("oauth2_code:" + code);
         if (userIdStr == null) {
             throw new UnauthorizedException("Invalid or expired OAuth2 code");
         }
-        
-        // Remove code to prevent reuse
-        redisTemplate.delete("oauth2_code:" + code);
         
         Long userId = Long.parseLong(userIdStr);
         User user = userRepository.findById(userId)
@@ -90,7 +89,7 @@ public class AuthService {
     public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail()).orElse(null);
         if (user == null) {
-            auditService.logAction(null, "AUTH_LOGIN_FAILURE", request.getEmail(), "Login failed: user not found with email: " + request.getEmail(), null);
+            auditService.logAction(null, "AUTH_LOGIN_FAILURE", null, "Login failed: invalid credentials", null);
             throw new UnauthorizedException("Invalid credentials");
         }
 
@@ -190,7 +189,8 @@ public class AuthService {
                     java.util.Date exp = jwtService.extractExpiration(token);
                     long remainingMs = exp.getTime() - System.currentTimeMillis();
                     if (remainingMs > 0) {
-                        redisTemplate.opsForValue().set("blacklist:access:" + token, "revoked", Duration.ofMillis(remainingMs));
+                        String tokenHash = CryptoUtils.sha256Hex(token);
+                        redisTemplate.opsForValue().set("blacklist:access:" + tokenHash, "revoked", Duration.ofMillis(remainingMs));
                     }
                 } catch (Exception ignored) {}
 
@@ -208,21 +208,22 @@ public class AuthService {
             for (byte b : randomBytes) {
                 sb.append(String.format("%02x", b));
             }
-            String token = sb.toString();
-            redisTemplate.opsForValue().set("password_reset:token:" + token, String.valueOf(user.getId()), Duration.ofMinutes(15));
-            auditService.logAction(user.getId(), "AUTH_PASSWORD_RESET_REQUESTED", String.valueOf(user.getId()), "Password reset requested for email: " + user.getEmail(), null);
-            // TODO: Dispatch reset link with token to user's email once EmailService (SendGrid/Resend) is integrated
+            String rawToken = sb.toString();
+            String tokenHash = CryptoUtils.sha256Hex(rawToken);
+
+            redisTemplate.opsForValue().set("password_reset:token:" + tokenHash, String.valueOf(user.getId()), Duration.ofMinutes(15));
+            auditService.logAction(user.getId(), "AUTH_PASSWORD_RESET_REQUESTED", String.valueOf(user.getId()), "Password reset requested", null);
+            emailDispatchService.sendPasswordResetEmail(user.getEmail(), rawToken);
         }
     }
 
     public void resetPassword(com.medev.modules.auth.dto.ResetPasswordRequest request) {
-        String key = "password_reset:token:" + request.getToken();
-        String userIdStr = redisTemplate.opsForValue().get(key);
+        String tokenHash = CryptoUtils.sha256Hex(request.getToken());
+        String key = "password_reset:token:" + tokenHash;
+        String userIdStr = redisTemplate.opsForValue().getAndDelete(key);
         if (userIdStr == null) {
             throw new IllegalArgumentException("Invalid or expired password reset token");
         }
-
-        redisTemplate.delete(key);
 
         Long userId = Long.parseLong(userIdStr);
         User user = userRepository.findById(userId)

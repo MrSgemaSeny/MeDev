@@ -104,8 +104,6 @@ class JobApplicationServiceTest {
         req.setSalaryRange("$120k - $150k");
         req.setNotes("Referral via Alice");
         req.setJobDescription("Java Spring Boot microservices");
-        req.setMatchScore(90);
-        req.setMatchFeedback("Great match for Java background");
         req.setAppliedDate(LocalDate.of(2026, 1, 15));
 
         JobApplicationDto result = service.create(1L, req);
@@ -113,7 +111,7 @@ class JobApplicationServiceTest {
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(10L);
         assertThat(result.getCompanyName()).isEqualTo("Tech Corp");
-        assertThat(result.getMatchScore()).isEqualTo(90);
+        assertThat(result.getMatchScore()).isNull();
         verify(repository).save(any(JobApplication.class));
     }
 

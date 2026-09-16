@@ -43,7 +43,7 @@ public class Profile {
     private String linkedin;
     
     @Builder.Default
-    private Boolean isPublic = true;
+    private Boolean isPublic = false;
 
     @Builder.Default
     private Boolean isOnboardingCompleted = false;

@@ -58,7 +58,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             Duration.ofMinutes(5)
         );
 
-        auditService.logAction(user.getId(), "AUTH_OAUTH_LOGIN_SUCCESS", String.valueOf(user.getId()), "OAuth2 login successful via " + user.getEmail(), null);
+        auditService.logAction(user.getId(), "AUTH_OAUTH_LOGIN_SUCCESS", String.valueOf(user.getId()), "OAuth2 login successful", null);
 
         String frontendOrigin = (defaultFrontendUrl != null && !defaultFrontendUrl.isBlank())
                 ? defaultFrontendUrl.trim()

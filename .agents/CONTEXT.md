@@ -1,12 +1,12 @@
 # Current Project Context
 
 ## Status
-- **Project Stage**: Level 4 — Production Live (Production Deployed: Render backend + Vercel frontend, 266 backend + 41 frontend tests)
+- **Project Stage**: Level 4 — Production Live (Production Deployed: Render backend + Vercel frontend, 460 backend + 55 frontend tests)
 - **Developer Level**: Senior / Tech Lead
 - **Live Infrastructure**:
   - **Frontend**: Custom Domain (`https://medev.mrsgemaseny.com`) + Vercel (`https://me-dev-two.vercel.app`) + GitHub Pages (`https://mrsgemaseny.github.io/MeDev/`), `@vercel/analytics`, `vercel.json` SPA rewrites.
   - **Backend API**: Render Web Service (`https://medev-backend.onrender.com/api`), Docker, Java 17, Spring Boot 3.3.0.
-  - **Database**: Render PostgreSQL 17 (`medev-postgres`, Flyway V27).
+  - **Database**: Render PostgreSQL 17 (`medev-postgres`, Flyway V29).
   - **Cache & Redis**: Render Redis (`medev-redis`, Valkey 8.1.4) + In-Memory Caffeine L1 (`profiles`, `public-profiles`).
   - **AI Model**: `openai/gpt-oss-20b` (GPT-20B) via Groq API. СТРОГО: Модели Llama НЕ РАБОТАЮТ и запрещены. Работает ТОЛЬКО `openai/gpt-oss-20b`.
 - **Monorepo Structure**:
@@ -14,118 +14,31 @@
   - `frontend/`: Vite + React 19 SPA (`app.medev.mrsgemaseny.com`, Dashboard, Resume Builder, ATS).
   - `landing/`: Next.js 15 App Router SSG (`medev.mrsgemaseny.com`, Marketing, SEO, OpenGraph).
 
-## Latest Milestones & Features (2026-09-10)
-1. **5-Axis Security and Architectural Audit & Remediation (100% COMPLETE)**:
+## Latest Milestones & Features (2026-09-16)
+1. **Security, Concurrency, Architecture Decoupling & Documentation Hardening (100% COMPLETE)**:
+   - **P0 Security & Concurrency (Milestone 1)**: `UrlSecurityValidator` with full CIDR/port/DNS/allowlist checks against SSRF; `AiRateLimiter` atomic Redis Lua script; dynamic TTL and eviction for user plan cache; `matchScore` server authority; `is_public=false` default; RAG tenant isolation (`user_id BIGINT NOT NULL` with cascade and index in Flyway V29).
+   - **P1 Auth, Billing, Privacy & AI (Milestone 2)**: OAuth GETDEL atomic code exchange; password reset SHA-256 token hashing in Redis + `EmailDispatchService`; JWT blacklist SHA-256 token hashing; DB admin privilege validation in `AdminService` and session eviction; Stripe webhook 2-tier DB idempotency (`stripe_webhook_events`) and subscription `current_period_end` sync; LLM prompt injection delimiters (`<<< UNTRUSTED ... >>>`) and length bounds; AI resume safe non-destructive merge; RAG chunk content-hash caching; audit log PII removal.
+   - **P2 Architecture Decoupling & Docs (Milestone 3)**: `WebScraperService` decomposed into 5 SRP components (`UrlSecurityValidator`, `HhVacancyClient`, `GenericPageFetcher`, `AiJobExtractor`, `ScrapeRateLimiter`) with coordinator facade; AI fallback dummy strings eliminated; embedding metadata versioning (`model`, `version`, `dimension`, `chunkHash`); `README.md` synchronized.
+
+2. **5-Axis Security and Architectural Audit & Remediation (100% COMPLETE)**:
    - **Backend Security & Hardening**: Fixed OAuth2 Java Serialization RCE (using JSON + AES). Strengthened JWT claims. Removed wildcard header `*` from CORS `allowedHeaders`. Sanitized `authenticationEntryPoint` JSON output against injection. Centralized origin whitelist in `SecurityOrigins`. Purged reset token from application logs. Hardened `getClientIp` against spoofed `X-Forwarded-For` using rightmost hop.
    - **Backend Architecture & Stability**: Eliminated N+1 queries using `Set` collections and `@EntityGraph`. Fixed Redis rate limiter crashes by adding `StringRedisTemplate`. Removed DB mutation side-effects from `AiRateLimiter` hot path. Enabled `@EnableScheduling` for hourly subscription expiration job. Removed automatic experience generation from GitHub organizations. Removed dead `OptimisticLockingFailureException` handler. Parameterized owner username in `AdminService`.
-   - **Container & Runtime Optimization**: Added `-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0` to Dockerfile entrypoint.
-   - **Frontend Architecture (FSD)**: Migrated `shared/api/hooks` to `entities/profile` and `entities/job-tracker`. Replaced Axios with native fetch (`ADR-005a`).
-   - **Frontend Performance**: Implemented `LocalErrorBoundary` and wrapped `KanbanBoard` elements in `React.memo` to eliminate drag-and-drop re-renders.
 
-2. **Test User Data Cleanup & Admin Management (100% COMPLETE)**:
-   - **Flyway V25**: `V25__cleanup_test_data.sql` удаляет всех синтетических пользователей.
-   - **Admin UI**: В `AdminDashboardPage.tsx` добавлена кнопка "Очистить тестовые данные". В `AdminUsersPage.tsx` добавлена колонка Username и кнопки удаления каждого аккаунта.
+3. **RAG Embedding Pipeline & Semantic Job Match Engine (100% COMPLETE)**:
+   - Jina AI (`jina-embeddings-v2-base-en`), `PgVectorRepository` on clean JdbcTemplate, HNSW index on vector(768).
+   - Asynchronous vacancy vectorization and cosine similarity match score calculation.
 
-3. **100% Free Resume Templates Everywhere (100% COMPLETE)**:
-   - Все 6 шаблонов полностью бесплатны для всех пользователей как при превью, так и при экспорте PDF/HTML.
-
-4. **Mobile UI Compaction & Mobile Navigation**:
-   - Сайдбар скрыт на экранах <768px, внедрен выезжающий drawer `MobileNavDrawer.tsx`.
-   - Редактор резюме снабжен табами на мобильных экранах.
-
-5. **Complete Light & Dark Mode Architecture (100% COMPLETE)**:
-   - Полноценная светлая палитра GitHub Light и строгая тёмная палитра GitHub Dark.
-   - Переключение темы с сохранением стейта.
-
-6. **JF-1C i18n Architecture Adoption & Localization Overhaul (100% COMPLETE)**:
-   - Выровнена архитектура по стандарту JF-1C. Добавлен LanguageSwitcher RU/EN.
-
-7. **Profile Data Overhaul & Desktop UX Polish (100% COMPLETE)**:
-   - **Flyway V26**: `V26__clean_spoken_languages_and_update_profile.sql`.
-   - **Desktop UX**: Восстановлена полноценная прокрутка листа А4 на мониторах ПК.
-
-8. **Production 500 Error Remediation (EncryptedStringConverter & EntityGraph Cartesian Product)**:
-   - **EncryptedStringConverter**: Обернуты вызовы шифрования/дешифрования в try-catch с логгированием и безопасным фоллбэком на исходное строковое значение. Это полностью устраняет 500 ошибку при чтении legacy незашифрованных (`gho_...`) или пустых токенов из production PostgreSQL.
-   - **ProfileRepository**: Убран 5-коллекционный `@EntityGraph`, заменен на чистый JPQL `@Query("SELECT p FROM Profile p WHERE p.user.id = :userId")`. Предотвращен взрыв Cartesian product и дублирование результатов.
-   - **Hibernate Batch Fetching**: В `application.yml` добавлен `default_batch_fetch_size: 50` для защиты от N+1 при ленивой загрузке.
-
-9. **Desktop Sidebar Redesign, Universal Hamburger Menu & Desktop Responsiveness (100% COMPLETE)**:
-   - **Universal Hamburger Button**: Кнопка меню в `AppHeader` теперь доступна на всех устройствах (десктоп, планшет, мобильный). На мобильных открывает `MobileNavDrawer`, на десктопе сворачивает/разворачивает сайдбар.
-   - **Desktop Sidebar Overhaul**: Новый брендовый хедер `>_ MeDev`, компактный вид (68px) с tooltips и развернутый (260px) с изумрудным активным маркером, персистентное сохранение состояния в `localStorage`.
-   - **Desktop Responsiveness & Zoom Controls**: Адаптивная ширина панели в конструкторе резюме (`w-full lg:w-[300px] xl:w-[340px]`), интерактивный тулбар масштабирования превью (`Zoom Out`, `Fit %`, `Zoom In`) с авто-подгонкой при изменении размера экрана.
-
-10. **AI Resume Parser 500 Remediation & UI De-cluttering (100% COMPLETE)**:
-    - **Backend (500 Root Cause Eliminated)**: `AiExperienceDto` и `AiEducationDto` переведены с `LocalDate` на `String` (Jackson больше не падает при текстовых датах от Groq). В `ProfileService` внедрен безопасный парсер дат `parseDateSafe` и санитизация строк `truncate(str, max)`. `AiAnalysisService` ловит все PDFBox рантайм-сбои. В `GlobalExceptionHandler` добавлен перехват `DataIntegrityViolationException`.
-    - **Frontend (UI Clean-up)**: Убран SVG-квадрат с терминалом и мигающая точка у логотипа `MeDev`. Убрана подпись `DEVELOPER HUB`. Удален пункт "О себе". Удалены кнопки закрытия внутри сайдбара — сайдбар открывается/закрывается только гамбургером в хедере. Из конструктора резюме вычищены все лишние описания и индикаторы.
-
-11. **Kitapall-Style Island Drawer & Universal Header (100% COMPLETE)**:
-    - **AppHeader**: Добавлен стильный логотип `MeDev` рядом с кнопкой меню `☰`, минималистичный капсульный инпут поиска `rounded-full`.
-    - **Universal Island Drawer (`MobileNavDrawer`)**: Реализован дизайн со скругленными карточками-островками (`rounded-2xl`): блок главного меню со встроенным переключателем языка и темы, блок разделов резюме с подсказками, блок сервиса с тарифами, настройками и выходом. Контент приложения получил 100% ширины экрана.
-
-12. **Drawer Polish: Segmented Theme Switcher & Monochromatic White Typography (100% COMPLETE)**:
-    - **Segmented Theme Switcher**: Внедрен переключатель тем `[ 🌙 Тёмная | ☀️ Светлая ]` в едином стиле с тумблером языка.
-    - **Monochromatic White Typography**: Все тексты в сайдбаре переведены на чистый белый цвет (`text-white`, `text-white/80`, `text-white/70`, `text-white/50`). Полностью удалены зеленые тексты (логотип `MeDev`, кнопка темы, пункт "Админ-панель").
-
-13. **PostgreSQL Column Bounds Hardening (100% COMPLETE)**:
-    - `languages.level`: исправлено усечение до `VARCHAR(20)` (ранее стояло 50).
-    - `profiles`: добавлены усечения `truncate` для всех строковых полей (fullName, headline, location, website, githubUsername, telegram, linkedin).
-
-14. **Job Tracker ↔ AI Resume Tailoring Integration (100% COMPLETE)**:
-    - **Contract-First & API Alignment**: В `AiApplicationResponse` добавлены псевдонимы `coverLetter` и `suggestions` для обратной совместимости по Hyrum's Law.
-    - **Frontend DTOs & Hooks**: Добавлены контракты `AiTailorRequest`, `AiTailorResponse`, `AiMatchRequest`, `AiMatchResponse` и хук `useTailorResume`.
-    - **AiTailorModal**: Новое модальное окно для пошаговой адаптации резюме под требования вакансии с валидацией длины текста, индикацией статуса, копированием и быстрым переходом в конструктор резюме.
-    - **Kanban & List Quick Actions**: В карточки KanbanBoard и строки списка Job Tracker добавлены кнопки быстрого вызова адаптации резюме (`Sparkles`) с доступностью по WCAG AA.
-    - **Bugfix**: Исправлена автоподстановка распарсенного `jobDescription` в `AiCoverLetterModal`.
-
-15. **RAG Embedding Pipeline Activation via Jina AI & PgVectorRepository (100% COMPLETE)**:
-    - **Flyway V27**: `V27__update_vector_dimensions.sql` обновляет размерность `vector(384)` -> `vector(768)` с пересозданием индекса HNSW.
-    - **JinaEmbeddingClient**: Высокопроизводительный WebClient HTTP-клиент к Jina AI (`jina-embeddings-v2-base-en`), исключающий OOM на JVM.
-    - **PgVectorRepository**: Нативный репозиторий на чистом JdbcTemplate для batch upsert и косинусного поиска (`<=>`).
-17. **RAG Plan B: Semantic Job Match Engine (100% COMPLETE)**:
-    - **Flyway V28**: `V28__add_vacancy_vector.sql` добавляет столбец `job_embedding vector(768)` и HNSW индекс на `job_applications`.
-    - **PgVectorRepository**: Добавлены методы `saveVacancyEmbedding` и `getAggregatedProfileVector` (`AVG(embedding)` центроид профиля).
-    - **VacancyVectorizationService**: Асинхронная векторизация вакансий и мгновенный расчет косинусного сходства (`match_score`) без вызова LLM.
-    - **API & JobApplicationService**: Подключен автоматический триггер векторизации и эндпоинт `POST /v1/tracker/applications/{id}/rematch`.
-
-18. **Resume Parsing Pipeline Deep Audit & Remediation (100% COMPLETE)**:
-    - **Stability**: Removed crash-inducing `spring.ai.vectorstore.pgvector` auto-config.
-    - **Data Integrity**: Hardened PII masking logic to prevent false-positive masking of ISO dates and software versions.
-    - **Performance**: N+1 queries eliminated in onboarding wizard using `saveAll()` batching.
-    - **Security**: Added explicit masking of GitHub snapshot JSON before sending it to LLM (Groq).
-    - **Prompt Engineering**: Enforced canonical array field output (`[]` instead of `null`) to fix frontend mapping.
-    - **Reliability (GroqClient)**: Added 5000ms connect timeout to prevent infinite hanging, reduced synchronous retries from 4 to 2 for better UX.
-    - **Rate Limiting**: Fixed increment-before-check race condition in `AiRateLimiter.java` preventing parallel-request token leak.
-    - **Clean Code**: Eliminated redundant in-memory PDF magic-byte validation in `AiController`.
-
-19. **Job Tracker URL Parsing Upgrade & UI Polish (100% COMPLETE)**:
-    - **Backend (WebScraperService)**: Replaced fragile and blocking Jsoup HTML parsing with Jina AI Reader API (`https://r.jina.ai/`) for bypassing Cloudflare/Authwalls and fetching clean Markdown.
-    - **Backend (WebScraperService)**: Added structured LLM parsing (Groq `LlmProvider` + `ObjectMapper`) to extract accurate `CreateJobApplicationRequest` JSON from the raw Markdown.
-    - **Frontend (JobTrackerPage)**: Redesigned the Empty State from scratch. Added a sleek gradient background, a glowing target icon, and a modern floating input field with a purple/accent shadow for the URL import form. Added confirmation dialogs for profile deletions using `ConfirmDialog`.
-
-20. **Strict Minimal Design System & Scraper Hardening (100% COMPLETE)**:
-    - **Design Tokens**: Restored strict GitHub Green accent (`#238636` dark / `#1f883d` light) for all buttons and active switches.
-    - **Visual De-cluttering**: Removed search bar from Job Tracker page toolbar (global search remains in header). Removed all subtext hints and secondary descriptions from navigation links in `MobileNavDrawer` and `AppSidebar`.
-    - **WebScraperService**: Direct HeadHunter Public API integration (`api.hh.ru/vacancies/{id}`) with Jsoup and AI fallback, eliminating 500 errors.
-
-21. **Dashboard UI Polish & De-cluttering (100% COMPLETE)**:
-    - **Hero & Actions Subtitles**: Removed secondary description text below welcome heading and Quick Actions heading in `DashboardPage.tsx`.
-    - **Stats Container**: Removed 3rd status column ("100% Free / Status") that broke boundaries. Layout cleanly centered with 2 balanced stats cards (`grid-cols-2 max-w-md`).
-
-22. **Auth Pages Localization & UX Overhaul (100% COMPLETE)**:
-    - **Full i18n**: Eliminated language mixing across `LoginPage`, `RegisterPage`, and `ResetPasswordPage`. Added top-bar `LanguageSwitcher` and header home link.
-23. **AI Cover Letter & Resume Tailoring Markdown & Templating Remediation (100% COMPLETE)**:
-    - **Backend (Prompt Engineering & Data Enrichment)**: `AiApplicationService.java` now extracts full candidate details (`buildCandidateProfileContext`) and passes them into LLM prompt context alongside RAG vector search results. Strict rules enforced against generic template placeholders (`[Your Name]`, `[Company]`, `[Date]`) and markdown formatting (`**`, `##`, `*`).
-    - **Backend (Tailor Resume Plain Text)**: Replaced raw `<markdown text>` system prompt instruction with structured plain text headers, eliminating markdown clutter from plain text resume exports.
-    - **Frontend (UX & Toasts)**: Replaced native `alert()` with `toast.error` in `AiCoverLetterModal`, added dynamic `Copy`/`Check` clipboard feedback and localization.
+4. **UI & Design Polish (100% COMPLETE)**:
+   - Strict GitHub dark aesthetic (#0d1117, #161b22, #30363d, #238636 accent). Zero emojis, clean navigation without subtext clutter.
 
 ## Verification
-- `backend`: 278/278 тестов успешно пройдены (`./gradlew test`).
+- `backend`: 460/460 тестов успешно пройдены (`./gradlew test`).
 - `frontend`: 55/55 тестов пройдены (`npm test`).
 - `frontend`: сборка Vite прошла успешно (`npm run build`).
-- `landing`: сборка Next.js 15 прошла без ошибок (`npm run build`).
 
 ## Active Backlog
 - **Native Mobile App (Expo)**: Инициализация и разработка нативного приложения MeDev на React Native + Expo.
 - Setting up automated nightly DB backup jobs.
 - Sentry and Prometheus/Grafana monitoring dashboards.
+
 

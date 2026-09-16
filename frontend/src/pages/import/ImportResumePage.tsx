@@ -143,8 +143,11 @@ export const ImportResumePage = () => {
               <h3 className="text-lg sm:text-xl font-bold text-primary mb-2">
                 Перетащите PDF резюме сюда или нажмите для выбора
               </h3>
-              <p className="text-xs sm:text-sm text-secondary mb-6 max-w-sm">
+              <p className="text-xs sm:text-sm text-secondary mb-2 max-w-sm">
                 Поддерживаются любые PDF-файлы до 10 МБ.
+              </p>
+              <p className="text-[11px] text-muted mb-6 max-w-md">
+                Безопасный импорт: ваши существующие навыки, проекты и опыт не перезаписываются, а объединяются без дубликатов.
               </p>
               <Button variant="primary" size="lg" type="button" className="pointer-events-none rounded-xl px-5 sm:px-8 text-xs sm:text-sm shadow-md">
                 Выбрать PDF-файл

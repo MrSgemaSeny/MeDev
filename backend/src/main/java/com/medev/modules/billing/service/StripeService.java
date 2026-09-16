@@ -12,11 +12,15 @@ import com.stripe.net.Webhook;
 import com.stripe.param.checkout.SessionCreateParams;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import com.medev.modules.billing.entity.StripeWebhookEvent;
+import com.medev.modules.billing.repository.StripeWebhookEventRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @Slf4j
 @Service
@@ -26,6 +30,7 @@ public class StripeService {
     private final UserRepository userRepository;
     private final org.springframework.data.redis.core.RedisTemplate<String, Object> redisTemplate;
     private final AuditService auditService;
+    private final StripeWebhookEventRepository stripeWebhookEventRepository;
 
     @Value("${stripe.pro-price-id}")
     private String proPriceId;
@@ -99,6 +104,12 @@ public class StripeService {
             return;
         }
 
+        // Persistent database idempotency check
+        if (stripeWebhookEventRepository.existsByEventId(eventId)) {
+            log.info("Stripe webhook event {} already processed in database, skipping", eventId);
+            return;
+        }
+
         try {
             if ("checkout.session.completed".equals(event.getType())) {
                 Session session = (Session) event.getDataObjectDeserializer().getObject().orElse(null);
@@ -110,14 +121,14 @@ public class StripeService {
                 if (subscription != null) {
                     downgradeUser(subscription.getCustomer());
                 }
-            } else if ("customer.subscription.updated".equals(event.getType())) {
+            } else if ("customer.subscription.updated".equals(event.getType()) || "customer.subscription.created".equals(event.getType())) {
                 com.stripe.model.Subscription subscription = (com.stripe.model.Subscription) event.getDataObjectDeserializer().getObject().orElse(null);
                 if (subscription != null) {
                     String status = subscription.getStatus();
                     if ("canceled".equals(status) || "unpaid".equals(status) || "past_due".equals(status)) {
                         downgradeUser(subscription.getCustomer());
-                    } else if ("active".equals(status)) {
-                        upgradeUserByCustomer(subscription.getCustomer());
+                    } else if ("active".equals(status) || "trialing".equals(status)) {
+                        upgradeUserBySubscription(subscription);
                     }
                 }
             } else if ("invoice.payment_failed".equals(event.getType())) {
@@ -126,6 +137,12 @@ public class StripeService {
                     downgradeUser(invoice.getCustomer());
                 }
             }
+
+            stripeWebhookEventRepository.save(StripeWebhookEvent.builder()
+                    .eventId(eventId)
+                    .eventType(event.getType())
+                    .processedAt(Instant.now())
+                    .build());
         } catch (Exception e) {
             redisTemplate.delete(idempotencyKey);
             log.error("Error processing Stripe webhook event {}, cleared idempotency key for retry", eventId, e);
@@ -164,10 +181,25 @@ public class StripeService {
         });
     }
 
+    private void upgradeUserBySubscription(com.stripe.model.Subscription subscription) {
+        upgradeUserByCustomer(subscription.getCustomer(), subscription.getCurrentPeriodEnd());
+    }
+
     private void upgradeUserByCustomer(String customerId) {
+        upgradeUserByCustomer(customerId, null);
+    }
+
+    private void upgradeUserByCustomer(String customerId, Long currentPeriodEnd) {
         userRepository.findByStripeCustomerId(customerId).ifPresent(user -> {
             user.setPlan(User.Plan.PRO);
-            user.setSubscriptionExpiresAt(LocalDateTime.now().plusMonths(1));
+            if (currentPeriodEnd != null) {
+                user.setSubscriptionExpiresAt(LocalDateTime.ofInstant(
+                        Instant.ofEpochSecond(currentPeriodEnd),
+                        ZoneOffset.UTC
+                ));
+            } else {
+                user.setSubscriptionExpiresAt(LocalDateTime.now().plusMonths(1));
+            }
             userRepository.save(user);
             redisTemplate.delete("user_plan:" + user.getId());
             log.info("Upgraded user {} to PRO plan via subscription update", user.getId());

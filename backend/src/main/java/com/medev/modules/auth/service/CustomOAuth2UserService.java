@@ -32,6 +32,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final ProfileService profileService;
     private final JwtService jwtService;
     private final AuditService auditService;
+    private final org.springframework.data.redis.core.StringRedisTemplate stringRedisTemplate;
 
     @Override
     @Transactional
@@ -157,6 +158,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if (isOwner) {
             user.setRole(User.Role.ADMIN);
             user.setPlan(User.Plan.PRO);
+            if (stringRedisTemplate != null && user.getId() != null) {
+                stringRedisTemplate.delete("user_plan:" + user.getId());
+            }
         }
 
         // Обновляем provider ID для существующего пользователя

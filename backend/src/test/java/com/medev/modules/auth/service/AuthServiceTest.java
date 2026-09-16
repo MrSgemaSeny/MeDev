@@ -53,6 +53,9 @@ class AuthServiceTest {
     @Mock
     private com.medev.modules.audit.service.AuditService auditService;
 
+    @Mock
+    private EmailDispatchService emailDispatchService;
+
     @InjectMocks
     private AuthService authService;
 
@@ -215,6 +218,34 @@ class AuthServiceTest {
     }
 
     @Test
+    void exchangeOauth2Code_validCode_returnsAuthResponseAndDeletesAtomically() {
+        String code = "oauth-code-123";
+        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+        when(valueOperations.getAndDelete("oauth2_code:" + code)).thenReturn("1");
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+        when(jwtService.generateAccessToken(any(User.class), anyString())).thenReturn("access-token");
+        when(jwtService.generateRefreshToken(any(User.class), anyString())).thenReturn("refresh-token");
+
+        AuthResponse response = authService.exchangeOauth2Code(code);
+
+        assertThat(response).isNotNull();
+        assertThat(response.getAccessToken()).isEqualTo("access-token");
+        verify(valueOperations).getAndDelete("oauth2_code:" + code);
+        verify(redisTemplate, never()).delete("oauth2_code:" + code);
+    }
+
+    @Test
+    void exchangeOauth2Code_invalidOrExpiredCode_throwsUnauthorized() {
+        String code = "expired-code";
+        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+        when(valueOperations.getAndDelete("oauth2_code:" + code)).thenReturn(null);
+
+        assertThatThrownBy(() -> authService.exchangeOauth2Code(code))
+                .isInstanceOf(UnauthorizedException.class)
+                .hasMessage("Invalid or expired OAuth2 code");
+    }
+
+    @Test
     void forgotPassword_userExists_storesTokenInRedis() {
         com.medev.modules.auth.dto.ForgotPasswordRequest req = new com.medev.modules.auth.dto.ForgotPasswordRequest("test@example.com");
         when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(testUser));
@@ -223,6 +254,7 @@ class AuthServiceTest {
         authService.forgotPassword(req);
 
         verify(valueOperations).set(startsWith("password_reset:token:"), eq("1"), eq(Duration.ofMinutes(15)));
+        verify(emailDispatchService).sendPasswordResetEmail(eq("test@test.com"), anyString());
     }
 
     @Test
@@ -233,21 +265,23 @@ class AuthServiceTest {
         authService.forgotPassword(req);
 
         verifyNoInteractions(valueOperations);
+        verifyNoInteractions(emailDispatchService);
     }
 
     @Test
     void resetPassword_validToken_updatesPasswordAndInvalidatesSessions() {
         String token = "valid-reset-token";
+        String tokenHash = com.medev.shared.util.CryptoUtils.sha256Hex(token);
         com.medev.modules.auth.dto.ResetPasswordRequest req = new com.medev.modules.auth.dto.ResetPasswordRequest(token, "newPassword123");
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-        when(valueOperations.get("password_reset:token:" + token)).thenReturn("1");
+        when(valueOperations.getAndDelete("password_reset:token:" + tokenHash)).thenReturn("1");
         when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
         when(passwordEncoder.encode("newPassword123")).thenReturn("encodedNewPassword");
         when(redisTemplate.keys("refresh:1:*")).thenReturn(java.util.Set.of("refresh:1:dev1"));
 
         authService.resetPassword(req);
 
-        verify(redisTemplate).delete("password_reset:token:" + token);
+        verify(valueOperations).getAndDelete("password_reset:token:" + tokenHash);
         verify(passwordEncoder).encode("newPassword123");
         verify(userRepository).save(testUser);
         verify(redisTemplate).delete(any(java.util.Set.class));
@@ -256,9 +290,11 @@ class AuthServiceTest {
 
     @Test
     void resetPassword_invalidToken_throwsIllegalArgumentException() {
-        com.medev.modules.auth.dto.ResetPasswordRequest req = new com.medev.modules.auth.dto.ResetPasswordRequest("invalid-token", "newPassword123");
+        String token = "invalid-token";
+        String tokenHash = com.medev.shared.util.CryptoUtils.sha256Hex(token);
+        com.medev.modules.auth.dto.ResetPasswordRequest req = new com.medev.modules.auth.dto.ResetPasswordRequest(token, "newPassword123");
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-        when(valueOperations.get("password_reset:token:invalid-token")).thenReturn(null);
+        when(valueOperations.getAndDelete("password_reset:token:" + tokenHash)).thenReturn(null);
 
         assertThatThrownBy(() -> authService.resetPassword(req))
                 .isInstanceOf(IllegalArgumentException.class)
